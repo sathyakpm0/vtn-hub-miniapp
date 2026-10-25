@@ -1,334 +1,2017 @@
-/* =========================================
-   VTN HUB BOT — ROYAL BLACK & GOLD THEME
-   ========================================= */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+<title>VTN HUB BOT</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
 :root {
-  --red: #e00018;
-  --red2: #590009;
-  --cream: #100607;
+  --bg: #100405;
+  --bg2: #1c0609;
+  --card: #27090d;
+  --card2: #3a0a10;
+  --red: #d90019;
+  --red2: #8b0010;
   --gold: #e8b642;
-  --goldlight: #fff0b0;
-  --text: #fff2d1;
-  --muted: #c0a68a;
-  --border: #75501d;
-  --green: #18b879;
-  --blue: #279af4;
-  --pink: #d837c2;
+  --gold2: #ffdf83;
+  --cream: #fff0c8;
+  --muted: #c9b18e;
+  --border: #80551e;
+  --green: #22bf80;
 }
 
-/* Main background */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
+  font-family: -apple-system, BlinkMacSystemFont,
+  "Segoe UI", Roboto, Arial, sans-serif;
   background:
-    radial-gradient(ellipse at top, #350008 0%, #100405 55%, #050202 100%);
-  color: #fff1cc;
+    radial-gradient(ellipse at top, #3b0710 0%, #160507 45%, #080203 100%);
+  color: var(--cream);
+  min-height: 100vh;
+  padding-bottom: 85px;
 }
 
-/* Top navigation */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  color: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+/* HEADER */
+
 .topbar {
-  background: linear-gradient(110deg, #080203, #79000b, #170204);
-  border-bottom: 1px solid #d9a83c;
-  box-shadow: 0 3px 18px rgba(235, 0, 25, .22);
-  color: #ffe7a0;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px;
+  background: linear-gradient(100deg, #100305, #78000e, #240407);
+  border-bottom: 1px solid var(--gold);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
-/* Main royal header */
-.header {
+.brand {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gold2);
+  letter-spacing: .3px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 17px;
+  align-items: center;
+}
+
+.icon-button {
+  background: transparent;
+  font-size: 23px;
+  color: var(--gold2);
+  padding: 5px;
+}
+
+/* PAGE CONTAINER */
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  padding: 14px;
+}
+
+.page {
+  display: none;
+  animation: appear .2s ease;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* GENERAL CARDS */
+
+.card {
   background:
-    radial-gradient(ellipse at top, rgba(255,190,50,.14), transparent 60%),
-    linear-gradient(135deg, #080203, #68000a, #180204);
-  border-bottom: 3px solid #e8b642;
-}
-
-/* Main headings */
-.title,
-.section-title {
-  color: #ffd976;
-}
-
-/* Gold divider */
-.section-title::before {
-  background: linear-gradient(#fff0ae, #b77b19);
-}
-
-/* Cards */
-.card,
-.user-card,
-.usercard,
-.refcode,
-.commission,
-.stat,
-.day,
-.task {
-  background: linear-gradient(145deg, #26090c, #100607);
-  border: 1px solid #80591f;
-  color: #fff0ce;
+    radial-gradient(ellipse at top right,
+    rgba(232,182,66,.07), transparent 50%),
+    linear-gradient(145deg, #31090e, #130507);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 15px;
+  margin-bottom: 13px;
   box-shadow:
-    0 4px 14px rgba(0,0,0,.30),
-    inset 0 0 10px rgba(230,170,45,.025);
+    0 5px 16px rgba(0,0,0,.24),
+    inset 0 0 10px rgba(255,190,50,.02);
 }
 
-/* User avatar */
-.avatar {
-  background: linear-gradient(145deg, #ff2437, #80000d, #300005);
-  border: 2px solid #e8b642;
-  box-shadow: 0 0 12px rgba(239,174,47,.2);
+.section-title {
+  color: var(--gold2);
+  font-size: 15px;
+  font-weight: 800;
+  margin: 22px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* User details */
-.userinfo small,
-.userinfo p,
-.tasktext p,
-.stat span,
-.refcode small,
-.day {
-  color: #d2b997;
+.section-title:after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
 }
 
-/* VIP badge */
-.vip {
-  background: linear-gradient(135deg, #fff4bd, #e8b13b, #a86b13);
-  color: #431300;
+/* BUTTONS */
+
+.btn {
+  padding: 13px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  background: linear-gradient(145deg, #3b1015, #1b0609);
+  border: 1px solid #76501e;
+  color: var(--cream);
+  box-shadow: 0 3px 9px rgba(0,0,0,.2);
+  transition: transform .15s;
+}
+
+.btn.red {
+  background: linear-gradient(135deg, #ff263b, #c80018, #78000d);
+  border: 1px solid #e9b344;
+  color: white;
+}
+
+.btn.gold {
+  background: linear-gradient(135deg,
+    #fff2b5, #edc354, #bd801b);
   border: 1px solid #fff0a0;
-  box-shadow: 0 0 8px rgba(232,182,66,.2);
+  color: #451000;
 }
 
-/* Balance panel */
-.balance,
+.btn.green {
+  background: linear-gradient(135deg, #176d4b, #0b3928);
+  border: 1px solid #36bc84;
+}
+
+.btn.full {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+.small-text {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* USER CARD */
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(120deg, #4a1015, #190608);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 13px;
+  margin-bottom: 13px;
+}
+
+.avatar {
+  width: 53px;
+  height: 53px;
+  min-width: 53px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27px;
+  background: linear-gradient(135deg, #ff3040, #74000c);
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 12px rgba(232,182,66,.14);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.user-info p {
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.vip {
+  background: linear-gradient(135deg, #fff0a9, #dba22d);
+  color: #461000;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* BALANCE */
+
 .balance-card {
   background:
-    radial-gradient(ellipse at top right, rgba(255,210,80,.13), transparent 50%),
-    linear-gradient(125deg, #8e0010, #e00019, #610008);
-  border: 1px solid #f0c65a;
-  color: #fff3ce;
-  box-shadow:
-    0 5px 18px rgba(200,0,20,.2),
-    inset 0 0 15px rgba(255,190,50,.06);
+    radial-gradient(ellipse at top right,
+    rgba(255,220,100,.16), transparent 50%),
+    linear-gradient(115deg, #8b0010, #df0019, #64000b);
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 15px;
 }
 
-/* Royal gold buttons */
-.goldbtn,
-.copybtn,
-.promo-action {
-  background: linear-gradient(
-    135deg,
-    #fff4bd 0%,
-    #f2d16a 25%,
-    #dca02c 65%,
-    #ffe8a0 100%
-  );
-  color: #4b1600;
-  border: 1px solid #fff0a0;
-  box-shadow: 0 2px 10px rgba(231,174,47,.17);
+.balance-label {
+  font-size: 12px;
+  color: #ffe8aa;
+  margin-bottom: 8px;
 }
 
-/* Red buttons */
-.start,
-.share,
-.primary {
-  background: linear-gradient(135deg, #ff2639, #c90019 45%, #78000b);
-  color: #fff5d9;
-  border: 1px solid #e9b344;
-  box-shadow: 0 3px 10px rgba(190,0,20,.2);
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Home feature cards */
+.balance-amount {
+  font-size: 27px;
+  font-weight: 900;
+  color: white;
+  overflow-wrap: anywhere;
+}
+
+/* HOME TILES */
+
 .tile {
-  background: linear-gradient(145deg, #2a0a0e, #100405);
-  color: #ffeac1;
-  border: 1px solid #8a5b24;
-  box-shadow:
-    0 4px 12px rgba(0,0,0,.28),
-    inset 0 0 12px rgba(220,165,48,.025);
+  min-height: 104px;
+  padding: 13px 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #451018, #180508);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 12px rgba(255,190,50,.025);
+  color: var(--cream);
 }
 
-/* Red feature cards */
+.tile-icon {
+  font-size: 30px;
+}
+
+.tile-label {
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .tile.red {
-  background: linear-gradient(145deg, #f21a30, #a60013, #500008);
-  color: #fff0c7;
-  border: 1px solid #e9b344;
+  background: linear-gradient(145deg, #ef2337, #9d0013, #480007);
+  border-color: #d9a33c;
 }
 
-/* Blue cards: preserve the icon category, but use royal red */
-.tile.blue {
-  background: linear-gradient(145deg, #e91d32, #a90016, #540008);
-  color: white;
-  border: 1px solid #dca83b;
-}
-
-/* Green cards: preserve the icon category, but use royal red */
-.tile.green {
-  background: linear-gradient(145deg, #ed2335, #a60013, #510008);
-  color: white;
-  border: 1px solid #dca83b;
-}
-
-/* Pink cards: preserve the icon category, but use royal red */
-.tile.pink {
-  background: linear-gradient(145deg, #e72a40, #a90019, #510008);
-  color: white;
-  border: 1px solid #dca83b;
-}
-
-/* Orange cards: royal gold */
-.tile.orange {
-  background: linear-gradient(145deg, #fff0a8, #e7ad35, #a86a13);
-  color: #4c1500;
-  border: 1px solid #fff0a0;
-}
-
-/* Gold cards */
 .tile.gold {
-  background: linear-gradient(135deg, #fff0ad, #e6b13c, #a96c15);
-  color: #491400;
-  border: 1px solid #fff0a0;
+  background: linear-gradient(145deg, #fff0ac, #e3ae38, #9d6414);
+  color: #471100;
+  border-color: #fff0a0;
 }
 
-/* Promotional banner */
-.banner,
-.promo-banner,
-.day7 {
+.tile.blue,
+.tile.green,
+.tile.pink,
+.tile.orange {
+  background: linear-gradient(145deg, #490b15, #1b0509);
+  border-color: #93651f;
+}
+
+/* PROMO BANNER */
+
+.promo-banner {
+  margin-top: 14px;
+  padding: 17px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--gold);
+  border-radius: 17px;
   background:
-    radial-gradient(ellipse at top right, rgba(255,210,80,.16), transparent 50%),
-    linear-gradient(125deg, #79000b, #d50018 48%, #420006);
-  color: #fff0c5;
-  border: 1px solid #e9b344;
-  box-shadow: 0 5px 15px rgba(0,0,0,.25);
+    radial-gradient(ellipse at right,
+    rgba(255,210,75,.16), transparent 60%),
+    linear-gradient(120deg, #8c0010, #df001a, #4a0008);
 }
 
-.banner p,
-.promo-banner p {
-  color: #ffe3a2;
+.promo-content {
+  flex: 1;
 }
 
-/* Task category filters */
+.promo-content h3 {
+  font-size: 15px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.promo-content p {
+  color: #ffe4a0;
+  font-size: 12px;
+  margin-bottom: 11px;
+}
+
+.promo-icon {
+  font-size: 43px;
+}
+
+/* TASKS */
+
+.page-heading {
+  text-align: center;
+  padding: 19px 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  background: linear-gradient(110deg, #78000c, #dc0018, #600008);
+}
+
+.page-heading h2 {
+  font-size: 19px;
+  margin-bottom: 5px;
+  color: #fff1c2;
+}
+
+.page-heading p {
+  color: #ffe3a1;
+  font-size: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  margin-bottom: 13px;
+}
+
 .tab {
-  background: linear-gradient(145deg, #27090c, #100405);
-  color: #e9d4b0;
-  border: 1px solid #80551e;
+  padding: 9px 14px;
+  border-radius: 22px;
+  background: #22080b;
+  border: 1px solid #76501e;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #e6d1ae;
 }
 
 .tab.active {
-  background: linear-gradient(135deg, #ff2639, #a50013, #580007);
-  color: #fff4d6;
-  border: 1px solid #f0c55b;
+  background: linear-gradient(135deg, #ff283b, #b90016);
+  border-color: var(--gold);
+  color: white;
 }
 
-/* Task icons */
-.taskicon {
-  background: linear-gradient(145deg, #ff2639, #99000f, #470006);
-  border: 1px solid #e8b642;
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #79501d;
+  border-radius: 15px;
+  background: linear-gradient(120deg, #30090e, #130507);
 }
 
-/* Referral code */
-.refcode {
-  background: linear-gradient(145deg, #28090c, #100405);
-  border: 1px solid #d6a53d;
+.task-icon {
+  width: 43px;
+  height: 43px;
+  min-width: 43px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 23px;
+  background: linear-gradient(145deg, #ef273a, #76000c);
+  border: 1px solid var(--gold);
 }
 
-/* Commission cards */
-.commission {
-  background: linear-gradient(145deg, #2a0a0d, #100405);
+.task-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-details h4 {
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.task-details p {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.task-row .btn {
+  padding: 10px 13px;
+  font-size: 12px;
+}
+
+/* REFERRAL */
+
+.referral-code {
+  text-align: center;
+  padding: 18px;
+  border: 1px solid var(--gold);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #3b0d12, #150507);
+  margin-bottom: 14px;
+}
+
+.referral-code p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.code-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--gold2);
+  overflow-wrap: anywhere;
+}
+
+.commission-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 13px;
+  background: linear-gradient(120deg, #3b0d12, #180609);
   border: 1px solid #80551e;
+  margin-bottom: 10px;
 }
 
-/* Statistics */
-.stat strong {
-  color: #ffe09a;
+.commission-icon {
+  font-size: 26px;
 }
 
-/* Transaction list */
+.commission-row strong {
+  margin-left: auto;
+  color: var(--gold2);
+  white-space: nowrap;
+}
+
+/* WALLET */
+
+.wallet-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 14px;
+}
+
 .transaction {
-  border-bottom: 1px solid #4e3020;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 2px;
+  border-bottom: 1px solid #4c2b20;
 }
 
-.transaction small {
-  color: #bda58b;
+.transaction-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d80019, #580008);
+  border: 1px solid #b58531;
+}
+
+.transaction-info {
+  flex: 1;
+}
+
+.transaction-info h4 {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.transaction-info p {
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .positive {
-  color: #72e4a9;
+  color: #6be2a2;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-/* Profile menu separators */
-.listrow {
-  border-bottom: 1px solid #4e3020;
-  color: #ffebc4;
+/* STATISTICS */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 15px;
 }
 
-.listrow small,
-.listrow .arrow {
-  color: #c2a786;
+.stat {
+  text-align: center;
+  padding: 12px 4px;
+  border: 1px solid #79501d;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #370b11, #170508);
 }
 
-/* Daily check-in */
+.stat strong {
+  display: block;
+  font-size: 16px;
+  color: var(--gold2);
+  margin-bottom: 5px;
+}
+
+.stat span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+/* PROFILE LIST */
+
+.list-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 3px;
+  text-align: left;
+  border-bottom: 1px solid #4a2b20;
+  background: transparent;
+  color: var(--cream);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-icon {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d90019, #5b0008);
+  border: 1px solid #8c6127;
+  font-size: 17px;
+}
+
+.list-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.arrow {
+  color: var(--gold);
+  font-size: 20px;
+}
+
+/* DAILY CHECK-IN */
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.day {
+  text-align: center;
+  padding: 13px 5px;
+  border: 1px solid #76501e;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #390b11, #170508);
+}
+
+.day span {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+
+.day strong {
+  display: block;
+  color: var(--gold2);
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.day p {
+  font-size: 12px;
+  color: #ffe7a7;
+}
+
 .day.claimed {
-  background: linear-gradient(145deg, #65400c, #2b1705);
-  border: 1px solid #edc153;
-  color: #fff0ad;
+  background: linear-gradient(145deg, #705019, #321606);
+  border-color: var(--gold);
 }
 
-/* Spin wheel */
+/* SPIN WHEEL */
+
+.wheel-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
 .wheel {
-  border-color: #f6d16b;
-  outline-color: #92000e;
-  box-shadow:
-    0 0 0 3px #4b1607,
-    0 0 22px rgba(255,190,45,.23);
-}
-
-.spin-center {
-  background: linear-gradient(135deg, #fff4bd, #e9b13a, #a86a12);
-  color: #62000b;
-  border: 4px solid #9d0011;
-}
-
-/* Bottom navigation */
-.bottomnav {
-  background: linear-gradient(180deg, #1c0709, #080203);
-  border-top: 1px solid #b88a34;
-  box-shadow: 0 -4px 18px rgba(0,0,0,.35);
-}
-
-.navbtn {
-  color: #b8a38b;
-}
-
-.navbtn.active {
-  color: #ffd56b;
-}
-
-/* Footer */
-.footer {
-  color: #c0a47d;
-}
-
-.footer strong {
-  color: #ffdf83;
-}
-
-.footer-line {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #e8b642,
-    #fff0a0,
-    #e8b642,
-    transparent
+  width: min(78vw, 290px);
+  height: min(78vw, 290px);
+  max-width: 290px;
+  max-height: 290px;
+  border-radius: 50%;
+  position: relative;
+  border: 8px solid #e8b642;
+  outline: 3px solid #68000a;
+  box-shadow: 0 0 22px rgba(255,190,45,.18);
+  overflow: hidden;
+  background: conic-gradient(
+    #c90018 0deg 45deg,
+    #39060b 45deg 90deg,
+    #edb73c 90deg 135deg,
+    #970011 135deg 180deg,
+    #e00019 180deg 225deg,
+    #39060b 225deg 270deg,
+    #c18a25 270deg 315deg,
+    #8d0010 315deg 360deg
   );
+  transition: transform 3s cubic-bezier(.15,.7,.15,1);
 }
 
-/* Coming soon screen */
-.lock {
-  background: linear-gradient(145deg, #28090c, #0c0304);
-  border: 2px solid #e8b642;
-  box-shadow: 0 10px 35px rgba(0,0,0,.35);
-  color: #fff0c7;
+.wheel-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 900;
 }
 
-.lock h1 {
-  color: #ffda76;
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #fff2b0, #e2a92d, #9a5c12);
+  border: 5px solid #85000c;
+  color: #51000a;
+  font-size: 19px;
+  font-weight: 900;
+  z-index: 2;
 }
 
-.lock p {
-  color: #d8bd9a;
+/* FOOTER */
+
+.bottomnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: linear-gradient(180deg, #21070b, #090203);
+  border-top: 1px solid #a77b2d;
+  padding: 8px 3px max(8px, env(safe-area-inset-bottom));
 }
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+  background: transparent;
+  color: #b6a38d;
+  font-size: 10px;
+}
+
+.nav-item span {
+  font-size: 20px;
+}
+
+.nav-item.active {
+  color: var(--gold2);
+}
+
+/* ADMIN */
+
+.admin-section {
+  margin-bottom: 23px;
+}
+
+.admin-section h3 {
+  font-size: 14px;
+  color: var(--gold2);
+  margin-bottom: 11px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.admin-grid .btn {
+  min-height: 49px;
+  overflow-wrap: anywhere;
+}
+
+.admin-switch {
+  margin-bottom: 15px;
+}
+
+/* LOCKED SCREEN */
+
+.lock-container {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lock-box {
+  width: 100%;
+  max-width: 350px;
+  padding: 35px 22px;
+  text-align: center;
+  border: 2px solid var(--gold);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #370b11, #100405);
+}
+
+.lock-box h1 {
+  color: var(--gold2);
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.lock-box p {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+/* SMALL SCREENS */
+
+@media (max-width: 360px) {
+  .container {
+    padding: 10px;
+  }
+
+  .brand {
+    font-size: 16px;
+  }
+
+  .balance-amount {
+    font-size: 22px;
+  }
+
+  .tile {
+    min-height: 95px;
+  }
+
+  .task-row {
+    gap: 7px;
+    padding: 10px 7px;
+  }
+
+  .task-row .btn {
+    padding: 9px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP HEADER -->
+
+<header class="topbar">
+  <button class="icon-button"
+  onclick="toggleMenu()" aria-label="Menu">☰</button>
+
+  <div class="brand">VTN Hub Bot 👑</div>
+
+  <div class="header-actions">
+    <button class="icon-button"
+    onclick="action('notifications')">♟</button>
+  </div>
+</header>
+
+<!-- MAIN APP -->
+
+<main class="container">
+
+<!-- HOME PAGE -->
+
+<section id="home" class="page active">
+
+  <div class="user-card">
+    <div class="avatar">🤖</div>
+
+    <div class="user-info">
+      <h3>Welcome Back</h3>
+      <p id="home-username">VTN User</p>
+      <p id="home-userid">Telegram User</p>
+    </div>
+
+    <span class="vip">VIP</span>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-label">👑 Your Balance</div>
+
+    <div class="balance-row">
+      <div class="balance-amount">
+        ₹ <span id="home-balance">0.00</span>
+      </div>
+
+      <button class="btn gold"
+      onclick="openPage('wallet')">Withdraw</button>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <button class="tile red"
+    onclick="openPage('checkin')">
+      <span class="tile-icon">🎁</span>
+      <span class="tile-label">Daily Check In</span>
+    </button>
+
+    <button class="tile"
+    onclick="openPage('tasks')">
+      <span class="tile-icon">📋</span>
+      <span class="tile-label">Complete Tasks</span>
+    </button>
+
+    <button class="tile"
+    onclick="openPage('refer')">
+      <span class="tile-icon">👥</span>
+      <span class="tile-label">Refer & Earn</span>
+    </button>
+
+    <button class="tile gold"
+    onclick="openPage('spin')">
+      <span class="tile-icon">🎡</span>
+      <span class="tile-label">Spin & Win</span>
+    </button>
+
+  </div>
+
+  <div class="promo-banner">
+    <div class="promo-content">
+      <h3>Earn More<br>Refer Your Friends</h3>
+      <p>Invite friends and explore rewards.</p>
+      <button class="btn gold"
+      onclick="openPage('refer')">Invite Now</button>
+    </div>
+
+    <div class="promo-icon">🎁</div>
+  </div>
+
+  <h3 class="section-title">✨ Explore More</h3>
+
+  <div class="grid">
+
+    <button class="btn"
+    onclick="action('promote_channel')">
+      📣 Promote Channel
+    </button>
+
+    <button class="btn"
+    onclick="action('free_cross')">
+      🔄 Free Cross
+    </button>
+
+    <button class="btn"
+    onclick="action('join_tasks')">
+      🎯 Join Tasks
+    </button>
+
+    <button class="btn"
+    onclick="action('earn_tasks')">
+      💼 Earn Tasks
+    </button>
+
+    <button class="btn"
+    onclick="action('watch_earn')">
+      👀 Watch & Earn
+    </button>
+
+    <button class="btn"
+    onclick="action('views_likes')">
+      👍 Views / Likes
+    </button>
+
+    <button class="btn"
+    onclick="action('join_bot')">
+      🤖 Join Bot
+    </button>
+
+    <button class="btn"
+    onclick="action('promote_bot')">
+      📢 Promote Bot
+    </button>
+
+    <button class="btn"
+    onclick="action('chat_earn')">
+      💬 Chat & Earn
+    </button>
+
+    <button class="btn"
+    onclick="action('paid_promo')">
+      🚀 Paid Promotion
+    </button>
+
+  </div>
+
+</section>
+
+<!-- TASKS PAGE -->
+
+<section id="tasks" class="page">
+
+  <div class="page-heading">
+    <h2>🎁 Complete Tasks</h2>
+    <p>Complete available tasks to earn coins</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active"
+    onclick="filterTasks('all',this)">All</button>
+
+    <button class="tab"
+    onclick="filterTasks('watch',this)">Watch</button>
+
+    <button class="tab"
+    onclick="filterTasks('survey',this)">Survey</button>
+
+    <button class="tab"
+    onclick="filterTasks('quiz',this)">Quiz</button>
+  </div>
+
+  <div id="task-list">
+
+    <div class="task-row" data-category="watch">
+      <div class="task-icon">▶️</div>
+      <div class="task-details">
+        <h4>Watch Video</h4>
+        <p>🪙 +10 Coins</p>
+      </div>
+      <button class="btn red"
+      onclick="action('watch_earn')">Start</button>
+    </div>
+
+    <div class="task-row" data-category="quiz">
+      <div class="task-icon">❓</div>
+      <div class="task-details">
+        <h4>Complete Quiz</h4>
+        <p>🪙 +20 Coins</p>
+      </div>
+      <button class="btn red"
+      onclick="action('quiz')">Start</button>
+    </div>
+
+    <div class="task-row" data-category="watch">
+      <div class="task-icon">⬇️</div>
+      <div class="task-details">
+        <h4>Download App</h4>
+        <p>🪙 +30 Coins</p>
+      </div>
+      <button class="btn red"
+      onclick="action('download_app')">Start</button>
+    </div>
+
+    <div class="task-row" data-category="all">
+      <div class="task-icon">🎁</div>
+      <div class="task-details">
+        <h4>Daily Check In</h4>
+        <p>🪙 +15 Coins</p>
+      </div>
+      <button class="btn red"
+      onclick="openPage('checkin')">Start</button>
+    </div>
+
+    <div class="task-row" data-category="survey">
+      <div class="task-icon">📝</div>
+      <div class="task-details">
+        <h4>Survey & Earn</h4>
+        <p>🪙 +25 Coins</p>
+      </div>
+      <button class="btn red"
+      onclick="action('survey')">Start</button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- REFER & EARN PAGE -->
+
+<section id="refer" class="page">
+
+  <div class="page-heading">
+    <h2>👑 Invite Your Friends</h2>
+    <p>Invite friends and explore referral rewards</p>
+  </div>
+
+  <div class="card">
+    <div class="referral-code">
+      <p>Your Referral Code</p>
+
+      <div class="code-row">
+        <span id="ref-code">VTN12345</span>
+
+        <button class="btn"
+        onclick="copyReferral()">📋</button>
+      </div>
+    </div>
+
+    <div class="commission-row">
+      <span class="commission-icon">🥇</span>
+      <span>Level 1</span>
+      <strong>5% Commission</strong>
+    </div>
+
+    <div class="commission-row">
+      <span class="commission-icon">🥈</span>
+      <span>Level 2</span>
+      <strong>2% Commission</strong>
+    </div>
+
+    <button class="btn gold full"
+    onclick="shareReferral()">
+      📤 Share Referral Link
+    </button>
+  </div>
+
+  <h3 class="section-title">👥 Your Referrals</h3>
+
+  <div class="stats-grid">
+
+    <div class="stat">
+      <strong id="ref-count">0</strong>
+      <span>Total Friends</span>
+    </div>
+
+    <div class="stat">
+      <strong id="ref-earned">₹0</strong>
+      <span>Total Earned</span>
+    </div>
+
+    <div class="stat">
+      <strong>2</strong>
+      <span>Referral Levels</span>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--gold2);margin-bottom:9px">
+      More Friends 👑 More Earnings
+    </h3>
+
+    <p class="small-text">
+      Share your referral link with friends.
+      Referral tracking and commissions must be
+      verified by the app backend.
+    </p>
+  </div>
+
+</section>
+
+<!-- WALLET PAGE -->
+
+<section id="wallet" class="page">
+
+  <div class="page-heading">
+    <h2>💰 My Wallet</h2>
+    <p>View your balance and transactions</p>
+  </div>
+
+  <div class="balance-card">
+
+    <div class="balance-label">Total Balance</div>
+
+    <div class="balance-amount">
+      ₹ <span id="wallet-balance">0.00</span>
+    </div>
+
+    <div class="wallet-actions">
+
+      <button class="btn gold"
+      onclick="action('withdrawals')">
+        💸 Withdraw
+      </button>
+
+      <button class="btn"
+      onclick="openPage('history')">
+        📜 History
+      </button>
+
+    </div>
+
+  </div>
+
+  <h3 class="section-title">Recent Transactions</h3>
+
+  <div class="card" id="transaction-list">
+
+    <div class="transaction">
+      <div class="transaction-icon">🎁</div>
+
+      <div class="transaction-info">
+        <h4>No transactions yet</h4>
+        <p>Your activity will appear here.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <p class="small-text">
+    Your actual balance and withdrawal status
+    must come from your secure backend.
+  </p>
+
+</section>
+
+<!-- HISTORY PAGE -->
+
+<section id="history" class="page">
+
+  <div class="page-heading">
+    <h2>📜 Transaction History</h2>
+    <p>Review your earning activity</p>
+  </div>
+
+  <div class="card">
+    <p class="small-text">
+      No transaction records are connected yet.
+      Your backend should supply verified task
+      rewards, referral commissions and payouts.
+    </p>
+  </div>
+
+  <button class="btn full"
+  onclick="openPage('wallet')">
+    ← Back to Wallet
+  </button>
+
+</section>
+
+<!-- DAILY CHECK-IN PAGE -->
+
+<section id="checkin" class="page">
+
+  <div class="page-heading">
+    <h2>🎁 7 Day Check In</h2>
+    <p>Keep checking in for daily bonuses</p>
+  </div>
+
+  <div class="card">
+
+    <div class="days-grid">
+
+      <div class="day">
+        <span>Day 1</span>
+        <strong>🪙</strong>
+        <p>+10</p>
+      </div>
+
+      <div class="day">
+        <span>Day 2</span>
+        <strong>🪙</strong>
+        <p>+15</p>
+      </div>
+
+      <div class="day">
+        <span>Day 3</span>
+        <strong>🪙</strong>
+        <p>+20</p>
+      </div>
+
+      <div class="day">
+        <span>Day 4</span>
+        <strong>🪙</strong>
+        <p>+30</p>
+      </div>
+
+      <div class="day">
+        <span>Day 5</span>
+        <strong>🪙</strong>
+        <p>+40</p>
+      </div>
+
+      <div class="day">
+        <span>Day 6</span>
+        <strong>🪙</strong>
+        <p>+50</p>
+      </div>
+
+      <div class="day" style="grid-column:span 3">
+        <span>Day 7 — Special Bonus</span>
+        <strong>🎁</strong>
+        <p>+75</p>
+      </div>
+
+    </div>
+
+    <p class="small-text" style="margin:15px 0">
+      Check-in rewards are examples until configured
+      in your backend.
+    </p>
+
+    <button class="btn gold full"
+    onclick="action('daily_checkin')">
+      🎁 Claim Daily Check In
+    </button>
+
+  </div>
+
+</section>
+
+<!-- SPIN & WIN PAGE -->
+
+<section id="spin" class="page">
+
+  <div class="page-heading">
+    <h2>🎡 Spin & Win</h2>
+    <p>Explore exciting rewards</p>
+  </div>
+
+  <div class="card">
+
+    <div class="wheel-wrap">
+
+      <div class="wheel" id="wheel">
+
+        <div class="wheel-center">SPIN</div>
+
+      </div>
+
+    </div>
+
+    <p class="small-text" style="text-align:center;margin-bottom:15px">
+      Rewards shown are illustrative.
+      Connect a verified reward system before enabling prizes.
+    </p>
+
+    <button class="btn gold full"
+    onclick="action('play_earn')">
+      🎁 Free Spin
+    </button>
+
+  </div>
+
+</section>
+
+<!-- PROFILE PAGE -->
+
+<section id="profile" class="page">
+
+  <div class="page-heading">
+    <h2>👤 My Profile</h2>
+    <p>Your VTN HUB BOT account</p>
+  </div>
+
+  <div class="user-card">
+
+    <div class="avatar">🤖</div>
+
+    <div class="user-info">
+      <h3 id="profile-name">VTN User</h3>
+      <p id="profile-username">@user</p>
+      <p id="profile-id">Telegram account</p>
+    </div>
+
+    <span class="vip">VIP</span>
+
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat">
+      <strong id="tasks-done">0</strong>
+      <span>Tasks Done</span>
+    </div>
+
+    <div class="stat">
+      <strong id="profile-referrals">0</strong>
+      <span>Referrals</span>
+    </div>
+
+    <div class="stat">
+      <strong id="profile-earned">₹0</strong>
+      <span>Total Earned</span>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <button class="list-item"
+    onclick="action('my_earnings')">
+      <span class="list-icon">💰</span>
+      <span class="list-text">My Earnings</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="list-item"
+    onclick="openPage('refer')">
+      <span class="list-icon">👥</span>
+      <span class="list-text">Referral Program</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="list-item"
+    onclick="action('support')">
+      <span class="list-icon">❓</span>
+      <span class="list-text">Help & Support</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="list-item"
+    onclick="action('terms')">
+      <span class="list-icon">📄</span>
+      <span class="list-text">Terms & Conditions</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="list-item"
+    onclick="action('logout')">
+      <span class="list-icon">🚪</span>
+      <span class="list-text">Logout</span>
+      <span class="arrow">›</span>
+    </button>
+
+  </div>
+
+  <div id="admin-entry" class="hidden">
+    <button class="btn gold full"
+    onclick="openPage('admin')">
+      👑 Open Admin Panel
+    </button>
+  </div>
+
+</section>
+
+<!-- ADMIN PAGE -->
+
+<section id="admin" class="page">
+
+  <div class="page-heading">
+    <h2>👑 ADMIN PANEL</h2>
+    <p>VTN HUB BOT administration</p>
+  </div>
+
+  <button class="btn gold full admin-switch"
+  onclick="showUserMenu()">
+    🏠 Return to User Menu
+  </button>
+
+  <div class="admin-section">
+
+    <h3>💰 Money Control</h3>
+
+    <div class="admin-grid">
+
+      <button class="btn"
+      onclick="action('add_coins')">➕ Add Coins</button>
+
+      <button class="btn"
+      onclick="action('remove_coins')">➖ Remove Coins</button>
+
+      <button class="btn"
+      onclick="action('withdrawals')">🏦 Withdrawals</button>
+
+      <button class="btn"
+      onclick="action('statistics')">📊 Statistics</button>
+
+      <button class="btn"
+      onclick="action('payout_run')">⏱ Payout Run</button>
+
+      <button class="btn"
+      onclick="action('payout_list')">📋 Payout List</button>
+
+      <button class="btn gold"
+      onclick="action('master_wallet')">💼 Master Wallet</button>
+
+      <button class="btn"
+      onclick="action('task_pay_id')">🔍 Task / Pay ID</button>
+
+    </div>
+
+  </div>
+
+  <div class="admin-section">
+
+    <h3>📋 Task Control</h3>
+
+    <div class="admin-grid">
+
+      <button class="btn"
+      onclick="action('task_studio')">🛠 Task Studio</button>
+
+      <button class="btn"
+      onclick="action('manage_tasks')">📝 Manage Tasks</button>
+
+      <button class="btn"
+      onclick="action('pending_proofs')">📩 Pending Proofs</button>
+
+      <button class="btn"
+      onclick="action('pending_videos')">🎬 Pending Videos</button>
+
+      <button class="btn green"
+      onclick="action('task_on')">✅ Task ON</button>
+
+      <button class="btn red"
+      onclick="action('task_off')">❌ Task OFF</button>
+
+      <button class="btn full"
+      style="grid-column:span 2"
+      onclick="action('task_list_track')">
+        📋 Task List + Track
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="admin-section">
+
+    <h3>🔄 Cross & Promo</h3>
+
+    <div class="admin-grid">
+
+      <button class="btn"
+      onclick="action('cross_run')">🔄 Cross Run</button>
+
+      <button class="btn"
+      onclick="action('cross_delete')">🗑 Cross Delete</button>
+
+      <button class="btn"
+      onclick="action('cross_timing')">⏱ Cross Timing</button>
+
+      <button class="btn"
+      onclick="action('banner_easy')">🌐 Banner Easy</button>
+
+      <button class="btn"
+      onclick="action('bot_promo_config')">🤖 Bot Promo Config</button>
+
+      <button class="btn"
+      onclick="action('pending_bot_joins')">⏳ Pending Bot Joins</button>
+
+      <button class="btn gold"
+      style="grid-column:span 2"
+      onclick="action('broadcast')">📣 Broadcast</button>
+
+    </div>
+
+  </div>
+
+  <div class="admin-section">
+
+    <h3>👥 Users & Safety</h3>
+
+    <div class="admin-grid">
+
+      <button class="btn"
+      style="grid-column:span 2"
+      onclick="action('user_list')">
+        👥 User List + History
+      </button>
+
+      <button class="btn"
+      style="grid-column:span 2"
+      onclick="action('refer_leaderboard')">
+        🏆 Refer Leaderboard
+      </button>
+
+      <button class="btn red"
+      style="grid-column:span 2"
+      onclick="action('emergency_lock')">
+        🚨 Emergency Lock
+      </button>
+
+      <button class="btn"
+      onclick="action('qr_control')">📷 QR Control</button>
+
+      <button class="btn"
+      onclick="action('deposit_qr')">💰 Deposit QR/UPI</button>
+
+      <button class="btn"
+      onclick="action('deposits')">📥 Deposits</button>
+
+      <button class="btn"
+      onclick="action('crypto_toggle')">₿ Crypto Toggle</button>
+
+      <button class="btn"
+      style="grid-column:span 2"
+      onclick="action('withdraw_limit')">
+        📉 Withdraw Limit
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="admin-section">
+
+    <h3>⚙️ Other Controls</h3>
+
+    <div class="admin-grid">
+
+      <button class="btn"
+      onclick="action('support')">💬 Support</button>
+
+      <button class="btn"
+      onclick="showUserMenu()">🏠 User Menu</button>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+
+<nav class="bottomnav" id="bottomnav">
+
+  <button class="nav-item active"
+  data-page="home" onclick="openPage('home')">
+    <span>🏠</span>
+    Home
+  </button>
+
+  <button class="nav-item"
+  data-page="tasks" onclick="openPage('tasks')">
+    <span>📋</span>
+    Tasks
+  </button>
+
+  <button class="nav-item"
+  data-page="refer" onclick="openPage('refer')">
+    <span>👥</span>
+    Refer
+  </button>
+
+  <button class="nav-item"
+  data-page="wallet" onclick="openPage('wallet')">
+    <span>💰</span>
+    Wallet
+  </button>
+
+  <button class="nav-item"
+  data-page="profile" onclick="openPage('profile')">
+    <span>👤</span>
+    Profile
+  </button>
+
+</nav>
+
+<script>
+/* =========================================
+   TELEGRAM MINI APP
+   ========================================= */
+
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.expand();
+
+try {
+  tg.setHeaderColor('#78000e');
+  tg.setBackgroundColor('#100405');
+} catch (e) {
+  console.log('Theme settings unavailable');
+}
+
+/* =========================================
+   ADMIN CONFIGURATION
+   ========================================= */
+
+const ADMIN_IDS = [8150531247];
+
+const telegramUser = tg.initDataUnsafe
+  ? tg.initDataUnsafe.user
+  : null;
+
+const isAdmin = !!(
+  telegramUser &&
+  ADMIN_IDS.includes(telegramUser.id)
+);
+
+/*
+ * Demo balance only.
+ * Replace with a verified backend balance.
+ */
+
+let demoBalance = 0;
+
+/* =========================================
+   USER INFORMATION
+   ========================================= */
+
+function loadUser() {
+  if (!telegramUser) return;
+
+  const name = [
+    telegramUser.first_name || '',
+    telegramUser.last_name || ''
+  ].join(' ').trim() || 'VTN User';
+
+  document.getElementById('home-username').textContent = name;
+  document.getElementById('profile-name').textContent = name;
+
+  document.getElementById('home-userid').textContent =
+    'ID: ' + telegramUser.id;
+
+  document.getElementById('profile-id').textContent =
+    'ID: ' + telegramUser.id;
+
+  document.getElementById('profile-username').textContent =
+    telegramUser.username
+      ? '@' + telegramUser.username
+      : 'Telegram User';
+
+  document.getElementById('ref-code').textContent =
+    'VTN' + telegramUser.id;
+}
+
+loadUser();
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+function openPage(pageId) {
+  const page = document.getElementById(pageId);
+
+  if (!page) return;
+
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+  });
+
+  page.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.toggle(
+      'active',
+      btn.dataset.page === pageId
+    );
+  });
+
+  document.getElementById('bottomnav').style.display =
+    pageId === 'admin' ? 'none' : 'grid';
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+function showUserMenu() {
+  openPage('home');
+}
+
+function toggleMenu() {
+  if (isAdmin) {
+    openPage('admin');
+  } else {
+    openPage('profile');
+  }
+}
+
+/* =========================================
+   ACTION HANDLER
+   ========================================= */
+
+/*
+ * These actions are placeholders.
+ * Connect them to your actual bot/backend.
+ */
+
+function action(name) {
+  const labels = {
+    promote_channel: 'Promote Channel',
+    free_cross: 'Free Cross',
+    join_tasks: 'Join Tasks',
+    earn_tasks: 'Earn Tasks',
+    watch_earn: 'Watch & Earn',
+    views_likes: 'Views / Likes',
+    join_bot: 'Join Bot',
+    promote_bot: 'Promote Bot',
+    play_earn: 'Play & Earn',
+    daily_checkin: 'Daily Check-in',
+    chat_earn: 'Chat & Earn',
+    paid_promo: 'Paid Promotion',
+    withdrawals: 'Withdrawals',
+    history: 'Transaction History',
+    guide: 'Guide',
+    support: 'Support',
+    notifications: 'Notifications',
+    my_earnings: 'My Earnings',
+    terms: 'Terms & Conditions',
+    logout: 'Logout',
+    download_app: 'Download App',
+    quiz: 'Quiz',
+    survey: 'Survey',
+    add_coins: 'Add Coins',
+    remove_coins: 'Remove Coins',
+    statistics: 'Statistics',
+    payout_run: 'Payout Run',
+    payout_list: 'Payout List',
+    master_wallet: 'Master Wallet',
+    task_pay_id: 'Task / Pay ID',
+    task_studio: 'Task Studio',
+    manage_tasks: 'Manage Tasks',
+    pending_proofs: 'Pending Proofs',
+    pending_videos: 'Pending Videos',
+    task_on: 'Task ON',
+    task_off: 'Task OFF',
+    task_list_track: 'Task List + Track',
+    cross_run: 'Cross Run',
+    cross_delete: 'Cross Delete',
+    cross_timing: 'Cross Timing',
+    banner_easy: 'Banner Easy',
+    bot_promo_config: 'Bot Promo Config',
+    pending_bot_joins: 'Pending Bot Joins',
+    broadcast: 'Broadcast',
+    user_list: 'User List + History',
+    refer_leaderboard: 'Referral Leaderboard',
+    emergency_lock: 'Emergency Lock',
+    qr_control: 'QR Control',
+    deposit_qr: 'Deposit QR/UPI',
+    deposits: 'Deposits',
+    crypto_toggle: 'Crypto Toggle',
+    withdraw_limit: 'Withdraw Limit'
+  };
+
+  const message =
+    (labels[name] || name) +
+    '\n\nThis feature needs to be connected to your bot backend.';
+
+  if (tg.showAlert) {
+    tg.showAlert(message);
+  } else {
+    alert(message);
+  }
+}
+
+/* =========================================
+   TASK FILTERS
+   ========================================= */
+
+function filterTasks(category, button) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  button.classList.add('active');
+
+  document.querySelectorAll('.task-row').forEach(task => {
+    const taskCategory = task.dataset.category;
+
+    task.style.display =
+      category === 'all' ||
+      taskCategory === category
+        ? 'flex'
+        : 'none';
+  });
+}
+
+/* =========================================
+   REFERRAL SHARING
+   ========================================= */
+
+function getReferralLink() {
+  /*
+   * Configure your actual bot username here.
+   * Example: const BOT_USERNAME = 'YourBotName';
+   */
+
+  const BOT_USERNAME = '';
+
+  if (!telegramUser || !BOT_USERNAME) {
+    return '';
+  }
+
+  const code = 'VTN' + telegramUser.id;
+
+  return 'https://t.me/' +
+    BOT_USERNAME +
+    '?start=' +
+    encodeURIComponent(code);
+}
+
+function copyReferral() {
+  const code = document.getElementById('ref-code').textContent;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code)
+      .then(() => {
+        if (tg.showAlert) {
+          tg.showAlert('Referral code copied!');
+        } else {
+          alert('Referral code copied!');
+        }
+      })
+      .catch(() => {
+        fallbackCopy(code);
+      });
+  } else {
+    fallbackCopy(code);
+  }
+}
+
+function fallbackCopy(text) {
+  const input = document.createElement('textarea');
+
+  input.value = text;
+  input.style.position = 'fixed';
+  input.style.opacity = '0';
+
+  document.body.appendChild(input);
+  input.select();
+
+  try {
+    document.execCommand('copy');
+
+    if (tg.showAlert) {
+      tg.showAlert('Referral code copied!');
+    } else {
+      alert('Referral code copied!');
+    }
+  } catch (e) {
+    alert('Your referral code: ' + text);
+  }
+
+  input.remove();
+}
+
+function shareReferral() {
+  const link = getReferralLink();
+
+  if (!link) {
+    const code = document.getElementById('ref-code').textContent;
+
+    if (tg.showAlert) {
+      tg.showAlert(
+        'Set your Telegram bot username in the code first.\n\n' +
+        'Your referral code: ' + code
+      );
+    } else {
+      alert('Your referral code: ' + code);
+    }
+
+    return;
+  }
+
+  const shareUrl =
+    'https://t.me/share/url?url=' +
+    encodeURIComponent(link) +
+    '&text=' +
+    encodeURIComponent(
+      'Join VTN HUB BOT and explore tasks and rewards!'
+    );
+
+  if (tg.openTelegramLink) {
+    tg.openTelegramLink(shareUrl);
+  } else {
+    window.open(shareUrl, '_blank');
+  }
+}
+
+/* =========================================
+   BALANCE DISPLAY
+   ========================================= */
+
+function updateBalance(amount) {
+  /*
+   * Display helper only.
+   * Never use this client-side function to
+   * authorize real money or withdrawals.
+   */
+
+  demoBalance = Number(amount) || 0;
+
+  document.getElementById('home-balance').textContent =
+    demoBalance.toFixed(2);
+
+  document.getElementById('wallet-balance').textContent =
+    demoBalance.toFixed(2);
+}
+
+updateBalance(0);
+
+/* =========================================
+   ADMIN VISIBILITY
+   ========================================= */
+
+if (isAdmin) {
+  document.getElementById('admin-entry')
+    .classList.remove('hidden');
+}
+
+/*
+ * Open the user dashboard by default.
+ * Admin users can open the admin panel
+ * from Profile.
+ */
+
+openPage('home');
+
+/* =========================================
+   BACK BUTTON
+   ========================================= */
+
+if (tg.BackButton) {
+  tg.BackButton.show();
+
+  tg.BackButton.onClick(function() {
+    const activePage =
+      document.querySelector('.page.active');
+
+    if (!activePage || activePage.id === 'home') {
+      tg.BackButton.hide();
+      return;
+    }
+
+    openPage('home');
+  });
+}
+</script>
+
+</body>
+   </html>
