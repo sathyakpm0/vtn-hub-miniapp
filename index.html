@@ -14,10 +14,100 @@
       color: #f5e6c8;
       padding: 18px 14px;
       min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 26px;
+      padding-top: 8px;
+    }
+
+    .header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      color: #c9b28a;
+      font-size: 13.5px;
+      margin-top: 6px;
+    }
+
+    .vip-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #d4af37, #f5d76e);
+      color: #1a1200;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: #d4af37;
+      margin: 22px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      background: linear-gradient(145deg, #2a1a1f, #1c1216);
+      color: #f8e9c0;
+      border: 1px solid #5c3d1e;
+      border-radius: 16px;
+      padding: 16px 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,215,0,0.1);
+      transition: all 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn.gold {
+      background: linear-gradient(145deg, #3d2a12, #2a1c0d);
+      border-color: #d4af37;
+      color: #ffe9a0;
+    }
+
+    .btn.danger {
+      background: linear-gradient(145deg, #3a1515, #2a0f0f);
+      border-color: #8b2e2e;
+      color: #ffb3b3;
+    }
+
+    .btn.success {
+      background: linear-gradient(145deg, #14301a, #0f2414);
+      border-color: #2e7d32;
+      color: #a5d6a7;
+    }
+
+    .full { grid-column: span 2; }
+    .hidden { display: none; }
+
+    /* Locked Screen */
+    .lock-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      min-height: 80vh;
       text-align: center;
     }
 
@@ -42,22 +132,118 @@
       font-size: 15px;
       line-height: 1.5;
     }
-
-    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-  <!-- LOCKED SCREEN (for normal users) -->
-  <div id="locked-screen" class="lock-box">
-    <h1>🔒 Coming Soon</h1>
-    <p>VTN HUB Mini App is under maintenance.<br><br>Please check back later.</p>
+  <!-- ==================== LOCKED SCREEN ==================== -->
+  <div id="locked-screen" class="lock-container">
+    <div class="lock-box">
+      <h1>🔒 Coming Soon</h1>
+      <p>VTN HUB Mini App is under maintenance.<br><br>Please check back later.</p>
+    </div>
   </div>
 
-  <!-- REAL APP (only for you) -->
+  <!-- ==================== ADMIN / REAL APP ==================== -->
   <div id="app-content" class="hidden">
-    <h1 style="color:#ffd700; margin-bottom: 15px;">👑 Welcome Admin</h1>
-    <p style="color:#c9b28a;">You can access the Mini App.<br>Development mode is active.</p>
+
+    <!-- USER MENU -->
+    <div id="user-menu">
+      <div class="header">
+        <h1>✨ VTN HUB</h1>
+        <div class="vip-badge">VIP ACCESS</div>
+        <p>Premium Experience</p>
+      </div>
+
+      <div class="grid">
+        <button class="btn gold" onclick="action('promote_channel')">📣 Promote Channel</button>
+        <button class="btn" onclick="action('free_cross')">🔄 Free Cross</button>
+
+        <button class="btn" onclick="action('join_tasks')">🎯 Join Tasks</button>
+        <button class="btn" onclick="action('earn_tasks')">💼 Earn Tasks</button>
+
+        <button class="btn" onclick="action('watch_earn')">👀 Watch & Earn</button>
+        <button class="btn" onclick="action('views_likes')">👍 Views / Likes</button>
+
+        <button class="btn" onclick="action('join_bot')">🤖 Join Bot</button>
+        <button class="btn" onclick="action('promote_bot')">📢 Promote Bot</button>
+
+        <button class="btn gold" onclick="action('play_earn')">🎮 Play & Earn</button>
+        <button class="btn gold" onclick="action('daily_checkin')">🎁 Daily Check-in</button>
+
+        <button class="btn" onclick="action('wallet')">💰 My Wallet</button>
+        <button class="btn" onclick="action('history')">📜 My History</button>
+
+        <button class="btn" onclick="action('referral')">👥 Referral</button>
+        <button class="btn" onclick="action('guide')">📖 Guide</button>
+
+        <button class="btn full gold" onclick="action('chat_earn')">💬 Chat & Earn</button>
+
+        <button class="btn" onclick="action('support')">📞 Support</button>
+        <button class="btn" onclick="action('paid_promo')">🚀 Paid Promotion</button>
+      </div>
+    </div>
+
+    <!-- ADMIN MENU -->
+    <div id="admin-menu" class="hidden">
+      <div class="header">
+        <h1>👑 ADMIN PANEL</h1>
+        <div class="vip-badge">OWNER ACCESS</div>
+      </div>
+
+      <div class="section-title">💰 Money Control</div>
+      <div class="grid">
+        <button class="btn" onclick="action('add_coins')">➕ Add Coins</button>
+        <button class="btn" onclick="action('remove_coins')">➖ Remove Coins</button>
+        <button class="btn" onclick="action('withdrawals')">🏦 Withdrawals</button>
+        <button class="btn" onclick="action('statistics')">📊 Statistics</button>
+        <button class="btn" onclick="action('payout_run')">⏱ Payout Run</button>
+        <button class="btn" onclick="action('payout_list')">📋 Payout List</button>
+        <button class="btn gold" onclick="action('master_wallet')">💼 Master Wallet</button>
+        <button class="btn" onclick="action('task_pay_id')">🔍 Task / Pay ID</button>
+      </div>
+
+      <div class="section-title">📋 Task Control</div>
+      <div class="grid">
+        <button class="btn" onclick="action('task_studio')">🛠 Task Studio</button>
+        <button class="btn" onclick="action('manage_tasks')">📝 Manage Tasks</button>
+        <button class="btn" onclick="action('pending_proofs')">📩 Pending Proofs</button>
+        <button class="btn" onclick="action('pending_videos')">🎬 Pending Videos</button>
+        <button class="btn success" onclick="action('task_on')">✅ Task ON</button>
+        <button class="btn danger" onclick="action('task_off')">❌ Task OFF</button>
+        <button class="btn full" onclick="action('task_list_track')">📋 Task List + Track</button>
+      </div>
+
+      <div class="section-title">🔄 Cross & Promo</div>
+      <div class="grid">
+        <button class="btn" onclick="action('cross_run')">🔄 Cross Run</button>
+        <button class="btn" onclick="action('cross_delete')">🗑 Cross Delete</button>
+        <button class="btn" onclick="action('cross_timing')">⏱ Cross Timing</button>
+        <button class="btn" onclick="action('banner_easy')">🌐 Banner Easy</button>
+        <button class="btn" onclick="action('bot_promo_config')">🤖 Bot Promo Config</button>
+        <button class="btn" onclick="action('pending_bot_joins')">⏳ Pending Bot Joins</button>
+        <button class="btn full gold" onclick="action('broadcast')">📣 Broadcast</button>
+      </div>
+
+      <div class="section-title">👥 Users & Safety</div>
+      <div class="grid">
+        <button class="btn full" onclick="action('user_list')">👥 User List + History</button>
+        <button class="btn full" onclick="action('refer_leaderboard')">🏆 Refer Leaderboard</button>
+        <button class="btn danger full" onclick="action('emergency_lock')">🚨 Emergency Lock</button>
+        <button class="btn" onclick="action('qr_control')">📷 QR Control</button>
+        <button class="btn" onclick="action('deposit_qr')">💰 Deposit QR/UPI</button>
+        <button class="btn" onclick="action('deposits')">📥 Deposits</button>
+        <button class="btn" onclick="action('crypto_toggle')">₿ Crypto Toggle</button>
+        <button class="btn full" onclick="action('withdraw_limit')">📉 Withdraw Limit</button>
+      </div>
+
+      <div class="section-title">Other</div>
+      <div class="grid">
+        <button class="btn" onclick="action('support')">💬 Support</button>
+        <button class="btn" onclick="showUserMenu()">🏠 User Menu</button>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -67,15 +253,29 @@
     tg.setHeaderColor('#0b0b0f');
     tg.setBackgroundColor('#0b0b0f');
 
-    // Only your ID is allowed
+    // Only your Telegram ID can access
     const ADMIN_IDS = [8150531247];
 
     const user = tg.initDataUnsafe?.user;
     const isAdmin = user && ADMIN_IDS.includes(user.id);
 
     if (isAdmin) {
+      // Show full app only for you
       document.getElementById('locked-screen').classList.add('hidden');
       document.getElementById('app-content').classList.remove('hidden');
+
+      // Show Admin menu by default for you
+      document.getElementById('user-menu').classList.add('hidden');
+      document.getElementById('admin-menu').classList.remove('hidden');
+    }
+
+    function showUserMenu() {
+      document.getElementById('admin-menu').classList.add('hidden');
+      document.getElementById('user-menu').classList.remove('hidden');
+    }
+
+    function action(name) {
+      tg.showAlert("You clicked: " + name + "\n\n(This will be connected to backend later)");
     }
   </script>
 </body>
