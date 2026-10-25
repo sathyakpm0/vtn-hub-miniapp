@@ -10,51 +10,54 @@
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(160deg, #0b0b0f 0%, #1a0b1e 50%, #0f0a14 100%);
-      color: #f5e6c8;
-      padding: 18px 14px;
+      background: linear-gradient(160deg, #1a0a1f 0%, #2d0b2e 40%, #0f0515 100%);
+      color: #fff5d6;
+      padding: 16px 12px;
       min-height: 100vh;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 26px;
-      padding-top: 8px;
+      margin-bottom: 24px;
+      padding-top: 10px;
     }
 
     .header h1 {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
-      background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
+      background: linear-gradient(90deg, #ffd700, #ffec8b, #ffd700);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: 1px;
-    }
-
-    .header p {
-      color: #c9b28a;
-      font-size: 13.5px;
-      margin-top: 6px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
     }
 
     .vip-badge {
       display: inline-block;
-      background: linear-gradient(90deg, #d4af37, #f5d76e);
-      color: #1a1200;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
+      background: linear-gradient(90deg, #ffd700, #ffb700);
+      color: #1a0a00;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 30px;
+      margin-top: 10px;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+
+    .header p {
+      color: #e8d5a3;
+      font-size: 13px;
       margin-top: 8px;
     }
 
     .section-title {
-      font-size: 12px;
-      color: #d4af37;
-      margin: 22px 0 10px;
+      font-size: 13px;
+      color: #ffd700;
+      margin: 24px 0 12px;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 600;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
     }
 
     .grid {
@@ -64,42 +67,49 @@
     }
 
     .btn {
-      background: linear-gradient(145deg, #2a1a1f, #1c1216);
-      color: #f8e9c0;
-      border: 1px solid #5c3d1e;
+      background: linear-gradient(145deg, #3b1a45, #2a1033);
+      color: #fff0c2;
+      border: 1.5px solid #c9a227;
       border-radius: 16px;
       padding: 16px 10px;
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,215,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(201, 162, 39, 0.15);
       transition: all 0.2s ease;
     }
 
     .btn:active {
       transform: scale(0.96);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
 
     .btn.gold {
-      background: linear-gradient(145deg, #3d2a12, #2a1c0d);
-      border-color: #d4af37;
-      color: #ffe9a0;
+      background: linear-gradient(145deg, #5c3d12, #3d280a);
+      border-color: #ffd700;
+      color: #fff8dc;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.25);
     }
 
     .btn.danger {
-      background: linear-gradient(145deg, #3a1515, #2a0f0f);
-      border-color: #8b2e2e;
-      color: #ffb3b3;
+      background: linear-gradient(145deg, #4a1515, #2e0c0c);
+      border-color: #e74c3c;
+      color: #ffcccc;
     }
 
     .btn.success {
-      background: linear-gradient(145deg, #14301a, #0f2414);
-      border-color: #2e7d32;
-      color: #a5d6a7;
+      background: linear-gradient(145deg, #1a3a22, #0f2a16);
+      border-color: #2ecc71;
+      color: #c8f7c5;
     }
 
-    .full { grid-column: span 2; }
-    .hidden { display: none; }
+    .full {
+      grid-column: span 2;
+    }
+
+    .hidden {
+      display: none;
+    }
 
     /* Locked Screen */
     .lock-container {
@@ -112,31 +122,32 @@
     }
 
     .lock-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid #5c3d1e;
-      border-radius: 20px;
-      padding: 40px 25px;
+      background: rgba(255, 215, 0, 0.05);
+      border: 1.5px solid #c9a227;
+      border-radius: 24px;
+      padding: 45px 28px;
       max-width: 320px;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
     }
 
     .lock-box h1 {
-      font-size: 28px;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, #ffd700, #ffb347);
+      font-size: 30px;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #ffd700, #ffec8b);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .lock-box p {
-      color: #c9b28a;
-      font-size: 15px;
-      line-height: 1.5;
+      color: #e8d5a3;
+      font-size: 15.5px;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
 
-  <!-- ==================== LOCKED SCREEN ==================== -->
+  <!-- LOCKED SCREEN -->
   <div id="locked-screen" class="lock-container">
     <div class="lock-box">
       <h1>🔒 Coming Soon</h1>
@@ -144,7 +155,7 @@
     </div>
   </div>
 
-  <!-- ==================== ADMIN / REAL APP ==================== -->
+  <!-- REAL APP -->
   <div id="app-content" class="hidden">
 
     <!-- USER MENU -->
@@ -152,7 +163,7 @@
       <div class="header">
         <h1>✨ VTN HUB</h1>
         <div class="vip-badge">VIP ACCESS</div>
-        <p>Premium Experience</p>
+        <p>Premium Royal Experience</p>
       </div>
 
       <div class="grid">
@@ -250,21 +261,17 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
-    tg.setHeaderColor('#0b0b0f');
-    tg.setBackgroundColor('#0b0b0f');
+    tg.setHeaderColor('#1a0a1f');
+    tg.setBackgroundColor('#1a0a1f');
 
-    // Only your Telegram ID can access
     const ADMIN_IDS = [8150531247];
 
     const user = tg.initDataUnsafe?.user;
     const isAdmin = user && ADMIN_IDS.includes(user.id);
 
     if (isAdmin) {
-      // Show full app only for you
       document.getElementById('locked-screen').classList.add('hidden');
       document.getElementById('app-content').classList.remove('hidden');
-
-      // Show Admin menu by default for you
       document.getElementById('user-menu').classList.add('hidden');
       document.getElementById('admin-menu').classList.remove('hidden');
     }
@@ -275,7 +282,7 @@
     }
 
     function action(name) {
-      tg.showAlert("You clicked: " + name + "\n\n(This will be connected to backend later)");
+      tg.showAlert("You clicked: " + name);
     }
   </script>
 </body>
