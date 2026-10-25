@@ -1,289 +1,873 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VTN HUB VIP</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(160deg, #1a0a1f 0%, #2d0b2e 40%, #0f0515 100%);
-      color: #fff5d6;
-      padding: 16px 12px;
-      min-height: 100vh;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
-      padding-top: 10px;
-    }
+<title>VTN HUB BOT</title>
 
-    .header h1 {
-      font-size: 28px;
-      font-weight: 800;
-      background: linear-gradient(90deg, #ffd700, #ffec8b, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-    }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    .vip-badge {
-      display: inline-block;
-      background: linear-gradient(90deg, #ffd700, #ffb700);
-      color: #1a0a00;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 4px 14px;
-      border-radius: 30px;
-      margin-top: 10px;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-    }
+<style>
+:root {
+  --red: #c90016;
+  --red-dark: #85000c;
+  --red-light: #f52b38;
+  --cream: #fff8ed;
+  --white: #ffffff;
+  --gold: #e6ad35;
+  --gold-light: #ffe6a0;
+  --text: #40201a;
+  --muted: #89736a;
+  --green: #19ad72;
+  --shadow: 0 5px 16px rgba(100, 0, 0, .10);
+}
 
-    .header p {
-      color: #e8d5a3;
-      font-size: 13px;
-      margin-top: 8px;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .section-title {
-      font-size: 13px;
-      color: #ffd700;
-      margin: 24px 0 12px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 700;
-      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-    }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: var(--cream);
+  min-height: 100vh;
+  padding: 0 14px 24px;
+  overflow-x: hidden;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
 
-    .btn {
-      background: linear-gradient(145deg, #3b1a45, #2a1033);
-      color: #fff0c2;
-      border: 1.5px solid #c9a227;
-      border-radius: 16px;
-      padding: 16px 10px;
-      font-size: 14.5px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(201, 162, 39, 0.15);
-      transition: all 0.2s ease;
-    }
+/* GENERAL */
 
-    .btn:active {
-      transform: scale(0.96);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
+.hidden {
+  display: none !important;
+}
 
-    .btn.gold {
-      background: linear-gradient(145deg, #5c3d12, #3d280a);
-      border-color: #ffd700;
-      color: #fff8dc;
-      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.25);
-    }
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+}
 
-    .btn.danger {
-      background: linear-gradient(145deg, #4a1515, #2e0c0c);
-      border-color: #e74c3c;
-      color: #ffcccc;
-    }
+.header {
+  position: relative;
+  text-align: center;
+  padding: 25px 12px 23px;
+  margin: 0 -14px 20px;
+  color: white;
+  background:
+    radial-gradient(circle at top, rgba(255,220,130,.24), transparent 55%),
+    linear-gradient(135deg, #97000d, #ed1426 55%, #a60011);
+  border-radius: 0 0 25px 25px;
+  box-shadow: 0 5px 15px rgba(145, 0, 12, .20);
+  border-bottom: 3px solid var(--gold);
+}
 
-    .btn.success {
-      background: linear-gradient(145deg, #1a3a22, #0f2a16);
-      border-color: #2ecc71;
-      color: #c8f7c5;
-    }
+.header h1 {
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.22);
+}
 
-    .full {
-      grid-column: span 2;
-    }
+.header p {
+  font-size: 12px;
+  margin-top: 7px;
+  color: #fff0d0;
+  letter-spacing: .7px;
+}
 
-    .hidden {
-      display: none;
-    }
+.crown {
+  color: var(--gold-light);
+}
 
-    /* Locked Screen */
-    .lock-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 80vh;
-      text-align: center;
-    }
+.vip-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 16px;
+  border-radius: 25px;
+  color: #702900;
+  background: linear-gradient(135deg, #fff0b2, #e7ad36);
+  border: 1px solid #ffe9a5;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 3px 9px rgba(0,0,0,.15);
+}
 
-    .lock-box {
-      background: rgba(255, 215, 0, 0.05);
-      border: 1.5px solid #c9a227;
-      border-radius: 24px;
-      padding: 45px 28px;
-      max-width: 320px;
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
-    }
+.section-title {
+  color: var(--red-dark);
+  font-size: 13px;
+  font-weight: 900;
+  margin: 23px 2px 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-    .lock-box h1 {
-      font-size: 30px;
-      margin-bottom: 16px;
-      background: linear-gradient(90deg, #ffd700, #ffec8b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+.section-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: var(--gold);
+  border-radius: 5px;
+  margin-right: 8px;
+  vertical-align: -2px;
+}
 
-    .lock-box p {
-      color: #e8d5a3;
-      font-size: 15.5px;
-      line-height: 1.6;
-    }
-  </style>
+/* USER CARD */
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #f3dfc9;
+  border-radius: 19px;
+  padding: 14px;
+  margin-bottom: 15px;
+  box-shadow: var(--shadow);
+}
+
+.avatar {
+  width: 53px;
+  height: 53px;
+  min-width: 53px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  font-size: 27px;
+  background: linear-gradient(145deg, #ff5961, #a40013);
+  border: 3px solid #ffe1a0;
+  box-shadow: 0 3px 8px rgba(130,0,0,.18);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.user-info h3 {
+  font-size: 16px;
+  margin: 3px 0;
+  overflow-wrap: anywhere;
+}
+
+.user-id {
+  font-size: 11px;
+  color: #8a776d;
+}
+
+.vip-mini {
+  color: #713100;
+  background: linear-gradient(135deg, #fff0b4, #e7b13f);
+  padding: 6px 10px;
+  border-radius: 18px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* BALANCE */
+
+.balance-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #a90012, #ed1728);
+  color: white;
+  border: 1px solid #f8c65a;
+  border-radius: 19px;
+  padding: 17px;
+  margin-bottom: 19px;
+  box-shadow: 0 5px 14px rgba(165,0,15,.17);
+}
+
+.balance-label {
+  font-size: 12px;
+  color: #ffe7c0;
+  margin-bottom: 7px;
+}
+
+.balance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.balance-amount {
+  font-size: 27px;
+  font-weight: 900;
+}
+
+.withdraw-btn {
+  background: linear-gradient(135deg, #fff0b5, #f2b735);
+  color: #681500;
+  border: 1px solid #ffe8a2;
+  border-radius: 22px;
+  padding: 10px 15px;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+/* BUTTON GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.btn {
+  min-height: 91px;
+  padding: 14px 8px;
+  border-radius: 18px;
+  border: 1px solid #f0dfd1;
+  background: white;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 750;
+  box-shadow: var(--shadow);
+  transition: transform .15s, filter .15s;
+  overflow-wrap: anywhere;
+}
+
+.btn:active {
+  transform: scale(.97);
+  filter: brightness(.96);
+}
+
+.btn .icon {
+  display: block;
+  font-size: 29px;
+  margin-bottom: 8px;
+}
+
+.btn.red {
+  background: linear-gradient(145deg, #ed2434, #b90017);
+  color: white;
+  border: 1px solid #ffb8a7;
+}
+
+.btn.gold {
+  background: linear-gradient(145deg, #fff0bd, #e9b544);
+  color: #762600;
+  border: 1px solid #dca439;
+}
+
+.btn.green {
+  background: linear-gradient(145deg, #37d79a, #0ca66a);
+  color: white;
+  border: 1px solid #a3f0cf;
+}
+
+.btn.pink {
+  background: linear-gradient(145deg, #f36bd5, #bd28a7);
+  color: white;
+  border: 1px solid #ffc4f0;
+}
+
+.btn.blue {
+  background: linear-gradient(145deg, #54b9ff, #1774e8);
+  color: white;
+  border: 1px solid #c4e6ff;
+}
+
+.btn.orange {
+  background: linear-gradient(145deg, #ffc54f, #f18a08);
+  color: white;
+  border: 1px solid #ffe2a0;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+/* PROMOTION BANNER */
+
+.promo-banner {
+  position: relative;
+  overflow: hidden;
+  margin: 18px 0;
+  padding: 20px 17px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 90% 50%, rgba(255,211,90,.22), transparent 35%),
+    linear-gradient(120deg, #85000d, #e80d23 65%, #a50012);
+  border: 2px solid #f0c36b;
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.promo-banner h3 {
+  font-size: 17px;
+  line-height: 1.45;
+  padding-right: 55px;
+}
+
+.promo-banner p {
+  color: #ffe5b7;
+  font-size: 12px;
+  margin-top: 6px;
+  padding-right: 50px;
+}
+
+.promo-banner .gift {
+  position: absolute;
+  right: 13px;
+  top: 20px;
+  font-size: 42px;
+}
+
+.promo-action {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 9px 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff0b5, #f1b52f);
+  color: #771600;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* ADMIN BUTTONS */
+
+.admin-grid .btn {
+  min-height: 75px;
+}
+
+.admin-grid .btn .icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.danger {
+  background: linear-gradient(135deg, #e92232, #a90016) !important;
+  color: white !important;
+}
+
+.success {
+  background: linear-gradient(135deg, #32d99a, #0b9963) !important;
+  color: white !important;
+}
+
+/* FOOTER */
+
+.footer {
+  text-align: center;
+  padding: 22px 10px 8px;
+  color: #987b69;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.footer strong {
+  color: var(--red);
+}
+
+.footer-line {
+  width: 70%;
+  height: 2px;
+  margin: 0 auto 12px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* LOCK SCREEN */
+
+.lock-container {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lock-box {
+  width: 100%;
+  max-width: 340px;
+  padding: 35px 24px;
+  border-radius: 26px;
+  background: white;
+  border: 2px solid var(--gold);
+  box-shadow: 0 12px 35px rgba(125,0,12,.13);
+}
+
+.lock-logo {
+  font-size: 60px;
+  margin-bottom: 12px;
+}
+
+.lock-box h1 {
+  color: var(--red);
+  font-size: 25px;
+  margin-bottom: 14px;
+}
+
+.lock-box p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.lock-box .vip-badge {
+  margin-bottom: 15px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 360px) {
+  body {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .header {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .grid {
+    gap: 9px;
+  }
+
+  .btn {
+    min-height: 84px;
+    font-size: 12px;
+  }
+
+  .balance-amount {
+    font-size: 23px;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <!-- LOCKED SCREEN -->
-  <div id="locked-screen" class="lock-container">
-    <div class="lock-box">
-      <h1>🔒 Coming Soon</h1>
-      <p>VTN HUB Mini App is under maintenance.<br><br>Please check back later.</p>
+<!-- LOCKED SCREEN -->
+<div id="locked-screen" class="lock-container">
+  <div class="lock-box">
+    <div class="lock-logo">👑</div>
+    <h1>VTN HUB BOT</h1>
+    <div class="vip-badge">PREMIUM EXPERIENCE</div>
+    <p>
+      🔒 Mini App Coming Soon<br><br>
+      We are preparing a better earning experience for you.
+      Please check back later!
+    </p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-content" class="app hidden">
+
+  <!-- USER MENU -->
+  <div id="user-menu">
+
+    <header class="header">
+      <h1><span class="crown">👑</span> VTN HUB BOT</h1>
+      <div class="vip-badge">✦ EARN · REFER · GROW ✦</div>
+      <p>Your Rewards Journey Starts Here</p>
+    </header>
+
+    <div class="user-card">
+      <div class="avatar">🤖</div>
+      <div class="user-info">
+        <small>Welcome Back!</small>
+        <h3 id="user-name">VTN User</h3>
+        <div class="user-id" id="user-id">Telegram Member</div>
+      </div>
+      <div class="vip-mini">VIP 👑</div>
     </div>
+
+    <div class="balance-card">
+      <div class="balance-label">👑 YOUR BALANCE</div>
+      <div class="balance-row">
+        <div class="balance-amount">₹ 0.00</div>
+        <button class="withdraw-btn"
+          onclick="action('wallet')">Withdraw</button>
+      </div>
+    </div>
+
+    <div class="section-title">✨ Your Earning Zone</div>
+
+    <div class="grid">
+      <button class="btn blue"
+        onclick="action('daily_checkin')">
+        <span class="icon">📅</span>
+        Daily Check-in
+      </button>
+
+      <button class="btn green"
+        onclick="action('earn_tasks')">
+        <span class="icon">📋</span>
+        Complete Tasks
+      </button>
+
+      <button class="btn pink"
+        onclick="action('referral')">
+        <span class="icon">👥</span>
+        Refer & Earn
+      </button>
+
+      <button class="btn orange"
+        onclick="action('play_earn')">
+        <span class="icon">🎡</span>
+        Spin & Win
+      </button>
+    </div>
+
+    <div class="promo-banner">
+      <span class="gift">🎁</span>
+      <h3>Earn More, Refer More!</h3>
+      <p>Invite friends and explore more earning opportunities.</p>
+      <button class="promo-action"
+        onclick="action('referral')">Invite Friends →</button>
+    </div>
+
+    <div class="section-title">🎯 Tasks & Promotions</div>
+
+    <div class="grid">
+      <button class="btn"
+        onclick="action('promote_channel')">
+        <span class="icon">📣</span>
+        Promote Channel
+      </button>
+
+      <button class="btn"
+        onclick="action('free_cross')">
+        <span class="icon">🔄</span>
+        Free Cross
+      </button>
+
+      <button class="btn"
+        onclick="action('join_tasks')">
+        <span class="icon">🎯</span>
+        Join Tasks
+      </button>
+
+      <button class="btn"
+        onclick="action('watch_earn')">
+        <span class="icon">▶️</span>
+        Watch & Earn
+      </button>
+
+      <button class="btn"
+        onclick="action('views_likes')">
+        <span class="icon">👍</span>
+        Views / Likes
+      </button>
+
+      <button class="btn"
+        onclick="action('join_bot')">
+        <span class="icon">🤖</span>
+        Join Bot
+      </button>
+
+      <button class="btn"
+        onclick="action('promote_bot')">
+        <span class="icon">📢</span>
+        Promote Bot
+      </button>
+
+      <button class="btn"
+        onclick="action('chat_earn')">
+        <span class="icon">💬</span>
+        Chat & Earn
+      </button>
+
+      <button class="btn gold"
+        onclick="action('paid_promo')">
+        <span class="icon">🚀</span>
+        Paid Promotion
+      </button>
+
+      <button class="btn"
+        onclick="action('guide')">
+        <span class="icon">📖</span>
+        How It Works
+      </button>
+    </div>
+
+    <div class="section-title">💰 Wallet & Account</div>
+
+    <div class="grid">
+      <button class="btn gold"
+        onclick="action('wallet')">
+        <span class="icon">💰</span>
+        My Wallet
+      </button>
+
+      <button class="btn"
+        onclick="action('history')">
+        <span class="icon">📜</span>
+        Transaction History
+      </button>
+
+      <button class="btn"
+        onclick="action('support')">
+        <span class="icon">🎧</span>
+        Help & Support
+      </button>
+
+      <button class="btn"
+        onclick="action('profile')">
+        <span class="icon">👤</span>
+        My Profile
+      </button>
+    </div>
+
   </div>
 
-  <!-- REAL APP -->
-  <div id="app-content" class="hidden">
+  <!-- ADMIN MENU -->
+  <div id="admin-menu" class="hidden">
 
-    <!-- USER MENU -->
-    <div id="user-menu">
-      <div class="header">
-        <h1>✨ VTN HUB</h1>
-        <div class="vip-badge">VIP ACCESS</div>
-        <p>Premium Royal Experience</p>
-      </div>
+    <header class="header">
+      <h1>👑 ADMIN PANEL</h1>
+      <div class="vip-badge">OWNER ACCESS</div>
+      <p>VTN HUB Management Centre</p>
+    </header>
 
-      <div class="grid">
-        <button class="btn gold" onclick="action('promote_channel')">📣 Promote Channel</button>
-        <button class="btn" onclick="action('free_cross')">🔄 Free Cross</button>
+    <div class="section-title">💰 Money Control</div>
+    <div class="grid admin-grid">
+      <button class="btn" onclick="action('add_coins')">
+        <span class="icon">➕</span>Add Coins
+      </button>
 
-        <button class="btn" onclick="action('join_tasks')">🎯 Join Tasks</button>
-        <button class="btn" onclick="action('earn_tasks')">💼 Earn Tasks</button>
+      <button class="btn" onclick="action('remove_coins')">
+        <span class="icon">➖</span>Remove Coins
+      </button>
 
-        <button class="btn" onclick="action('watch_earn')">👀 Watch & Earn</button>
-        <button class="btn" onclick="action('views_likes')">👍 Views / Likes</button>
+      <button class="btn" onclick="action('withdrawals')">
+        <span class="icon">🏦</span>Withdrawals
+      </button>
 
-        <button class="btn" onclick="action('join_bot')">🤖 Join Bot</button>
-        <button class="btn" onclick="action('promote_bot')">📢 Promote Bot</button>
+      <button class="btn" onclick="action('statistics')">
+        <span class="icon">📊</span>Statistics
+      </button>
 
-        <button class="btn gold" onclick="action('play_earn')">🎮 Play & Earn</button>
-        <button class="btn gold" onclick="action('daily_checkin')">🎁 Daily Check-in</button>
+      <button class="btn" onclick="action('payout_run')">
+        <span class="icon">⏱️</span>Payout Run
+      </button>
 
-        <button class="btn" onclick="action('wallet')">💰 My Wallet</button>
-        <button class="btn" onclick="action('history')">📜 My History</button>
+      <button class="btn" onclick="action('payout_list')">
+        <span class="icon">📋</span>Payout List
+      </button>
 
-        <button class="btn" onclick="action('referral')">👥 Referral</button>
-        <button class="btn" onclick="action('guide')">📖 Guide</button>
+      <button class="btn gold" onclick="action('master_wallet')">
+        <span class="icon">💼</span>Master Wallet
+      </button>
 
-        <button class="btn full gold" onclick="action('chat_earn')">💬 Chat & Earn</button>
-
-        <button class="btn" onclick="action('support')">📞 Support</button>
-        <button class="btn" onclick="action('paid_promo')">🚀 Paid Promotion</button>
-      </div>
+      <button class="btn" onclick="action('task_pay_id')">
+        <span class="icon">🔍</span>Task / Pay ID
+      </button>
     </div>
 
-    <!-- ADMIN MENU -->
-    <div id="admin-menu" class="hidden">
-      <div class="header">
-        <h1>👑 ADMIN PANEL</h1>
-        <div class="vip-badge">OWNER ACCESS</div>
-      </div>
+    <div class="section-title">📋 Task Control</div>
+    <div class="grid admin-grid">
+      <button class="btn" onclick="action('task_studio')">
+        <span class="icon">🛠️</span>Task Studio
+      </button>
 
-      <div class="section-title">💰 Money Control</div>
-      <div class="grid">
-        <button class="btn" onclick="action('add_coins')">➕ Add Coins</button>
-        <button class="btn" onclick="action('remove_coins')">➖ Remove Coins</button>
-        <button class="btn" onclick="action('withdrawals')">🏦 Withdrawals</button>
-        <button class="btn" onclick="action('statistics')">📊 Statistics</button>
-        <button class="btn" onclick="action('payout_run')">⏱ Payout Run</button>
-        <button class="btn" onclick="action('payout_list')">📋 Payout List</button>
-        <button class="btn gold" onclick="action('master_wallet')">💼 Master Wallet</button>
-        <button class="btn" onclick="action('task_pay_id')">🔍 Task / Pay ID</button>
-      </div>
+      <button class="btn" onclick="action('manage_tasks')">
+        <span class="icon">📝</span>Manage Tasks
+      </button>
 
-      <div class="section-title">📋 Task Control</div>
-      <div class="grid">
-        <button class="btn" onclick="action('task_studio')">🛠 Task Studio</button>
-        <button class="btn" onclick="action('manage_tasks')">📝 Manage Tasks</button>
-        <button class="btn" onclick="action('pending_proofs')">📩 Pending Proofs</button>
-        <button class="btn" onclick="action('pending_videos')">🎬 Pending Videos</button>
-        <button class="btn success" onclick="action('task_on')">✅ Task ON</button>
-        <button class="btn danger" onclick="action('task_off')">❌ Task OFF</button>
-        <button class="btn full" onclick="action('task_list_track')">📋 Task List + Track</button>
-      </div>
+      <button class="btn" onclick="action('pending_proofs')">
+        <span class="icon">📩</span>Pending Proofs
+      </button>
 
-      <div class="section-title">🔄 Cross & Promo</div>
-      <div class="grid">
-        <button class="btn" onclick="action('cross_run')">🔄 Cross Run</button>
-        <button class="btn" onclick="action('cross_delete')">🗑 Cross Delete</button>
-        <button class="btn" onclick="action('cross_timing')">⏱ Cross Timing</button>
-        <button class="btn" onclick="action('banner_easy')">🌐 Banner Easy</button>
-        <button class="btn" onclick="action('bot_promo_config')">🤖 Bot Promo Config</button>
-        <button class="btn" onclick="action('pending_bot_joins')">⏳ Pending Bot Joins</button>
-        <button class="btn full gold" onclick="action('broadcast')">📣 Broadcast</button>
-      </div>
+      <button class="btn" onclick="action('pending_videos')">
+        <span class="icon">🎬</span>Pending Videos
+      </button>
 
-      <div class="section-title">👥 Users & Safety</div>
-      <div class="grid">
-        <button class="btn full" onclick="action('user_list')">👥 User List + History</button>
-        <button class="btn full" onclick="action('refer_leaderboard')">🏆 Refer Leaderboard</button>
-        <button class="btn danger full" onclick="action('emergency_lock')">🚨 Emergency Lock</button>
-        <button class="btn" onclick="action('qr_control')">📷 QR Control</button>
-        <button class="btn" onclick="action('deposit_qr')">💰 Deposit QR/UPI</button>
-        <button class="btn" onclick="action('deposits')">📥 Deposits</button>
-        <button class="btn" onclick="action('crypto_toggle')">₿ Crypto Toggle</button>
-        <button class="btn full" onclick="action('withdraw_limit')">📉 Withdraw Limit</button>
-      </div>
+      <button class="btn success" onclick="action('task_on')">
+        <span class="icon">✅</span>Task ON
+      </button>
 
-      <div class="section-title">Other</div>
-      <div class="grid">
-        <button class="btn" onclick="action('support')">💬 Support</button>
-        <button class="btn" onclick="showUserMenu()">🏠 User Menu</button>
-      </div>
+      <button class="btn danger" onclick="action('task_off')">
+        <span class="icon">❌</span>Task OFF
+      </button>
+
+      <button class="btn full" onclick="action('task_list_track')">
+        <span class="icon">📋</span>Task List & Tracking
+      </button>
+    </div>
+
+    <div class="section-title">🔄 Cross & Promotions</div>
+    <div class="grid admin-grid">
+      <button class="btn" onclick="action('cross_run')">
+        <span class="icon">🔄</span>Cross Run
+      </button>
+
+      <button class="btn" onclick="action('cross_delete')">
+        <span class="icon">🗑️</span>Cross Delete
+      </button>
+
+      <button class="btn" onclick="action('cross_timing')">
+        <span class="icon">⏱️</span>Cross Timing
+      </button>
+
+      <button class="btn" onclick="action('banner_easy')">
+        <span class="icon">🌐</span>Banner Easy
+      </button>
+
+      <button class="btn" onclick="action('bot_promo_config')">
+        <span class="icon">🤖</span>Bot Promo Config
+      </button>
+
+      <button class="btn" onclick="action('pending_bot_joins')">
+        <span class="icon">⏳</span>Pending Bot Joins
+      </button>
+
+      <button class="btn gold full" onclick="action('broadcast')">
+        <span class="icon">📣</span>Broadcast Messages
+      </button>
+    </div>
+
+    <div class="section-title">👥 Users & Security</div>
+    <div class="grid admin-grid">
+      <button class="btn full" onclick="action('user_list')">
+        <span class="icon">👥</span>User List & History
+      </button>
+
+      <button class="btn full" onclick="action('refer_leaderboard')">
+        <span class="icon">🏆</span>Referral Leaderboard
+      </button>
+
+      <button class="btn danger full"
+        onclick="action('emergency_lock')">
+        <span class="icon">🚨</span>Emergency Lock
+      </button>
+
+      <button class="btn" onclick="action('qr_control')">
+        <span class="icon">📷</span>QR Control
+      </button>
+
+      <button class="btn" onclick="action('deposit_qr')">
+        <span class="icon">💳</span>Deposit QR / UPI
+      </button>
+
+      <button class="btn" onclick="action('deposits')">
+        <span class="icon">📥</span>Deposits
+      </button>
+
+      <button class="btn" onclick="action('crypto_toggle')">
+        <span class="icon">₿</span>Crypto Toggle
+      </button>
+
+      <button class="btn full" onclick="action('withdraw_limit')">
+        <span class="icon">📉</span>Withdrawal Limits
+      </button>
+    </div>
+
+    <div class="section-title">⚙️ Other Settings</div>
+    <div class="grid admin-grid">
+      <button class="btn" onclick="action('support')">
+        <span class="icon">🎧</span>Support
+      </button>
+
+      <button class="btn gold" onclick="showUserMenu()">
+        <span class="icon">🏠</span>User Menu
+      </button>
     </div>
 
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    tg.setHeaderColor('#1a0a1f');
-    tg.setBackgroundColor('#1a0a1f');
+  <footer class="footer">
+    <div class="footer-line"></div>
+    👑 <strong>VTN HUB BOT</strong><br>
+    Earn · Refer · Grow<br>
+    Your journey, your rewards!
+  </footer>
 
-    const ADMIN_IDS = [8150531247];
+</div>
 
-    const user = tg.initDataUnsafe?.user;
-    const isAdmin = user && ADMIN_IDS.includes(user.id);
+<script>
+const tg = window.Telegram.WebApp;
 
-    if (isAdmin) {
-      document.getElementById('locked-screen').classList.add('hidden');
-      document.getElementById('app-content').classList.remove('hidden');
-      document.getElementById('user-menu').classList.add('hidden');
-      document.getElementById('admin-menu').classList.remove('hidden');
-    }
+tg.ready();
+tg.expand();
 
-    function showUserMenu() {
-      document.getElementById('admin-menu').classList.add('hidden');
-      document.getElementById('user-menu').classList.remove('hidden');
-    }
+try {
+  tg.setHeaderColor('#a90012');
+  tg.setBackgroundColor('#fff8ed');
+} catch (e) {
+  console.log('Theme settings unavailable');
+}
 
-    function action(name) {
-      tg.showAlert("You clicked: " + name);
-    }
-  </script>
+/* ADMIN TELEGRAM IDS */
+const ADMIN_IDS = [8150531247];
+
+/* USER DETAILS */
+const user = tg.initDataUnsafe?.user;
+const isAdmin = user && ADMIN_IDS.includes(user.id);
+
+/* SCREEN CONTROL */
+if (isAdmin) {
+  document.getElementById('locked-screen')
+    .classList.add('hidden');
+
+  document.getElementById('app-content')
+    .classList.remove('hidden');
+
+  document.getElementById('user-menu')
+    .classList.add('hidden');
+
+  document.getElementById('admin-menu')
+    .classList.remove('hidden');
+}
+
+/* DISPLAY TELEGRAM USER */
+if (user) {
+  const displayName = [
+    user.first_name,
+    user.last_name
+  ].filter(Boolean).join(' ');
+
+  document.getElementById('user-name').textContent =
+    displayName || 'VTN User';
+
+  document.getElementById('user-id').textContent =
+    'Telegram ID: ' + user.id;
+}
+
+/* ADMIN MENU TO USER MENU */
+function showUserMenu() {
+  document.getElementById('admin-menu')
+    .classList.add('hidden');
+
+  document.getElementById('user-menu')
+    .classList.remove('hidden');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* BUTTON ACTIONS */
+function action(name) {
+  /*
+    Connect these actions to your existing bot backend.
+
+    This demo displays an alert only.
+    It does not automatically perform tasks,
+    add coins, process withdrawals, or make payments.
+  */
+
+  tg.showAlert('Selected: ' + name);
+}
+</script>
+
 </body>
-</html>
+  </html>
