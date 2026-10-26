@@ -14,7 +14,6 @@
       padding-bottom: 80px;
       min-height: 100vh;
     }
-
     .header {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
       color: white;
@@ -26,7 +25,6 @@
       font-size: 18px;
       font-weight: 700;
     }
-
     .card {
       background: white;
       margin: 12px 14px;
@@ -34,7 +32,6 @@
       padding: 16px;
       box-shadow: 0 3px 12px rgba(0,0,0,0.06);
     }
-
     .balance-card {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
       margin: 14px;
@@ -59,7 +56,6 @@
       font-weight: 700;
       font-size: 14px;
     }
-
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -67,14 +63,14 @@
       padding: 0 14px 14px;
     }
     .btn {
-      background: white;
       border-radius: 16px;
       padding: 18px 10px;
       text-align: center;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-      border: 1.5px solid #f0e6c8;
       font-size: 13.5px;
       font-weight: 600;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     .btn .icon { font-size: 26px; margin-bottom: 6px; display: block; }
 
@@ -110,7 +106,6 @@
       font-size: 12px;
       font-weight: 600;
     }
-
     .banner {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
       margin: 14px;
@@ -121,7 +116,6 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -142,18 +136,14 @@
     }
     .nav-item.active { color: #c8102e; font-weight: 700; }
     .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
-
     .page { display: none; }
     .page.active { display: block; }
-
     .section-title {
       margin: 16px 14px 10px;
       font-size: 15px;
       font-weight: 700;
       color: #c8102e;
     }
-
-    /* Lock Screen */
     .lock-screen {
       display: flex;
       flex-direction: column;
@@ -171,21 +161,13 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.08);
       max-width: 300px;
     }
-    .lock-box h1 {
-      font-size: 26px;
-      color: #c8102e;
-      margin-bottom: 12px;
-    }
-    .lock-box p {
-      color: #666;
-      font-size: 15px;
-      line-height: 1.5;
-    }
+    .lock-box h1 { font-size: 26px; color: #c8102e; margin-bottom: 12px; }
+    .lock-box p { color: #666; font-size: 15px; line-height: 1.5; }
   </style>
 </head>
 <body>
 
-  <!-- LOCK SCREEN (for normal users) -->
+  <!-- LOCK SCREEN -->
   <div id="lock-screen" class="lock-screen">
     <div class="lock-box">
       <h1>🔒 Coming Soon</h1>
@@ -193,7 +175,7 @@
     </div>
   </div>
 
-  <!-- MAIN APP (only for admin) -->
+  <!-- MAIN APP -->
   <div id="main-app" style="display:none;">
 
     <!-- HOME -->
@@ -212,15 +194,23 @@
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
         <div class="amount">₹ 0.00</div>
-        <button class="gold-btn" onclick="alert('Withdraw coming soon')">Withdraw</button>
+        <button class="gold-btn">Withdraw</button>
       </div>
 
       <div class="section-title">Quick Actions</div>
       <div class="grid">
-        <div class="btn" onclick="showPage('earn')"><span class="icon">✅</span>Daily Check-In</div>
-        <div class="btn" onclick="showPage('earn')"><span class="icon">🎯</span>Earn Tasks</div>
-        <div class="btn" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
-        <div class="btn" onclick="showPage('fun')"><span class="icon">🎮</span>Fun Zone</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-In Successful!')">
+          <span class="icon">✅</span>Daily Check-In
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+          <span class="icon">🎯</span>Earn Tasks
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
+          <span class="icon">📢</span>Promote
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
+          <span class="icon">🎮</span>Fun Zone
+        </div>
       </div>
 
       <div class="banner">
@@ -245,43 +235,38 @@
       </div>
 
       <div class="list-item">
-        <div class="icon" style="background:#ff9800;">⚡</div>
+        <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#e91e63;">▶️</div>
+        <div class="icon" style="background:#E91E63;">▶️</div>
         <div class="info"><h4>Watch Ads / Video</h4><p>+10 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#9c27b0;">👀</div>
+        <div class="icon" style="background:#9C27B0;">👀</div>
         <div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#3f51b5;">📢</div>
+        <div class="icon" style="background:#3F51B5;">📢</div>
         <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#00bcd4;">🤖</div>
+        <div class="icon" style="background:#00BCD4;">🤖</div>
         <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#4caf50;">📱</div>
+        <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#ff5722;">🌐</div>
+        <div class="icon" style="background:#FF5722;">🌐</div>
         <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
-        <button class="start-btn">Start</button>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#c8102e;">📅</div>
-        <div class="info"><h4>Daily Check-In</h4><p>+10 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
     </div>
@@ -303,27 +288,27 @@
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#9c27b0;">🤖</div>
+        <div class="icon" style="background:#9C27B0;">🤖</div>
         <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#3f51b5;">👀</div>
+        <div class="icon" style="background:#3F51B5;">👀</div>
         <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#4caf50;">📱</div>
+        <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#ff9800;">🌐</div>
+        <div class="icon" style="background:#FF9800;">🌐</div>
         <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#e91e63;">🛒</div>
+        <div class="icon" style="background:#E91E63;">🛒</div>
         <div class="info"><h4>Affiliate / Product</h4><p>Promote products</p></div>
         <button class="start-btn">Buy</button>
       </div>
@@ -333,12 +318,12 @@
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
       <div class="grid" style="margin-top:14px;">
-        <div class="btn" onclick="alert('Chat coming soon')"><span class="icon">💬</span>Live Chat</div>
-        <div class="btn" onclick="alert('Daily 8:00 PM Quiz')"><span class="icon">❓</span>Daily 8PM Quiz</div>
-        <div class="btn" onclick="alert('Spin & Win')"><span class="icon">🎡</span>Spin & Win</div>
-        <div class="btn" onclick="alert('Mini Games')"><span class="icon">🎮</span>Mini Games</div>
-        <div class="btn" onclick="alert('Lucky Draw')"><span class="icon">🎟️</span>Lucky Draw</div>
-        <div class="btn" onclick="alert('Leaderboard')"><span class="icon">🏆</span>Leaderboard</div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Chat coming soon')"><span class="icon">💬</span>Live Chat</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="alert('Daily 8:00 PM Quiz')"><span class="icon">❓</span>Daily 8PM Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="alert('Spin & Win')"><span class="icon">🎡</span>Spin & Win</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="alert('Mini Games')"><span class="icon">🎮</span>Mini Games</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="alert('Lucky Draw')"><span class="icon">🎟️</span>Lucky Draw</div>
+        <div class="btn" style="background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="alert('Leaderboard')"><span class="icon">🏆</span>Leaderboard</div>
       </div>
     </div>
 
@@ -351,9 +336,7 @@
         <button class="gold-btn">Withdraw</button>
       </div>
       <div class="section-title">Recent Transactions</div>
-      <div class="card" style="text-align:center;color:#888;padding:30px;">
-        No transactions yet
-      </div>
+      <div class="card" style="text-align:center;color:#888;padding:30px;">No transactions yet</div>
     </div>
 
     <!-- REFER -->
@@ -369,7 +352,7 @@
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
         <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN8150531247</div>
-        <button class="gold-btn" onclick="alert('Code Copied!')">Copy Code</button>
+        <button class="gold-btn">Copy Code</button>
       </div>
     </div>
 
@@ -412,10 +395,9 @@
       document.getElementById(pageId).classList.add('active');
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const navItems = document.querySelectorAll('.nav-item');
       const map = { home: 0, earn: 1, promote: 2, fun: 3, wallet: 4, refer: 1 };
       if (map[pageId] !== undefined) {
-        navItems[map[pageId]].classList.add('active');
+        document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
   </script>
