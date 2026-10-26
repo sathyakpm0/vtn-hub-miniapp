@@ -11,7 +11,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #FFF8E7;
       color: #333;
-      padding-bottom: 75px;
+      padding-bottom: 80px;
       min-height: 100vh;
     }
 
@@ -19,96 +19,55 @@
     .header {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
       color: white;
-      padding: 16px;
+      padding: 15px;
       text-align: center;
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-    .header h1 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
 
-    /* User Card */
-    .user-card {
+    /* Cards */
+    .card {
       background: white;
-      margin: 14px;
+      margin: 12px 14px;
       border-radius: 16px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      padding: 16px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.06);
     }
-    .avatar {
-      width: 50px;
-      height: 50px;
-      background: #c8102e;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      color: white;
-    }
-    .user-info h3 { font-size: 16px; }
-    .user-info p { font-size: 12px; color: #777; margin-top: 2px; }
-    .vip-badge {
-      background: linear-gradient(90deg, #ffd700, #ffb700);
-      color: #5c3d00;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-left: auto;
-    }
 
-    /* Balance Card */
+    /* Balance */
     .balance-card {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 0 14px 16px;
+      margin: 14px;
       border-radius: 18px;
       padding: 20px;
       color: white;
       text-align: center;
-      box-shadow: 0 6px 18px rgba(200,16,46,0.25);
     }
-    .balance-card .label { font-size: 13px; opacity: 0.9; }
     .balance-card .amount {
       font-size: 32px;
       font-weight: 800;
-      margin: 6px 0 14px;
       color: #ffd700;
+      margin: 8px 0 14px;
     }
-    .withdraw-btn {
+    .gold-btn {
       background: #ffd700;
       color: #5c3d00;
       border: none;
-      padding: 10px 28px;
+      padding: 10px 24px;
       border-radius: 30px;
       font-weight: 700;
       font-size: 14px;
     }
 
-    /* Section Title */
-    .section-title {
-      margin: 18px 16px 10px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #c8102e;
-    }
-
-    /* Grid Buttons */
+    /* Grid */
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding: 0 14px;
+      padding: 0 14px 14px;
     }
     .btn {
       background: white;
@@ -117,41 +76,58 @@
       text-align: center;
       box-shadow: 0 3px 10px rgba(0,0,0,0.06);
       border: 1.5px solid #f0e6c8;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
-      color: #333;
     }
-    .btn .icon { font-size: 26px; margin-bottom: 6px; }
-    .btn.gold {
-      background: linear-gradient(135deg, #ffd700, #ffb700);
-      color: #5c3d00;
+    .btn .icon { font-size: 26px; margin-bottom: 6px; display: block; }
+
+    /* List Item */
+    .list-item {
+      background: white;
+      margin: 0 14px 10px;
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .list-item .icon {
+      width: 42px;
+      height: 42px;
+      background: #fff0f0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .list-item .info { flex: 1; }
+    .list-item .info h4 { font-size: 14px; }
+    .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
+    .start-btn {
+      background: #c8102e;
+      color: white;
       border: none;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
     }
 
     /* Banner */
     .banner {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 18px 14px;
+      margin: 14px;
       border-radius: 16px;
       padding: 16px;
       color: white;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-    }
-    .banner h3 { font-size: 15px; margin-bottom: 4px; }
-    .banner p { font-size: 12px; opacity: 0.9; }
-    .banner button {
-      background: #ffd700;
-      color: #5c3d00;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 13px;
+      align-items: center;
     }
 
-    /* Bottom Navigation */
+    /* Bottom Nav */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -171,123 +147,250 @@
       flex: 1;
     }
     .nav-item.active { color: #c8102e; font-weight: 700; }
-    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 3px; }
+    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
 
-    /* Pages */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* Coming Soon */
-    .coming {
-      text-align: center;
-      padding: 60px 20px;
-      color: #888;
+    .section-title {
+      margin: 16px 14px 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #c8102e;
     }
   </style>
 </head>
 <body>
 
-  <!-- ==================== HOME PAGE ==================== -->
+  <!-- ==================== HOME ==================== -->
   <div id="home" class="page active">
-    <div class="header">
-      <h1>👑 VTN Hub Bot</h1>
-    </div>
+    <div class="header">👑 VTN Hub Bot</div>
 
-    <div class="user-card">
-      <div class="avatar">🤖</div>
-      <div class="user-info">
-        <h3 id="username">Loading...</h3>
-        <p id="userid">ID: --</p>
+    <div class="card" style="display:flex; align-items:center; gap:12px;">
+      <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
+      <div>
+        <div style="font-weight:700;" id="username">User</div>
+        <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
       </div>
-      <div class="vip-badge">VIP</div>
+      <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
     </div>
 
     <div class="balance-card">
-      <div class="label">Your Balance</div>
+      <div style="font-size:13px;opacity:0.9;">Your Balance</div>
       <div class="amount">₹ 0.00</div>
-      <button class="withdraw-btn" onclick="alert('Withdraw coming soon')">Withdraw</button>
+      <button class="gold-btn" onclick="alert('Withdraw coming soon')">Withdraw</button>
     </div>
 
     <div class="section-title">Quick Actions</div>
     <div class="grid">
-      <div class="btn" onclick="showPage('earn')">
-        <div class="icon">✅</div>
-        Daily Check-In
-      </div>
-      <div class="btn" onclick="showPage('earn')">
-        <div class="icon">🎯</div>
-        Earn Tasks
-      </div>
-      <div class="btn" onclick="showPage('promote')">
-        <div class="icon">📢</div>
-        Promote
-      </div>
-      <div class="btn" onclick="showPage('fun')">
-        <div class="icon">🎮</div>
-        Fun Zone
-      </div>
+      <div class="btn" onclick="showPage('earn')"><span class="icon">✅</span>Daily Check-In</div>
+      <div class="btn" onclick="showPage('earn')"><span class="icon">🎯</span>Earn Tasks</div>
+      <div class="btn" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
+      <div class="btn" onclick="showPage('fun')"><span class="icon">🎮</span>Fun Zone</div>
     </div>
 
     <div class="banner">
       <div>
-        <h3>Earn More, Refer Friends</h3>
-        <p>Invite & get rewards</p>
+        <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
+        <div style="font-size:12px;opacity:0.9;">Invite & get rewards</div>
       </div>
-      <button onclick="showPage('refer')">Invite Now</button>
+      <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
     </div>
   </div>
 
-  <!-- ==================== OTHER PAGES (Placeholder) ==================== -->
+  <!-- ==================== EARN ==================== -->
   <div id="earn" class="page">
-    <div class="header"><h1>Earn</h1></div>
-    <div class="coming">Earn page will be designed next</div>
-  </div>
+    <div class="header">Earn Money</div>
 
-  <div id="promote" class="page">
-    <div class="header"><h1>Promote</h1></div>
-    <div class="coming">Promote page will be designed next</div>
-  </div>
+    <div class="banner">
+      <div>
+        <div style="font-weight:700;">Complete Tasks</div>
+        <div style="font-size:12px;">Earn coins daily</div>
+      </div>
+      <div style="font-size:28px;">🎁</div>
+    </div>
 
-  <div id="fun" class="page">
-    <div class="header"><h1>Fun Zone</h1></div>
-    <div class="coming">
-      <p>Chat + Daily 8PM Quiz + Games</p>
-      <p>Coming next...</p>
+    <div class="list-item">
+      <div class="icon">⚡</div>
+      <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
+      <button class="start-btn" onclick="alert('Auto Earn')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">▶️</div>
+      <div class="info"><h4>Watch Ads / Video</h4><p>+10 coins</p></div>
+      <button class="start-btn" onclick="alert('Watch Ads')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">👀</div>
+      <div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div>
+      <button class="start-btn" onclick="alert('Views & Likes')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">📢</div>
+      <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
+      <button class="start-btn" onclick="alert('Join')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">🤖</div>
+      <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
+      <button class="start-btn" onclick="alert('Join Bot')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">📱</div>
+      <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
+      <button class="start-btn" onclick="alert('Install App')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">🌐</div>
+      <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
+      <button class="start-btn" onclick="alert('Visit Website')">Start</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">📅</div>
+      <div class="info"><h4>Daily Check-In</h4><p>+10 coins</p></div>
+      <button class="start-btn" onclick="alert('Check-In Done')">Start</button>
     </div>
   </div>
 
-  <div id="wallet" class="page">
-    <div class="header"><h1>Wallet</h1></div>
-    <div class="coming">Wallet page will be designed next</div>
+  <!-- ==================== PROMOTE ==================== -->
+  <div id="promote" class="page">
+    <div class="header">Promote Services</div>
+
+    <div class="banner">
+      <div>
+        <div style="font-weight:700;">Buy Promotion</div>
+        <div style="font-size:12px;">Grow your channel & product</div>
+      </div>
+      <div style="font-size:28px;">🚀</div>
+    </div>
+
+    <div class="list-item">
+      <div class="icon">📢</div>
+      <div class="info"><h4>Promote Channel / Group</h4><p>Get real members</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">🤖</div>
+      <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">👀</div>
+      <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">📱</div>
+      <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">🌐</div>
+      <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
+    <div class="list-item">
+      <div class="icon">🛒</div>
+      <div class="info"><h4>Affiliate / Product</h4><p>Promote products</p></div>
+      <button class="start-btn">Buy</button>
+    </div>
   </div>
 
+  <!-- ==================== FUN ZONE ==================== -->
+  <div id="fun" class="page">
+    <div class="header">Fun Zone</div>
+
+    <div class="grid" style="margin-top:14px;">
+      <div class="btn" onclick="alert('Chat coming soon')"><span class="icon">💬</span>Live Chat</div>
+      <div class="btn" onclick="alert('Quiz at 8:00 PM')"><span class="icon">❓</span>Daily 8PM Quiz</div>
+      <div class="btn" onclick="alert('Spin & Win')"><span class="icon">🎡</span>Spin & Win</div>
+      <div class="btn" onclick="alert('Mini Games')"><span class="icon">🎮</span>Mini Games</div>
+      <div class="btn" onclick="alert('Lucky Draw')"><span class="icon">🎟️</span>Lucky Draw</div>
+      <div class="btn" onclick="alert('Leaderboard')"><span class="icon">🏆</span>Leaderboard</div>
+    </div>
+  </div>
+
+  <!-- ==================== WALLET ==================== -->
+  <div id="wallet" class="page">
+    <div class="header">My Wallet</div>
+
+    <div class="balance-card">
+      <div style="font-size:13px;">Total Balance</div>
+      <div class="amount">₹ 0.00</div>
+      <button class="gold-btn">Withdraw</button>
+    </div>
+
+    <div class="section-title">Recent Transactions</div>
+    <div class="card" style="text-align:center;color:#888;padding:30px;">
+      No transactions yet
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
   <div id="profile" class="page">
-    <div class="header"><h1>Profile</h1></div>
-    <div class="coming">Profile page will be designed next</div>
+    <div class="header">Profile</div>
+
+    <div class="card" style="text-align:center;">
+      <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+      <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+      <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+      <div style="margin-top:8px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;">VIP MEMBER</div>
+    </div>
+
+    <div class="list-item" onclick="alert('My Earnings')">
+      <div class="icon">💰</div>
+      <div class="info"><h4>My Earnings</h4></div>
+      <div>›</div>
+    </div>
+    <div class="list-item" onclick="showPage('refer')">
+      <div class="icon">👥</div>
+      <div class="info"><h4>Referral Program</h4></div>
+      <div>›</div>
+    </div>
+    <div class="list-item" onclick="alert('Help & Support')">
+      <div class="icon">💬</div>
+      <div class="info"><h4>Help & Support</h4></div>
+      <div>›</div>
+    </div>
+  </div>
+
+  <!-- ==================== REFER (hidden page) ==================== -->
+  <div id="refer" class="page">
+    <div class="header">Refer & Earn</div>
+
+    <div class="banner">
+      <div>
+        <div style="font-weight:700;">Invite Friends</div>
+        <div style="font-size:12px;">Get rewards on every referral</div>
+      </div>
+      <div style="font-size:28px;">🎁</div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <div style="font-size:13px;color:#777;">Your Referral Code</div>
+      <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN8150531247</div>
+      <button class="gold-btn" onclick="alert('Code Copied!')">Copy Code</button>
+    </div>
+
+    <div class="grid">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:13px;color:#777;">Level 1</div>
+        <div style="font-weight:700;font-size:18px;color:#c8102e;">5%</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:13px;color:#777;">Level 2</div>
+        <div style="font-weight:700;font-size:18px;color:#c8102e;">2%</div>
+      </div>
+    </div>
   </div>
 
   <!-- Bottom Navigation -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home')">
-      <span class="icon">🏠</span>
-      Home
-    </div>
-    <div class="nav-item" onclick="showPage('earn')">
-      <span class="icon">💰</span>
-      Earn
-    </div>
-    <div class="nav-item" onclick="showPage('promote')">
-      <span class="icon">📢</span>
-      Promote
-    </div>
-    <div class="nav-item" onclick="showPage('fun')">
-      <span class="icon">🎮</span>
-      Fun
-    </div>
-    <div class="nav-item" onclick="showPage('wallet')">
-      <span class="icon">👛</span>
-      Wallet
-    </div>
+    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
+    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
+    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
+    <div class="nav-item" onclick="showPage('wallet')"><span class="icon">👛</span>Wallet</div>
   </div>
 
   <script>
@@ -297,24 +400,28 @@
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    // Set user info
     const user = tg.initDataUnsafe?.user;
     if (user) {
       document.getElementById('username').innerText = user.first_name || 'User';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
+      document.getElementById('profile-name').innerText = user.first_name || 'User';
+      document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+      document.getElementById('ref-code').innerText = 'VTN' + user.id;
     }
-
-    // Admin check (only you can see admin later)
-    const ADMIN_IDS = [8150531247];
-    const isAdmin = user && ADMIN_IDS.includes(user.id);
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
 
+      // Update bottom nav
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      const navMap = {
+        home: 0, earn: 1, promote: 2, fun: 3, wallet: 4, profile: 4, refer: 1
+      };
+      if (navMap[pageId] !== undefined) {
+        document.querySelectorAll('.nav-item')[navMap[pageId]].classList.add('active');
+      }
     }
   </script>
 </body>
- </html>
+  </html>
