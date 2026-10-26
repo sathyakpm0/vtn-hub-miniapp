@@ -178,7 +178,7 @@
   <!-- MAIN APP -->
   <div id="main-app" style="display:none;">
 
-    <!-- HOME -->
+    <!-- ==================== HOME ==================== -->
     <div id="home" class="page active">
       <div class="header">👑 VTN Hub Bot</div>
 
@@ -220,18 +220,25 @@
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
       </div>
+
+      <!-- Admin Button (only visible to you) -->
+      <div id="admin-btn" style="display:none; padding: 0 14px 20px;">
+        <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')">
+          <span class="icon">👑</span>Admin Panel
+        </button>
+      </div>
     </div>
 
-    <!-- EARN -->
+    <!-- ==================== EARN ==================== -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
 
       <div class="banner">
         <div>
-          <div style="font-weight:700;">Complete Tasks</div>
-          <div style="font-size:12px;">Earn coins daily</div>
+          <div style="font-weight:700;">Earn Tasks</div>
+          <div style="font-size:12px;">Complete tasks & earn coins</div>
         </div>
-        <div style="font-size:28px;">🎁</div>
+        <div style="font-size:28px;">🎯</div>
       </div>
 
       <div class="list-item">
@@ -271,17 +278,19 @@
       </div>
     </div>
 
-    <!-- PROMOTE -->
+    <!-- ==================== PROMOTE ==================== -->
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
+
       <div class="banner">
         <div>
           <div style="font-weight:700;">Buy Promotion</div>
-          <div style="font-size:12px;">Grow your channel & product</div>
+          <div style="font-size:12px;">Grow faster</div>
         </div>
         <div style="font-size:28px;">🚀</div>
       </div>
 
+      <div class="section-title">Promotion Services</div>
       <div class="list-item">
         <div class="icon" style="background:#c8102e;">📢</div>
         <div class="info"><h4>Promote Channel / Group</h4><p>Get real members</p></div>
@@ -302,19 +311,26 @@
         <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
         <button class="start-btn">Buy</button>
       </div>
+
+      <div class="section-title">Cross Promotion</div>
       <div class="list-item">
-        <div class="icon" style="background:#FF9800;">🌐</div>
-        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
-        <button class="start-btn">Buy</button>
+        <div class="icon" style="background:#FF9800;">🔄</div>
+        <div class="info"><h4>Cross Promotion</h4><p>Exchange promotion</p></div>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
-        <div class="icon" style="background:#E91E63;">🛒</div>
-        <div class="info"><h4>Affiliate / Product</h4><p>Promote products</p></div>
+        <div class="icon" style="background:#00BCD4;">🆓</div>
+        <div class="info"><h4>Free Cross</h4><p>Free cross promotion</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#E91E63;">🖼️</div>
+        <div class="info"><h4>Banner Promotion</h4><p>Banner ads</p></div>
         <button class="start-btn">Buy</button>
       </div>
     </div>
 
-    <!-- FUN ZONE -->
+    <!-- ==================== FUN ZONE ==================== -->
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
       <div class="grid" style="margin-top:14px;">
@@ -327,7 +343,7 @@
       </div>
     </div>
 
-    <!-- WALLET -->
+    <!-- ==================== WALLET ==================== -->
     <div id="wallet" class="page">
       <div class="header">My Wallet</div>
       <div class="balance-card">
@@ -339,7 +355,7 @@
       <div class="card" style="text-align:center;color:#888;padding:30px;">No transactions yet</div>
     </div>
 
-    <!-- REFER -->
+    <!-- ==================== REFER ==================== -->
     <div id="refer" class="page">
       <div class="header">Refer & Earn</div>
       <div class="banner">
@@ -353,6 +369,51 @@
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
         <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN8150531247</div>
         <button class="gold-btn">Copy Code</button>
+      </div>
+    </div>
+
+    <!-- ==================== ADMIN PANEL ==================== -->
+    <div id="admin" class="page">
+      <div class="header">👑 Admin Panel</div>
+
+      <div class="section-title">💰 Money Control</div>
+      <div class="grid">
+        <div class="btn" style="background:#4CAF50;" onclick="alert('Add Coins')">➕ Add Coins</div>
+        <div class="btn" style="background:#f44336;" onclick="alert('Remove Coins')">➖ Remove Coins</div>
+        <div class="btn" style="background:#2196F3;" onclick="alert('Withdrawals')">🏦 Withdrawals</div>
+        <div class="btn" style="background:#FF9800;" onclick="alert('Statistics')">📊 Statistics</div>
+        <div class="btn" style="background:#9C27B0;" onclick="alert('Master Wallet')">💼 Master Wallet</div>
+        <div class="btn" style="background:#00BCD4;" onclick="alert('Payout Run')">⏱ Payout Run</div>
+      </div>
+
+      <div class="section-title">📋 Task Control</div>
+      <div class="grid">
+        <div class="btn" style="background:#3F51B5;" onclick="alert('Task Studio')">🛠 Task Studio</div>
+        <div class="btn" style="background:#009688;" onclick="alert('Manage Tasks')">📝 Manage Tasks</div>
+        <div class="btn" style="background:#FF5722;" onclick="alert('Pending Proofs')">📩 Pending Proofs</div>
+        <div class="btn" style="background:#795548;" onclick="alert('Pending Videos')">🎬 Pending Videos</div>
+        <div class="btn" style="background:#4CAF50;" onclick="alert('Task ON')">✅ Task ON</div>
+        <div class="btn" style="background:#f44336;" onclick="alert('Task OFF')">❌ Task OFF</div>
+      </div>
+
+      <div class="section-title">🔄 Cross & Promo</div>
+      <div class="grid">
+        <div class="btn" style="background:#FF9800;" onclick="alert('Cross Run')">🔄 Cross Run</div>
+        <div class="btn" style="background:#f44336;" onclick="alert('Cross Delete')">🗑 Cross Delete</div>
+        <div class="btn" style="background:#2196F3;" onclick="alert('Banner Easy')">🖼️ Banner Easy</div>
+        <div class="btn" style="background:#9C27B0;" onclick="alert('Broadcast')">📣 Broadcast</div>
+      </div>
+
+      <div class="section-title">👥 Users & Safety</div>
+      <div class="grid">
+        <div class="btn" style="background:#3F51B5;" onclick="alert('User List')">👥 User List</div>
+        <div class="btn" style="background:#FF9800;" onclick="alert('Leaderboard')">🏆 Leaderboard</div>
+        <div class="btn" style="background:#f44336;" onclick="alert('Emergency Lock')">🚨 Emergency Lock</div>
+        <div class="btn" style="background:#00BCD4;" onclick="alert('Deposits')">💰 Deposits</div>
+      </div>
+
+      <div style="padding: 14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
       </div>
     </div>
 
@@ -382,6 +443,7 @@
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
       document.getElementById('bottom-nav').style.display = 'flex';
+      document.getElementById('admin-btn').style.display = 'block';
 
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
@@ -395,11 +457,11 @@
       document.getElementById(pageId).classList.add('active');
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, wallet: 4, refer: 1 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, wallet: 4, refer: 1, admin: 0 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
   </script>
 </body>
-  </html>
+          </html>
