@@ -73,6 +73,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     .btn .icon { font-size: 26px; margin-bottom: 6px; display: block; }
+
     .list-item {
       background: white;
       margin: 0 14px 10px;
@@ -82,6 +83,7 @@
       align-items: center;
       gap: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid #c8102e;   /* Red border for all */
     }
     .list-item .icon {
       width: 44px;
@@ -193,7 +195,7 @@
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
         <div class="amount">₹ 0.00</div>
-        <button class="gold-btn" onclick="alert('Withdraw: UPI / Bank / Crypto')">Withdraw</button>
+        <button class="gold-btn">Withdraw</button>
       </div>
 
       <div class="section-title">Quick Actions</div>
@@ -227,19 +229,16 @@
       </div>
     </div>
 
-    <!-- EARN PAGE -->
+    <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
-
       <div class="section-title">Earn Tasks</div>
 
-      <!-- Earn Tasks Option -->
-      <div class="list-item" style="border: 2px solid #c8102e;">
+      <div class="list-item">
         <div class="icon" style="background:#c8102e;">🎯</div>
         <div class="info"><h4>Earn Tasks</h4><p>All available tasks</p></div>
-        <button class="start-btn" onclick="alert('Earn Tasks opened')">Open</button>
+        <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
@@ -274,6 +273,11 @@
         <div class="icon" style="background:#FF5722;">🌐</div>
         <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
         <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#c8102e;">🔒</div>
+        <div class="info"><h4>VIP High Reward Task</h4><p>Only for active VIP users</p></div>
+        <button class="start-btn">Locked</button>
       </div>
     </div>
 
@@ -326,19 +330,7 @@
       </div>
     </div>
 
-    <!-- WALLET -->
-    <div id="wallet" class="page">
-      <div class="header">My Wallet</div>
-      <div class="balance-card">
-        <div style="font-size:13px;">Total Balance</div>
-        <div class="amount">₹ 0.00</div>
-        <button class="gold-btn">Withdraw</button>
-      </div>
-      <div class="section-title">Recent Transactions</div>
-      <div class="card" style="text-align:center;color:#888;padding:30px;">No transactions yet</div>
-    </div>
-
-    <!-- PROFILE + VIP -->
+    <!-- PROFILE -->
     <div id="profile" class="page">
       <div class="header">My Profile</div>
 
@@ -346,26 +338,21 @@
         <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
         <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
-        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Member</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Active</div>
       </div>
 
-      <div class="section-title">VIP Levels</div>
+      <div class="section-title">VIP Status</div>
       <div class="list-item">
-        <div class="icon" style="background:#cd7f32;">🥉</div>
-        <div class="info"><h4>Bronze VIP</h4><p>+10% extra coins</p></div>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#c0c0c0;">🥈</div>
-        <div class="info"><h4>Silver VIP</h4><p>+20% extra + Extra Spin</p></div>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#ffd700;">🥇</div>
-        <div class="info"><h4>Gold VIP</h4><p>+30% extra + Priority Support</p></div>
+        <div class="icon" style="background:#c8102e;">👑</div>
+        <div class="info">
+          <h4>Maintain VIP</h4>
+          <p>Do tasks or refer every week to keep VIP & unlock high rewards</p>
+        </div>
       </div>
 
       <div class="list-item" onclick="showPage('refer')">
         <div class="icon" style="background:#3F51B5;">👥</div>
-        <div class="info"><h4>Referral Program</h4></div>
+        <div class="info"><h4>Referral Program</h4><p>Invite friends & earn</p></div>
         <div>›</div>
       </div>
       <div class="list-item">
@@ -463,4 +450,4 @@
     }
   </script>
 </body>
-        </html>
+          </html>
