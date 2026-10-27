@@ -177,11 +177,11 @@
   <!-- MAIN APP -->
   <div id="main-app" style="display:none;">
 
-    <!-- ==================== HOME ==================== -->
+    <!-- HOME -->
     <div id="home" class="page active">
       <div class="header">👑 VTN Hub Bot</div>
 
-      <div class="card" style="display:flex; align-items:center; gap:12px;">
+      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
           <div style="font-weight:700;" id="username">User</div>
@@ -198,7 +198,7 @@
 
       <div class="section-title">Quick Actions</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-in Successful! +10 coins')">
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-in Successful!')">
           <span class="icon">✅</span>Daily Check-in
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
@@ -227,58 +227,59 @@
       </div>
     </div>
 
-    <!-- ==================== EARN ==================== -->
+    <!-- EARN PAGE -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
 
       <div class="section-title">Earn Tasks</div>
 
+      <!-- Earn Tasks Option -->
+      <div class="list-item" style="border: 2px solid #c8102e;">
+        <div class="icon" style="background:#c8102e;">🎯</div>
+        <div class="info"><h4>Earn Tasks</h4><p>All available tasks</p></div>
+        <button class="start-btn" onclick="alert('Earn Tasks opened')">Open</button>
+      </div>
+
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
-        <button class="start-btn" onclick="alert('Auto Earn')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#E91E63;">▶️</div>
         <div class="info"><h4>Watch & Earn</h4><p>+10 coins</p></div>
-        <button class="start-btn" onclick="alert('Watch & Earn')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#9C27B0;">👀</div>
         <div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div>
-        <button class="start-btn" onclick="alert('Views & Likes')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#3F51B5;">📢</div>
         <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
-        <button class="start-btn" onclick="alert('Join Channel')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#00BCD4;">🤖</div>
         <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
-        <button class="start-btn" onclick="alert('Join Bot')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
-        <button class="start-btn" onclick="alert('Install App')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
       <div class="list-item">
         <div class="icon" style="background:#FF5722;">🌐</div>
         <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
-        <button class="start-btn" onclick="alert('Visit Website')">Start</button>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#c8102e;">🌟</div>
-        <div class="info"><h4>Task of the Day</h4><p>Special high reward</p></div>
-        <button class="start-btn" onclick="alert('Task of the Day')">Start</button>
+        <button class="start-btn">Start</button>
       </div>
     </div>
 
-    <!-- ==================== PROMOTE ==================== -->
+    <!-- PROMOTE -->
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
-
       <div class="section-title">Promotion Services</div>
       <div class="list-item">
         <div class="icon" style="background:#c8102e;">📢</div>
@@ -300,60 +301,81 @@
         <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
         <button class="start-btn">Buy</button>
       </div>
-      <div class="list-item">
-        <div class="icon" style="background:#FF9800;">🌐</div>
-        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#E91E63;">🛒</div>
-        <div class="info"><h4>Affiliate / Product</h4><p>Promote products</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
       <div class="section-title">Cross Promotion</div>
       <div class="list-item">
         <div class="icon" style="background:#00BCD4;">🔄</div>
         <div class="info"><h4>Free Cross Promotion</h4><p>Exchange promotion free</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item">
-        <div class="icon" style="background:#9C27B0;">🖼️</div>
-        <div class="info"><h4>Banner Promotion</h4><p>Banner ads</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
     </div>
 
-    <!-- ==================== FUN ZONE ==================== -->
+    <!-- FUN ZONE -->
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
       <div class="grid" style="margin-top:14px;">
-        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="alert('Daily Quiz at 8:00 PM')"><span class="icon">❓</span>Daily Quiz</div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="alert('Spin & Win')"><span class="icon">🎡</span>Spin & Win</div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="alert('Lucky Draw')"><span class="icon">🎟️</span>Lucky Draw</div>
-        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="alert('Tic Tac Toe')"><span class="icon">⭕</span>Tic Tac Toe</div>
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="alert('Rock Paper Scissors')"><span class="icon">✊</span>Rock Paper Scissors</div>
-        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Number Guessing')"><span class="icon">🔢</span>Number Guessing</div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="alert('Dice Roll')"><span class="icon">🎲</span>Dice Roll</div>
-        <div class="btn" style="background: linear-gradient(135deg, #673AB7, #512DA8);" onclick="alert('Memory Match')"><span class="icon">🃏</span>Memory Match</div>
-        <div class="btn" style="background: linear-gradient(135deg, #009688, #00796B);" onclick="alert('Community Chat')"><span class="icon">💬</span>Community Chat</div>
-        <div class="btn" style="background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="alert('Leaderboard')"><span class="icon">🏆</span>Leaderboard</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);"><span class="icon">❓</span>Daily Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);"><span class="icon">🎡</span>Spin & Win</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);"><span class="icon">🎟️</span>Lucky Draw</div>
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);"><span class="icon">⭕</span>Tic Tac Toe</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);"><span class="icon">✊</span>Rock Paper Scissors</div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);"><span class="icon">🔢</span>Number Guessing</div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);"><span class="icon">🎲</span>Dice Roll</div>
+        <div class="btn" style="background: linear-gradient(135deg, #673AB7, #512DA8);"><span class="icon">🃏</span>Memory Match</div>
+        <div class="btn" style="background: linear-gradient(135deg, #009688, #00796B);"><span class="icon">💬</span>Community Chat</div>
+        <div class="btn" style="background: linear-gradient(135deg, #c8102e, #9b0c24);"><span class="icon">🏆</span>Leaderboard</div>
       </div>
     </div>
 
-    <!-- ==================== WALLET ==================== -->
+    <!-- WALLET -->
     <div id="wallet" class="page">
       <div class="header">My Wallet</div>
       <div class="balance-card">
         <div style="font-size:13px;">Total Balance</div>
         <div class="amount">₹ 0.00</div>
-        <button class="gold-btn" onclick="alert('Withdraw options: UPI / Bank / Crypto')">Withdraw</button>
+        <button class="gold-btn">Withdraw</button>
       </div>
       <div class="section-title">Recent Transactions</div>
       <div class="card" style="text-align:center;color:#888;padding:30px;">No transactions yet</div>
     </div>
 
-    <!-- ==================== REFER ==================== -->
+    <!-- PROFILE + VIP -->
+    <div id="profile" class="page">
+      <div class="header">My Profile</div>
+
+      <div class="card" style="text-align:center;">
+        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Member</div>
+      </div>
+
+      <div class="section-title">VIP Levels</div>
+      <div class="list-item">
+        <div class="icon" style="background:#cd7f32;">🥉</div>
+        <div class="info"><h4>Bronze VIP</h4><p>+10% extra coins</p></div>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#c0c0c0;">🥈</div>
+        <div class="info"><h4>Silver VIP</h4><p>+20% extra + Extra Spin</p></div>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#ffd700;">🥇</div>
+        <div class="info"><h4>Gold VIP</h4><p>+30% extra + Priority Support</p></div>
+      </div>
+
+      <div class="list-item" onclick="showPage('refer')">
+        <div class="icon" style="background:#3F51B5;">👥</div>
+        <div class="info"><h4>Referral Program</h4></div>
+        <div>›</div>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Help & Support</h4></div>
+        <div>›</div>
+      </div>
+    </div>
+
+    <!-- REFER -->
     <div id="refer" class="page">
       <div class="header">Refer & Earn</div>
       <div class="banner">
@@ -366,50 +388,27 @@
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
         <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN8150531247</div>
-        <button class="gold-btn" onclick="alert('Code Copied!')">Copy Code</button>
+        <button class="gold-btn">Copy Code</button>
       </div>
     </div>
 
-    <!-- ==================== ADMIN PANEL ==================== -->
+    <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-
       <div class="section-title">💰 Money Control</div>
       <div class="grid">
-        <div class="btn" style="background:#4CAF50;" onclick="alert('Add Coins')">➕ Add Coins</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Remove Coins')">➖ Remove Coins</div>
-        <div class="btn" style="background:#2196F3;" onclick="alert('Withdrawals')">🏦 Withdrawals</div>
-        <div class="btn" style="background:#FF9800;" onclick="alert('Statistics')">📊 Statistics</div>
-        <div class="btn" style="background:#9C27B0;" onclick="alert('Master Wallet')">💼 Master Wallet</div>
-        <div class="btn" style="background:#00BCD4;" onclick="alert('Payout Run')">⏱ Payout Run</div>
+        <div class="btn" style="background:#4CAF50;">➕ Add Coins</div>
+        <div class="btn" style="background:#f44336;">➖ Remove Coins</div>
+        <div class="btn" style="background:#2196F3;">🏦 Withdrawals</div>
+        <div class="btn" style="background:#FF9800;">📊 Statistics</div>
       </div>
-
-      <div class="section-title">📋 Task Control (Editable)</div>
+      <div class="section-title">📋 Task Control</div>
       <div class="grid">
-        <div class="btn" style="background:#3F51B5;" onclick="alert('Task Studio - Add/Edit Tasks')">🛠 Task Studio</div>
-        <div class="btn" style="background:#009688;" onclick="alert('Manage Tasks')">📝 Manage Tasks</div>
-        <div class="btn" style="background:#FF5722;" onclick="alert('Pending Proofs')">📩 Pending Proofs</div>
-        <div class="btn" style="background:#795548;" onclick="alert('Pending Videos')">🎬 Pending Videos</div>
-        <div class="btn" style="background:#4CAF50;" onclick="alert('Task ON')">✅ Task ON</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Task OFF')">❌ Task OFF</div>
+        <div class="btn" style="background:#3F51B5;">🛠 Task Studio</div>
+        <div class="btn" style="background:#009688;">📝 Manage Tasks</div>
+        <div class="btn" style="background:#FF5722;">📩 Pending Proofs</div>
+        <div class="btn" style="background:#c8102e;">👑 VIP Control</div>
       </div>
-
-      <div class="section-title">🔄 Cross & Promo</div>
-      <div class="grid">
-        <div class="btn" style="background:#FF9800;" onclick="alert('Cross Run')">🔄 Cross Run</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Cross Delete')">🗑 Cross Delete</div>
-        <div class="btn" style="background:#2196F3;" onclick="alert('Banner Easy')">🖼️ Banner</div>
-        <div class="btn" style="background:#9C27B0;" onclick="alert('Broadcast')">📣 Broadcast</div>
-      </div>
-
-      <div class="section-title">👥 Users & VIP</div>
-      <div class="grid">
-        <div class="btn" style="background:#3F51B5;" onclick="alert('User List')">👥 User List</div>
-        <div class="btn" style="background:#FF9800;" onclick="alert('Leaderboard')">🏆 Leaderboard</div>
-        <div class="btn" style="background:#c8102e;" onclick="alert('VIP Control - Bronze/Silver/Gold')">👑 VIP Levels</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Emergency Lock')">🚨 Emergency Lock</div>
-      </div>
-
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
       </div>
@@ -423,7 +422,7 @@
     <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
     <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
     <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
-    <div class="nav-item" onclick="showPage('wallet')"><span class="icon">👛</span>Wallet</div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
   </div>
 
   <script>
@@ -446,6 +445,8 @@
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
         document.getElementById('userid').innerText = 'ID: ' + user.id;
+        document.getElementById('profile-name').innerText = user.first_name || 'User';
+        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
         document.getElementById('ref-code').innerText = 'VTN' + user.id;
       }
     }
@@ -455,11 +456,11 @@
       document.getElementById(pageId).classList.add('active');
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, wallet: 4, refer: 1, admin: 0 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, refer: 4, admin: 0 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
   </script>
 </body>
-  </html>
+        </html>
