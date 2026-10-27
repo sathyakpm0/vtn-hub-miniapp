@@ -73,7 +73,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     .btn .icon { font-size: 26px; margin-bottom: 6px; display: block; }
-
     .list-item {
       background: white;
       margin: 0 14px 10px;
@@ -83,7 +82,7 @@
       align-items: center;
       gap: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 2px solid #c8102e;   /* Red border for all */
+      border: 2px solid #c8102e;
     }
     .list-item .icon {
       width: 44px;
@@ -276,7 +275,7 @@
       </div>
       <div class="list-item">
         <div class="icon" style="background:#c8102e;">🔒</div>
-        <div class="info"><h4>VIP High Reward Task</h4><p>Only for active VIP users</p></div>
+        <div class="info"><h4>VIP High Reward Task</h4><p>Only for active VIP</p></div>
         <button class="start-btn">Locked</button>
       </div>
     </div>
@@ -330,7 +329,7 @@
       </div>
     </div>
 
-    <!-- PROFILE -->
+    <!-- PROFILE + VIP -->
     <div id="profile" class="page">
       <div class="header">My Profile</div>
 
@@ -338,26 +337,41 @@
         <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
         <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
-        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Active</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
 
-      <div class="section-title">VIP Status</div>
+      <div class="section-title">Keep VIP Active</div>
+
       <div class="list-item">
-        <div class="icon" style="background:#c8102e;">👑</div>
+        <div class="icon" style="background:#4CAF50;">✅</div>
         <div class="info">
-          <h4>Maintain VIP</h4>
-          <p>Do tasks or refer every week to keep VIP & unlock high rewards</p>
+          <h4>Complete 100 Tasks</h4>
+          <p>This week to keep VIP</p>
         </div>
+        <button class="start-btn">Go</button>
+      </div>
+
+      <div class="list-item">
+        <div class="icon" style="background:#2196F3;">👥</div>
+        <div class="info">
+          <h4>Refer Friends</h4>
+          <p>Refer to maintain VIP</p>
+        </div>
+        <button class="start-btn" onclick="showPage('refer')">Go</button>
+      </div>
+
+      <div class="list-item">
+        <div class="icon" style="background:#FF9800;">💰</div>
+        <div class="info">
+          <h4>Purchase VIP</h4>
+          <p>Pay 500 coins</p>
+        </div>
+        <button class="start-btn">Buy</button>
       </div>
 
       <div class="list-item" onclick="showPage('refer')">
-        <div class="icon" style="background:#3F51B5;">👥</div>
-        <div class="info"><h4>Referral Program</h4><p>Invite friends & earn</p></div>
-        <div>›</div>
-      </div>
-      <div class="list-item">
-        <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Help & Support</h4></div>
+        <div class="icon" style="background:#3F51B5;">🎁</div>
+        <div class="info"><h4>Referral Program</h4></div>
         <div>›</div>
       </div>
     </div>
@@ -450,4 +464,4 @@
     }
   </script>
 </body>
-          </html>
+  </html>
