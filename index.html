@@ -172,7 +172,6 @@
     }
     .history-item:last-child { border-bottom: none; }
     .positive { color: #4CAF50; font-weight: 600; }
-    .negative { color: #f44336; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -188,10 +187,9 @@
   <!-- MAIN APP -->
   <div id="main-app" style="display:none;">
 
-    <!-- ==================== HOME ==================== -->
+    <!-- HOME -->
     <div id="home" class="page active">
       <div class="header">👑 VTN Hub Bot</div>
-
       <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
@@ -200,13 +198,11 @@
         </div>
         <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
-
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
         <div class="amount" id="balance">0 Coins</div>
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
-
       <div class="section-title">Quick Actions</div>
       <div class="grid">
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
@@ -222,7 +218,6 @@
           <span class="icon">🎮</span>Fun Zone
         </div>
       </div>
-
       <div class="banner">
         <div>
           <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
@@ -230,7 +225,6 @@
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
       </div>
-
       <div id="admin-btn" style="display:none; padding: 0 14px 20px;">
         <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')">
           <span class="icon">👑</span>Admin Panel
@@ -238,32 +232,31 @@
       </div>
     </div>
 
-    <!-- ==================== EARN ==================== -->
+    <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
       <div class="section-title">Earn Tasks</div>
-
-      <div class="list-item" onclick="openTask('auto')">
+      <div class="list-item" onclick="alert('Auto Earn - Easy tasks only (Half reward)')">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Half reward • Easy tasks only</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item" onclick="openTask('watch')">
+      <div class="list-item" onclick="alert('Watch & Earn')">
         <div class="icon" style="background:#E91E63;">▶️</div>
         <div class="info"><h4>Watch & Earn</h4><p>+10 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item" onclick="openTask('views')">
+      <div class="list-item" onclick="alert('Views & Likes')">
         <div class="icon" style="background:#9C27B0;">👀</div>
         <div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item" onclick="openTask('join')">
+      <div class="list-item" onclick="alert('Join Channel / Group')">
         <div class="icon" style="background:#3F51B5;">📢</div>
         <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item" onclick="openTask('install')">
+      <div class="list-item" onclick="alert('Install App')">
         <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
         <button class="start-btn">Start</button>
@@ -280,42 +273,203 @@
       </div>
     </div>
 
-    <!-- ==================== WALLET HISTORY ==================== -->
+    <!-- PROMOTE -->
+    <div id="promote" class="page">
+      <div class="header">Promote Services</div>
+      <div class="section-title">Promotion Services</div>
+      <div class="list-item">
+        <div class="icon" style="background:#c8102e;">📢</div>
+        <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard (24 hrs)</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#9C27B0;">🤖</div>
+        <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#3F51B5;">👀</div>
+        <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#FF9800;">🧪</div>
+        <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#00BCD4;">🌐</div>
+        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#E91E63;">🛒</div>
+        <div class="info"><h4>View Products</h4><p>Product promotion</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#673AB7;">🔗</div>
+        <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="section-title">Cross Promotion</div>
+      <div class="list-item">
+        <div class="icon" style="background:#00BCD4;">🔄</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Exchange promotion free</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+    </div>
+
+    <!-- FUN ZONE -->
+    <div id="fun" class="page">
+      <div class="header">Fun Zone</div>
+      <div class="section-title">Games</div>
+      <div class="grid">
+        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="startGame('Dart')">
+          <span class="icon">🎯</span>Dart Game
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="startGame('Fruit')">
+          <span class="icon">🍎</span>Fruit Game
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="alert('Tic Tac Toe')">
+          <span class="icon">⭕</span>Tic Tac Toe
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="alert('Spin & Win')">
+          <span class="icon">🎡</span>Spin & Win
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="alert('Lucky Draw')">
+          <span class="icon">🎟️</span>Lucky Draw
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')">
+          <span class="icon">❓</span>Daily Quiz
+        </div>
+      </div>
+      <div class="section-title">More</div>
+      <div class="list-item" onclick="enterChat()">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter • No links allowed</p></div>
+        <button class="start-btn">Enter</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#c8102e;">🏆</div>
+        <div class="info"><h4>Leaderboard</h4><p>Top earners</p></div>
+        <button class="start-btn">View</button>
+      </div>
+    </div>
+
+    <!-- WALLET -->
     <div id="wallet" class="page">
       <div class="header">Wallet & History</div>
-
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
-
       <div class="section-title">Transaction History</div>
       <div class="card" id="history-list">
         <div class="history-item">
-          <div>Daily Check-in</div>
-          <div class="positive">+12 Coins</div>
-        </div>
-        <div class="history-item">
-          <div>Watch & Earn</div>
-          <div class="positive">+10 Coins</div>
-        </div>
-        <div class="history-item">
-          <div>No more transactions</div>
+          <div>No transactions yet</div>
           <div></div>
         </div>
       </div>
-
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
       </div>
     </div>
 
-    <!-- Placeholder pages for now -->
-    <div id="promote" class="page"><div class="header">Promote</div><div class="card">Coming in next part...</div></div>
-    <div id="fun" class="page"><div class="header">Fun Zone</div><div class="card">Coming in next part...</div></div>
-    <div id="profile" class="page"><div class="header">Profile</div><div class="card">Coming in next part...</div></div>
-    <div id="refer" class="page"><div class="header">Refer</div><div class="card">Coming in next part...</div></div>
-    <div id="admin" class="page"><div class="header">Admin</div><div class="card">Coming in next part...</div></div>
+    <!-- PROFILE -->
+    <div id="profile" class="page">
+      <div class="header">My Profile</div>
+      <div class="card" style="text-align:center;">
+        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
+      </div>
+      <div class="section-title">Keep VIP Active</div>
+      <div class="list-item">
+        <div class="icon" style="background:#4CAF50;">✅</div>
+        <div class="info"><h4>Complete 100 Tasks</h4><p>This week to keep VIP</p></div>
+        <button class="start-btn">Go</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#2196F3;">👥</div>
+        <div class="info"><h4>Refer Friends</h4><p>Refer to maintain VIP</p></div>
+        <button class="start-btn" onclick="showPage('refer')">Go</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#FF9800;">💰</div>
+        <div class="info"><h4>Purchase VIP</h4><p>Pay 500 coins</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="section-title">More Options</div>
+      <div class="list-item" onclick="showPage('terms')">
+        <div class="icon" style="background:#607D8B;">📄</div>
+        <div class="info"><h4>Terms & Policies</h4></div>
+        <div>›</div>
+      </div>
+      <div class="list-item" onclick="window.open('https://t.me/vtnhub', '_blank')">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Contact Support</h4><p>@vtnhub</p></div>
+        <div>›</div>
+      </div>
+      <div class="list-item" onclick="alert('Suggestion Box')">
+        <div class="icon" style="background:#FF5722;">💡</div>
+        <div class="info"><h4>Suggestion Box</h4></div>
+        <div>›</div>
+      </div>
+    </div>
+
+    <!-- REFER -->
+    <div id="refer" class="page">
+      <div class="header">Refer & Earn</div>
+      <div class="banner">
+        <div>
+          <div style="font-weight:700;">Invite Friends</div>
+          <div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div>
+        </div>
+        <div style="font-size:28px;">🎁</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:13px;color:#777;">Your Referral Code</div>
+        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN8150531247</div>
+        <button class="gold-btn">Copy Code</button>
+      </div>
+    </div>
+
+    <!-- TERMS -->
+    <div id="terms" class="page">
+      <div class="header">Terms & Policies</div>
+      <div class="card" style="font-size:14px; line-height:1.6;">
+        <p style="color:#c8102e; font-weight:700; margin-bottom:12px;">
+          ⚠️ Important Warning:<br>
+          Do not invest any money in this platform.<br>
+          We are not responsible for any loss of money.
+        </p>
+        <p>1. This is an earning + promotion platform.</p>
+        <p>2. All rewards depend on available funds.</p>
+        <p>3. Fake proofs will lead to permanent ban.</p>
+        <p>4. We can change rules anytime.</p>
+        <p>5. By using this app you agree to these terms.</p>
+      </div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin" class="page">
+      <div class="header">👑 Admin Panel</div>
+      <div class="section-title">Full controls will be added after frontend is complete</div>
+      <div class="card">Admin Panel is ready for expansion.</div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
+      </div>
+    </div>
 
   </div>
 
@@ -357,6 +511,9 @@
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
         document.getElementById('userid').innerText = 'ID: ' + user.id;
+        document.getElementById('profile-name').innerText = user.first_name || 'User';
+        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+        document.getElementById('ref-code').innerText = 'VTN' + user.id;
       }
       updateBalance();
     }
@@ -366,14 +523,10 @@
       document.getElementById(pageId).classList.add('active');
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4, admin: 0 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
-    }
-
-    function openTask(type) {
-      alert('Task page for ' + type + ' will be in next part');
     }
 
     function dailyCheckIn() {
@@ -385,18 +538,36 @@
 
       let reward = 0;
       if (isFirstDay) {
-        reward = Math.floor(Math.random() * 70) + 30; // 30-100
+        reward = Math.floor(Math.random() * 70) + 30;
         localStorage.setItem('vtn_first_day', 'done');
         isFirstDay = false;
         alert("🎉 First Day Bonus! You received " + reward + " Coins!");
       } else {
-        reward = Math.floor(Math.random() * 13) + 3; // 3-15
+        reward = Math.floor(Math.random() * 13) + 3;
         alert("Daily Check-in Successful! +" + reward + " Coins");
       }
 
       balance += reward;
       updateBalance();
     }
+
+    function startGame(game) {
+      const watch = confirm("Watch a short ad to play " + game + " Game?\n\nYou can play freely for 15-20 minutes.");
+      if (watch) {
+        alert(game + " Game started! Enjoy playing.");
+      } else {
+        alert("Ad required to play.");
+      }
+    }
+
+    function enterChat() {
+      const watch = confirm("Watch a short ad to enter Community Chat?\n\nStrict Rule: No links allowed.");
+      if (watch) {
+        alert("Welcome to Community Chat!\n\nNo links allowed.");
+      } else {
+        alert("Ad required to enter chat.");
+      }
+    }
   </script>
 </body>
-        </html>
+          </html>
