@@ -250,14 +250,14 @@
       </div>
     </div>
 
-    <!-- EARN PAGE -->
+    <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
       <div class="section-title">Earn Tasks</div>
 
       <div class="list-item" onclick="openTask('auto')">
         <div class="icon" style="background:#FF9800;">⚡</div>
-        <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
+        <div class="info"><h4>Auto Earn</h4><p>Half reward • Easy tasks only</p></div>
         <button class="start-btn">Start</button>
       </div>
       <div class="list-item" onclick="openTask('watch')">
@@ -292,18 +292,19 @@
       </div>
     </div>
 
-    <!-- TASK DETAIL PAGES -->
+    <!-- TASK PAGES -->
     <div id="task-auto" class="page">
       <div class="header">Auto Earn</div>
       <div class="task-detail">
         <h2>⚡ Auto Earn</h2>
-        <div class="reward">Reward: +5 to +15 coins</div>
-        <p>Complete this task to earn coins automatically.</p>
+        <div class="reward">Reward: Half of normal (Easy tasks only)</div>
+        <p>Only simple tasks that can be done automatically (Click, View, Join Channel).</p>
         <div class="instruction">
-          <b>Instruction:</b><br>
-          Just click the Start button below. Coins will be added after verification.
+          <b>Allowed:</b> Click, View, Join Channel/Group<br>
+          <b>Not Allowed:</b> Install App, Signup, Complex tasks<br><br>
+          Earnings will be <b>50%</b> of normal reward.
         </div>
-        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Auto Earn submitted! Waiting for approval.')">Submit Proof</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Auto Earn started! Easy tasks will be given.')">Start Auto Earn</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -314,14 +315,13 @@
       <div class="task-detail">
         <h2>▶️ Watch & Earn</h2>
         <div class="reward">Reward: +10 coins</div>
-        <p>Watch the video/ad completely to earn coins.</p>
+        <p>Watch the full video/ad to earn coins.</p>
         <div class="instruction">
-          <b>Instruction:</b><br>
-          1. Click the link below<br>
-          2. Watch the full video<br>
+          1. Open the given link<br>
+          2. Watch the complete video<br>
           3. Come back and submit proof
         </div>
-        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Watch & Earn submitted! Waiting for approval.')">Submit Proof</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Watch & Earn submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -332,14 +332,13 @@
       <div class="task-detail">
         <h2>👀 Views & Likes</h2>
         <div class="reward">Reward: +8 to +20 coins</div>
-        <p>Like and view the given post/video.</p>
+        <p>View and like the given post.</p>
         <div class="instruction">
-          <b>Instruction:</b><br>
           1. Open the link<br>
-          2. Like the post / View the video<br>
+          2. Like / View the content<br>
           3. Take screenshot and submit
         </div>
-        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Views & Likes submitted! Waiting for approval.')">Submit Proof</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Views & Likes submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -352,13 +351,12 @@
         <div class="reward">Reward: +15 coins</div>
         <p>Join the given Telegram channel or group.</p>
         <div class="instruction">
-          <b>Instruction:</b><br>
-          1. Click the join link<br>
+          1. Click join link<br>
           2. Join the channel/group<br>
-          3. Stay joined for at least 24 hours<br>
+          3. Stay for at least 24 hours<br>
           4. Submit proof
         </div>
-        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Join task submitted! Waiting for approval.')">Submit Proof</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Join task submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -369,15 +367,14 @@
       <div class="task-detail">
         <h2>📱 Install App</h2>
         <div class="reward">Reward: +25 coins</div>
-        <p>Install the given application and open it.</p>
+        <p>Install and open the given app.</p>
         <div class="instruction">
-          <b>Instruction:</b><br>
-          1. Click the download link<br>
-          2. Install the app<br>
+          1. Download the app<br>
+          2. Install it<br>
           3. Open the app once<br>
-          4. Submit screenshot as proof
+          4. Submit screenshot
         </div>
-        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Install App submitted! Waiting for approval.')">Submit Proof</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Install App submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -523,4 +520,4 @@
     }
   </script>
 </body>
-          </html>
+  </html>
