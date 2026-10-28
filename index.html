@@ -235,8 +235,18 @@
     <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
+      <div class="section-title">Official Task</div>
+      <div class="list-item" id="official-task" onclick="doOfficialTask()">
+        <div class="icon" style="background:#c8102e;">⭐</div>
+        <div class="info">
+          <h4>Join Official Channel & Group</h4>
+          <p>+50 Coins • Must join to unlock all tasks</p>
+        </div>
+        <button class="start-btn">Join</button>
+      </div>
+
       <div class="section-title">Earn Tasks</div>
-      <div class="list-item" onclick="alert('Auto Earn - Easy tasks only (Half reward)')">
+      <div class="list-item" onclick="alert('Auto Earn - Only easy tasks (View, Click, Join) • Half reward')">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Half reward • Easy tasks only</p></div>
         <button class="start-btn">Start</button>
@@ -256,17 +266,17 @@
         <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
+      <div class="list-item" onclick="alert('Join Bot')">
+        <div class="icon" style="background:#00BCD4;">🤖</div>
+        <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
       <div class="list-item" onclick="alert('Install App')">
         <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
         <button class="start-btn">Start</button>
       </div>
-      <div class="list-item">
-        <div class="icon" style="background:#00BCD4;">🤖</div>
-        <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
-        <button class="start-btn">Start</button>
-      </div>
-      <div class="list-item">
+      <div class="list-item" onclick="alert('Visit Website')">
         <div class="icon" style="background:#FF5722;">🌐</div>
         <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
         <button class="start-btn">Start</button>
@@ -320,7 +330,7 @@
       <div class="section-title">Cross Promotion</div>
       <div class="list-item">
         <div class="icon" style="background:#00BCD4;">🔄</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Exchange promotion free</p></div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
         <button class="start-btn">Start</button>
       </div>
     </div>
@@ -336,17 +346,23 @@
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="startGame('Fruit')">
           <span class="icon">🍎</span>Fruit Game
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="alert('Tic Tac Toe')">
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="startGame('TicTacToe')">
           <span class="icon">⭕</span>Tic Tac Toe
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="alert('Spin & Win')">
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="startGame('Spin')">
           <span class="icon">🎡</span>Spin & Win
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="alert('Lucky Draw')">
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="startGame('Lucky')">
           <span class="icon">🎟️</span>Lucky Draw
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')">
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8:00 PM')">
           <span class="icon">❓</span>Daily Quiz
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="startGame('Dice')">
+          <span class="icon">🎲</span>Dice Roll
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #673AB7, #512DA8);" onclick="startGame('Memory')">
+          <span class="icon">🃏</span>Memory Match
         </div>
       </div>
       <div class="section-title">More</div>
@@ -412,9 +428,9 @@
         <div class="info"><h4>Terms & Policies</h4></div>
         <div>›</div>
       </div>
-      <div class="list-item" onclick="window.open('https://t.me/vtnhub', '_blank')">
+      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')">
         <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Contact Support</h4><p>@vtnhub</p></div>
+        <div class="info"><h4>Contact Support</h4><p>@Vtnhub0</p></div>
         <div>›</div>
       </div>
       <div class="list-item" onclick="alert('Suggestion Box')">
@@ -453,8 +469,10 @@
         <p>1. This is an earning + promotion platform.</p>
         <p>2. All rewards depend on available funds.</p>
         <p>3. Fake proofs will lead to permanent ban.</p>
-        <p>4. We can change rules anytime.</p>
-        <p>5. By using this app you agree to these terms.</p>
+        <p>4. Official Channel: https://t.me/vtnhub</p>
+        <p>5. Official Group: https://t.me/vtnhub1</p>
+        <p>6. Support: @Vtnhub0</p>
+        <p>7. By using this app you agree to these terms.</p>
       </div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
@@ -464,8 +482,20 @@
     <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Full controls will be added after frontend is complete</div>
-      <div class="card">Admin Panel is ready for expansion.</div>
+      <div class="section-title">Money Control</div>
+      <div class="grid">
+        <div class="btn" style="background:#4CAF50;">➕ Add Coins</div>
+        <div class="btn" style="background:#f44336;">➖ Remove Coins</div>
+        <div class="btn" style="background:#2196F3;">🏦 Withdrawals</div>
+        <div class="btn" style="background:#FF9800;">📊 Statistics</div>
+      </div>
+      <div class="section-title">Task Control</div>
+      <div class="grid">
+        <div class="btn" style="background:#3F51B5;">🛠 Task Studio</div>
+        <div class="btn" style="background:#009688;">📝 Manage Tasks</div>
+        <div class="btn" style="background:#FF5722;">📩 Pending Proofs</div>
+        <div class="btn" style="background:#c8102e;">👑 VIP Control</div>
+      </div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
       </div>
@@ -489,12 +519,13 @@
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    const ADMIN_IDS = [8150531247];
+    const ADMIN_IDS = [8150531247]; // You can add more IDs later
     const user = tg.initDataUnsafe?.user;
     const isAdmin = user && ADMIN_IDS.includes(user.id);
 
     let balance = parseInt(localStorage.getItem('vtn_balance') || '0');
     let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
+    let officialDone = localStorage.getItem('vtn_official') === 'done';
 
     function updateBalance() {
       document.getElementById('balance').innerText = balance + ' Coins';
@@ -516,6 +547,11 @@
         document.getElementById('ref-code').innerText = 'VTN' + user.id;
       }
       updateBalance();
+
+      // Hide official task if already done
+      if (officialDone) {
+        document.getElementById('official-task').style.display = 'none';
+      }
     }
 
     function showPage(pageId) {
@@ -551,10 +587,24 @@
       updateBalance();
     }
 
+    function doOfficialTask() {
+      const join = confirm("Join Official Channel & Group to get 50 Coins?\n\nChannel: https://t.me/vtnhub\nGroup: https://t.me/vtnhub1");
+      if (join) {
+        window.open('https://t.me/vtnhub', '_blank');
+        setTimeout(() => {
+          balance += 50;
+          updateBalance();
+          localStorage.setItem('vtn_official', 'done');
+          document.getElementById('official-task').style.display = 'none';
+          alert("🎉 Official Task Completed! +50 Coins added.");
+        }, 2000);
+      }
+    }
+
     function startGame(game) {
-      const watch = confirm("Watch a short ad to play " + game + " Game?\n\nYou can play freely for 15-20 minutes.");
+      const watch = confirm("Watch a short ad to play " + game + "?\n\nYou can play freely for 15-20 minutes.");
       if (watch) {
-        alert(game + " Game started! Enjoy playing.");
+        alert(game + " started! Enjoy playing.");
       } else {
         alert("Ad required to play.");
       }
@@ -570,4 +620,4 @@
     }
   </script>
 </body>
-          </html>
+        </html>
