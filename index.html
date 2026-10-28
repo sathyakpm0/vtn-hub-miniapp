@@ -163,6 +163,43 @@
     }
     .lock-box h1 { font-size: 26px; color: #c8102e; margin-bottom: 12px; }
     .lock-box p { color: #666; font-size: 15px; line-height: 1.5; }
+    .task-detail {
+      padding: 20px 16px;
+    }
+    .task-detail h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #c8102e;
+    }
+    .task-detail .reward {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ff9800;
+      margin-bottom: 16px;
+    }
+    .task-detail p {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: #555;
+    }
+    .task-detail .instruction {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .back-btn {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -196,7 +233,7 @@
       </div>
       <div class="section-title">Quick Actions</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-in Successful!')"><span class="icon">✅</span>Daily Check-in</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-in Successful! +10 coins')"><span class="icon">✅</span>Daily Check-in</div>
         <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')"><span class="icon">🎯</span>Earn Tasks</div>
         <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
         <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')"><span class="icon">🎮</span>Fun Zone</div>
@@ -213,18 +250,137 @@
       </div>
     </div>
 
-    <!-- EARN -->
+    <!-- EARN PAGE -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
       <div class="section-title">Earn Tasks</div>
-      <div class="list-item"><div class="icon" style="background:#c8102e;">🎯</div><div class="info"><h4>Earn Tasks</h4><p>All available tasks</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+12 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+25 coins</p></div><button class="start-btn">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>+10 coins</p></div><button class="start-btn">Start</button></div>
+
+      <div class="list-item" onclick="openTask('auto')">
+        <div class="icon" style="background:#FF9800;">⚡</div>
+        <div class="info"><h4>Auto Earn</h4><p>+5 to +15 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item" onclick="openTask('watch')">
+        <div class="icon" style="background:#E91E63;">▶️</div>
+        <div class="info"><h4>Watch & Earn</h4><p>+10 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item" onclick="openTask('views')">
+        <div class="icon" style="background:#9C27B0;">👀</div>
+        <div class="info"><h4>Views & Likes</h4><p>+8 to +20 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item" onclick="openTask('join')">
+        <div class="icon" style="background:#3F51B5;">📢</div>
+        <div class="info"><h4>Join Channel / Group</h4><p>+15 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item" onclick="openTask('install')">
+        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="info"><h4>Install App</h4><p>+25 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#00BCD4;">🤖</div>
+        <div class="info"><h4>Join Bot</h4><p>+12 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#FF5722;">🌐</div>
+        <div class="info"><h4>Visit Website</h4><p>+10 coins</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+    </div>
+
+    <!-- TASK DETAIL PAGES -->
+    <div id="task-auto" class="page">
+      <div class="header">Auto Earn</div>
+      <div class="task-detail">
+        <h2>⚡ Auto Earn</h2>
+        <div class="reward">Reward: +5 to +15 coins</div>
+        <p>Complete this task to earn coins automatically.</p>
+        <div class="instruction">
+          <b>Instruction:</b><br>
+          Just click the Start button below. Coins will be added after verification.
+        </div>
+        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Auto Earn submitted! Waiting for approval.')">Submit Proof</button>
+        <br>
+        <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
+      </div>
+    </div>
+
+    <div id="task-watch" class="page">
+      <div class="header">Watch & Earn</div>
+      <div class="task-detail">
+        <h2>▶️ Watch & Earn</h2>
+        <div class="reward">Reward: +10 coins</div>
+        <p>Watch the video/ad completely to earn coins.</p>
+        <div class="instruction">
+          <b>Instruction:</b><br>
+          1. Click the link below<br>
+          2. Watch the full video<br>
+          3. Come back and submit proof
+        </div>
+        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Watch & Earn submitted! Waiting for approval.')">Submit Proof</button>
+        <br>
+        <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
+      </div>
+    </div>
+
+    <div id="task-views" class="page">
+      <div class="header">Views & Likes</div>
+      <div class="task-detail">
+        <h2>👀 Views & Likes</h2>
+        <div class="reward">Reward: +8 to +20 coins</div>
+        <p>Like and view the given post/video.</p>
+        <div class="instruction">
+          <b>Instruction:</b><br>
+          1. Open the link<br>
+          2. Like the post / View the video<br>
+          3. Take screenshot and submit
+        </div>
+        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Views & Likes submitted! Waiting for approval.')">Submit Proof</button>
+        <br>
+        <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
+      </div>
+    </div>
+
+    <div id="task-join" class="page">
+      <div class="header">Join Channel / Group</div>
+      <div class="task-detail">
+        <h2>📢 Join Channel / Group</h2>
+        <div class="reward">Reward: +15 coins</div>
+        <p>Join the given Telegram channel or group.</p>
+        <div class="instruction">
+          <b>Instruction:</b><br>
+          1. Click the join link<br>
+          2. Join the channel/group<br>
+          3. Stay joined for at least 24 hours<br>
+          4. Submit proof
+        </div>
+        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Join task submitted! Waiting for approval.')">Submit Proof</button>
+        <br>
+        <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
+      </div>
+    </div>
+
+    <div id="task-install" class="page">
+      <div class="header">Install App</div>
+      <div class="task-detail">
+        <h2>📱 Install App</h2>
+        <div class="reward">Reward: +25 coins</div>
+        <p>Install the given application and open it.</p>
+        <div class="instruction">
+          <b>Instruction:</b><br>
+          1. Click the download link<br>
+          2. Install the app<br>
+          3. Open the app once<br>
+          4. Submit screenshot as proof
+        </div>
+        <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="alert('Install App submitted! Waiting for approval.')">Submit Proof</button>
+        <br>
+        <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
+      </div>
     </div>
 
     <!-- PROMOTE -->
@@ -292,50 +448,23 @@
       </div>
     </div>
 
-    <!-- ==================== IMPROVED ADMIN PANEL ==================== -->
+    <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-
-      <!-- Money Control -->
       <div class="section-title">💰 Money Control</div>
       <div class="grid">
-        <div class="btn" style="background:#4CAF50;" onclick="alert('Add Coins to User')"><span class="icon">➕</span>Add Coins</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Remove Coins')"><span class="icon">➖</span>Remove Coins</div>
-        <div class="btn" style="background:#2196F3;" onclick="alert('View & Approve Withdrawals')"><span class="icon">🏦</span>Withdrawals</div>
-        <div class="btn" style="background:#FF9800;" onclick="alert('View Statistics')"><span class="icon">📊</span>Statistics</div>
-        <div class="btn" style="background:#9C27B0;" onclick="alert('Master Wallet')"><span class="icon">💼</span>Master Wallet</div>
-        <div class="btn" style="background:#00BCD4;" onclick="alert('Run Payout')"><span class="icon">⏱</span>Payout Run</div>
+        <div class="btn" style="background:#4CAF50;"><span class="icon">➕</span>Add Coins</div>
+        <div class="btn" style="background:#f44336;"><span class="icon">➖</span>Remove Coins</div>
+        <div class="btn" style="background:#2196F3;"><span class="icon">🏦</span>Withdrawals</div>
+        <div class="btn" style="background:#FF9800;"><span class="icon">📊</span>Statistics</div>
       </div>
-
-      <!-- Task Control -->
       <div class="section-title">📋 Task Control</div>
       <div class="grid">
-        <div class="btn" style="background:#3F51B5;" onclick="alert('Open Task Studio - Add New Tasks')"><span class="icon">🛠</span>Task Studio</div>
-        <div class="btn" style="background:#009688;" onclick="alert('Manage / Edit / Delete Tasks')"><span class="icon">📝</span>Manage Tasks</div>
-        <div class="btn" style="background:#FF5722;" onclick="alert('Pending Proofs for Approval')"><span class="icon">📩</span>Pending Proofs</div>
-        <div class="btn" style="background:#795548;" onclick="alert('Pending Videos')"><span class="icon">🎬</span>Pending Videos</div>
-        <div class="btn" style="background:#4CAF50;" onclick="alert('Turn Task ON')"><span class="icon">✅</span>Task ON</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Turn Task OFF')"><span class="icon">❌</span>Task OFF</div>
+        <div class="btn" style="background:#3F51B5;"><span class="icon">🛠</span>Task Studio</div>
+        <div class="btn" style="background:#009688;"><span class="icon">📝</span>Manage Tasks</div>
+        <div class="btn" style="background:#FF5722;"><span class="icon">📩</span>Pending Proofs</div>
+        <div class="btn" style="background:#c8102e;"><span class="icon">👑</span>VIP Control</div>
       </div>
-
-      <!-- User & VIP -->
-      <div class="section-title">👥 User & VIP Control</div>
-      <div class="grid">
-        <div class="btn" style="background:#3F51B5;" onclick="alert('View All Users')"><span class="icon">👥</span>User List</div>
-        <div class="btn" style="background:#c8102e;" onclick="alert('VIP Control Panel')"><span class="icon">👑</span>VIP Control</div>
-        <div class="btn" style="background:#FF9800;" onclick="alert('Leaderboard')"><span class="icon">🏆</span>Leaderboard</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Ban / Unban User')"><span class="icon">🚫</span>Ban User</div>
-      </div>
-
-      <!-- Promotion & System -->
-      <div class="section-title">🔄 Promotion & System</div>
-      <div class="grid">
-        <div class="btn" style="background:#FF9800;" onclick="alert('Run Cross Promotion')"><span class="icon">🔄</span>Cross Run</div>
-        <div class="btn" style="background:#9C27B0;" onclick="alert('Send Broadcast Message')"><span class="icon">📣</span>Broadcast</div>
-        <div class="btn" style="background:#607D8B;" onclick="alert('App Settings')"><span class="icon">⚙️</span>App Settings</div>
-        <div class="btn" style="background:#f44336;" onclick="alert('Emergency Lock Activated')"><span class="icon">🚨</span>Emergency Lock</div>
-      </div>
-
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back to Home</button>
       </div>
@@ -388,6 +517,10 @@
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
+
+    function openTask(type) {
+      showPage('task-' + type);
+    }
   </script>
 </body>
-</html>
+          </html>
