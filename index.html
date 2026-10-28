@@ -177,12 +177,6 @@
       color: #ff9800;
       margin-bottom: 16px;
     }
-    .task-detail p {
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 12px;
-      color: #555;
-    }
     .task-detail .instruction {
       background: #fff3e0;
       border-left: 4px solid #ff9800;
@@ -226,18 +220,29 @@
         </div>
         <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
+
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
-        <div class="amount">₹ 0.00</div>
-        <button class="gold-btn">Withdraw</button>
+        <div class="amount" id="balance">0 Coins</div>
+        <button class="gold-btn" onclick="alert('Withdraw coming soon')">Withdraw</button>
       </div>
+
       <div class="section-title">Quick Actions</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="alert('Daily Check-in Successful! +10 coins')"><span class="icon">✅</span>Daily Check-in</div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')"><span class="icon">🎯</span>Earn Tasks</div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')"><span class="icon">🎮</span>Fun Zone</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
+          <span class="icon">✅</span>Claim 100 Coins
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+          <span class="icon">🎯</span>Earn Tasks
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
+          <span class="icon">📢</span>Promote
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
+          <span class="icon">🎮</span>Fun Zone
+        </div>
       </div>
+
       <div class="banner">
         <div>
           <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
@@ -245,8 +250,11 @@
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
       </div>
+
       <div id="admin-btn" style="display:none; padding: 0 14px 20px;">
-        <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')"><span class="icon">👑</span>Admin Panel</button>
+        <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')">
+          <span class="icon">👑</span>Admin Panel
+        </button>
       </div>
     </div>
 
@@ -254,7 +262,6 @@
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
       <div class="section-title">Earn Tasks</div>
-
       <div class="list-item" onclick="openTask('auto')">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Half reward • Easy tasks only</p></div>
@@ -298,13 +305,13 @@
       <div class="task-detail">
         <h2>⚡ Auto Earn</h2>
         <div class="reward">Reward: Half of normal (Easy tasks only)</div>
-        <p>Only simple tasks that can be done automatically (Click, View, Join Channel).</p>
+        <p>Only simple tasks (Click, View, Join Channel).</p>
         <div class="instruction">
           <b>Allowed:</b> Click, View, Join Channel/Group<br>
-          <b>Not Allowed:</b> Install App, Signup, Complex tasks<br><br>
-          Earnings will be <b>50%</b> of normal reward.
+          <b>Not Allowed:</b> Install App, Signup<br>
+          Earnings = <b>50%</b> of normal reward
         </div>
-        <button class="gold-btn" style="width:100%;" onclick="alert('Auto Earn started! Easy tasks will be given.')">Start Auto Earn</button>
+        <button class="gold-btn" style="width:100%;" onclick="alert('Auto Earn started!')">Start Auto Earn</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
       </div>
@@ -315,12 +322,7 @@
       <div class="task-detail">
         <h2>▶️ Watch & Earn</h2>
         <div class="reward">Reward: +10 coins</div>
-        <p>Watch the full video/ad to earn coins.</p>
-        <div class="instruction">
-          1. Open the given link<br>
-          2. Watch the complete video<br>
-          3. Come back and submit proof
-        </div>
+        <div class="instruction">Watch the full video/ad then submit proof.</div>
         <button class="gold-btn" style="width:100%;" onclick="alert('Watch & Earn submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
@@ -332,12 +334,7 @@
       <div class="task-detail">
         <h2>👀 Views & Likes</h2>
         <div class="reward">Reward: +8 to +20 coins</div>
-        <p>View and like the given post.</p>
-        <div class="instruction">
-          1. Open the link<br>
-          2. Like / View the content<br>
-          3. Take screenshot and submit
-        </div>
+        <div class="instruction">Like/View the post and submit screenshot.</div>
         <button class="gold-btn" style="width:100%;" onclick="alert('Views & Likes submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
@@ -349,13 +346,7 @@
       <div class="task-detail">
         <h2>📢 Join Channel / Group</h2>
         <div class="reward">Reward: +15 coins</div>
-        <p>Join the given Telegram channel or group.</p>
-        <div class="instruction">
-          1. Click join link<br>
-          2. Join the channel/group<br>
-          3. Stay for at least 24 hours<br>
-          4. Submit proof
-        </div>
+        <div class="instruction">Join the channel/group and stay 24 hours.</div>
         <button class="gold-btn" style="width:100%;" onclick="alert('Join task submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
@@ -367,13 +358,7 @@
       <div class="task-detail">
         <h2>📱 Install App</h2>
         <div class="reward">Reward: +25 coins</div>
-        <p>Install and open the given app.</p>
-        <div class="instruction">
-          1. Download the app<br>
-          2. Install it<br>
-          3. Open the app once<br>
-          4. Submit screenshot
-        </div>
+        <div class="instruction">Install the app, open it once, then submit proof.</div>
         <button class="gold-btn" style="width:100%;" onclick="alert('Install App submitted!')">Submit Proof</button>
         <br>
         <button class="back-btn" onclick="showPage('earn')">← Back to Earn</button>
@@ -489,6 +474,15 @@
     const user = tg.initDataUnsafe?.user;
     const isAdmin = user && ADMIN_IDS.includes(user.id);
 
+    // Simple local storage for demo (will be replaced by backend later)
+    let balance = parseInt(localStorage.getItem('vtn_balance') || '0');
+    let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
+
+    function updateBalance() {
+      document.getElementById('balance').innerText = balance + ' Coins';
+      localStorage.setItem('vtn_balance', balance);
+    }
+
     if (isAdmin) {
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
@@ -502,6 +496,7 @@
         document.getElementById('profile-id').innerText = 'ID: ' + user.id;
         document.getElementById('ref-code').innerText = 'VTN' + user.id;
       }
+      updateBalance();
     }
 
     function showPage(pageId) {
@@ -517,6 +512,30 @@
 
     function openTask(type) {
       showPage('task-' + type);
+    }
+
+    // Daily Check-in Logic
+    function dailyCheckIn() {
+      // Simulate watching ad
+      const watchAd = confirm("Watch a short ad to claim your reward?");
+      if (!watchAd) {
+        alert("You need to watch the ad to claim coins.");
+        return;
+      }
+
+      let reward = 0;
+      if (isFirstDay) {
+        reward = Math.floor(Math.random() * 70) + 30; // 30 to 100 for first day
+        localStorage.setItem('vtn_first_day', 'done');
+        isFirstDay = false;
+        alert("🎉 First Day Bonus! You received " + reward + " Coins!");
+      } else {
+        reward = Math.floor(Math.random() * 13) + 3; // 3 to 15 coins
+        alert("Daily Check-in Successful! You received " + reward + " Coins!");
+      }
+
+      balance += reward;
+      updateBalance();
     }
   </script>
 </body>
