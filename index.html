@@ -145,37 +145,11 @@
       font-weight: 700;
       color: #c8102e;
     }
-    .lock-screen {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-      background: #FFF8E7;
-    }
-    .lock-box {
-      background: white;
-      border-radius: 20px;
-      padding: 40px 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-      max-width: 300px;
-    }
-    .lock-box h1 { font-size: 26px; color: #c8102e; margin-bottom: 12px; }
-    .lock-box p { color: #666; font-size: 15px; line-height: 1.5; }
   </style>
 </head>
 <body>
 
-  <div id="lock-screen" class="lock-screen">
-    <div class="lock-box">
-      <h1>🔒 Coming Soon</h1>
-      <p>VTN HUB Mini App is under maintenance.<br><br>Please check back later.</p>
-    </div>
-  </div>
-
-  <div id="main-app" style="display:none;">
+  <div id="main-app">
 
     <!-- HOME -->
     <div id="home" class="page active">
@@ -214,11 +188,6 @@
           <div style="font-size:12px;opacity:0.9;">Level 1: 5% | Level 2: 2%</div>
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
-      </div>
-      <div id="admin-btn" style="display:none; padding: 0 14px 20px;">
-        <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')">
-          <span class="icon">👑</span>Admin Panel
-        </button>
       </div>
     </div>
 
@@ -282,7 +251,7 @@
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
       <div class="section-title">Transaction History</div>
-      <div class="card" id="history-list">
+      <div class="card">
         <div style="text-align:center;color:#888;padding:20px;">No transactions yet</div>
       </div>
       <div style="padding:14px;">
@@ -359,19 +328,9 @@
       </div>
     </div>
 
-    <!-- ADMIN -->
-    <div id="admin" class="page">
-      <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Coming Soon - Full Control</div>
-      <div class="card">You can set VIP tasks, coins, ads, and more from here after full backend is ready.</div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
-      </div>
-    </div>
-
   </div>
 
-  <div class="bottom-nav" id="bottom-nav" style="display:none;">
+  <div class="bottom-nav">
     <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
     <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
     <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
@@ -380,87 +339,21 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const ALLOWED_IDS = [8150531247, 7393253410, 1330725407];
-    let currentUser = null;
-    let balance = 0;
-
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    async function init() {
-      // Wait for Telegram to fully load user data
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    const user = tg.initDataUnsafe?.user;
+    let balance = 0;
 
-      const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-
-      if (!user || !ALLOWED_IDS.includes(Number(user.id))) {
-        console.log("User not allowed:", user);
-        return;
-      }
-
-      // Unlock the app
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('main-app').style.display = 'block';
-      document.getElementById('bottom-nav').style.display = 'flex';
-
-      if (Number(user.id) === 8150531247) {
-        document.getElementById('admin-btn').style.display = 'block';
-      }
-
+    if (user) {
       document.getElementById('username').innerText = user.first_name || 'User';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
       document.getElementById('profile-name').innerText = user.first_name || 'User';
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
-
-      await loadUser(user);
-    }
-
-    async function loadUser(user) {
-      try {
-        let { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('telegram_id', user.id)
-          .single();
-
-        if (error || !data) {
-          const { data: newUser } = await supabase
-            .from('users')
-            .insert([{
-              telegram_id: user.id,
-              first_name: user.first_name || '',
-              username: user.username || '',
-              balance: 0,
-              is_vip: false,
-              daily_tasks: 0,
-              official_done: false
-            }])
-            .select()
-            .single();
-          currentUser = newUser;
-        } else {
-          currentUser = data;
-        }
-
-        balance = currentUser?.balance || 0;
-        updateBalance();
-
-        if (currentUser?.official_done) {
-          document.getElementById('official-task').style.display = 'none';
-        }
-      } catch (e) {
-        console.log('Error loading user', e);
-        balance = 0;
-        updateBalance();
-      }
     }
 
     function updateBalance() {
@@ -472,48 +365,27 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4, admin: 0 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
 
-    async function dailyCheckIn() {
+    function dailyCheckIn() {
       const watch = confirm("Watch a short ad to claim your reward?");
       if (!watch) return alert("Ad required to claim.");
-
       let reward = Math.floor(Math.random() * 13) + 3;
       balance += reward;
       updateBalance();
-
-      if (currentUser) {
-        await supabase.from('users').update({ balance: balance }).eq('telegram_id', currentUser.telegram_id);
-        await supabase.from('transactions').insert([{
-          telegram_id: currentUser.telegram_id,
-          amount: reward,
-          type: 'checkin',
-          description: 'Daily Check-in'
-        }]);
-      }
-
       alert("Daily Check-in Successful! +" + reward + " Coins");
     }
 
-    async function doOfficialTask() {
+    function doOfficialTask() {
       const join = confirm("Join Official Channel & Group to get 50 Coins?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
       if (!join) return;
-
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
       updateBalance();
-
-      if (currentUser) {
-        await supabase.from('users').update({ 
-          balance: balance, 
-          official_done: true 
-        }).eq('telegram_id', currentUser.telegram_id);
-      }
-
       document.getElementById('official-task').style.display = 'none';
       alert("🎉 Official Task Completed! +50 Coins");
     }
@@ -526,8 +398,7 @@
       alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
     }
 
-    // Start the app
-    init();
+    updateBalance();
   </script>
 </body>
-          </html>
+      </html>
