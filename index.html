@@ -258,7 +258,7 @@
       <div class="list-item"><div class="icon" style="background:#673AB7;">🔗</div><div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div><button class="start-btn">Buy</button></div>
 
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Submit your Channel/Group for Monetization. After approval we will send ads and you will earn revenue.')">
+      <div class="list-item" onclick="alert('Submit your Channel/Group for Monetization.\nAfter approval we will send ads and you will earn revenue.')">
         <div class="icon" style="background:#2196F3;">💰</div>
         <div class="info">
           <h4>Monetize My Channel / Group</h4>
@@ -307,7 +307,7 @@
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
       <div class="section-title">Transaction History</div>
-      <div class="card" id="history-list">
+      <div class="card">
         <div style="text-align:center;color:#888;padding:20px;">No transactions yet</div>
       </div>
       <div style="padding:14px;">
@@ -324,17 +324,23 @@
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
-      <div class="section-title">Keep VIP Active</div>
+      <div class="section-title">Keep VIP Active (Any one)</div>
       <div class="list-item">
         <div class="icon" style="background:#4CAF50;">✅</div>
-        <div class="info"><h4>Complete 10 Tasks Daily</h4><p>To maintain VIP level</p></div>
+        <div class="info"><h4>Complete 10 Tasks Daily</h4><p>To maintain VIP</p></div>
         <button class="start-btn">Go</button>
       </div>
-      <div class="list-item" onclick="showPage('refer')">
+      <div class="list-item">
         <div class="icon" style="background:#2196F3;">👥</div>
-        <div class="info"><h4>Refer Friends</h4></div>
-        <div>›</div>
+        <div class="info"><h4>Refer 5 People / Week</h4><p>To maintain VIP</p></div>
+        <button class="start-btn" onclick="showPage('refer')">Go</button>
       </div>
+      <div class="list-item">
+        <div class="icon" style="background:#FF9800;">💰</div>
+        <div class="info"><h4>Purchase VIP</h4><p>Pay 500 Coins</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="section-title">More</div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')">
         <div class="icon" style="background:#009688;">💬</div>
         <div class="info"><h4>Contact Support</h4><p>@Vtnhub0</p></div>
@@ -387,8 +393,8 @@
     <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Full controls coming soon</div>
-      <div class="card">You can manage tasks, coins, monetization requests and more from here.</div>
+      <div class="section-title">Coming Soon</div>
+      <div class="card">Full control for tasks, coins, monetization requests will be added here.</div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
       </div>
@@ -409,7 +415,7 @@
     const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const ALLOWED_IDS = [8150531247, 7393253410, 1330725407];
+    const ADMIN_ID = 8150531247;
     let currentUser = null;
     let balance = 0;
 
@@ -420,25 +426,23 @@
     tg.setBackgroundColor('#FFF8E7');
 
     async function init() {
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 1000));
 
       const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
 
-      if (!user || !ALLOWED_IDS.includes(Number(user.id))) {
-        return;
+      if (!user || Number(user.id) !== ADMIN_ID) {
+        return; // Keep locked for everyone except admin
       }
 
+      // Unlock for Admin
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
       document.getElementById('bottom-nav').style.display = 'flex';
+      document.getElementById('admin-btn').style.display = 'block';
 
-      if (Number(user.id) === 8150531247) {
-        document.getElementById('admin-btn').style.display = 'block';
-      }
-
-      document.getElementById('username').innerText = user.first_name || 'User';
+      document.getElementById('username').innerText = user.first_name || 'Admin';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
-      document.getElementById('profile-name').innerText = user.first_name || 'User';
+      document.getElementById('profile-name').innerText = user.first_name || 'Admin';
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
 
@@ -448,14 +452,13 @@
     async function loadUser(user) {
       try {
         let { data } = await supabase.from('users').select('*').eq('telegram_id', user.id).single();
-
         if (!data) {
           const { data: newUser } = await supabase.from('users').insert([{
             telegram_id: user.id,
             first_name: user.first_name || '',
             username: user.username || '',
             balance: 0,
-            is_vip: false,
+            is_vip: true,
             daily_tasks: 0,
             official_done: false
           }]).select().single();
@@ -463,10 +466,8 @@
         } else {
           currentUser = data;
         }
-
         balance = currentUser?.balance || 0;
         updateBalance();
-
         if (currentUser?.official_done) {
           document.getElementById('official-task').style.display = 'none';
         }
@@ -527,4 +528,4 @@
     init();
   </script>
 </body>
-  </html>
+          </html>
