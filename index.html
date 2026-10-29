@@ -186,7 +186,7 @@
           <div style="font-weight:700;" id="username">User</div>
           <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
         </div>
-        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;" id="vip-badge">VIP</div>
+        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
@@ -385,26 +385,32 @@
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const ALLOWED_IDS = [8150531247, 7393253410, 1330725407];
+    let currentUser = null;
+    let balance = 0;
+
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    const user = tg.initDataUnsafe?.user;
-    let currentUser = null;
-    let balance = 0;
-
     async function init() {
-      if (!user || !ALLOWED_IDS.includes(user.id)) {
-        return; // Keep locked
+      // Wait for Telegram to fully load user data
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+      if (!user || !ALLOWED_IDS.includes(Number(user.id))) {
+        console.log("User not allowed:", user);
+        return;
       }
 
+      // Unlock the app
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
       document.getElementById('bottom-nav').style.display = 'flex';
 
-      if (user.id === 8150531247) {
+      if (Number(user.id) === 8150531247) {
         document.getElementById('admin-btn').style.display = 'block';
       }
 
@@ -414,11 +420,10 @@
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
 
-      // Load or create user in Supabase
-      await loadUser();
+      await loadUser(user);
     }
 
-    async function loadUser() {
+    async function loadUser(user) {
       try {
         let { data, error } = await supabase
           .from('users')
@@ -427,7 +432,6 @@
           .single();
 
         if (error || !data) {
-          // Create new user
           const { data: newUser } = await supabase
             .from('users')
             .insert([{
@@ -446,14 +450,14 @@
           currentUser = data;
         }
 
-        balance = currentUser.balance || 0;
+        balance = currentUser?.balance || 0;
         updateBalance();
 
-        if (currentUser.official_done) {
+        if (currentUser?.official_done) {
           document.getElementById('official-task').style.display = 'none';
         }
       } catch (e) {
-        console.log('Supabase error', e);
+        console.log('Error loading user', e);
         balance = 0;
         updateBalance();
       }
@@ -478,15 +482,14 @@
       const watch = confirm("Watch a short ad to claim your reward?");
       if (!watch) return alert("Ad required to claim.");
 
-      let reward = Math.floor(Math.random() * 13) + 3; // 3-15
+      let reward = Math.floor(Math.random() * 13) + 3;
       balance += reward;
       updateBalance();
 
-      // Update in Supabase
       if (currentUser) {
-        await supabase.from('users').update({ balance: balance }).eq('telegram_id', user.id);
+        await supabase.from('users').update({ balance: balance }).eq('telegram_id', currentUser.telegram_id);
         await supabase.from('transactions').insert([{
-          telegram_id: user.id,
+          telegram_id: currentUser.telegram_id,
           amount: reward,
           type: 'checkin',
           description: 'Daily Check-in'
@@ -508,7 +511,7 @@
         await supabase.from('users').update({ 
           balance: balance, 
           official_done: true 
-        }).eq('telegram_id', user.id);
+        }).eq('telegram_id', currentUser.telegram_id);
       }
 
       document.getElementById('official-task').style.display = 'none';
@@ -523,8 +526,8 @@
       alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
     }
 
+    // Start the app
     init();
   </script>
 </body>
           </html>
- 
