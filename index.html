@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VTN HUB</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -145,37 +144,11 @@
       font-weight: 700;
       color: #c8102e;
     }
-    .lock-screen {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-      background: #FFF8E7;
-    }
-    .lock-box {
-      background: white;
-      border-radius: 20px;
-      padding: 40px 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-      max-width: 300px;
-    }
-    .lock-box h1 { font-size: 26px; color: #c8102e; margin-bottom: 12px; }
-    .lock-box p { color: #666; font-size: 15px; line-height: 1.5; }
   </style>
 </head>
 <body>
 
-  <div id="lock-screen" class="lock-screen">
-    <div class="lock-box">
-      <h1>🔒 Coming Soon</h1>
-      <p>VTN HUB Mini App is under maintenance.<br><br>Please check back later.</p>
-    </div>
-  </div>
-
-  <div id="main-app" style="display:none;">
+  <div id="main-app">
 
     <!-- HOME -->
     <div id="home" class="page active">
@@ -215,11 +188,6 @@
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
       </div>
-      <div id="admin-btn" style="display:none; padding: 0 14px 20px;">
-        <button class="btn" style="width:100%; background: linear-gradient(135deg, #c8102e, #9b0c24);" onclick="showPage('admin')">
-          <span class="icon">👑</span>Admin Panel
-        </button>
-      </div>
     </div>
 
     <!-- EARN -->
@@ -258,7 +226,7 @@
       <div class="list-item"><div class="icon" style="background:#673AB7;">🔗</div><div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div><button class="start-btn">Buy</button></div>
 
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Submit your Channel/Group for Monetization.\nAfter approval we will send ads and you will earn revenue.')">
+      <div class="list-item" onclick="showMonetize()">
         <div class="icon" style="background:#2196F3;">💰</div>
         <div class="info">
           <h4>Monetize My Channel / Group</h4>
@@ -390,19 +358,9 @@
       </div>
     </div>
 
-    <!-- ADMIN -->
-    <div id="admin" class="page">
-      <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Coming Soon</div>
-      <div class="card">Full control for tasks, coins, monetization requests will be added here.</div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
-      </div>
-    </div>
-
   </div>
 
-  <div class="bottom-nav" id="bottom-nav" style="display:none;">
+  <div class="bottom-nav">
     <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
     <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
     <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
@@ -411,70 +369,21 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const ADMIN_ID = 8150531247;
-    let currentUser = null;
-    let balance = 0;
-
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    async function init() {
-      await new Promise(r => setTimeout(r, 1000));
+    const user = tg.initDataUnsafe?.user;
+    let balance = 0;
 
-      const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-
-      if (!user || Number(user.id) !== ADMIN_ID) {
-        return; // Keep locked for everyone except admin
-      }
-
-      // Unlock for Admin
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('main-app').style.display = 'block';
-      document.getElementById('bottom-nav').style.display = 'flex';
-      document.getElementById('admin-btn').style.display = 'block';
-
-      document.getElementById('username').innerText = user.first_name || 'Admin';
+    if (user) {
+      document.getElementById('username').innerText = user.first_name || 'User';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
-      document.getElementById('profile-name').innerText = user.first_name || 'Admin';
+      document.getElementById('profile-name').innerText = user.first_name || 'User';
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
-
-      await loadUser(user);
-    }
-
-    async function loadUser(user) {
-      try {
-        let { data } = await supabase.from('users').select('*').eq('telegram_id', user.id).single();
-        if (!data) {
-          const { data: newUser } = await supabase.from('users').insert([{
-            telegram_id: user.id,
-            first_name: user.first_name || '',
-            username: user.username || '',
-            balance: 0,
-            is_vip: true,
-            daily_tasks: 0,
-            official_done: false
-          }]).select().single();
-          currentUser = newUser;
-        } else {
-          currentUser = data;
-        }
-        balance = currentUser?.balance || 0;
-        updateBalance();
-        if (currentUser?.official_done) {
-          document.getElementById('official-task').style.display = 'none';
-        }
-      } catch (e) {
-        balance = 0;
-        updateBalance();
-      }
     }
 
     function updateBalance() {
@@ -486,33 +395,27 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4, admin: 0 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
 
-    async function dailyCheckIn() {
+    function dailyCheckIn() {
       const watch = confirm("Watch a short ad to claim your reward?");
       if (!watch) return alert("Ad required to claim.");
       let reward = Math.floor(Math.random() * 13) + 3;
       balance += reward;
       updateBalance();
-      if (currentUser) {
-        await supabase.from('users').update({ balance }).eq('telegram_id', currentUser.telegram_id);
-      }
       alert("Daily Check-in Successful! +" + reward + " Coins");
     }
 
-    async function doOfficialTask() {
+    function doOfficialTask() {
       const join = confirm("Join Official Channel & Group to get 50 Coins?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
       if (!join) return;
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
       updateBalance();
-      if (currentUser) {
-        await supabase.from('users').update({ balance, official_done: true }).eq('telegram_id', currentUser.telegram_id);
-      }
       document.getElementById('official-task').style.display = 'none';
       alert("🎉 Official Task Completed! +50 Coins");
     }
@@ -525,7 +428,11 @@
       alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
     }
 
-    init();
+    function showMonetize() {
+      alert("Monetize My Channel / Group\n\nSend your Channel or Group link to @Vtnhub0\nAfter approval we will send ads and you will earn revenue.");
+    }
+
+    updateBalance();
   </script>
 </body>
-          </html>
+        </html>
