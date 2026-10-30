@@ -208,14 +208,14 @@
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically without doing anything</p></div>
         <button class="start-btn" onclick="alert('Auto Earn will be activated soon')">Start</button>
       </div>
-      <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="alert('Watch & Earn +10 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="alert('Views & Earn +2 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 Coins</p></div><button class="start-btn" onclick="alert('Join Channel +15 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+50 Coins</p></div><button class="start-btn" onclick="alert('Join Bot +50 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+100 Coins</p></div><button class="start-btn" onclick="alert('Install App +100 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>+10 Coins</p></div><button class="start-btn" onclick="alert('Visit Website +10 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>+5 Coins</p></div><button class="start-btn" onclick="alert('View Products +5 Coins')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Join Referral</h4><p>+50 Coins</p></div><button class="start-btn" onclick="alert('Join Referral +50 Coins')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10, 'Watch & Earn')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="addCoins(2, 'Views & Earn')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 Coins</p></div><button class="start-btn" onclick="addCoins(15, 'Join Channel')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50, 'Join Bot')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+100 Coins</p></div><button class="start-btn" onclick="addCoins(100, 'Install App')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10, 'Visit Website')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>+5 Coins</p></div><button class="start-btn" onclick="addCoins(5, 'View Products')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Join Referral</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50, 'Join Referral')">Start</button></div>
     </div>
 
     <!-- PROMOTE -->
@@ -335,7 +335,9 @@
     tg.setBackgroundColor('#FFF8E7');
 
     const user = tg.initDataUnsafe?.user;
-    let balance = 0;
+    let balance = Number(localStorage.getItem('vtn_balance')) || 0;
+    let lastCheckIn = localStorage.getItem('vtn_last_checkin') || '';
+    let officialDone = localStorage.getItem('vtn_official') === 'done';
     let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
 
     if (user) {
@@ -346,9 +348,14 @@
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
     }
 
+    if (officialDone) {
+      document.getElementById('official-task').style.display = 'none';
+    }
+
     function updateBalance() {
       document.getElementById('balance').innerText = balance + ' Coins';
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
+      localStorage.setItem('vtn_balance', balance);
     }
 
     function showPage(pageId) {
@@ -361,7 +368,18 @@
       }
     }
 
+    function addCoins(amount, title) {
+      balance += amount;
+      updateBalance();
+      alert(title + " Successful! +" + amount + " Coins");
+    }
+
     function dailyCheckIn() {
+      const today = new Date().toDateString();
+      if (lastCheckIn === today) {
+        return alert("You already claimed today's reward.\nCome back tomorrow!");
+      }
+
       const watch = confirm("Watch a short ad to claim your reward?");
       if (!watch) return alert("Ad required to claim.");
 
@@ -377,16 +395,21 @@
       }
 
       balance += reward;
+      lastCheckIn = today;
+      localStorage.setItem('vtn_last_checkin', today);
       updateBalance();
     }
 
     function doOfficialTask() {
+      if (officialDone) return alert("You already completed Official Task");
       const join = confirm("Join Official Channel & Group to get 50 Coins?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
       if (!join) return;
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
-      updateBalance();
+      officialDone = true;
+      localStorage.setItem('vtn_official', 'done');
       document.getElementById('official-task').style.display = 'none';
+      updateBalance();
       alert("🎉 Official Task Completed! +50 Coins");
     }
 
@@ -401,4 +424,4 @@
     updateBalance();
   </script>
 </body>
-                               </html>
+                                                                                                                                                                                                                       </html>
