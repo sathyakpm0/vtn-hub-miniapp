@@ -144,6 +144,15 @@
       font-weight: 700;
       color: #c8102e;
     }
+    .ad-banner {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      margin: 14px;
+      border-radius: 14px;
+      padding: 14px;
+      color: white;
+      text-align: center;
+      border: 1px solid #ffd700;
+    }
   </style>
 </head>
 <body>
@@ -156,8 +165,8 @@
       <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
-          <div style="font-weight:700;" id="username">Guest</div>
-          <div style="font-size:12px;color:#777;" id="userid">ID: Guest Mode</div>
+          <div style="font-weight:700;" id="username">User</div>
+          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
         </div>
         <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
@@ -166,6 +175,14 @@
         <div class="amount" id="balance">0 Coins</div>
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
+
+      <!-- Banner Ad -->
+      <div class="ad-banner" onclick="alert('Banner Ad - Contact @Vtnhub0 to place ads')">
+        <div style="font-size:12px;opacity:0.8;">Sponsored</div>
+        <div style="font-weight:700;margin:4px 0;">🔥 Place Your Ad Here</div>
+        <div style="font-size:12px;">Reach thousands of users</div>
+      </div>
+
       <div class="section-title">Quick Actions</div>
       <div class="grid">
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
@@ -206,7 +223,7 @@
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
-        <button class="start-btn" onclick="alert('Auto Earn coming soon')">Start</button>
+        <button class="start-btn" onclick="alert('Auto Earn will be activated soon')">Start</button>
       </div>
       <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Watch & Earn')">Start</button></div>
       <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="addCoins(2,'Views & Earn')">Start</button></div>
@@ -222,15 +239,21 @@
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
       <div class="section-title">Promotion Services</div>
-      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0 to promote')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#9C27B0;">🤖</div><div class="info"><h4>Promote Bot</h4><p>Get new users</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Send Channel/Group link to @Vtnhub0')">
+      <div class="list-item" onclick="alert('Send your Channel/Group link to @Vtnhub0')">
         <div class="icon" style="background:#2196F3;">💰</div>
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
+      </div>
+      <div class="section-title">Banner Ads</div>
+      <div class="list-item" onclick="alert('Place Banner Ad\nContact @Vtnhub0')">
+        <div class="icon" style="background:#FF5722;">📢</div>
+        <div class="info"><h4>Place Banner Ad</h4><p>Home page banner</p></div>
+        <button class="start-btn">Buy</button>
       </div>
     </div>
 
@@ -256,12 +279,12 @@
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
       <div class="section-title">Withdraw</div>
-      <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
+      <div class="list-item" onclick="alert('India - UPI / Bank\nMinimum 1000 Coins\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
         <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
-      <div class="list-item" onclick="alert('USDT Withdrawal\nContact @Vtnhub0')">
+      <div class="list-item" onclick="alert('USDT Withdrawal\nMinimum 1000 Coins\nContact @Vtnhub0')">
         <div class="icon" style="background:#26A17B;">₮</div>
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
@@ -276,11 +299,16 @@
       <div class="header">My Profile</div>
       <div class="card" style="text-align:center;">
         <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
-        <div style="font-weight:700;font-size:18px;" id="profile-name">Guest</div>
-        <div style="font-size:13px;color:#777;" id="profile-id">ID: Guest Mode</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
+      <div class="section-title">Keep VIP Active (Any one)</div>
+      <div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>Complete 10 Tasks Daily</h4></div><button class="start-btn">Go</button></div>
+      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Refer 5 People / Week</h4></div><button class="start-btn" onclick="showPage('refer')">Go</button></div>
+      <div class="list-item"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Purchase VIP (500 Coins)</h4></div><button class="start-btn">Buy</button></div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin')"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
     <!-- REFER -->
@@ -295,8 +323,22 @@
       </div>
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
-        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTNGUEST</div>
+        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
         <button class="gold-btn">Copy Code</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin" class="page">
+      <div class="header">👑 Admin Panel</div>
+      <div class="section-title">Quick Controls</div>
+      <div class="list-item" onclick="alert('Manage Tasks\nYou can add/edit/delete tasks from here soon')"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>Manage Tasks</h4><p>Add / Edit / Delete</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Manage Users coming soon')"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Manage Users</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Withdrawals coming soon')"><div class="icon" style="background:#4CAF50;">💸</div><div class="info"><h4>Withdrawals</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Monetize Requests coming soon')"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Monetize Requests</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Banner Ads Manager coming soon')"><div class="icon" style="background:#9C27B0;">📢</div><div class="info"><h4>Banner Ads</h4></div><button class="start-btn">Open</button></div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
     </div>
 
@@ -322,7 +364,6 @@
     let officialDone = localStorage.getItem('vtn_official') === 'done';
     let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
 
-    // Try to get real user
     const user = tg.initDataUnsafe?.user;
     if (user) {
       document.getElementById('username').innerText = user.first_name || 'User';
@@ -330,6 +371,10 @@
       document.getElementById('profile-name').innerText = user.first_name || 'User';
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
+
+      if (Number(user.id) === 8150531247) {
+        document.getElementById('admin-btn').style.display = 'flex';
+      }
     }
 
     if (officialDone) {
@@ -347,7 +392,7 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
@@ -405,4 +450,4 @@
     updateBalance();
   </script>
 </body>
-          </html>
+  </html>
