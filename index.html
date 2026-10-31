@@ -116,6 +116,15 @@
       justify-content: space-between;
       align-items: center;
     }
+    .ad-banner {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      margin: 14px;
+      border-radius: 14px;
+      padding: 14px;
+      color: white;
+      text-align: center;
+      border: 1px solid #ffd700;
+    }
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -144,15 +153,6 @@
       font-weight: 700;
       color: #c8102e;
     }
-    .ad-banner {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      margin: 14px;
-      border-radius: 14px;
-      padding: 14px;
-      color: white;
-      text-align: center;
-      border: 1px solid #ffd700;
-    }
   </style>
 </head>
 <body>
@@ -176,8 +176,7 @@
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
 
-      <!-- Banner Ad -->
-      <div class="ad-banner" onclick="alert('Banner Ad - Contact @Vtnhub0 to place ads')">
+      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0 to place ads here')">
         <div style="font-size:12px;opacity:0.8;">Sponsored</div>
         <div style="font-weight:700;margin:4px 0;">🔥 Place Your Ad Here</div>
         <div style="font-size:12px;">Reach thousands of users</div>
@@ -222,7 +221,7 @@
       <div class="section-title">Earn Tasks</div>
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
-        <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
+        <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically without doing anything</p></div>
         <button class="start-btn" onclick="alert('Auto Earn will be activated soon')">Start</button>
       </div>
       <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Watch & Earn')">Start</button></div>
@@ -239,21 +238,33 @@
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
       <div class="section-title">Promotion Services</div>
-      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0 to promote')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#9C27B0;">🤖</div><div class="info"><h4>Promote Bot</h4><p>Get new users</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#FF9800;">🧪</div><div class="info"><h4>Test App / Web</h4><p>Test & review</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#00BCD4;">🌐</div><div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#673AB7;">🔗</div><div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Send your Channel/Group link to @Vtnhub0')">
+      <div class="list-item" onclick="alert('Send your Channel or Group link to @Vtnhub0\nAfter approval we will send ads and you will earn revenue.')">
         <div class="icon" style="background:#2196F3;">💰</div>
-        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
+        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn revenue by allowing ads</p></div>
         <button class="start-btn">Apply</button>
       </div>
+
       <div class="section-title">Banner Ads</div>
-      <div class="list-item" onclick="alert('Place Banner Ad\nContact @Vtnhub0')">
+      <div class="list-item" onclick="alert('Place Banner Ad on Home page\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF5722;">📢</div>
-        <div class="info"><h4>Place Banner Ad</h4><p>Home page banner</p></div>
+        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
         <button class="start-btn">Buy</button>
+      </div>
+
+      <div class="section-title">Cross Promotion</div>
+      <div class="list-item">
+        <div class="icon" style="background:#00BCD4;">🔄</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
+        <button class="start-btn" onclick="alert('Coming soon')">Start</button>
       </div>
     </div>
 
@@ -267,7 +278,21 @@
         <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="startGame('Shoot')"><span class="icon">🔫</span>Shoot</div>
         <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="startGame('Tower')"><span class="icon">🗼</span>Tower</div>
         <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="startGame('Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8:00 PM')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="startGame('Dice')"><span class="icon">🎲</span>Dice</div>
+        <div class="btn" style="background: linear-gradient(135deg, #673AB7, #512DA8);" onclick="startGame('Memory')"><span class="icon">🃏</span>Memory</div>
+        <div class="btn" style="background: linear-gradient(135deg, #795548, #5D4037);" onclick="startGame('Rock')"><span class="icon">✊</span>Rock</div>
+        <div class="btn" style="background: linear-gradient(135deg, #607D8B, #455A64);" onclick="startGame('Number')"><span class="icon">🔢</span>Number</div>
+      </div>
+      <div class="list-item" onclick="enterChat()">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Community Chat</h4><p>Play & Earn while chatting • No links</p></div>
+        <button class="start-btn">Enter</button>
+      </div>
+      <div class="list-item">
+        <div class="icon" style="background:#c8102e;">🏆</div>
+        <div class="info"><h4>Leaderboard</h4><p>Top earners</p></div>
+        <button class="start-btn" onclick="alert('Leaderboard coming soon')">View</button>
       </div>
     </div>
 
@@ -278,13 +303,19 @@
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
+      <div class="section-title">Add Coins</div>
+      <div class="list-item" onclick="alert('Add Coins coming soon\nUPI / USDT')">
+        <div class="icon" style="background:#4CAF50;">➕</div>
+        <div class="info"><h4>Add Coins</h4><p>Buy with UPI or USDT</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
       <div class="section-title">Withdraw</div>
       <div class="list-item" onclick="alert('India - UPI / Bank\nMinimum 1000 Coins\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
         <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
-      <div class="list-item" onclick="alert('USDT Withdrawal\nMinimum 1000 Coins\nContact @Vtnhub0')">
+      <div class="list-item" onclick="alert('USDT Withdrawal\nMinimum 1000 Coins\nTRC20 / BEP20\nContact @Vtnhub0')">
         <div class="icon" style="background:#26A17B;">₮</div>
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
@@ -304,10 +335,12 @@
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
       <div class="section-title">Keep VIP Active (Any one)</div>
-      <div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>Complete 10 Tasks Daily</h4></div><button class="start-btn">Go</button></div>
-      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Refer 5 People / Week</h4></div><button class="start-btn" onclick="showPage('refer')">Go</button></div>
-      <div class="list-item"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Purchase VIP (500 Coins)</h4></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>Complete 10 Tasks Daily</h4><p>To maintain VIP</p></div><button class="start-btn">Go</button></div>
+      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Refer 5 People / Week</h4><p>To maintain VIP</p></div><button class="start-btn" onclick="showPage('refer')">Go</button></div>
+      <div class="list-item"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Purchase VIP</h4><p>Pay 500 Coins</p></div><button class="start-btn">Buy</button></div>
+      <div class="section-title">More</div>
+      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support</h4><p>@Vtnhub0</p></div><div>›</div></div>
+      <div class="list-item" onclick="showPage('terms')"><div class="icon" style="background:#607D8B;">📄</div><div class="info"><h4>Terms & Policies</h4></div><div>›</div></div>
       <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin')"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
@@ -324,7 +357,27 @@
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
         <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
-        <button class="gold-btn">Copy Code</button>
+        <button class="gold-btn" onclick="copyCode()">Copy Code</button>
+      </div>
+    </div>
+
+    <!-- TERMS -->
+    <div id="terms" class="page">
+      <div class="header">Terms & Policies</div>
+      <div class="card" style="font-size:14px; line-height:1.6;">
+        <p style="color:#c8102e; font-weight:700; margin-bottom:12px;">
+          ⚠️ Important Warning:<br>
+          Do not invest any money in this platform.<br>
+          We are not responsible for any loss of money.
+        </p>
+        <p>1. Official Channel: https://t.me/vtnhub</p>
+        <p>2. Official Group: https://t.me/vtnhub1</p>
+        <p>3. Support: @Vtnhub0</p>
+        <p>4. All rewards depend on available funds.</p>
+        <p>5. Fake proofs will lead to ban.</p>
+      </div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
     </div>
 
@@ -332,11 +385,11 @@
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
       <div class="section-title">Quick Controls</div>
-      <div class="list-item" onclick="alert('Manage Tasks\nYou can add/edit/delete tasks from here soon')"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>Manage Tasks</h4><p>Add / Edit / Delete</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="alert('Manage Users coming soon')"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Manage Users</h4></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="alert('Withdrawals coming soon')"><div class="icon" style="background:#4CAF50;">💸</div><div class="info"><h4>Withdrawals</h4></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="alert('Monetize Requests coming soon')"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Monetize Requests</h4></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="alert('Banner Ads Manager coming soon')"><div class="icon" style="background:#9C27B0;">📢</div><div class="info"><h4>Banner Ads</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Manage Tasks coming next')"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>Manage Tasks</h4><p>Add / Edit / Delete tasks</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Coming soon')"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Manage Users</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Coming soon')"><div class="icon" style="background:#4CAF50;">💸</div><div class="info"><h4>Withdrawals</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Coming soon')"><div class="icon" style="background:#FF9800;">💰</div><div class="info"><h4>Monetize Requests</h4></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="alert('Coming soon')"><div class="icon" style="background:#9C27B0;">📢</div><div class="info"><h4>Banner Ads</h4></div><button class="start-btn">Open</button></div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
@@ -359,12 +412,20 @@
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    let balance = Number(localStorage.getItem('vtn_balance')) || 0;
-    let lastCheckIn = localStorage.getItem('vtn_last_checkin') || '';
-    let officialDone = localStorage.getItem('vtn_official') === 'done';
-    let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
-
     const user = tg.initDataUnsafe?.user;
+    const userId = user ? user.id : 'guest';
+
+    // User-specific storage keys
+    const balanceKey = 'vtn_balance_' + userId;
+    const checkinKey = 'vtn_last_checkin_' + userId;
+    const officialKey = 'vtn_official_' + userId;
+    const firstDayKey = 'vtn_first_day_' + userId;
+
+    let balance = Number(localStorage.getItem(balanceKey)) || 0;
+    let lastCheckIn = localStorage.getItem(checkinKey) || '';
+    let officialDone = localStorage.getItem(officialKey) === 'done';
+    let isFirstDay = localStorage.getItem(firstDayKey) !== 'done';
+
     if (user) {
       document.getElementById('username').innerText = user.first_name || 'User';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
@@ -375,6 +436,11 @@
       if (Number(user.id) === 8150531247) {
         document.getElementById('admin-btn').style.display = 'flex';
       }
+    } else {
+      document.getElementById('username').innerText = 'Guest';
+      document.getElementById('userid').innerText = 'ID: Guest Mode';
+      document.getElementById('profile-name').innerText = 'Guest';
+      document.getElementById('profile-id').innerText = 'ID: Guest Mode';
     }
 
     if (officialDone) {
@@ -385,14 +451,14 @@
     function updateBalance() {
       document.getElementById('balance').innerText = balance + ' Coins';
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
-      localStorage.setItem('vtn_balance', balance);
+      localStorage.setItem(balanceKey, balance);
     }
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, terms: 4, admin: 4 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
@@ -416,7 +482,7 @@
       let reward = 0;
       if (isFirstDay) {
         reward = Math.floor(Math.random() * 70) + 30;
-        localStorage.setItem('vtn_first_day', 'done');
+        localStorage.setItem(firstDayKey, 'done');
         isFirstDay = false;
         alert("🎉 First Day Bonus! You received " + reward + " Coins!");
       } else {
@@ -426,7 +492,7 @@
 
       balance += reward;
       lastCheckIn = today;
-      localStorage.setItem('vtn_last_checkin', today);
+      localStorage.setItem(checkinKey, today);
       updateBalance();
     }
 
@@ -437,7 +503,7 @@
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
       officialDone = true;
-      localStorage.setItem('vtn_official', 'done');
+      localStorage.setItem(officialKey, 'done');
       document.getElementById('official-task').style.display = 'none';
       updateBalance();
       alert("Official Task Completed! +50 Coins");
@@ -447,7 +513,20 @@
       alert("Play & Earn freely!\n\n" + game + " starting...");
     }
 
+    function enterChat() {
+      alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
+    }
+
+    function copyCode() {
+      const code = document.getElementById('ref-code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("Referral code copied: " + code);
+      }).catch(() => {
+        alert("Your code: " + code);
+      });
+    }
+
     updateBalance();
   </script>
 </body>
-  </html>
+        </html>
