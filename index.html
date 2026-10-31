@@ -1,291 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#c8102e">
-<title>VTN Hub</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<style>
-:root{
---red:#c8102e;
---red2:#a90d29;
---cream:#fff8e7;
---yellow:#ffd000;
---text:#333;
---muted:#888
-}
-*{box-sizing:border-box}
-body{
-margin:0;background:var(--cream);
-font-family:Arial,Helvetica,sans-serif;
-color:var(--text);padding-bottom:82px
-}
-header{
-height:64px;background:var(--red);color:#fff;
-display:flex;align-items:center;justify-content:center;
-font-size:23px;font-weight:800;position:sticky;top:0;z-index:5
-}
-.page-title{
-background:linear-gradient(110deg,var(--red),var(--red2));
-color:#fff;text-align:center;padding:18px 10px;
-font-size:22px;font-weight:800
-}
-main{max-width:720px;margin:auto;padding:18px 16px}
-.hidden{display:none!important}
-.card{
-background:#fff;border:3px solid #b51b3b;
-border-radius:23px;padding:18px;margin:14px 0;
-box-shadow:0 5px 12px #8b6b2914
-}
-.row{display:flex;align-items:center;gap:14px}
-.grow{flex:1;min-width:0}
-.icon{
-width:84px;height:84px;display:grid;place-items:center;
-border-radius:22px;font-size:35px;flex-shrink:0;color:#fff
-}
-h2{font-size:22px;margin:8px 0}
-h3{font-size:18px;margin:0 0 6px}
-.muted{color:var(--muted);font-size:16px;line-height:1.4}
-button{
-border:0;border-radius:30px;background:var(--red);
-color:#fff;font-weight:800;font-size:16px;
-padding:13px 22px;cursor:pointer
-}
-button:disabled{opacity:.5}
-.yellow{background:var(--yellow);color:#573d00}
-.wide{width:100%}
-.balance{
-background:linear-gradient(120deg,var(--red),var(--red2));
-border-radius:28px;text-align:center;color:var(--yellow);
-padding:34px 12px;margin:0 0 24px
-}
-.balance small{color:#fff;font-size:18px}
-.balance strong{display:block;font-size:42px;margin:10px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.tile{
-min-height:128px;border:0;border-radius:28px;color:#fff;
-display:flex;flex-direction:column;align-items:center;
-justify-content:center;gap:10px;font-size:20px;font-weight:800
-}
-.tile span:first-child{font-size:34px}
-.green{background:linear-gradient(135deg,#53b85b,#27833c)}
-.orange{background:linear-gradient(135deg,#ff9e00,#f06b00)}
-.pink{background:linear-gradient(135deg,#ed1763,#bf1454)}
-.purple{background:linear-gradient(135deg,#9b24b7,#5829a9)}
-.blue{background:linear-gradient(135deg,#269be9,#1972c5)}
-.teal{background:linear-gradient(135deg,#08bacb,#00949e)}
-.brown{background:linear-gradient(135deg,#806052,#563c32)}
-.slate{background:linear-gradient(135deg,#718a94,#405964)}
-nav{
-position:fixed;bottom:0;left:0;right:0;background:#fff;
-display:flex;justify-content:space-around;
-padding:10px 2px calc(10px + env(safe-area-inset-bottom));
-box-shadow:0 -5px 16px #00000012;z-index:10
-}
-nav button{
-background:none;color:#888;border-radius:0;padding:4px 5px;
-font-weight:500;display:flex;flex-direction:column;
-align-items:center;gap:3px;font-size:14px
-}
-nav button b{font-size:27px}
-nav button.active{color:var(--red);font-weight:800}
-.section{color:#a71937;font-weight:800;font-size:21px;margin:24px 0 14px}
-input,textarea,select{
-width:100%;border:1px solid #ddd;border-radius:12px;
-padding:13px;font:16px Arial;margin:6px 0 12px;background:#fff
-}
-label{font-weight:700;font-size:14px}
-.task-reward{color:#888;font-size:16px;margin-top:4px}
-.pill{
-display:inline-block;background:#fff0b8;color:#755400;
-padding:7px 13px;border-radius:18px;font-weight:700
-}
-.notice{
-padding:13px;border-radius:12px;background:#fff1c8;
-color:#684d00;margin:12px 0;font-size:14px;line-height:1.5
-}
-.auth{max-width:460px;margin:35px auto}
-.auth h2{text-align:center;color:var(--red)}
-.small-btn{padding:9px 14px;font-size:14px}
-.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-@media(max-width:390px){
-.icon{width:68px;height:68px}
-.card{padding:14px}
-.grid{gap:10px}
-.tile{min-height:112px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VTN HUB</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #FFF8E7;
+      color: #333;
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .card {
+      background: white;
+      margin: 12px 14px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
+    .balance-card {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      margin: 14px;
+      border-radius: 18px;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(200,16,46,0.25);
+    }
+    .balance-card .amount {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffd700;
+      margin: 8px 0 14px;
+    }
+    .gold-btn {
+      background: linear-gradient(90deg, #ffd700, #ffb700);
+      color: #5c3d00;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 14px 14px;
+    }
+    .btn {
+      border-radius: 16px;
+      padding: 16px 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .btn .icon { font-size: 22px; margin-bottom: 5px; display: block; }
+    .list-item {
+      background: white;
+      margin: 0 14px 10px;
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid #c8102e;
+    }
+    .list-item .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+    }
+    .list-item .info { flex: 1; }
+    .list-item .info h4 { font-size: 14px; }
+    .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
+    .start-btn {
+      background: #c8102e;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .banner {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      margin: 14px;
+      border-radius: 16px;
+      padding: 16px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ad-banner {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      margin: 14px;
+      border-radius: 14px;
+      padding: 14px;
+      color: white;
+      text-align: center;
+      border: 1px solid #ffd700;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -3px 15px rgba(0,0,0,0.08);
+      z-index: 200;
+    }
+    .nav-item {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      flex: 1;
+    }
+    .nav-item.active { color: #c8102e; font-weight: 700; }
+    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .section-title {
+      margin: 16px 14px 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #c8102e;
+    }
+  </style>
 </head>
-
 <body>
-<header>👑 VTN Hub</header>
 
-<div id="authView" class="auth card">
-<h2>Welcome to VTN Hub</h2>
-<div class="notice">Sign in or create an account.</div>
-<label>Email</label>
-<input id="email" type="email" placeholder="Email">
-<label>Password</label>
-<input id="password" type="password" placeholder="Password">
-<button class="wide" onclick="signIn()">Sign In</button>
-<button class="wide yellow" style="margin-top:10px" onclick="signUp()">Create Account</button>
-<p id="authMsg" class="muted"></p>
-</div>
+  <div id="main-app">
 
-<div id="appView" class="hidden">
-<div id="pageTitle" class="page-title">VTN Hub Bot</div>
+    <!-- HOME -->
+    <div id="home" class="page active">
+      <div class="header">👑 VTN Hub Bot</div>
+      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
+        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
+        <div>
+          <div style="font-weight:700;" id="username">User</div>
+          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
+        </div>
+        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
+      </div>
+      <div class="balance-card">
+        <div style="font-size:13px;opacity:0.9;">Your Balance</div>
+        <div class="amount" id="balance">0 Coins</div>
+        <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
+      </div>
 
-<main>
+      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0 to place ads')">
+        <div style="font-size:12px;opacity:0.8;">Sponsored</div>
+        <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
+        <div style="font-size:12px;">Reach thousands of users</div>
+      </div>
 
-<section id="homePage" class="page">
-<div class="balance">
-<small>Current Balance</small>
-<strong id="homeBalance">0 Coins</strong>
-<button class="yellow" onclick="showPage('wallet')">Wallet & History</button>
-</div>
+      <div class="section-title">Quick Actions</div>
+      <div class="grid">
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
+          <span class="icon">✅</span>Claim up to 100
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+          <span class="icon">🎯</span>Earn Tasks
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
+          <span class="icon">📢</span>Promote
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
+          <span class="icon">🎮</span>Fun Zone
+        </div>
+      </div>
+      <div class="banner">
+        <div>
+          <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
+          <div style="font-size:12px;opacity:0.9;">Level 1: 5% | Level 2: 2%</div>
+        </div>
+        <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
+      </div>
+    </div>
 
-<div class="card" style="background:#171b35;color:white;text-align:center">
-<div>Sponsored</div>
-<h2>🔥 Place Your Ad Here</h2>
-Reach VTN Hub users
-</div>
+    <!-- EARN -->
+    <div id="earn" class="page">
+      <div class="header">Earn Money</div>
+      <div class="section-title">Official Task</div>
+      <div class="list-item" id="official-task" onclick="doOfficialTask()">
+        <div class="icon" style="background:#c8102e;">⭐</div>
+        <div class="info">
+          <h4>Join Official Channel & Group</h4>
+          <p>+50 Coins • Required</p>
+        </div>
+        <button class="start-btn">Join</button>
+      </div>
+      <div class="section-title">Earn Tasks</div>
+      <div class="list-item">
+        <div class="icon" style="background:#FF9800;">⚡</div>
+        <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
+        <button class="start-btn" onclick="alert('Auto Earn coming soon')">Start</button>
+      </div>
+      <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Watch & Earn')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="addCoins(2,'Views & Earn')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 Coins</p></div><button class="start-btn" onclick="addCoins(15,'Join Channel')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50,'Join Bot')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+100 Coins</p></div><button class="start-btn" onclick="addCoins(100,'Install App')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Visit Website')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>+5 Coins</p></div><button class="start-btn" onclick="addCoins(5,'View Products')">Start</button></div>
+      <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Join Referral</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50,'Join Referral')">Start</button></div>
+    </div>
 
-<div class="section">Quick Actions</div>
-<div class="grid">
-<button class="tile green" onclick="claimDaily()"><span>✅</span><span>Daily Check In</span></button>
-<button class="tile orange" onclick="showPage('earn')"><span>🎯</span><span>Earn Tasks</span></button>
-<button class="tile pink" onclick="showPage('promote')"><span>📢</span><span>Promote</span></button>
-<button class="tile purple" onclick="showPage('fun')"><span>🎮</span><span>Fun Zone</span></button>
-</div>
+    <!-- PROMOTE -->
+    <div id="promote" class="page">
+      <div class="header">Promote Services</div>
+      <div class="section-title">Promotion Services</div>
+      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#9C27B0;">🤖</div><div class="info"><h4>Promote Bot</h4><p>Get new users</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="section-title">Monetization</div>
+      <div class="list-item" onclick="alert('Send Channel/Group link to @Vtnhub0')">
+        <div class="icon" style="background:#2196F3;">💰</div>
+        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
+        <button class="start-btn">Apply</button>
+      </div>
+      <div class="section-title">Cross Promotion</div>
+      <div class="list-item">
+        <div class="icon" style="background:#00BCD4;">🔄</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day</p></div>
+        <button class="start-btn" onclick="alert('Coming soon')">Start</button>
+      </div>
+    </div>
 
-<div class="card row" style="background:#b90e2d;color:white">
-<div class="grow">
-<h3>Earn More, Refer Friends</h3>
-<div>Invite your friends to VTN Hub</div>
-</div>
-<button class="yellow" onclick="shareReferral()">Invite</button>
-</div>
-</section>
+    <!-- FUN -->
+    <div id="fun" class="page">
+      <div class="header">Fun Zone</div>
+      <div class="section-title">Games (Play & Earn)</div>
+      <div class="grid">
+        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="startGame('Dart')"><span class="icon">🎯</span>Dart</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="startGame('Fruit')"><span class="icon">🍎</span>Fruit</div>
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="startGame('Shoot')"><span class="icon">🔫</span>Shoot</div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="startGame('Tower')"><span class="icon">🗼</span>Tower</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="startGame('Spin')"><span class="icon">🎡</span>Spin</div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')"><span class="icon">❓</span>Quiz</div>
+      </div>
+      <div class="list-item" onclick="enterChat()">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Community Chat</h4><p>Play & Earn while chatting</p></div>
+        <button class="start-btn">Enter</button>
+      </div>
+    </div>
 
-<section id="earnPage" class="page hidden">
-<div class="section">Earn Money</div>
+    <!-- WALLET -->
+    <div id="wallet" class="page">
+      <div class="header">Wallet & History</div>
+      <div class="balance-card">
+        <div style="font-size:13px;opacity:0.9;">Current Balance</div>
+        <div class="amount" id="wallet-balance">0 Coins</div>
+      </div>
+      <div class="section-title">Withdraw</div>
+      <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
+        <div class="icon" style="background:#FF9800;">🇮🇳</div>
+        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
+      <div class="list-item" onclick="alert('USDT Withdrawal\nContact @Vtnhub0')">
+        <div class="icon" style="background:#26A17B;">₮</div>
+        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
+      </div>
+    </div>
 
-<div class="row" style="justify-content:space-between">
-<h3>Earn Tasks</h3>
-<button id="addTaskBtn" class="small-btn hidden" onclick="openTaskForm()">＋ Add Earn Task</button>
-</div>
+    <!-- PROFILE -->
+    <div id="profile" class="page">
+      <div class="header">My Profile</div>
+      <div class="card" style="text-align:center;">
+        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
+      </div>
+      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin')"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
+    </div>
 
-<div id="taskForm" class="card hidden">
-<h2>Create Earn Task</h2>
-<label>Task Title</label>
-<input id="newTaskTitle" placeholder="Task title">
-<label>Description</label>
-<textarea id="newTaskDesc"></textarea>
-<label>Reward Coins</label>
-<input id="newTaskReward" type="number" min="1">
-<label>Task Category</label>
-<select id="newTaskType">
-<option value="view">Watch & Earn</option>
-<option value="other">Earn Task</option>
-<option value="other">Auto Earn (manual task queue)</option>
-<option value="view">Views & Earn</option>
-<option value="join">Join Channel / Group</option>
-<option value="bot">Join Bot</option>
-<option value="install">Install App</option>
-<option value="visit">Visit Website</option>
-<option value="other">View Products</option>
-<option value="other">Join Referral</option>
-</select>
-<label>Task Link</label>
-<input id="newTaskUrl" type="url" placeholder="https://...">
-<div class="task-actions">
-<button onclick="createTask()">Publish Task</button>
-<button class="yellow" onclick="closeTaskForm()">Cancel</button>
-</div>
-<p id="taskFormMsg" class="muted"></p>
-</div>
+    <!-- REFER -->
+    <div id="refer" class="page">
+      <div class="header">Refer & Earn</div>
+      <div class="banner">
+        <div>
+          <div style="font-weight:700;">Invite Friends</div>
+          <div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div>
+        </div>
+        <div style="font-size:28px;">🎁</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:13px;color:#777;">Your Referral Code</div>
+        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
+        <button class="gold-btn" onclick="copyCode()">Copy Code</button>
+      </div>
+    </div>
 
-<div id="tasksList"></div>
-<div class="notice">Rewards are credited only after admin approval or verified eligible ad-network callbacks.</div>
-</section>
+    <!-- ADMIN -->
+    <div id="admin" class="page">
+      <div class="header">👑 Admin Panel</div>
+      <div class="section-title">Coming Soon</div>
+      <div class="card">Full control for tasks, users and withdrawals will be added here.</div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
+      </div>
+    </div>
 
-<section id="walletPage" class="page hidden">
-<div class="balance">
-<small>Current Balance</small>
-<strong id="walletBalance">0 Coins</strong>
-</div>
-<div class="section">Wallet & History</div>
-<div class="card">
-<h3>Points Wallet</h3>
-<p class="muted">Earn & Pay: use earned coins for promotions.</p>
-<p class="muted">Deposit & Pay: disabled until a compliant payment system is configured.</p>
-</div>
-<div id="historyList"></div>
-</section>
+  </div>
 
-<section id="promotePage" class="page hidden">
-<div class="section">Promote Services</div>
-<div id="promoList"></div>
-<div class="notice">
-Earn & Pay uses platform coins. Deposit & Pay is currently disabled.
-All advertisements require admin approval.
-</div>
-</section>
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
+    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
+    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
+  </div>
 
-<section id="funPage" class="page hidden">
-<div class="section">Fun Zone</div>
-<div class="grid">
-<div class="tile orange"><span>🎯</span><span>Dart</span></div>
-<div class="tile green"><span>🍎</span><span>Fruit</span></div>
-<div class="tile blue"><span>🎯</span><span>Shoot</span></div>
-<div class="tile purple"><span>🗼</span><span>Tower</span></div>
-<div class="tile orange"><span>🎡</span><span>Spin</span></div>
-<div class="tile teal"><span>❓</span><span>Quiz</span></div>
-<div class="tile pink"><span>🎲</span><span>Dice</span></div>
-<div class="tile purple"><span>🃏</span><span>Memory</span></div>
-<div class="tile brown"><span>✊</span><span>Rock</span></div>
-<div class="tile slate"><span>🔢</span><span>Number</span></div>
-</div>
-<div class="card"><h3>Community Chat</h3></div>
-<div class="card"><h3>🏆 Leaderboard</h3><div id="leaderboard"></div></div>
-</section>
+  <script>
+    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
+    let supabase = null;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch (e) {
+      console.log('Supabase not loaded');
+    }
 
-<section id="profilePage" class="page hidden">
-<div class="card" style="text-align:center">
-<div style="font-size:65px">🤖</div>
-<h2>VTN Hub</h2>
-<div id="profileEmail" class="muted"></div>
-<div id="vipBadge" class="pill">Member</div>
-</div>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor('#c8102e');
+    tg.setBackgroundColor('#FFF8E7');
 
-<div class="section">More</div>
-<div class="card">
-<h3>Account</h3>
-<button class="small-btn" onclick="signOut()">Sign Out</button>
-</div>
+    const user = tg.initDataUnsafe?.user;
+    const userId = user ? user.id : 'guest';
 
-<div class="card">
-<h3>Contact Support</h3>
-<p class="muted">Contact VTN Hub support.</p>
-</div>
+    // Local keys as fallback
+    const balanceKey = 'vtn_balance_' + userId;
+    const checkinKey = 'vtn_last_checkin_' + userId;
+    const officialKey = 'vtn_official_' + userId;
+    const firstDayKey = 'vtn_first_day_' + userId;
 
-<div id="adminPanel" class="card hidden">
-<h3>👑 Admin Panel</h3>
-<div id="pendingClaims"></div>
-</div>
-</section>
+    let balance = Number(localStorage.getItem(balanceKey)) || 0;
+    let lastCheckIn = localStorage.getItem(checkinKey) || '';
+    let officialDone = localStorage.getItem(officialKey) === 'done';
+    let isFirstDay = localStorage.getItem(firstDayKey) !== 'done';
+    let currentUser = null;
 
-</main>
+    if (user) {
+      document.getElementById('username').innerText = user.first_name || 'User';
+      document.getElementById('userid').innerText = 'ID: ' + user.id;
+      document.getElementById('profile-name').innerText = user.first_name || 'User';
+      document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+      document.getElementById('ref-code').innerText = 'VTN' + user.id;
 
-<nav>
-<button class="active" data-page="home" onclick="showPage('home')"><b>🏠</b>Home</button>
-<button data-page="earn" onclick="showPage('earn')"><b>💰</b>Earn</button>
-<button data-page="promote" onclick="showPage('promote')"><b>📢</b>Promote</button>
-<button data-page="fun" onclick="showPage('fun')"><b>🎮</b>Fun</button>
-<button data-page="profile" onclick="showPage('profile')"><b>👤</b>Profile</button>
-</nav>
-</div>
+      if (Number(user.id) === 8150531247) {
+        document.getElementById('admin-btn').style.display = 'flex';
+      }
+    }
+
+    if (officialDone) {
+      const el = document.getElementById('official-task');
+      if (el) el.style.display = 'none';
+    }
+
+    // Load from Supabase carefully
+    async function loadFromSupabase() {
+      if (!supabase || !user) return;
+
+      try {
+        let { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('telegram_id', user.id)
+          .single();
+
+        if (error || !data) {
+          // Create user
+          const { data: newUser } = await supabase
+            .from('users')
+            .insert([{
+              telegram_id: user.id,
+              first_name: user.first_name || '',
+              username: user.username || '',
+              balance: balance,
+              is_vip: false,
+              daily_tasks: 0,
+              official_done: officialDone
+            }])
+            .select()
+            .single();
+          currentUser = newUser;
+        } else {
+          currentUser = data;
+          // Prefer server balance if available
+          if (typeof data.balance === 'number') {
+            balance = data.balance;
+            localStorage.setItem(balanceKey, balance);
+          }
+          if (data.official_done) {
+            officialDone = true;
+            localStorage.setItem(officialKey, 'done');
+            const el = document.getElementById('official-task');
+            if (el) el.style.display = 'none';
+          }
+        }
+        updateBalance();
+      } catch (e) {
+        console.log('Supabase load failed, using local', e);
+      }
+    }
+
+    async function saveToSupabase(amount, type, description) {
+      if (!supabase || !user) return;
+
+      try {
+        await supabase.from('users')
+          .update({ balance: balance })
+          .eq('telegram_id', user.id);
+
+        await supabase.from('transactions').insert([{
+          telegram_id: user.id,
+          amount: amount,
+          type: type,
+          description: description
+        }]);
+      } catch (e) {
+        console.log('Supabase save failed', e);
+      }
+    }
+
+    function updateBalance() {
+      document.getElementById('balance').innerText = balance + ' Coins';
+      document.getElementById('wallet-balance').innerText = balance + ' Coins';
+      localStorage.setItem(balanceKey, balance);
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
+      if (map[pageId] !== undefined) {
+        document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
+      }
+    }
+
+    async function addCoins(amount, title) {
+      balance += amount;
+      updateBalance();
+      await saveToSupabase(amount, 'task', title);
+      alert(title + " Successful! +" + amount + " Coins");
+    }
+
+    async function dailyCheckIn() {
+      const today = new Date().toDateString();
+      if (lastCheckIn === today) {
+        return alert("You already claimed today's reward.\nCome back tomorrow!");
+      }
+
+      const watch = confirm("Watch a short ad to claim your reward?");
+      if (!watch) return;
+
+      let reward = 0;
+      if (isFirstDay) {
+        reward = Math.floor(Math.random() * 70) + 30;
+        localStorage.setItem(firstDayKey, 'done');
+        isFirstDay = false;
+        alert("🎉 First Day Bonus! You received " + reward + " Coins!");
+      } else {
+        reward = Math.floor(Math.random() * 13) + 3;
+        alert("Daily Check-in Successful! +" + reward + " Coins");
+      }
+
+      balance += reward;
+      lastCheckIn = today;
+      localStorage.setItem(checkinKey, today);
+      updateBalance();
+      await saveToSupabase(reward, 'checkin', 'Daily Check-in');
+    }
+
+    async function doOfficialTask() {
+      if (officialDone) return alert("Already completed");
+      const join = confirm("Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
+      if (!join) return;
+      window.open('https://t.me/vtnhub', '_blank');
+      balance += 50;
+      officialDone = true;
+      localStorage.setItem(officialKey, 'done');
+      document.getElementById('official-task').style.display = 'none';
+      updateBalance();
+      await saveToSupabase(50, 'official', 'Official Task');
+      if (supabase && user) {
+        try {
+          await supabase.from('users').update({ official_done: true }).eq('telegram_id', user.id);
+        } catch(e) {}
+      }
+      alert("Official Task Completed! +50 Coins");
+    }
+
+    function startGame(game) {
+      alert("Play & Earn freely!\n\n" + game + " starting...");
+    }
+
+    function enterChat() {
+      alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
+    }
+
+    function copyCode() {
+      const code = document.getElementById('ref-code').innerText;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => alert("Copied: " + code));
+      } else {
+        alert("Your code: " + code);
+      }
+    }
+
+    // Start
+    updateBalance();
+    loadFromSupabase();
+  </script>
+</body>
+        </html>
