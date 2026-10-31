@@ -249,12 +249,6 @@
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
       </div>
-      <div class="section-title">Cross Promotion</div>
-      <div class="list-item">
-        <div class="icon" style="background:#00BCD4;">🔄</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day</p></div>
-        <button class="start-btn" onclick="alert('Coming soon')">Start</button>
-      </div>
     </div>
 
     <!-- FUN -->
@@ -268,11 +262,6 @@
         <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="startGame('Tower')"><span class="icon">🗼</span>Tower</div>
         <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="startGame('Spin')"><span class="icon">🎡</span>Spin</div>
         <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')"><span class="icon">❓</span>Quiz</div>
-      </div>
-      <div class="list-item" onclick="enterChat()">
-        <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Community Chat</h4><p>Play & Earn while chatting</p></div>
-        <button class="start-btn">Enter</button>
       </div>
     </div>
 
@@ -332,8 +321,7 @@
     <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Coming Soon</div>
-      <div class="card">Full control for tasks, users and withdrawals will be added here.</div>
+      <div class="card">Admin features will be added after backend is fully stable.</div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
@@ -350,208 +338,228 @@
   </div>
 
   <script>
+    // ========== SAFE SUPABASE INIT ==========
     const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    let supabase = null;
+    let supabaseClient = null;
+
     try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
     } catch (e) {
-      console.log('Supabase not loaded');
+      console.log('Supabase init failed, continuing with local only');
     }
 
+    // ========== TELEGRAM ==========
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    const user = tg.initDataUnsafe?.user;
-    const userId = user ? user.id : 'guest';
+    const user = tg.initDataUnsafe?.user || null;
+    const userId = user ? String(user.id) : 'guest';
 
-    // Local keys as fallback
+    // ========== STORAGE KEYS ==========
     const balanceKey = 'vtn_balance_' + userId;
-    const checkinKey = 'vtn_last_checkin_' + userId;
+    const checkinKey = 'vtn_checkin_' + userId;
     const officialKey = 'vtn_official_' + userId;
-    const firstDayKey = 'vtn_first_day_' + userId;
+    const firstDayKey = 'vtn_first_' + userId;
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
-    let officialDone = localStorage.getItem(officialKey) === 'done';
-    let isFirstDay = localStorage.getItem(firstDayKey) !== 'done';
-    let currentUser = null;
+    let officialDone = localStorage.getItem(officialKey) === '1';
+    let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
 
-    if (user) {
-      document.getElementById('username').innerText = user.first_name || 'User';
-      document.getElementById('userid').innerText = 'ID: ' + user.id;
-      document.getElementById('profile-name').innerText = user.first_name || 'User';
-      document.getElementById('profile-id').innerText = 'ID: ' + user.id;
-      document.getElementById('ref-code').innerText = 'VTN' + user.id;
+    // ========== UI SETUP ==========
+    function setupUI() {
+      if (user) {
+        document.getElementById('username').innerText = user.first_name || 'User';
+        document.getElementById('userid').innerText = 'ID: ' + user.id;
+        document.getElementById('profile-name').innerText = user.first_name || 'User';
+        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+        document.getElementById('ref-code').innerText = 'VTN' + user.id;
 
-      if (Number(user.id) === 8150531247) {
-        document.getElementById('admin-btn').style.display = 'flex';
+        if (Number(user.id) === 8150531247) {
+          const adminBtn = document.getElementById('admin-btn');
+          if (adminBtn) adminBtn.style.display = 'flex';
+        }
+      } else {
+        document.getElementById('username').innerText = 'Guest';
+        document.getElementById('userid').innerText = 'ID: Guest';
+        document.getElementById('profile-name').innerText = 'Guest';
+        document.getElementById('profile-id').innerText = 'ID: Guest';
       }
+
+      if (officialDone) {
+        const el = document.getElementById('official-task');
+        if (el) el.style.display = 'none';
+      }
+
+      updateBalanceUI();
     }
 
-    if (officialDone) {
-      const el = document.getElementById('official-task');
-      if (el) el.style.display = 'none';
+    function updateBalanceUI() {
+      document.getElementById('balance').innerText = balance + ' Coins';
+      document.getElementById('wallet-balance').innerText = balance + ' Coins';
+      localStorage.setItem(balanceKey, balance);
     }
 
-    // Load from Supabase carefully
-    async function loadFromSupabase() {
-      if (!supabase || !user) return;
+    // ========== SUPABASE HELPERS (SAFE) ==========
+    async function tryLoadFromServer() {
+      if (!supabaseClient || !user) return;
 
       try {
-        let { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('users')
           .select('*')
           .eq('telegram_id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (error || !data) {
-          // Create user
-          const { data: newUser } = await supabase
-            .from('users')
-            .insert([{
-              telegram_id: user.id,
-              first_name: user.first_name || '',
-              username: user.username || '',
-              balance: balance,
-              is_vip: false,
-              daily_tasks: 0,
-              official_done: officialDone
-            }])
-            .select()
-            .single();
-          currentUser = newUser;
-        } else {
-          currentUser = data;
-          // Prefer server balance if available
+        if (error) {
+          console.log('Load error:', error.message);
+          return;
+        }
+
+        if (data) {
           if (typeof data.balance === 'number') {
             balance = data.balance;
             localStorage.setItem(balanceKey, balance);
           }
           if (data.official_done) {
             officialDone = true;
-            localStorage.setItem(officialKey, 'done');
+            localStorage.setItem(officialKey, '1');
             const el = document.getElementById('official-task');
             if (el) el.style.display = 'none';
           }
+          updateBalanceUI();
+        } else {
+          // Create user
+          await supabaseClient.from('users').insert([{
+            telegram_id: user.id,
+            first_name: user.first_name || '',
+            username: user.username || '',
+            balance: balance,
+            is_vip: false,
+            daily_tasks: 0,
+            official_done: officialDone
+          }]);
         }
-        updateBalance();
       } catch (e) {
-        console.log('Supabase load failed, using local', e);
+        console.log('Server load failed safely');
       }
     }
 
-    async function saveToSupabase(amount, type, description) {
-      if (!supabase || !user) return;
+    async function trySaveToServer(amount, type, description) {
+      if (!supabaseClient || !user) return;
 
       try {
-        await supabase.from('users')
+        await supabaseClient
+          .from('users')
           .update({ balance: balance })
           .eq('telegram_id', user.id);
 
-        await supabase.from('transactions').insert([{
+        await supabaseClient.from('transactions').insert([{
           telegram_id: user.id,
           amount: amount,
-          type: type,
-          description: description
+          type: type || 'task',
+          description: description || ''
         }]);
       } catch (e) {
-        console.log('Supabase save failed', e);
+        console.log('Server save failed safely');
       }
     }
 
-    function updateBalance() {
-      document.getElementById('balance').innerText = balance + ' Coins';
-      document.getElementById('wallet-balance').innerText = balance + ' Coins';
-      localStorage.setItem(balanceKey, balance);
-    }
-
+    // ========== PAGE NAVIGATION ==========
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+      const page = document.getElementById(pageId);
+      if (page) page.classList.add('active');
+
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
       if (map[pageId] !== undefined) {
-        document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
+        const items = document.querySelectorAll('.nav-item');
+        if (items[map[pageId]]) items[map[pageId]].classList.add('active');
       }
     }
 
-    async function addCoins(amount, title) {
+    // ========== ACTIONS ==========
+    function addCoins(amount, title) {
       balance += amount;
-      updateBalance();
-      await saveToSupabase(amount, 'task', title);
-      alert(title + " Successful! +" + amount + " Coins");
+      updateBalanceUI();
+      trySaveToServer(amount, 'task', title);
+      alert(title + ' Successful! +' + amount + ' Coins');
     }
 
-    async function dailyCheckIn() {
+    function dailyCheckIn() {
       const today = new Date().toDateString();
       if (lastCheckIn === today) {
-        return alert("You already claimed today's reward.\nCome back tomorrow!");
+        alert("You already claimed today's reward.\nCome back tomorrow!");
+        return;
       }
 
-      const watch = confirm("Watch a short ad to claim your reward?");
+      const watch = confirm('Watch a short ad to claim your reward?');
       if (!watch) return;
 
       let reward = 0;
       if (isFirstDay) {
         reward = Math.floor(Math.random() * 70) + 30;
-        localStorage.setItem(firstDayKey, 'done');
+        localStorage.setItem(firstDayKey, '1');
         isFirstDay = false;
-        alert("🎉 First Day Bonus! You received " + reward + " Coins!");
+        alert('🎉 First Day Bonus! You received ' + reward + ' Coins!');
       } else {
         reward = Math.floor(Math.random() * 13) + 3;
-        alert("Daily Check-in Successful! +" + reward + " Coins");
+        alert('Daily Check-in Successful! +' + reward + ' Coins');
       }
 
       balance += reward;
       lastCheckIn = today;
       localStorage.setItem(checkinKey, today);
-      updateBalance();
-      await saveToSupabase(reward, 'checkin', 'Daily Check-in');
+      updateBalanceUI();
+      trySaveToServer(reward, 'checkin', 'Daily Check-in');
     }
 
-    async function doOfficialTask() {
-      if (officialDone) return alert("Already completed");
-      const join = confirm("Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
+    function doOfficialTask() {
+      if (officialDone) {
+        alert('Already completed');
+        return;
+      }
+      const join = confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1');
       if (!join) return;
+
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
       officialDone = true;
-      localStorage.setItem(officialKey, 'done');
-      document.getElementById('official-task').style.display = 'none';
-      updateBalance();
-      await saveToSupabase(50, 'official', 'Official Task');
-      if (supabase && user) {
-        try {
-          await supabase.from('users').update({ official_done: true }).eq('telegram_id', user.id);
-        } catch(e) {}
-      }
-      alert("Official Task Completed! +50 Coins");
+      localStorage.setItem(officialKey, '1');
+      const el = document.getElementById('official-task');
+      if (el) el.style.display = 'none';
+      updateBalanceUI();
+      trySaveToServer(50, 'official', 'Official Task');
+      alert('Official Task Completed! +50 Coins');
     }
 
     function startGame(game) {
-      alert("Play & Earn freely!\n\n" + game + " starting...");
-    }
-
-    function enterChat() {
-      alert("Welcome to Community Chat!\n\nPlay & Earn while chatting.\nNo links allowed.");
+      alert('Play & Earn freely!\n\n' + game + ' starting...');
     }
 
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(code).then(() => alert("Copied: " + code));
+        navigator.clipboard.writeText(code).then(function() {
+          alert('Copied: ' + code);
+        }).catch(function() {
+          alert('Your code: ' + code);
+        });
       } else {
-        alert("Your code: " + code);
+        alert('Your code: ' + code);
       }
     }
 
-    // Start
-    updateBalance();
-    loadFromSupabase();
+    // ========== START ==========
+    setupUI();
+    tryLoadFromServer();
   </script>
 </body>
-        </html>
+</html>
