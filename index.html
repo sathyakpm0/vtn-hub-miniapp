@@ -1,550 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>VTN Hub Bot</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      background-color: #fdf6f0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      overscroll-behavior: none;
-    }
-    .page { display: none; }
-    .page.active { display: block; }
-    .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c8102e">
+<title>VTN Hub</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+:root{
+--red:#c8102e;
+--red2:#a90d29;
+--cream:#fff8e7;
+--yellow:#ffd000;
+--text:#333;
+--muted:#888
+}
+*{box-sizing:border-box}
+body{
+margin:0;background:var(--cream);
+font-family:Arial,Helvetica,sans-serif;
+color:var(--text);padding-bottom:82px
+}
+header{
+height:64px;background:var(--red);color:#fff;
+display:flex;align-items:center;justify-content:center;
+font-size:23px;font-weight:800;position:sticky;top:0;z-index:5
+}
+.page-title{
+background:linear-gradient(110deg,var(--red),var(--red2));
+color:#fff;text-align:center;padding:18px 10px;
+font-size:22px;font-weight:800
+}
+main{max-width:720px;margin:auto;padding:18px 16px}
+.hidden{display:none!important}
+.card{
+background:#fff;border:3px solid #b51b3b;
+border-radius:23px;padding:18px;margin:14px 0;
+box-shadow:0 5px 12px #8b6b2914
+}
+.row{display:flex;align-items:center;gap:14px}
+.grow{flex:1;min-width:0}
+.icon{
+width:84px;height:84px;display:grid;place-items:center;
+border-radius:22px;font-size:35px;flex-shrink:0;color:#fff
+}
+h2{font-size:22px;margin:8px 0}
+h3{font-size:18px;margin:0 0 6px}
+.muted{color:var(--muted);font-size:16px;line-height:1.4}
+button{
+border:0;border-radius:30px;background:var(--red);
+color:#fff;font-weight:800;font-size:16px;
+padding:13px 22px;cursor:pointer
+}
+button:disabled{opacity:.5}
+.yellow{background:var(--yellow);color:#573d00}
+.wide{width:100%}
+.balance{
+background:linear-gradient(120deg,var(--red),var(--red2));
+border-radius:28px;text-align:center;color:var(--yellow);
+padding:34px 12px;margin:0 0 24px
+}
+.balance small{color:#fff;font-size:18px}
+.balance strong{display:block;font-size:42px;margin:10px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{
+min-height:128px;border:0;border-radius:28px;color:#fff;
+display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:10px;font-size:20px;font-weight:800
+}
+.tile span:first-child{font-size:34px}
+.green{background:linear-gradient(135deg,#53b85b,#27833c)}
+.orange{background:linear-gradient(135deg,#ff9e00,#f06b00)}
+.pink{background:linear-gradient(135deg,#ed1763,#bf1454)}
+.purple{background:linear-gradient(135deg,#9b24b7,#5829a9)}
+.blue{background:linear-gradient(135deg,#269be9,#1972c5)}
+.teal{background:linear-gradient(135deg,#08bacb,#00949e)}
+.brown{background:linear-gradient(135deg,#806052,#563c32)}
+.slate{background:linear-gradient(135deg,#718a94,#405964)}
+nav{
+position:fixed;bottom:0;left:0;right:0;background:#fff;
+display:flex;justify-content:space-around;
+padding:10px 2px calc(10px + env(safe-area-inset-bottom));
+box-shadow:0 -5px 16px #00000012;z-index:10
+}
+nav button{
+background:none;color:#888;border-radius:0;padding:4px 5px;
+font-weight:500;display:flex;flex-direction:column;
+align-items:center;gap:3px;font-size:14px
+}
+nav button b{font-size:27px}
+nav button.active{color:var(--red);font-weight:800}
+.section{color:#a71937;font-weight:800;font-size:21px;margin:24px 0 14px}
+input,textarea,select{
+width:100%;border:1px solid #ddd;border-radius:12px;
+padding:13px;font:16px Arial;margin:6px 0 12px;background:#fff
+}
+label{font-weight:700;font-size:14px}
+.task-reward{color:#888;font-size:16px;margin-top:4px}
+.pill{
+display:inline-block;background:#fff0b8;color:#755400;
+padding:7px 13px;border-radius:18px;font-weight:700
+}
+.notice{
+padding:13px;border-radius:12px;background:#fff1c8;
+color:#684d00;margin:12px 0;font-size:14px;line-height:1.5
+}
+.auth{max-width:460px;margin:35px auto}
+.auth h2{text-align:center;color:var(--red)}
+.small-btn{padding:9px 14px;font-size:14px}
+.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:390px){
+.icon{width:68px;height:68px}
+.card{padding:14px}
+.grid{gap:10px}
+.tile{min-height:112px}
+}
+</style>
 </head>
-<body class="min-h-screen pb-24">
 
-  <!-- ==================== HOME ==================== -->
-  <div id="page-home" class="page active">
-    <div class="bg-red-600 text-white text-center py-4">
-      <h1 class="text-xl font-bold flex items-center justify-center gap-2">👑 VTN Hub Bot</h1>
-    </div>
+<body>
+<header>👑 VTN Hub</header>
 
-    <div class="px-4 pt-4 space-y-4">
-      <div id="loading" class="text-center py-16 text-gray-600 font-medium">Loading...</div>
+<div id="authView" class="auth card">
+<h2>Welcome to VTN Hub</h2>
+<div class="notice">Sign in or create an account.</div>
+<label>Email</label>
+<input id="email" type="email" placeholder="Email">
+<label>Password</label>
+<input id="password" type="password" placeholder="Password">
+<button class="wide" onclick="signIn()">Sign In</button>
+<button class="wide yellow" style="margin-top:10px" onclick="signUp()">Create Account</button>
+<p id="authMsg" class="muted"></p>
+</div>
 
-      <div id="home-content" class="hidden space-y-4">
-        <!-- User Card -->
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl">🤖</div>
-            <div>
-              <p class="font-semibold text-gray-800" id="user-name">User</p>
-              <p class="text-sm text-gray-500">ID: <span id="user-id">--</span></p>
-            </div>
-          </div>
-          <span id="vip-badge" class="hidden bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">VIP</span>
-        </div>
+<div id="appView" class="hidden">
+<div id="pageTitle" class="page-title">VTN Hub Bot</div>
 
-        <!-- Balance -->
-        <div class="bg-red-600 rounded-2xl p-6 text-center text-white shadow-md">
-          <p class="text-sm opacity-90">Your Balance</p>
-          <h2 class="text-4xl font-bold mt-1 mb-4">
-            <span id="balance">0</span> <span class="text-yellow-300">Coins</span>
-          </h2>
-          <button onclick="showPage('wallet')" class="bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-full text-sm active:scale-95 transition">
-            Wallet & History
-          </button>
-        </div>
+<main>
 
-        <!-- Sponsored -->
-        <div class="bg-gray-900 rounded-2xl p-4 text-center text-white">
-          <p class="text-xs text-gray-400 mb-1">Sponsored</p>
-          <p class="font-semibold text-lg">🔥 Place Your Ad Here</p>
-          <p class="text-xs text-gray-400 mt-1">Reach thousands of users</p>
-        </div>
+<section id="homePage" class="page">
+<div class="balance">
+<small>Current Balance</small>
+<strong id="homeBalance">0 Coins</strong>
+<button class="yellow" onclick="showPage('wallet')">Wallet & History</button>
+</div>
 
-        <!-- Quick Actions -->
-        <div>
-          <h3 class="font-semibold text-gray-700 mb-3">Quick Actions</h3>
-          <div class="grid grid-cols-2 gap-3">
-            <button onclick="claimDaily()" class="bg-green-500 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
-              <span class="text-2xl">✅</span>
-              <span class="text-sm font-medium">Claim up to 100</span>
-            </button>
-            <button onclick="showPage('earn')" class="bg-orange-500 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
-              <span class="text-2xl">🎯</span>
-              <span class="text-sm font-medium">Earn Tasks</span>
-            </button>
-            <button onclick="showPage('promote')" class="bg-pink-600 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
-              <span class="text-2xl">📢</span>
-              <span class="text-sm font-medium">Promote</span>
-            </button>
-            <button onclick="showPage('fun')" class="bg-purple-600 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
-              <span class="text-2xl">🎮</span>
-              <span class="text-sm font-medium">Fun Zone</span>
-            </button>
-          </div>
-        </div>
+<div class="card" style="background:#171b35;color:white;text-align:center">
+<div>Sponsored</div>
+<h2>🔥 Place Your Ad Here</h2>
+Reach VTN Hub users
+</div>
 
-        <!-- Referral -->
-        <div class="bg-red-600 rounded-2xl p-4 flex items-center justify-between text-white">
-          <div>
-            <p class="font-semibold">Earn More, Refer Friends</p>
-            <p class="text-xs opacity-90">Level 1: 5% | Level 2: 2%</p>
-          </div>
-          <button onclick="inviteFriends()" class="bg-yellow-400 text-black font-bold px-5 py-2 rounded-full text-sm active:scale-95 transition">
-            Invite
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="section">Quick Actions</div>
+<div class="grid">
+<button class="tile green" onclick="claimDaily()"><span>✅</span><span>Daily Check In</span></button>
+<button class="tile orange" onclick="showPage('earn')"><span>🎯</span><span>Earn Tasks</span></button>
+<button class="tile pink" onclick="showPage('promote')"><span>📢</span><span>Promote</span></button>
+<button class="tile purple" onclick="showPage('fun')"><span>🎮</span><span>Fun Zone</span></button>
+</div>
 
-  <!-- ==================== EARN ==================== -->
-  <div id="page-earn" class="page">
-    <div class="bg-red-600 text-white text-center py-4 relative">
-      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
-      <h1 class="text-xl font-bold">Earn Money</h1>
-    </div>
-    <div class="px-4 pt-4 space-y-3">
-      <p class="text-sm font-semibold text-gray-600">Earn Tasks</p>
+<div class="card row" style="background:#b90e2d;color:white">
+<div class="grow">
+<h3>Earn More, Refer Friends</h3>
+<div>Invite your friends to VTN Hub</div>
+</div>
+<button class="yellow" onclick="shareReferral()">Invite</button>
+</div>
+</section>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-orange-400 rounded-xl flex items-center justify-center text-white text-lg">⚡</div>
-          <div>
-            <p class="font-medium">Auto Earn</p>
-            <p class="text-xs text-gray-500">Enable once → Earn automatically</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<section id="earnPage" class="page hidden">
+<div class="section">Earn Money</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center text-white">▶</div>
-          <div>
-            <p class="font-medium">Watch & Earn</p>
-            <p class="text-xs text-gray-500">+10 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<div class="row" style="justify-content:space-between">
+<h3>Earn Tasks</h3>
+<button id="addTaskBtn" class="small-btn hidden" onclick="openTaskForm()">＋ Add Earn Task</button>
+</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white">👀</div>
-          <div>
-            <p class="font-medium">Views & Earn</p>
-            <p class="text-xs text-gray-500">+2 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<div id="taskForm" class="card hidden">
+<h2>Create Earn Task</h2>
+<label>Task Title</label>
+<input id="newTaskTitle" placeholder="Task title">
+<label>Description</label>
+<textarea id="newTaskDesc"></textarea>
+<label>Reward Coins</label>
+<input id="newTaskReward" type="number" min="1">
+<label>Task Category</label>
+<select id="newTaskType">
+<option value="view">Watch & Earn</option>
+<option value="other">Earn Task</option>
+<option value="other">Auto Earn (manual task queue)</option>
+<option value="view">Views & Earn</option>
+<option value="join">Join Channel / Group</option>
+<option value="bot">Join Bot</option>
+<option value="install">Install App</option>
+<option value="visit">Visit Website</option>
+<option value="other">View Products</option>
+<option value="other">Join Referral</option>
+</select>
+<label>Task Link</label>
+<input id="newTaskUrl" type="url" placeholder="https://...">
+<div class="task-actions">
+<button onclick="createTask()">Publish Task</button>
+<button class="yellow" onclick="closeTaskForm()">Cancel</button>
+</div>
+<p id="taskFormMsg" class="muted"></p>
+</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">📢</div>
-          <div>
-            <p class="font-medium">Join Channel / Group</p>
-            <p class="text-xs text-gray-500">+15 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<div id="tasksList"></div>
+<div class="notice">Rewards are credited only after admin approval or verified eligible ad-network callbacks.</div>
+</section>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-white">🤖</div>
-          <div>
-            <p class="font-medium">Join Bot</p>
-            <p class="text-xs text-gray-500">+50 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<section id="walletPage" class="page hidden">
+<div class="balance">
+<small>Current Balance</small>
+<strong id="walletBalance">0 Coins</strong>
+</div>
+<div class="section">Wallet & History</div>
+<div class="card">
+<h3>Points Wallet</h3>
+<p class="muted">Earn & Pay: use earned coins for promotions.</p>
+<p class="muted">Deposit & Pay: disabled until a compliant payment system is configured.</p>
+</div>
+<div id="historyList"></div>
+</section>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">📱</div>
-          <div>
-            <p class="font-medium">Install App</p>
-            <p class="text-xs text-gray-500">+100 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
+<section id="promotePage" class="page hidden">
+<div class="section">Promote Services</div>
+<div id="promoList"></div>
+<div class="notice">
+Earn & Pay uses platform coins. Deposit & Pay is currently disabled.
+All advertisements require admin approval.
+</div>
+</section>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">🌐</div>
-          <div>
-            <p class="font-medium">Visit Website</p>
-            <p class="text-xs text-gray-500">+10 Coins</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
-    </div>
-  </div>
+<section id="funPage" class="page hidden">
+<div class="section">Fun Zone</div>
+<div class="grid">
+<div class="tile orange"><span>🎯</span><span>Dart</span></div>
+<div class="tile green"><span>🍎</span><span>Fruit</span></div>
+<div class="tile blue"><span>🎯</span><span>Shoot</span></div>
+<div class="tile purple"><span>🗼</span><span>Tower</span></div>
+<div class="tile orange"><span>🎡</span><span>Spin</span></div>
+<div class="tile teal"><span>❓</span><span>Quiz</span></div>
+<div class="tile pink"><span>🎲</span><span>Dice</span></div>
+<div class="tile purple"><span>🃏</span><span>Memory</span></div>
+<div class="tile brown"><span>✊</span><span>Rock</span></div>
+<div class="tile slate"><span>🔢</span><span>Number</span></div>
+</div>
+<div class="card"><h3>Community Chat</h3></div>
+<div class="card"><h3>🏆 Leaderboard</h3><div id="leaderboard"></div></div>
+</section>
 
-  <!-- ==================== PROMOTE ==================== -->
-  <div id="page-promote" class="page">
-    <div class="bg-red-600 text-white text-center py-4 relative">
-      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
-      <h1 class="text-xl font-bold">Promote Services</h1>
-    </div>
-    <div class="px-4 pt-4 space-y-3">
-      <p class="text-sm font-semibold text-gray-600">Promotion Services</p>
+<section id="profilePage" class="page hidden">
+<div class="card" style="text-align:center">
+<div style="font-size:65px">🤖</div>
+<h2>VTN Hub</h2>
+<div id="profileEmail" class="muted"></div>
+<div id="vipBadge" class="pill">Member</div>
+</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white">📢</div>
-          <div>
-            <p class="font-medium">Promote Channel / Group</p>
-            <p class="text-xs text-gray-500">Premium or Standard</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-      </div>
+<div class="section">More</div>
+<div class="card">
+<h3>Account</h3>
+<button class="small-btn" onclick="signOut()">Sign Out</button>
+</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white">🤖</div>
-          <div>
-            <p class="font-medium">Promote Bot</p>
-            <p class="text-xs text-gray-500">Get new users</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-      </div>
+<div class="card">
+<h3>Contact Support</h3>
+<p class="muted">Contact VTN Hub support.</p>
+</div>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">👀</div>
-          <div>
-            <p class="font-medium">Buy Views & Likes</p>
-            <p class="text-xs text-gray-500">YouTube / Instagram / Telegram</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-      </div>
+<div id="adminPanel" class="card hidden">
+<h3>👑 Admin Panel</h3>
+<div id="pendingClaims"></div>
+</div>
+</section>
 
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">📱</div>
-          <div>
-            <p class="font-medium">Buy App Installs</p>
-            <p class="text-xs text-gray-500">Real installs</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-      </div>
+</main>
 
-      <p class="text-sm font-semibold text-gray-600 mt-4">Monetization</p>
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-400 rounded-xl flex items-center justify-center text-white">💰</div>
-          <div>
-            <p class="font-medium">Monetize My Channel</p>
-            <p class="text-xs text-gray-500">Earn revenue by allowing ads</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Apply</button>
-      </div>
-
-      <p class="text-sm font-semibold text-gray-600 mt-4">Cross Promotion</p>
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-white">🔄</div>
-          <div>
-            <p class="font-medium">Free Cross Promotion</p>
-            <p class="text-xs text-gray-500">Max 3 posts per day</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== FUN ==================== -->
-  <div id="page-fun" class="page">
-    <div class="bg-red-600 text-white text-center py-4 relative">
-      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
-      <h1 class="text-xl font-bold">Fun Zone</h1>
-    </div>
-    <div class="px-4 pt-4">
-      <p class="text-sm font-semibold text-gray-600 mb-3">Games (Play & Earn)</p>
-      <div class="grid grid-cols-2 gap-3">
-        <button class="bg-orange-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎯</span>Dart</button>
-        <button class="bg-green-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🍎</span>Fruit</button>
-        <button class="bg-blue-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🔫</span>Shoot</button>
-        <button class="bg-purple-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🗼</span>Tower</button>
-        <button class="bg-orange-400 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎡</span>Spin</button>
-        <button class="bg-cyan-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">❓</span>Quiz</button>
-        <button class="bg-pink-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎲</span>Dice</button>
-        <button class="bg-indigo-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🃏</span>Memory</button>
-        <button class="bg-amber-700 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">✊</span>Rock</button>
-        <button class="bg-gray-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🔢</span>Number</button>
-      </div>
-
-      <div class="mt-4 space-y-3">
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">💬</div>
-            <div>
-              <p class="font-medium">Community Chat</p>
-              <p class="text-xs text-gray-500">Play & Earn while chatting</p>
-            </div>
-          </div>
-          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Enter</button>
-        </div>
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white">🏆</div>
-            <div>
-              <p class="font-medium">Leaderboard</p>
-              <p class="text-xs text-gray-500">Top earners</p>
-            </div>
-          </div>
-          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">View</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== PROFILE ==================== -->
-  <div id="page-profile" class="page">
-    <div class="bg-red-600 text-white text-center py-4 relative">
-      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
-      <h1 class="text-xl font-bold">My Profile</h1>
-    </div>
-    <div class="px-4 pt-4 space-y-4">
-      <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
-        <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center text-white text-4xl mx-auto mb-3">🤖</div>
-        <p class="font-bold text-lg" id="profile-name">User</p>
-        <p class="text-sm text-gray-500">ID: <span id="profile-id">--</span></p>
-        <span id="profile-vip" class="hidden inline-block mt-2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">VIP Status</span>
-      </div>
-
-      <p class="font-semibold text-gray-700">Keep VIP Active</p>
-      <div class="space-y-3">
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">✅</div>
-            <div>
-              <p class="font-medium">Complete 10 Tasks Daily</p>
-              <p class="text-xs text-gray-500">To maintain VIP</p>
-            </div>
-          </div>
-          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Go</button>
-        </div>
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">👥</div>
-            <div>
-              <p class="font-medium">Refer 5 People / Week</p>
-              <p class="text-xs text-gray-500">To maintain VIP</p>
-            </div>
-          </div>
-          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Go</button>
-        </div>
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">💰</div>
-            <div>
-              <p class="font-medium">Purchase VIP</p>
-              <p class="text-xs text-gray-500">Pay 500 Coins</p>
-            </div>
-          </div>
-          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-        </div>
-      </div>
-
-      <p class="font-semibold text-gray-700">More</p>
-      <div class="space-y-3">
-        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border" onclick="window.Telegram.WebApp.openTelegramLink('https://t.me/Vtnhub0')">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">💬</div>
-            <div>
-              <p class="font-medium">Contact Support</p>
-              <p class="text-xs text-gray-500">@Vtnhub0</p>
-            </div>
-          </div>
-          <span class="text-gray-400">›</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== WALLET ==================== -->
-  <div id="page-wallet" class="page">
-    <div class="bg-red-600 text-white text-center py-4 relative">
-      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
-      <h1 class="text-xl font-bold">Wallet & History</h1>
-    </div>
-    <div class="px-4 pt-4 space-y-4">
-      <div class="bg-red-600 rounded-2xl p-6 text-center text-white">
-        <p class="text-sm opacity-90">Current Balance</p>
-        <h2 class="text-4xl font-bold mt-1">
-          <span id="wallet-balance">0</span> <span class="text-yellow-300">Coins</span>
-        </h2>
-      </div>
-
-      <p class="font-semibold text-gray-700">Add Coins</p>
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white text-xl">+</div>
-          <div>
-            <p class="font-medium">Add Coins</p>
-            <p class="text-xs text-gray-500">Buy with UPI or USDT</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
-      </div>
-
-      <p class="font-semibold text-gray-700">Withdraw</p>
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">🇮🇳</div>
-          <div>
-            <p class="font-medium">India - UPI / Bank</p>
-            <p class="text-xs text-gray-500">Withdraw in INR</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Withdraw</button>
-      </div>
-      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">₮</div>
-          <div>
-            <p class="font-medium">USDT (International)</p>
-            <p class="text-xs text-gray-500">TRC20 / BEP20</p>
-          </div>
-        </div>
-        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Withdraw</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== BOTTOM NAV ==================== -->
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 z-50 safe-bottom">
-    <button onclick="showPage('home')" class="flex flex-col items-center text-red-600 nav-btn" data-page="home">
-      <span class="text-xl">🏠</span><span class="text-xs mt-1 font-medium">Home</span>
-    </button>
-    <button onclick="showPage('earn')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="earn">
-      <span class="text-xl">💰</span><span class="text-xs mt-1">Earn</span>
-    </button>
-    <button onclick="showPage('promote')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="promote">
-      <span class="text-xl">📢</span><span class="text-xs mt-1">Promote</span>
-    </button>
-    <button onclick="showPage('fun')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="fun">
-      <span class="text-xl">🎮</span><span class="text-xs mt-1">Fun</span>
-    </button>
-    <button onclick="showPage('profile')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="profile">
-      <span class="text-xl">👤</span><span class="text-xs mt-1">Profile</span>
-    </button>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    tg.setHeaderColor('#dc2626');
-    tg.setBackgroundColor('#fdf6f0');
-
-    let currentUser = null;
-
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + pageId).classList.add('active');
-
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-red-600');
-        btn.classList.add('text-gray-500');
-      });
-      const activeBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
-      if (activeBtn) {
-        activeBtn.classList.remove('text-gray-500');
-        activeBtn.classList.add('text-red-600');
-      }
-
-      if (pageId === 'wallet' && currentUser) {
-        document.getElementById('wallet-balance').innerText = currentUser.balance || 0;
-      }
-    }
-
-    async function initApp() {
-      try {
-        const tgUser = tg.initDataUnsafe?.user;
-        if (!tgUser) {
-          document.getElementById('loading').innerHTML = '<p class="text-red-500">Please open inside Telegram</p>';
-          return;
-        }
-
-        let { data: user, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('telegram_id', tgUser.id)
-          .maybeSingle();
-
-        if (!user) {
-          const { data: newUser, error: insertError } = await supabase
-            .from('users')
-            .insert({
-              telegram_id: tgUser.id,
-              first_name: tgUser.first_name || 'User',
-              username: tgUser.username || null,
-              balance: 0,
-              is_vip: false
-            })
-            .select()
-            .single();
-
-          if (insertError) {
-            document.getElementById('loading').innerHTML = '<p class="text-red-500">Error: ' + insertError.message + '</p>';
-            return;
-          }
-          user = newUser;
-        }
-
-        currentUser = user;
-        updateUI(user);
-
-      } catch (err) {
-        document.getElementById('loading').innerHTML = '<p class="text-red-500">Error: ' + err.message + '</p>';
-      }
-    }
-
-    function updateUI(user) {
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('home-content').classList.remove('hidden');
-
-      document.getElementById('user-name').innerText = user.first_name || 'User';
-      document.getElementById('user-id').innerText = user.telegram_id;
-      document.getElementById('balance').innerText = user.balance || 0;
-
-      document.getElementById('profile-name').innerText = user.first_name || 'User';
-      document.getElementById('profile-id').innerText = user.telegram_id;
-
-      if (user.is_vip) {
-        document.getElementById('vip-badge').classList.remove('hidden');
-        document.getElementById('profile-vip').classList.remove('hidden');
-      }
-    }
-
-    function claimDaily() {
-      tg.showAlert('Daily Claim will be activated soon!');
-    }
-
-    function inviteFriends() {
-      const botUsername = 'VTNPromoAssistantbot';
-      const refLink = `https://t.me/\( {botUsername}?start=ref_ \){currentUser?.telegram_id || ''}`;
-      tg.openTelegramLink(`https://t.me/share/url?url=\( {encodeURIComponent(refLink)}&text= \){encodeURIComponent('Join VTN Hub and earn coins!')}`);
-    }
-
-    initApp();
-  </script>
-</body>
-            </html>
+<nav>
+<button class="active" data-page="home" onclick="showPage('home')"><b>🏠</b>Home</button>
+<button data-page="earn" onclick="showPage('earn')"><b>💰</b>Earn</button>
+<button data-page="promote" onclick="showPage('promote')"><b>📢</b>Promote</button>
+<button data-page="fun" onclick="showPage('fun')"><b>🎮</b>Fun</button>
+<button data-page="profile" onclick="showPage('profile')"><b>👤</b>Profile</button>
+</nav>
+</div>
