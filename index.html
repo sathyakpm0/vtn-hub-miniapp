@@ -160,13 +160,12 @@
 
   <div id="main-app">
 
-    <!-- HOME -->
     <div id="home" class="page active">
       <div class="header">👑 VTN Hub Bot</div>
       <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
-          <div style="font-weight:700;" id="username">User</div>
+          <div style="font-weight:700;" id="username">Loading...</div>
           <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
         </div>
         <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
@@ -177,7 +176,7 @@
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
 
-      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0 to place ads')">
+      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
         <div style="font-size:12px;opacity:0.8;">Sponsored</div>
         <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
         <div style="font-size:12px;">Reach thousands of users</div>
@@ -207,7 +206,6 @@
       </div>
     </div>
 
-    <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
       <div class="section-title">Official Task</div>
@@ -223,7 +221,7 @@
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
-        <button class="start-btn" onclick="alert('Auto Earn coming soon')">Start</button>
+        <button class="start-btn" onclick="alert('Coming soon')">Start</button>
       </div>
       <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Watch & Earn')">Start</button></div>
       <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="addCoins(2,'Views & Earn')">Start</button></div>
@@ -235,7 +233,6 @@
       <div class="list-item"><div class="icon" style="background:#2196F3;">👥</div><div class="info"><h4>Join Referral</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50,'Join Referral')">Start</button></div>
     </div>
 
-    <!-- PROMOTE -->
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
       <div class="section-title">Promotion Services</div>
@@ -251,7 +248,6 @@
       </div>
     </div>
 
-    <!-- FUN -->
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
       <div class="section-title">Games (Play & Earn)</div>
@@ -265,7 +261,6 @@
       </div>
     </div>
 
-    <!-- WALLET -->
     <div id="wallet" class="page">
       <div class="header">Wallet & History</div>
       <div class="balance-card">
@@ -288,7 +283,6 @@
       </div>
     </div>
 
-    <!-- PROFILE -->
     <div id="profile" class="page">
       <div class="header">My Profile</div>
       <div class="card" style="text-align:center;">
@@ -301,7 +295,6 @@
       <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin')"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
-    <!-- REFER -->
     <div id="refer" class="page">
       <div class="header">Refer & Earn</div>
       <div class="banner">
@@ -318,10 +311,9 @@
       </div>
     </div>
 
-    <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
-      <div class="card">Admin features will be added after backend is fully stable.</div>
+      <div class="card">Admin features will be added next.</div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
@@ -338,20 +330,15 @@
   </div>
 
   <script>
-    // ========== SAFE SUPABASE INIT ==========
     const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    let supabaseClient = null;
-
+    let sb = null;
     try {
-      if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } catch (e) {
-      console.log('Supabase init failed, continuing with local only');
+      console.log('Supabase failed to load');
     }
 
-    // ========== TELEGRAM ==========
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
@@ -361,82 +348,63 @@
     const user = tg.initDataUnsafe?.user || null;
     const userId = user ? String(user.id) : 'guest';
 
-    // ========== STORAGE KEYS ==========
-    const balanceKey = 'vtn_balance_' + userId;
-    const checkinKey = 'vtn_checkin_' + userId;
-    const officialKey = 'vtn_official_' + userId;
-    const firstDayKey = 'vtn_first_' + userId;
+    const balanceKey = 'vtn_b_' + userId;
+    const checkinKey = 'vtn_c_' + userId;
+    const officialKey = 'vtn_o_' + userId;
+    const firstDayKey = 'vtn_f_' + userId;
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
     let officialDone = localStorage.getItem(officialKey) === '1';
     let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
 
-    // ========== UI SETUP ==========
-    function setupUI() {
+    function updateUI() {
+      document.getElementById('balance').innerText = balance + ' Coins';
+      document.getElementById('wallet-balance').innerText = balance + ' Coins';
+      localStorage.setItem(balanceKey, balance);
+    }
+
+    function setupUser() {
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
         document.getElementById('userid').innerText = 'ID: ' + user.id;
         document.getElementById('profile-name').innerText = user.first_name || 'User';
         document.getElementById('profile-id').innerText = 'ID: ' + user.id;
         document.getElementById('ref-code').innerText = 'VTN' + user.id;
-
         if (Number(user.id) === 8150531247) {
-          const adminBtn = document.getElementById('admin-btn');
-          if (adminBtn) adminBtn.style.display = 'flex';
+          document.getElementById('admin-btn').style.display = 'flex';
         }
       } else {
         document.getElementById('username').innerText = 'Guest';
         document.getElementById('userid').innerText = 'ID: Guest';
-        document.getElementById('profile-name').innerText = 'Guest';
-        document.getElementById('profile-id').innerText = 'ID: Guest';
       }
-
       if (officialDone) {
         const el = document.getElementById('official-task');
         if (el) el.style.display = 'none';
       }
-
-      updateBalanceUI();
+      updateUI();
     }
 
-    function updateBalanceUI() {
-      document.getElementById('balance').innerText = balance + ' Coins';
-      document.getElementById('wallet-balance').innerText = balance + ' Coins';
-      localStorage.setItem(balanceKey, balance);
-    }
-
-    // ========== SUPABASE HELPERS (SAFE) ==========
-    async function tryLoadFromServer() {
-      if (!supabaseClient || !user) return;
-
+    async function loadUser() {
+      if (!sb || !user) return;
       try {
-        const { data, error } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('telegram_id', user.id)
-          .maybeSingle();
-
+        const { data, error } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
         if (error) {
-          console.log('Load error:', error.message);
+          console.log(error);
           return;
         }
-
         if (data) {
-          if (typeof data.balance === 'number') {
-            balance = data.balance;
-            localStorage.setItem(balanceKey, balance);
-          }
-          if (data.official_done) {
-            officialDone = true;
+          balance = data.balance || 0;
+          officialDone = !!data.official_done;
+          localStorage.setItem(balanceKey, balance);
+          if (officialDone) {
             localStorage.setItem(officialKey, '1');
             const el = document.getElementById('official-task');
             if (el) el.style.display = 'none';
           }
-          updateBalanceUI();
+          updateUI();
         } else {
-          // Create user
-          await supabaseClient.from('users').insert([{
+          await sb.from('users').insert([{
             telegram_id: user.id,
             first_name: user.first_name || '',
             username: user.username || '',
@@ -447,49 +415,39 @@
           }]);
         }
       } catch (e) {
-        console.log('Server load failed safely');
+        console.log('Load failed', e);
       }
     }
 
-    async function trySaveToServer(amount, type, description) {
-      if (!supabaseClient || !user) return;
-
+    async function saveBalance(amount, type, desc) {
+      if (!sb || !user) return;
       try {
-        await supabaseClient
-          .from('users')
-          .update({ balance: balance })
-          .eq('telegram_id', user.id);
-
-        await supabaseClient.from('transactions').insert([{
+        await sb.from('users').update({ balance: balance }).eq('telegram_id', user.id);
+        await sb.from('transactions').insert([{
           telegram_id: user.id,
           amount: amount,
-          type: type || 'task',
-          description: description || ''
+          type: type,
+          description: desc
         }]);
       } catch (e) {
-        console.log('Server save failed safely');
+        console.log('Save failed', e);
       }
     }
 
-    // ========== PAGE NAVIGATION ==========
-    function showPage(pageId) {
+    function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const page = document.getElementById(pageId);
-      if (page) page.classList.add('active');
-
+      document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
-      if (map[pageId] !== undefined) {
-        const items = document.querySelectorAll('.nav-item');
-        if (items[map[pageId]]) items[map[pageId]].classList.add('active');
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4 };
+      if (map[id] !== undefined) {
+        document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       }
     }
 
-    // ========== ACTIONS ==========
     function addCoins(amount, title) {
       balance += amount;
-      updateBalanceUI();
-      trySaveToServer(amount, 'task', title);
+      updateUI();
+      saveBalance(amount, 'task', title);
       alert(title + ' Successful! +' + amount + ' Coins');
     }
 
@@ -499,26 +457,21 @@
         alert("You already claimed today's reward.\nCome back tomorrow!");
         return;
       }
+      if (!confirm('Watch a short ad to claim?')) return;
 
-      const watch = confirm('Watch a short ad to claim your reward?');
-      if (!watch) return;
-
-      let reward = 0;
+      let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
       if (isFirstDay) {
-        reward = Math.floor(Math.random() * 70) + 30;
         localStorage.setItem(firstDayKey, '1');
         isFirstDay = false;
-        alert('🎉 First Day Bonus! You received ' + reward + ' Coins!');
+        alert('🎉 First Day Bonus! +' + reward + ' Coins');
       } else {
-        reward = Math.floor(Math.random() * 13) + 3;
         alert('Daily Check-in Successful! +' + reward + ' Coins');
       }
-
       balance += reward;
       lastCheckIn = today;
       localStorage.setItem(checkinKey, today);
-      updateBalanceUI();
-      trySaveToServer(reward, 'checkin', 'Daily Check-in');
+      updateUI();
+      saveBalance(reward, 'checkin', 'Daily Check-in');
     }
 
     function doOfficialTask() {
@@ -526,40 +479,36 @@
         alert('Already completed');
         return;
       }
-      const join = confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1');
-      if (!join) return;
-
+      if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
       window.open('https://t.me/vtnhub', '_blank');
       balance += 50;
       officialDone = true;
       localStorage.setItem(officialKey, '1');
-      const el = document.getElementById('official-task');
-      if (el) el.style.display = 'none';
-      updateBalanceUI();
-      trySaveToServer(50, 'official', 'Official Task');
+      document.getElementById('official-task').style.display = 'none';
+      updateUI();
+      saveBalance(50, 'official', 'Official Task');
+      if (sb && user) {
+        sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
+      }
       alert('Official Task Completed! +50 Coins');
     }
 
-    function startGame(game) {
-      alert('Play & Earn freely!\n\n' + game + ' starting...');
+    function startGame(g) {
+      alert('Play & Earn!\n\n' + g + ' starting...');
     }
 
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(code).then(function() {
-          alert('Copied: ' + code);
-        }).catch(function() {
-          alert('Your code: ' + code);
-        });
+        navigator.clipboard.writeText(code).then(() => alert('Copied: ' + code));
       } else {
-        alert('Your code: ' + code);
+        alert(code);
       }
     }
 
-    // ========== START ==========
-    setupUI();
-    tryLoadFromServer();
+    // Start
+    setupUser();
+    loadUser();
   </script>
 </body>
-</html>
+        </html>
