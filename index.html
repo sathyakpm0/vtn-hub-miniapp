@@ -8,133 +8,543 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background-color: #fdf6f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background-color: #fdf6f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overscroll-behavior: none;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   </style>
 </head>
-<body class="min-h-screen p-4">
+<body class="min-h-screen pb-24">
 
-  <div class="bg-red-600 text-white text-center py-4 rounded-xl mb-4">
-    <h1 class="text-xl font-bold">👑 VTN Hub Bot - Debug</h1>
+  <!-- ==================== HOME ==================== -->
+  <div id="page-home" class="page active">
+    <div class="bg-red-600 text-white text-center py-4">
+      <h1 class="text-xl font-bold flex items-center justify-center gap-2">👑 VTN Hub Bot</h1>
+    </div>
+
+    <div class="px-4 pt-4 space-y-4">
+      <div id="loading" class="text-center py-16 text-gray-600 font-medium">Loading...</div>
+
+      <div id="home-content" class="hidden space-y-4">
+        <!-- User Card -->
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl">🤖</div>
+            <div>
+              <p class="font-semibold text-gray-800" id="user-name">User</p>
+              <p class="text-sm text-gray-500">ID: <span id="user-id">--</span></p>
+            </div>
+          </div>
+          <span id="vip-badge" class="hidden bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">VIP</span>
+        </div>
+
+        <!-- Balance -->
+        <div class="bg-red-600 rounded-2xl p-6 text-center text-white shadow-md">
+          <p class="text-sm opacity-90">Your Balance</p>
+          <h2 class="text-4xl font-bold mt-1 mb-4">
+            <span id="balance">0</span> <span class="text-yellow-300">Coins</span>
+          </h2>
+          <button onclick="showPage('wallet')" class="bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-full text-sm active:scale-95 transition">
+            Wallet & History
+          </button>
+        </div>
+
+        <!-- Sponsored -->
+        <div class="bg-gray-900 rounded-2xl p-4 text-center text-white">
+          <p class="text-xs text-gray-400 mb-1">Sponsored</p>
+          <p class="font-semibold text-lg">🔥 Place Your Ad Here</p>
+          <p class="text-xs text-gray-400 mt-1">Reach thousands of users</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div>
+          <h3 class="font-semibold text-gray-700 mb-3">Quick Actions</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="claimDaily()" class="bg-green-500 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
+              <span class="text-2xl">✅</span>
+              <span class="text-sm font-medium">Claim up to 100</span>
+            </button>
+            <button onclick="showPage('earn')" class="bg-orange-500 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
+              <span class="text-2xl">🎯</span>
+              <span class="text-sm font-medium">Earn Tasks</span>
+            </button>
+            <button onclick="showPage('promote')" class="bg-pink-600 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
+              <span class="text-2xl">📢</span>
+              <span class="text-sm font-medium">Promote</span>
+            </button>
+            <button onclick="showPage('fun')" class="bg-purple-600 text-white rounded-2xl py-5 flex flex-col items-center gap-2 shadow active:scale-95 transition">
+              <span class="text-2xl">🎮</span>
+              <span class="text-sm font-medium">Fun Zone</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Referral -->
+        <div class="bg-red-600 rounded-2xl p-4 flex items-center justify-between text-white">
+          <div>
+            <p class="font-semibold">Earn More, Refer Friends</p>
+            <p class="text-xs opacity-90">Level 1: 5% | Level 2: 2%</p>
+          </div>
+          <button onclick="inviteFriends()" class="bg-yellow-400 text-black font-bold px-5 py-2 rounded-full text-sm active:scale-95 transition">
+            Invite
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div id="debug" class="bg-white rounded-xl p-4 shadow text-sm space-y-2">
-    <p>Status: <span id="status">Starting...</span></p>
-    <p>Telegram User: <span id="tg-user">Checking...</span></p>
-    <p>Supabase: <span id="sb-status">Checking...</span></p>
-    <p id="error" class="text-red-600 font-medium"></p>
+  <!-- ==================== EARN ==================== -->
+  <div id="page-earn" class="page">
+    <div class="bg-red-600 text-white text-center py-4 relative">
+      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
+      <h1 class="text-xl font-bold">Earn Money</h1>
+    </div>
+    <div class="px-4 pt-4 space-y-3">
+      <p class="text-sm font-semibold text-gray-600">Earn Tasks</p>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-orange-400 rounded-xl flex items-center justify-center text-white text-lg">⚡</div>
+          <div>
+            <p class="font-medium">Auto Earn</p>
+            <p class="text-xs text-gray-500">Enable once → Earn automatically</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center text-white">▶</div>
+          <div>
+            <p class="font-medium">Watch & Earn</p>
+            <p class="text-xs text-gray-500">+10 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white">👀</div>
+          <div>
+            <p class="font-medium">Views & Earn</p>
+            <p class="text-xs text-gray-500">+2 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">📢</div>
+          <div>
+            <p class="font-medium">Join Channel / Group</p>
+            <p class="text-xs text-gray-500">+15 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-white">🤖</div>
+          <div>
+            <p class="font-medium">Join Bot</p>
+            <p class="text-xs text-gray-500">+50 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">📱</div>
+          <div>
+            <p class="font-medium">Install App</p>
+            <p class="text-xs text-gray-500">+100 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">🌐</div>
+          <div>
+            <p class="font-medium">Visit Website</p>
+            <p class="text-xs text-gray-500">+10 Coins</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+    </div>
   </div>
 
-  <div id="result" class="mt-4 hidden bg-green-100 text-green-800 p-4 rounded-xl">
-    <p class="font-bold">Success!</p>
-    <p>Name: <span id="res-name"></span></p>
-    <p>ID: <span id="res-id"></span></p>
-    <p>Balance: <span id="res-balance"></span></p>
+  <!-- ==================== PROMOTE ==================== -->
+  <div id="page-promote" class="page">
+    <div class="bg-red-600 text-white text-center py-4 relative">
+      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
+      <h1 class="text-xl font-bold">Promote Services</h1>
+    </div>
+    <div class="px-4 pt-4 space-y-3">
+      <p class="text-sm font-semibold text-gray-600">Promotion Services</p>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white">📢</div>
+          <div>
+            <p class="font-medium">Promote Channel / Group</p>
+            <p class="text-xs text-gray-500">Premium or Standard</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white">🤖</div>
+          <div>
+            <p class="font-medium">Promote Bot</p>
+            <p class="text-xs text-gray-500">Get new users</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">👀</div>
+          <div>
+            <p class="font-medium">Buy Views & Likes</p>
+            <p class="text-xs text-gray-500">YouTube / Instagram / Telegram</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">📱</div>
+          <div>
+            <p class="font-medium">Buy App Installs</p>
+            <p class="text-xs text-gray-500">Real installs</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+      </div>
+
+      <p class="text-sm font-semibold text-gray-600 mt-4">Monetization</p>
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-400 rounded-xl flex items-center justify-center text-white">💰</div>
+          <div>
+            <p class="font-medium">Monetize My Channel</p>
+            <p class="text-xs text-gray-500">Earn revenue by allowing ads</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Apply</button>
+      </div>
+
+      <p class="text-sm font-semibold text-gray-600 mt-4">Cross Promotion</p>
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-white">🔄</div>
+          <div>
+            <p class="font-medium">Free Cross Promotion</p>
+            <p class="text-xs text-gray-500">Max 3 posts per day</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FUN ==================== -->
+  <div id="page-fun" class="page">
+    <div class="bg-red-600 text-white text-center py-4 relative">
+      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
+      <h1 class="text-xl font-bold">Fun Zone</h1>
+    </div>
+    <div class="px-4 pt-4">
+      <p class="text-sm font-semibold text-gray-600 mb-3">Games (Play & Earn)</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button class="bg-orange-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎯</span>Dart</button>
+        <button class="bg-green-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🍎</span>Fruit</button>
+        <button class="bg-blue-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🔫</span>Shoot</button>
+        <button class="bg-purple-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🗼</span>Tower</button>
+        <button class="bg-orange-400 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎡</span>Spin</button>
+        <button class="bg-cyan-500 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">❓</span>Quiz</button>
+        <button class="bg-pink-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🎲</span>Dice</button>
+        <button class="bg-indigo-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🃏</span>Memory</button>
+        <button class="bg-amber-700 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">✊</span>Rock</button>
+        <button class="bg-gray-600 text-white rounded-2xl py-6 flex flex-col items-center gap-2 shadow"><span class="text-3xl">🔢</span>Number</button>
+      </div>
+
+      <div class="mt-4 space-y-3">
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">💬</div>
+            <div>
+              <p class="font-medium">Community Chat</p>
+              <p class="text-xs text-gray-500">Play & Earn while chatting</p>
+            </div>
+          </div>
+          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Enter</button>
+        </div>
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white">🏆</div>
+            <div>
+              <p class="font-medium">Leaderboard</p>
+              <p class="text-xs text-gray-500">Top earners</p>
+            </div>
+          </div>
+          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div id="page-profile" class="page">
+    <div class="bg-red-600 text-white text-center py-4 relative">
+      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
+      <h1 class="text-xl font-bold">My Profile</h1>
+    </div>
+    <div class="px-4 pt-4 space-y-4">
+      <div class="bg-white rounded-2xl p-6 text-center shadow-sm">
+        <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center text-white text-4xl mx-auto mb-3">🤖</div>
+        <p class="font-bold text-lg" id="profile-name">User</p>
+        <p class="text-sm text-gray-500">ID: <span id="profile-id">--</span></p>
+        <span id="profile-vip" class="hidden inline-block mt-2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">VIP Status</span>
+      </div>
+
+      <p class="font-semibold text-gray-700">Keep VIP Active</p>
+      <div class="space-y-3">
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">✅</div>
+            <div>
+              <p class="font-medium">Complete 10 Tasks Daily</p>
+              <p class="text-xs text-gray-500">To maintain VIP</p>
+            </div>
+          </div>
+          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Go</button>
+        </div>
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">👥</div>
+            <div>
+              <p class="font-medium">Refer 5 People / Week</p>
+              <p class="text-xs text-gray-500">To maintain VIP</p>
+            </div>
+          </div>
+          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Go</button>
+        </div>
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">💰</div>
+            <div>
+              <p class="font-medium">Purchase VIP</p>
+              <p class="text-xs text-gray-500">Pay 500 Coins</p>
+            </div>
+          </div>
+          <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+        </div>
+      </div>
+
+      <p class="font-semibold text-gray-700">More</p>
+      <div class="space-y-3">
+        <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border" onclick="window.Telegram.WebApp.openTelegramLink('https://t.me/Vtnhub0')">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">💬</div>
+            <div>
+              <p class="font-medium">Contact Support</p>
+              <p class="text-xs text-gray-500">@Vtnhub0</p>
+            </div>
+          </div>
+          <span class="text-gray-400">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== WALLET ==================== -->
+  <div id="page-wallet" class="page">
+    <div class="bg-red-600 text-white text-center py-4 relative">
+      <button onclick="showPage('home')" class="absolute left-4 top-3.5 text-2xl">←</button>
+      <h1 class="text-xl font-bold">Wallet & History</h1>
+    </div>
+    <div class="px-4 pt-4 space-y-4">
+      <div class="bg-red-600 rounded-2xl p-6 text-center text-white">
+        <p class="text-sm opacity-90">Current Balance</p>
+        <h2 class="text-4xl font-bold mt-1">
+          <span id="wallet-balance">0</span> <span class="text-yellow-300">Coins</span>
+        </h2>
+      </div>
+
+      <p class="font-semibold text-gray-700">Add Coins</p>
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white text-xl">+</div>
+          <div>
+            <p class="font-medium">Add Coins</p>
+            <p class="text-xs text-gray-500">Buy with UPI or USDT</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Buy</button>
+      </div>
+
+      <p class="font-semibold text-gray-700">Withdraw</p>
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white">🇮🇳</div>
+          <div>
+            <p class="font-medium">India - UPI / Bank</p>
+            <p class="text-xs text-gray-500">Withdraw in INR</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Withdraw</button>
+      </div>
+      <div class="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white">₮</div>
+          <div>
+            <p class="font-medium">USDT (International)</p>
+            <p class="text-xs text-gray-500">TRC20 / BEP20</p>
+          </div>
+        </div>
+        <button class="bg-red-600 text-white text-sm px-4 py-1.5 rounded-full">Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BOTTOM NAV ==================== -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-3 z-50 safe-bottom">
+    <button onclick="showPage('home')" class="flex flex-col items-center text-red-600 nav-btn" data-page="home">
+      <span class="text-xl">🏠</span><span class="text-xs mt-1 font-medium">Home</span>
+    </button>
+    <button onclick="showPage('earn')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="earn">
+      <span class="text-xl">💰</span><span class="text-xs mt-1">Earn</span>
+    </button>
+    <button onclick="showPage('promote')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="promote">
+      <span class="text-xl">📢</span><span class="text-xs mt-1">Promote</span>
+    </button>
+    <button onclick="showPage('fun')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="fun">
+      <span class="text-xl">🎮</span><span class="text-xs mt-1">Fun</span>
+    </button>
+    <button onclick="showPage('profile')" class="flex flex-col items-center text-gray-500 nav-btn" data-page="profile">
+      <span class="text-xl">👤</span><span class="text-xs mt-1">Profile</span>
+    </button>
   </div>
 
   <script>
-    const statusEl = document.getElementById('status');
-    const tgUserEl = document.getElementById('tg-user');
-    const sbStatusEl = document.getElementById('sb-status');
-    const errorEl = document.getElementById('error');
+    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function log(msg) {
-      statusEl.innerText = msg;
-      console.log(msg);
-    }
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor('#dc2626');
+    tg.setBackgroundColor('#fdf6f0');
 
-    async function start() {
-      try {
-        log('1. Checking Telegram...');
+    let currentUser = null;
 
-        const tg = window.Telegram?.WebApp;
-        if (!tg) {
-          errorEl.innerText = 'Telegram WebApp not found. Open inside Telegram.';
-          return;
-        }
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
 
-        tg.ready();
-        tg.expand();
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-red-600');
+        btn.classList.add('text-gray-500');
+      });
+      const activeBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-gray-500');
+        activeBtn.classList.add('text-red-600');
+      }
 
-        const user = tg.initDataUnsafe?.user;
-        if (!user) {
-          tgUserEl.innerText = 'No user data';
-          errorEl.innerText = 'No Telegram user found. Make sure you opened from the bot.';
-          return;
-        }
-
-        tgUserEl.innerText = user.first_name + ' (' + user.id + ')';
-        log('2. Telegram OK. Connecting to Supabase...');
-
-        const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-
-        if (!window.supabase) {
-          errorEl.innerText = 'Supabase library failed to load';
-          return;
-        }
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        sbStatusEl.innerText = 'Client created';
-
-        log('3. Checking if user exists in database...');
-
-        let { data: existingUser, error: selectError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('telegram_id', user.id)
-          .maybeSingle();
-
-        if (selectError) {
-          errorEl.innerText = 'Select Error: ' + selectError.message + ' | Code: ' + selectError.code;
-          sbStatusEl.innerText = 'Error on select';
-          return;
-        }
-
-        if (existingUser) {
-          log('4. User already exists');
-          showSuccess(existingUser);
-          return;
-        }
-
-        log('5. Creating new user...');
-
-        const { data: newUser, error: insertError } = await supabase
-          .from('users')
-          .insert({
-            telegram_id: user.id,
-            first_name: user.first_name || 'User',
-            username: user.username || null,
-            balance: 0,
-            is_vip: false
-          })
-          .select()
-          .single();
-
-        if (insertError) {
-          errorEl.innerText = 'Insert Error: ' + insertError.message + ' | Code: ' + insertError.code;
-          sbStatusEl.innerText = 'Error on insert';
-          return;
-        }
-
-        log('6. User created successfully');
-        showSuccess(newUser);
-
-      } catch (err) {
-        errorEl.innerText = 'JS Error: ' + err.message;
-        log('Crashed');
+      if (pageId === 'wallet' && currentUser) {
+        document.getElementById('wallet-balance').innerText = currentUser.balance || 0;
       }
     }
 
-    function showSuccess(user) {
-      document.getElementById('result').classList.remove('hidden');
-      document.getElementById('res-name').innerText = user.first_name;
-      document.getElementById('res-id').innerText = user.telegram_id;
-      document.getElementById('res-balance').innerText = user.balance;
-      statusEl.innerText = 'Completed successfully';
-      sbStatusEl.innerText = 'Connected';
+    async function initApp() {
+      try {
+        const tgUser = tg.initDataUnsafe?.user;
+        if (!tgUser) {
+          document.getElementById('loading').innerHTML = '<p class="text-red-500">Please open inside Telegram</p>';
+          return;
+        }
+
+        let { data: user, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('telegram_id', tgUser.id)
+          .maybeSingle();
+
+        if (!user) {
+          const { data: newUser, error: insertError } = await supabase
+            .from('users')
+            .insert({
+              telegram_id: tgUser.id,
+              first_name: tgUser.first_name || 'User',
+              username: tgUser.username || null,
+              balance: 0,
+              is_vip: false
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            document.getElementById('loading').innerHTML = '<p class="text-red-500">Error: ' + insertError.message + '</p>';
+            return;
+          }
+          user = newUser;
+        }
+
+        currentUser = user;
+        updateUI(user);
+
+      } catch (err) {
+        document.getElementById('loading').innerHTML = '<p class="text-red-500">Error: ' + err.message + '</p>';
+      }
     }
 
-    start();
+    function updateUI(user) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('home-content').classList.remove('hidden');
+
+      document.getElementById('user-name').innerText = user.first_name || 'User';
+      document.getElementById('user-id').innerText = user.telegram_id;
+      document.getElementById('balance').innerText = user.balance || 0;
+
+      document.getElementById('profile-name').innerText = user.first_name || 'User';
+      document.getElementById('profile-id').innerText = user.telegram_id;
+
+      if (user.is_vip) {
+        document.getElementById('vip-badge').classList.remove('hidden');
+        document.getElementById('profile-vip').classList.remove('hidden');
+      }
+    }
+
+    function claimDaily() {
+      tg.showAlert('Daily Claim will be activated soon!');
+    }
+
+    function inviteFriends() {
+      const botUsername = 'VTNPromoAssistantbot';
+      const refLink = `https://t.me/\( {botUsername}?start=ref_ \){currentUser?.telegram_id || ''}`;
+      tg.openTelegramLink(`https://t.me/share/url?url=\( {encodeURIComponent(refLink)}&text= \){encodeURIComponent('Join VTN Hub and earn coins!')}`);
+    }
+
+    initApp();
   </script>
 </body>
-</html>
+            </html>
