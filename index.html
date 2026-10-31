@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VTN HUB</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -157,8 +156,8 @@
       <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
-          <div style="font-weight:700;" id="username">Loading...</div>
-          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
+          <div style="font-weight:700;" id="username">Guest</div>
+          <div style="font-size:12px;color:#777;" id="userid">ID: Guest Mode</div>
         </div>
         <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
@@ -277,12 +276,11 @@
       <div class="header">My Profile</div>
       <div class="card" style="text-align:center;">
         <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
-        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
-        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">Guest</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: Guest Mode</div>
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin')"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
     <!-- REFER -->
@@ -297,18 +295,8 @@
       </div>
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
-        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
+        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTNGUEST</div>
         <button class="gold-btn">Copy Code</button>
-      </div>
-    </div>
-
-    <!-- ADMIN -->
-    <div id="admin" class="page">
-      <div class="header">👑 Admin Panel</div>
-      <div class="section-title">Coming Soon</div>
-      <div class="card">Full control for tasks, users, withdrawals and banner ads will be added here.</div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
     </div>
 
@@ -323,181 +311,98 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    let supabase = null;
-
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } catch (e) {
-      console.log('Supabase load error', e);
-    }
-
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
-    let user = null;
-    let currentUser = null;
-    let balance = 0;
-    let officialDone = false;
+    let balance = Number(localStorage.getItem('vtn_balance')) || 0;
+    let lastCheckIn = localStorage.getItem('vtn_last_checkin') || '';
+    let officialDone = localStorage.getItem('vtn_official') === 'done';
+    let isFirstDay = localStorage.getItem('vtn_first_day') !== 'done';
 
-    // Strong user detection
-    function getTelegramUser() {
-      // Method 1
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-        return window.Telegram.WebApp.initDataUnsafe.user;
-      }
-      // Method 2
-      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        return tg.initDataUnsafe.user;
-      }
-      return null;
-    }
-
-    async function init() {
-      // Wait a bit for Telegram to fully load
-      await new Promise(r => setTimeout(r, 600));
-
-      user = getTelegramUser();
-
-      if (!user) {
-        document.getElementById('username').innerText = 'Guest';
-        document.getElementById('userid').innerText = 'ID: Not detected';
-        document.getElementById('profile-name').innerText = 'Guest';
-        document.getElementById('profile-id').innerText = 'ID: Not detected';
-        alert("User data not detected.\nPlease close and open the Mini App again from the bot menu.");
-        return;
-      }
-
+    // Try to get real user
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
       document.getElementById('username').innerText = user.first_name || 'User';
       document.getElementById('userid').innerText = 'ID: ' + user.id;
       document.getElementById('profile-name').innerText = user.first_name || 'User';
       document.getElementById('profile-id').innerText = 'ID: ' + user.id;
       document.getElementById('ref-code').innerText = 'VTN' + user.id;
-
-      if (Number(user.id) === 8150531247) {
-        document.getElementById('admin-btn').style.display = 'flex';
-      }
-
-      await loadUser();
     }
 
-    async function loadUser() {
-      if (!supabase || !user) return;
-
-      try {
-        let { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('telegram_id', user.id)
-          .single();
-
-        if (error || !data) {
-          const { data: newUser } = await supabase
-            .from('users')
-            .insert([{
-              telegram_id: user.id,
-              first_name: user.first_name || '',
-              username: user.username || '',
-              balance: 0,
-              is_vip: false,
-              daily_tasks: 0,
-              official_done: false
-            }])
-            .select()
-            .single();
-          currentUser = newUser;
-          balance = 0;
-        } else {
-          currentUser = data;
-          balance = data.balance || 0;
-          officialDone = data.official_done || false;
-          if (officialDone) {
-            const el = document.getElementById('official-task');
-            if (el) el.style.display = 'none';
-          }
-        }
-        updateBalance();
-      } catch (e) {
-        console.log(e);
-        balance = 0;
-        updateBalance();
-      }
+    if (officialDone) {
+      const el = document.getElementById('official-task');
+      if (el) el.style.display = 'none';
     }
 
     function updateBalance() {
       document.getElementById('balance').innerText = balance + ' Coins';
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
-    }
-
-    async function saveBalance(amount, type, description) {
-      balance += amount;
-      updateBalance();
-
-      if (!supabase || !user) return;
-
-      try {
-        await supabase.from('users').update({ balance: balance }).eq('telegram_id', user.id);
-        await supabase.from('transactions').insert([{
-          telegram_id: user.id,
-          amount: amount,
-          type: type,
-          description: description
-        }]);
-      } catch (e) {
-        console.log('Save error', e);
-      }
+      localStorage.setItem('vtn_balance', balance);
     }
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4, admin: 4 };
+      const map = { home: 0, earn: 1, promote: 2, fun: 3, profile: 4, wallet: 0, refer: 4 };
       if (map[pageId] !== undefined) {
         document.querySelectorAll('.nav-item')[map[pageId]].classList.add('active');
       }
     }
 
-    async function dailyCheckIn() {
-      if (!user) return alert("User not detected. Please reopen the Mini App.");
-      const watch = confirm("Watch a short ad to claim your reward?");
-      if (!watch) return;
-      let reward = Math.floor(Math.random() * 13) + 3;
-      await saveBalance(reward, 'checkin', 'Daily Check-in');
-      alert("Daily Check-in Successful! +" + reward + " Coins");
+    function addCoins(amount, title) {
+      balance += amount;
+      updateBalance();
+      alert(title + " Successful! +" + amount + " Coins");
     }
 
-    async function doOfficialTask() {
-      if (!user) return alert("User not detected");
+    function dailyCheckIn() {
+      const today = new Date().toDateString();
+      if (lastCheckIn === today) {
+        return alert("You already claimed today's reward.\nCome back tomorrow!");
+      }
+
+      const watch = confirm("Watch a short ad to claim your reward?");
+      if (!watch) return;
+
+      let reward = 0;
+      if (isFirstDay) {
+        reward = Math.floor(Math.random() * 70) + 30;
+        localStorage.setItem('vtn_first_day', 'done');
+        isFirstDay = false;
+        alert("🎉 First Day Bonus! You received " + reward + " Coins!");
+      } else {
+        reward = Math.floor(Math.random() * 13) + 3;
+        alert("Daily Check-in Successful! +" + reward + " Coins");
+      }
+
+      balance += reward;
+      lastCheckIn = today;
+      localStorage.setItem('vtn_last_checkin', today);
+      updateBalance();
+    }
+
+    function doOfficialTask() {
       if (officialDone) return alert("Already completed");
       const join = confirm("Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1");
       if (!join) return;
       window.open('https://t.me/vtnhub', '_blank');
-      await saveBalance(50, 'official', 'Official Task');
+      balance += 50;
       officialDone = true;
-      if (supabase && user) {
-        await supabase.from('users').update({ official_done: true }).eq('telegram_id', user.id);
-      }
+      localStorage.setItem('vtn_official', 'done');
       document.getElementById('official-task').style.display = 'none';
+      updateBalance();
       alert("Official Task Completed! +50 Coins");
-    }
-
-    async function addCoins(amount, title) {
-      if (!user) return alert("User not detected");
-      await saveBalance(amount, 'task', title);
-      alert(title + " Successful! +" + amount + " Coins");
     }
 
     function startGame(game) {
       alert("Play & Earn freely!\n\n" + game + " starting...");
     }
 
-    // Start
-    init();
+    updateBalance();
   </script>
 </body>
           </html>
