@@ -205,7 +205,7 @@
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
           <span class="icon">✅</span>Claim up to 100
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn'); loadUserTasks();">
           <span class="icon">🎯</span>Earn Tasks
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
@@ -240,9 +240,10 @@
 
       <div class="section-title">Earn Tasks</div>
       <div id="dynamic-tasks">
-        <!-- Tasks from Admin will load here -->
+        <div class="card" style="text-align:center; color:#888; margin: 0 14px;">Loading tasks...</div>
       </div>
 
+      <div class="section-title">Other Tasks</div>
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
@@ -493,6 +494,9 @@
       if (map[id] !== undefined) {
         document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       }
+      if (id === 'earn') {
+        loadUserTasks();
+      }
     }
 
     function addCoins(amount, title) {
@@ -557,37 +561,54 @@
       }
     }
 
-    // ========== LOAD TASKS FOR USERS ==========
+    // ========== STRONGER LOAD TASKS ==========
     async function loadUserTasks() {
-      if (!sb) return;
       const container = document.getElementById('dynamic-tasks');
       if (!container) return;
 
+      container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 0 14px;">Loading tasks...</div>';
+
+      if (!sb) {
+        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Supabase not connected</div>';
+        return;
+      }
+
       try {
-        const { data, error } = await sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
-        if (error || !data || data.length === 0) {
-          container.innerHTML = '';
+        // Load ALL tasks (no is_active filter for testing)
+        const { data, error } = await sb
+          .from('tasks')
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (error) {
+          container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Error: ' + error.message + '</div>';
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 0 14px;">No tasks available yet</div>';
           return;
         }
 
         let html = '';
         data.forEach(task => {
           const reward = task.reward || 0;
+          const title = (task.title || 'Task').replace(/'/g, "\\'");
           const link = task.link || '';
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info">
-                <h4>${task.title}</h4>
+                <h4>${task.title || 'Task'}</h4>
                 <p>+${reward} Coins</p>
               </div>
-              <button class="start-btn" onclick="doDynamicTask(\( {reward}, ' \){task.title.replace(/'/g, "\\'")}', '${link}')">Start</button>
+              <button class="start-btn" onclick="doDynamicTask(\( {reward}, ' \){title}', '${link}')">Start</button>
             </div>
           `;
         });
         container.innerHTML = html;
       } catch (e) {
-        container.innerHTML = '';
+        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Failed to load tasks</div>';
       }
     }
 
@@ -680,7 +701,7 @@
     // Start
     setupUser();
     loadUser();
-    loadUserTasks();
+    setTimeout(loadUserTasks, 800);
   </script>
 </body>
-                                                                                                      </html>
+          </html>
