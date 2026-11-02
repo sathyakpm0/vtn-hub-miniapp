@@ -205,7 +205,7 @@
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
           <span class="icon">✅</span>Claim up to 100
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn'); loadUserTasks();">
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
           <span class="icon">🎯</span>Earn Tasks
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
@@ -238,12 +238,18 @@
         <button class="start-btn">Join</button>
       </div>
 
-      <div class="section-title">Earn Tasks</div>
-      <div id="dynamic-tasks">
-        <div class="card" style="text-align:center; color:#888; margin: 0 14px;">Loading tasks...</div>
+      <div class="section-title">Tasks</div>
+      
+      <!-- Earn Tasks Button (same style) -->
+      <div class="list-item" onclick="showPage('earn-tasks'); loadUserTasks();">
+        <div class="icon" style="background:#c8102e;">📋</div>
+        <div class="info">
+          <h4>Earn Tasks</h4>
+          <p>Join, Views, Install & more</p>
+        </div>
+        <button class="start-btn">Open</button>
       </div>
 
-      <div class="section-title">Other Tasks</div>
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
@@ -254,6 +260,17 @@
       <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 Coins</p></div><button class="start-btn" onclick="addCoins(15,'Join Channel')">Start</button></div>
       <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50,'Join Bot')">Start</button></div>
       <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+100 Coins</p></div><button class="start-btn" onclick="addCoins(100,'Install App')">Start</button></div>
+    </div>
+
+    <!-- EARN TASKS (Inner Page) -->
+    <div id="earn-tasks" class="page">
+      <div class="header">Earn Tasks</div>
+      <div id="dynamic-tasks">
+        <div class="card" style="text-align:center; color:#888; margin: 14px;">Loading tasks...</div>
+      </div>
+      <div style="padding:14px;">
+        <button class="btn" style="width:100%; background:#666;" onclick="showPage('earn')">← Back</button>
+      </div>
     </div>
 
     <!-- PROMOTE -->
@@ -386,7 +403,7 @@
 
   <div class="bottom-nav">
     <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
-    <div class="nav-item" onclick="showPage('earn'); loadUserTasks();"><span class="icon">💰</span>Earn</div>
+    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
     <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
     <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
     <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
@@ -490,12 +507,9 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4 };
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'earn-tasks':1 };
       if (map[id] !== undefined) {
         document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
-      }
-      if (id === 'earn') {
-        loadUserTasks();
       }
     }
 
@@ -561,32 +575,28 @@
       }
     }
 
-    // ========== STRONGER LOAD TASKS ==========
+    // ========== LOAD TASKS ==========
     async function loadUserTasks() {
       const container = document.getElementById('dynamic-tasks');
       if (!container) return;
 
-      container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 0 14px;">Loading tasks...</div>';
+      container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">Loading tasks...</div>';
 
       if (!sb) {
-        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Supabase not connected</div>';
+        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Supabase not connected</div>';
         return;
       }
 
       try {
-        // Load ALL tasks (no is_active filter for testing)
-        const { data, error } = await sb
-          .from('tasks')
-          .select('*')
-          .order('id', { ascending: false });
+        const { data, error } = await sb.from('tasks').select('*').order('id', { ascending: false });
 
         if (error) {
-          container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Error: ' + error.message + '</div>';
+          container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Error: ' + error.message + '</div>';
           return;
         }
 
         if (!data || data.length === 0) {
-          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 0 14px;">No tasks available yet</div>';
+          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No tasks available yet</div>';
           return;
         }
 
@@ -594,7 +604,7 @@
         data.forEach(task => {
           const reward = task.reward || 0;
           const title = (task.title || 'Task').replace(/'/g, "\\'");
-          const link = task.link || '';
+          const link = (task.link || '').replace(/'/g, "\\'");
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
@@ -608,12 +618,12 @@
         });
         container.innerHTML = html;
       } catch (e) {
-        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 0 14px;">Failed to load tasks</div>';
+        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Failed to load tasks</div>';
       }
     }
 
     function doDynamicTask(reward, title, link) {
-      if (link) {
+      if (link && link !== '') {
         window.open(link, '_blank');
       }
       addCoins(reward, title);
@@ -649,7 +659,6 @@
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
         loadAdminTasks();
-        loadUserTasks();
       } catch (e) {
         alert('Failed to add task');
       }
@@ -692,7 +701,6 @@
         await sb.from('tasks').delete().eq('id', id);
         alert('Task deleted');
         loadAdminTasks();
-        loadUserTasks();
       } catch (e) {
         alert('Delete failed');
       }
@@ -701,7 +709,6 @@
     // Start
     setupUser();
     loadUser();
-    setTimeout(loadUserTasks, 800);
   </script>
 </body>
-          </html>
+                                                                                                                                           </html>
