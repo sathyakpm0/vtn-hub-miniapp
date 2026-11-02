@@ -436,8 +436,6 @@
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
     let officialDone = localStorage.getItem(officialKey) === '1';
     let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
-
-    // Store tasks here for reliable click
     let currentTasks = [];
 
     function updateUI() {
@@ -577,7 +575,7 @@
       }
     }
 
-    // ========== LOAD TASKS (SAFER) ==========
+    // ========== LOAD TASKS ==========
     async function loadUserTasks() {
       const container = document.getElementById('dynamic-tasks');
       if (!container) return;
@@ -602,7 +600,6 @@
           return;
         }
 
-        // Save tasks in memory
         currentTasks = data;
 
         let html = '';
@@ -624,7 +621,7 @@
       }
     }
 
-    // Safer click function
+    // ========== CONFIRMATION BEFORE GIVING COINS ==========
     function doTaskByIndex(index) {
       const task = currentTasks[index];
       if (!task) {
@@ -632,13 +629,23 @@
         return;
       }
 
+      // Open link if available
       if (task.link) {
         window.open(task.link, '_blank');
       }
 
-      const reward = task.reward || 0;
-      const title = task.title || 'Task';
-      addCoins(reward, title);
+      // Ask for confirmation
+      setTimeout(function() {
+        const confirmed = confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"');
+        
+        if (confirmed) {
+          const reward = task.reward || 0;
+          const title = task.title || 'Task';
+          addCoins(reward, title);
+        } else {
+          alert('Task not completed. No coins added.');
+        }
+      }, 1500);
     }
 
     // ========== ADMIN ==========
@@ -723,4 +730,4 @@
     loadUser();
   </script>
 </body>
-</html>
+                                                                                    </html>
