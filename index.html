@@ -227,6 +227,7 @@
     <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
+      
       <div class="section-title">Official Task</div>
       <div class="list-item" id="official-task" onclick="doOfficialTask()">
         <div class="icon" style="background:#c8102e;">⭐</div>
@@ -236,10 +237,12 @@
         </div>
         <button class="start-btn">Join</button>
       </div>
+
       <div class="section-title">Earn Tasks</div>
-      <div id="tasks-list">
-        <!-- Dynamic tasks will appear here -->
+      <div id="dynamic-tasks">
+        <!-- Tasks from Admin will load here -->
       </div>
+
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
@@ -335,7 +338,7 @@
       </div>
     </div>
 
-    <!-- ADMIN PANEL -->
+    <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
 
@@ -370,7 +373,7 @@
 
       <div class="section-title">Current Tasks</div>
       <div id="admin-tasks-list">
-        <div class="card" style="text-align:center;color:#888;">Loading tasks...</div>
+        <div class="card" style="text-align:center;color:#888;">Loading...</div>
       </div>
 
       <div style="padding:14px;">
@@ -382,7 +385,7 @@
 
   <div class="bottom-nav">
     <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
-    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
+    <div class="nav-item" onclick="showPage('earn'); loadUserTasks();"><span class="icon">💰</span>Earn</div>
     <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
     <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
     <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
@@ -395,7 +398,7 @@
     try {
       sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } catch (e) {
-      console.log('Supabase load error');
+      console.log('Supabase error');
     }
 
     const tg = window.Telegram.WebApp;
@@ -466,9 +469,7 @@
             official_done: officialDone
           }]);
         }
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     }
 
     async function saveBalance(amount, type, desc) {
@@ -481,9 +482,7 @@
           type: type,
           description: desc
         }]);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     }
 
     function showPage(id) {
@@ -558,7 +557,48 @@
       }
     }
 
-    // ========== ADMIN FUNCTIONS ==========
+    // ========== LOAD TASKS FOR USERS ==========
+    async function loadUserTasks() {
+      if (!sb) return;
+      const container = document.getElementById('dynamic-tasks');
+      if (!container) return;
+
+      try {
+        const { data, error } = await sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
+        if (error || !data || data.length === 0) {
+          container.innerHTML = '';
+          return;
+        }
+
+        let html = '';
+        data.forEach(task => {
+          const reward = task.reward || 0;
+          const link = task.link || '';
+          html += `
+            <div class="list-item">
+              <div class="icon" style="background:#c8102e;">📋</div>
+              <div class="info">
+                <h4>${task.title}</h4>
+                <p>+${reward} Coins</p>
+              </div>
+              <button class="start-btn" onclick="doDynamicTask(\( {reward}, ' \){task.title.replace(/'/g, "\\'")}', '${link}')">Start</button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (e) {
+        container.innerHTML = '';
+      }
+    }
+
+    function doDynamicTask(reward, title, link) {
+      if (link) {
+        window.open(link, '_blank');
+      }
+      addCoins(reward, title);
+    }
+
+    // ========== ADMIN ==========
     async function addNewTask() {
       if (!sb) return alert('Supabase not connected');
 
@@ -588,6 +628,7 @@
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
         loadAdminTasks();
+        loadUserTasks();
       } catch (e) {
         alert('Failed to add task');
       }
@@ -600,12 +641,7 @@
 
       try {
         const { data, error } = await sb.from('tasks').select('*').order('id', { ascending: false });
-        if (error) {
-          container.innerHTML = '<div class="card">Error loading tasks</div>';
-          return;
-        }
-
-        if (!data || data.length === 0) {
+        if (error || !data || data.length === 0) {
           container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks yet</div>';
           return;
         }
@@ -635,6 +671,7 @@
         await sb.from('tasks').delete().eq('id', id);
         alert('Task deleted');
         loadAdminTasks();
+        loadUserTasks();
       } catch (e) {
         alert('Delete failed');
       }
@@ -643,6 +680,7 @@
     // Start
     setupUser();
     loadUser();
+    loadUserTasks();
   </script>
 </body>
-  </html>
+                                                                                                      </html>
