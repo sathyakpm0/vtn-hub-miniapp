@@ -240,7 +240,6 @@
 
       <div class="section-title">Tasks</div>
       
-      <!-- Earn Tasks Button (same style) -->
       <div class="list-item" onclick="showPage('earn-tasks'); loadUserTasks();">
         <div class="icon" style="background:#c8102e;">📋</div>
         <div class="info">
@@ -438,6 +437,9 @@
     let officialDone = localStorage.getItem(officialKey) === '1';
     let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
 
+    // Store tasks here for reliable click
+    let currentTasks = [];
+
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
@@ -575,7 +577,7 @@
       }
     }
 
-    // ========== LOAD TASKS ==========
+    // ========== LOAD TASKS (SAFER) ==========
     async function loadUserTasks() {
       const container = document.getElementById('dynamic-tasks');
       if (!container) return;
@@ -600,19 +602,19 @@
           return;
         }
 
+        // Save tasks in memory
+        currentTasks = data;
+
         let html = '';
-        data.forEach(task => {
-          const reward = task.reward || 0;
-          const title = (task.title || 'Task').replace(/'/g, "\\'");
-          const link = (task.link || '').replace(/'/g, "\\'");
+        data.forEach((task, index) => {
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info">
                 <h4>${task.title || 'Task'}</h4>
-                <p>+${reward} Coins</p>
+                <p>+${task.reward || 0} Coins</p>
               </div>
-              <button class="start-btn" onclick="doDynamicTask(\( {reward}, ' \){title}', '${link}')">Start</button>
+              <button class="start-btn" onclick="doTaskByIndex(${index})">Start</button>
             </div>
           `;
         });
@@ -622,10 +624,20 @@
       }
     }
 
-    function doDynamicTask(reward, title, link) {
-      if (link && link !== '') {
-        window.open(link, '_blank');
+    // Safer click function
+    function doTaskByIndex(index) {
+      const task = currentTasks[index];
+      if (!task) {
+        alert('Task not found');
+        return;
       }
+
+      if (task.link) {
+        window.open(task.link, '_blank');
+      }
+
+      const reward = task.reward || 0;
+      const title = task.title || 'Task';
       addCoins(reward, title);
     }
 
@@ -711,4 +723,4 @@
     loadUser();
   </script>
 </body>
-                                                                                                                                           </html>
+</html>
