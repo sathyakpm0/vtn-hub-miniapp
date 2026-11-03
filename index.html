@@ -171,6 +171,13 @@
       border-radius: 10px;
       font-size: 14px;
     }
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+    .form-row .form-group {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -309,6 +316,10 @@
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
+      <div class="section-title">History</div>
+      <div id="history-list">
+        <div class="card" style="text-align:center;color:#888;">No history yet</div>
+      </div>
       <div class="section-title">Withdraw</div>
       <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
@@ -362,11 +373,11 @@
       <div class="section-title">Add New Task</div>
       <div class="card">
         <div class="form-group">
-          <label>Task Title</label>
+          <label>Task Title *</label>
           <input type="text" id="task-title" placeholder="e.g. Join My Channel">
         </div>
         <div class="form-group">
-          <label>Reward (Coins)</label>
+          <label>Reward (Coins) *</label>
           <input type="number" id="task-reward" placeholder="e.g. 50" value="10">
         </div>
         <div class="form-group">
@@ -377,13 +388,42 @@
             <option value="views">Views & Likes</option>
             <option value="install">Install App</option>
             <option value="website">Visit Website</option>
-            <option value="watch">Watch Video</option>
+            <option value="watch">Watch Video / Ads</option>
             <option value="other">Other</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Link (optional)</label>
+          <label>Link</label>
           <input type="text" id="task-link" placeholder="https://t.me/...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Daily Limit</label>
+            <input type="number" id="task-daily-limit" value="1">
+          </div>
+          <div class="form-group">
+            <label>Proof Required</label>
+            <select id="task-proof">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>VIP Only</label>
+            <select id="task-vip">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Active</label>
+            <select id="task-active">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
       </div>
@@ -431,12 +471,14 @@
     const checkinKey = 'vtn_c_' + userId;
     const officialKey = 'vtn_o_' + userId;
     const firstDayKey = 'vtn_f_' + userId;
+    const completedKey = 'vtn_completed_' + userId;
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
     let officialDone = localStorage.getItem(officialKey) === '1';
     let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
     let currentTasks = [];
+    let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
 
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
@@ -460,6 +502,7 @@
         if (el) el.style.display = 'none';
       }
       updateUI();
+      loadHistory();
     }
 
     async function loadUser() {
@@ -511,6 +554,7 @@
       if (map[id] !== undefined) {
         document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       }
+      if (id === 'wallet') loadHistory();
     }
 
     function addCoins(amount, title) {
@@ -588,7 +632,7 @@
       }
 
       try {
-        const { data, error } = await sb.from('tasks').select('*').order('id', { ascending: false });
+        const { data, error } = await sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
 
         if (error) {
           container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Error: ' + error.message + '</div>';
@@ -604,24 +648,31 @@
 
         let html = '';
         data.forEach((task, index) => {
+          // Skip if already completed and not a watch-type task
+          const isWatch = task.category === 'watch';
+          if (!isWatch && completedTasks.includes(task.id)) return;
+
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info">
                 <h4>${task.title || 'Task'}</h4>
-                <p>+${task.reward || 0} Coins</p>
+                <p>+${task.reward || 0} Coins ${task.proof_required ? '• Proof Required' : ''}</p>
               </div>
               <button class="start-btn" onclick="doTaskByIndex(${index})">Start</button>
             </div>
           `;
         });
+
+        if (!html) {
+          html = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No new tasks available</div>';
+        }
         container.innerHTML = html;
       } catch (e) {
         container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Failed to load tasks</div>';
       }
     }
 
-    // ========== CONFIRMATION BEFORE GIVING COINS ==========
     function doTaskByIndex(index) {
       const task = currentTasks[index];
       if (!task) {
@@ -629,23 +680,72 @@
         return;
       }
 
-      // Open link if available
       if (task.link) {
         window.open(task.link, '_blank');
       }
 
-      // Ask for confirmation
       setTimeout(function() {
         const confirmed = confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"');
         
         if (confirmed) {
           const reward = task.reward || 0;
           const title = task.title || 'Task';
+          
+          // Mark as completed (except watch type)
+          if (task.category !== 'watch') {
+            if (!completedTasks.includes(task.id)) {
+              completedTasks.push(task.id);
+              localStorage.setItem(completedKey, JSON.stringify(completedTasks));
+            }
+          }
+
+          // Save to history
+          saveToHistory(title, reward);
+
           addCoins(reward, title);
+          loadUserTasks(); // Refresh list
         } else {
           alert('Task not completed. No coins added.');
         }
       }, 1500);
+    }
+
+    function saveToHistory(title, amount) {
+      const history = JSON.parse(localStorage.getItem('vtn_history_' + userId) || '[]');
+      history.unshift({
+        title: title,
+        amount: amount,
+        time: new Date().toLocaleString()
+      });
+      // Keep only last 20
+      if (history.length > 20) history.length = 20;
+      localStorage.setItem('vtn_history_' + userId, JSON.stringify(history));
+    }
+
+    function loadHistory() {
+      const container = document.getElementById('history-list');
+      if (!container) return;
+
+      const history = JSON.parse(localStorage.getItem('vtn_history_' + userId) || '[]');
+      if (history.length === 0) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>';
+        return;
+      }
+
+      let html = '';
+      history.forEach(item => {
+        html += `
+          <div class="list-item">
+            <div class="icon" style="background:#4CAF50;">✅</div>
+            <div class="info">
+              <h4>${item.title}</h4>
+              <p>${item.time}</p>
+            </div>
+            <div style="font-weight:700;color:#c8102e;">+${item.amount}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
 
     // ========== ADMIN ==========
@@ -656,6 +756,10 @@
       const reward = Number(document.getElementById('task-reward').value) || 0;
       const category = document.getElementById('task-category').value;
       const link = document.getElementById('task-link').value.trim();
+      const dailyLimit = Number(document.getElementById('task-daily-limit').value) || 1;
+      const proofRequired = document.getElementById('task-proof').value === 'true';
+      const isVip = document.getElementById('task-vip').value === 'true';
+      const isActive = document.getElementById('task-active').value === 'true';
 
       if (!title) return alert('Please enter Task Title');
 
@@ -665,7 +769,10 @@
           reward: reward,
           category: category,
           link: link,
-          is_active: true
+          daily_limit: dailyLimit,
+          proof_required: proofRequired,
+          is_vip_only: isVip,
+          is_active: isActive
         }]);
 
         if (error) {
@@ -697,20 +804,32 @@
 
         let html = '';
         data.forEach(task => {
+          const status = task.is_active ? '🟢 Active' : '🔴 Disabled';
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info">
                 <h4>${task.title}</h4>
-                <p>+${task.reward} Coins • ${task.category || 'general'}</p>
+                <p>+${task.reward} • ${task.category} • ${status}</p>
               </div>
-              <button class="start-btn" onclick="deleteTask(${task.id})">Del</button>
+              <button class="start-btn" onclick="toggleTask(${task.id}, \( {!task.is_active})"> \){task.is_active ? 'Off' : 'On'}</button>
+              <button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(${task.id})">Del</button>
             </div>
           `;
         });
         container.innerHTML = html;
       } catch (e) {
         container.innerHTML = '<div class="card">Failed to load</div>';
+      }
+    }
+
+    async function toggleTask(id, newStatus) {
+      try {
+        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+        alert(newStatus ? 'Task Enabled' : 'Task Disabled');
+        loadAdminTasks();
+      } catch (e) {
+        alert('Failed to update');
       }
     }
 
@@ -730,4 +849,4 @@
     loadUser();
   </script>
 </body>
-                                                                                    </html>
+</html>
