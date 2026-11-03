@@ -448,6 +448,16 @@
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label>Wait Seconds (Timer)</label>
+            <input type="number" id="task-wait" value="0" placeholder="0 = no wait">
+          </div>
+          <div class="form-group">
+            <label>Max Users (0 = Unlimited)</label>
+            <input type="number" id="task-max-users" value="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label>Daily Limit</label>
             <input type="number" id="task-daily-limit" value="1">
           </div>
@@ -728,11 +738,12 @@
           const isRepeatable = task.category === 'watch';
           if (!isRepeatable && completedTasks.includes(task.id)) return;
 
+          const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
           html += '<div class="list-item">' +
             '<div class="icon" style="background:#c8102e;">📋</div>' +
             '<div class="info">' +
               '<h4>' + (task.title || 'Task') + '</h4>' +
-              '<p>+' + (task.reward || 0) + ' Coins' + (task.proof_required ? ' • Proof Required' : '') + '</p>' +
+              '<p>+' + (task.reward || 0) + ' Coins' + waitInfo + '</p>' +
             '</div>' +
             '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button>' +
           '</div>';
@@ -758,27 +769,40 @@
         window.open(task.link, '_blank');
       }
 
-      setTimeout(function() {
-        const confirmed = confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"');
-        
-        if (confirmed) {
-          const reward = task.reward || 0;
-          const title = task.title || 'Task';
-          
-          if (task.category !== 'watch') {
-            if (!completedTasks.includes(task.id)) {
-              completedTasks.push(task.id);
-              localStorage.setItem(completedKey, JSON.stringify(completedTasks));
-            }
-          }
+      const waitSec = Number(task.wait_seconds) || 0;
 
-          saveToHistory(title, reward);
-          addCoins(reward, title);
-          loadCategoryTasks(currentCategory);
-        } else {
-          alert('Task not completed. No coins added.');
+      if (waitSec > 0) {
+        alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
+        setTimeout(function() {
+          finishTask(task);
+        }, waitSec * 1000);
+      } else {
+        setTimeout(function() {
+          finishTask(task);
+        }, 1500);
+      }
+    }
+
+    function finishTask(task) {
+      const confirmed = confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"');
+      
+      if (confirmed) {
+        const reward = task.reward || 0;
+        const title = task.title || 'Task';
+        
+        if (task.category !== 'watch') {
+          if (!completedTasks.includes(task.id)) {
+            completedTasks.push(task.id);
+            localStorage.setItem(completedKey, JSON.stringify(completedTasks));
+          }
         }
-      }, 1500);
+
+        saveToHistory(title, reward);
+        addCoins(reward, title);
+        loadCategoryTasks(currentCategory);
+      } else {
+        alert('Task not completed. No coins added.');
+      }
     }
 
     function saveToHistory(title, amount) {
@@ -823,6 +847,8 @@
       const reward = Number(document.getElementById('task-reward').value) || 0;
       const category = document.getElementById('task-category').value;
       const link = document.getElementById('task-link').value.trim();
+      const waitSeconds = Number(document.getElementById('task-wait').value) || 0;
+      const maxUsers = Number(document.getElementById('task-max-users').value) || 0;
       const dailyLimit = Number(document.getElementById('task-daily-limit').value) || 1;
       const proofRequired = document.getElementById('task-proof').value === 'true';
       const isVip = document.getElementById('task-vip').value === 'true';
@@ -836,6 +862,8 @@
           reward: reward,
           category: category,
           link: link,
+          wait_seconds: waitSeconds,
+          max_users: maxUsers,
           daily_limit: dailyLimit,
           proof_required: proofRequired,
           is_vip_only: isVip,
@@ -847,10 +875,12 @@
           return;
         }
 
-        alert('✅ Task Added Successfully!\nCategory: ' + category);
+        alert('✅ Task Added Successfully!\nCategory: ' + category + '\nWait: ' + waitSeconds + 's');
         document.getElementById('task-title').value = '';
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
+        document.getElementById('task-wait').value = '0';
+        document.getElementById('task-max-users').value = '0';
         loadAdminTasks();
       } catch (e) {
         alert('Failed to add task');
@@ -874,12 +904,13 @@
           const btnText = task.is_active ? 'Off' : 'On';
           const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
           const statusDot = task.is_active ? '🟢' : '🔴';
+          const waitInfo = task.wait_seconds > 0 ? ' | ' + task.wait_seconds + 's' : '';
 
           html += '<div class="list-item">' +
             '<div class="icon" style="background:#c8102e;">📋</div>' +
             '<div class="info">' +
               '<h4>' + (task.title || 'Task') + '</h4>' +
-              '<p>+' + (task.reward || 0) + ' • ' + (task.category || '') + ' • ' + statusDot + '</p>' +
+              '<p>+' + (task.reward || 0) + ' • ' + (task.category || '') + waitInfo + ' • ' + statusDot + '</p>' +
             '</div>' +
             '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ', ' + (!task.is_active) + ')">' + btnText + '</button>' +
             '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button>' +
@@ -921,4 +952,4 @@
     loadUser();
   </script>
 </body>
-</html>
+        </html>
