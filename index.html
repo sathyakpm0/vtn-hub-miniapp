@@ -705,7 +705,6 @@
         let query = sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
         
         if (cat === 'other') {
-          // Show tasks that are 'other' or have no specific category
           query = query.or('category.eq.other,category.is.null');
         } else {
           query = query.eq('category', cat);
@@ -769,7 +768,6 @@
           const reward = task.reward || 0;
           const title = task.title || 'Task';
           
-          // Mark as completed (except watch type)
           if (task.category !== 'watch') {
             if (!completedTasks.includes(task.id)) {
               completedTasks.push(task.id);
@@ -879,15 +877,18 @@
 
         let html = '';
         data.forEach(task => {
-          const status = task.is_active ? '🟢' : '🔴';
+          const statusText = task.is_active ? 'Off' : 'On';
+          const statusColor = task.is_active ? '#c8102e' : '#4CAF50';
+          const statusDot = task.is_active ? '🟢' : '🔴';
+
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info">
                 <h4>${task.title}</h4>
-                <p>+${task.reward} • ${task.category} • ${status}</p>
+                <p>+${task.reward} • ${task.category} • ${statusDot}</p>
               </div>
-              <button class="start-btn" onclick="toggleTask(${task.id}, \( {!task.is_active})"> \){task.is_active ? 'Off' : 'On'}</button>
+              <button class="start-btn" style="background:\( {statusColor}" onclick="toggleTask( \){task.id}, \( {!task.is_active})"> \){statusText}</button>
               <button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(${task.id})">Del</button>
             </div>
           `;
@@ -900,7 +901,11 @@
 
     async function toggleTask(id, newStatus) {
       try {
-        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+        const { error } = await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+        if (error) {
+          alert('Error: ' + error.message);
+          return;
+        }
         alert(newStatus ? 'Task Enabled' : 'Task Disabled');
         loadAdminTasks();
       } catch (e) {
@@ -924,4 +929,4 @@
     loadUser();
   </script>
 </body>
-          </html>
+                                                                                                                                                                       </html>
