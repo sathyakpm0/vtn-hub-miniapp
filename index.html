@@ -682,7 +682,6 @@
       }
     }
 
-    // ========== CATEGORY SYSTEM ==========
     function openCategory(cat) {
       currentCategory = cat;
       document.getElementById('category-title').innerText = categoryNames[cat] || 'Tasks';
@@ -729,16 +728,14 @@
           const isRepeatable = task.category === 'watch';
           if (!isRepeatable && completedTasks.includes(task.id)) return;
 
-          html += `
-            <div class="list-item">
-              <div class="icon" style="background:#c8102e;">📋</div>
-              <div class="info">
-                <h4>${task.title || 'Task'}</h4>
-                <p>+${task.reward || 0} Coins ${task.proof_required ? '• Proof Required' : ''}</p>
-              </div>
-              <button class="start-btn" onclick="doTaskByIndex(${index})">Start</button>
-            </div>
-          `;
+          html += '<div class="list-item">' +
+            '<div class="icon" style="background:#c8102e;">📋</div>' +
+            '<div class="info">' +
+              '<h4>' + (task.title || 'Task') + '</h4>' +
+              '<p>+' + (task.reward || 0) + ' Coins' + (task.proof_required ? ' • Proof Required' : '') + '</p>' +
+            '</div>' +
+            '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button>' +
+          '</div>';
         });
 
         if (!html) {
@@ -807,21 +804,18 @@
 
       let html = '';
       history.forEach(item => {
-        html += `
-          <div class="list-item">
-            <div class="icon" style="background:#4CAF50;">✅</div>
-            <div class="info">
-              <h4>${item.title}</h4>
-              <p>${item.time}</p>
-            </div>
-            <div style="font-weight:700;color:#c8102e;">+${item.amount}</div>
-          </div>
-        `;
+        html += '<div class="list-item">' +
+          '<div class="icon" style="background:#4CAF50;">✅</div>' +
+          '<div class="info">' +
+            '<h4>' + item.title + '</h4>' +
+            '<p>' + item.time + '</p>' +
+          '</div>' +
+          '<div style="font-weight:700;color:#c8102e;">+' + item.amount + '</div>' +
+        '</div>';
       });
       container.innerHTML = html;
     }
 
-    // ========== ADMIN ==========
     async function addNewTask() {
       if (!sb) return alert('Supabase not connected');
 
@@ -877,21 +871,19 @@
 
         let html = '';
         data.forEach(task => {
-          const statusText = task.is_active ? 'Off' : 'On';
-          const statusColor = task.is_active ? '#c8102e' : '#4CAF50';
+          const btnText = task.is_active ? 'Off' : 'On';
+          const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
           const statusDot = task.is_active ? '🟢' : '🔴';
 
-          html += `
-            <div class="list-item">
-              <div class="icon" style="background:#c8102e;">📋</div>
-              <div class="info">
-                <h4>${task.title}</h4>
-                <p>+${task.reward} • ${task.category} • ${statusDot}</p>
-              </div>
-              <button class="start-btn" style="background:\( {statusColor}" onclick="toggleTask( \){task.id}, \( {!task.is_active})"> \){statusText}</button>
-              <button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(${task.id})">Del</button>
-            </div>
-          `;
+          html += '<div class="list-item">' +
+            '<div class="icon" style="background:#c8102e;">📋</div>' +
+            '<div class="info">' +
+              '<h4>' + (task.title || 'Task') + '</h4>' +
+              '<p>+' + (task.reward || 0) + ' • ' + (task.category || '') + ' • ' + statusDot + '</p>' +
+            '</div>' +
+            '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ', ' + (!task.is_active) + ')">' + btnText + '</button>' +
+            '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button>' +
+          '</div>';
         });
         container.innerHTML = html;
       } catch (e) {
@@ -929,4 +921,4 @@
     loadUser();
   </script>
 </body>
-                                                                                    </html>
+</html>
