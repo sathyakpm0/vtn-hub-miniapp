@@ -247,12 +247,9 @@
 
       <div class="section-title">Tasks</div>
       
-      <div class="list-item" onclick="showPage('earn-tasks'); loadUserTasks();">
+      <div class="list-item" onclick="openCategory('other')">
         <div class="icon" style="background:#c8102e;">📋</div>
-        <div class="info">
-          <h4>Earn Tasks</h4>
-          <p>Join, Views, Install & more</p>
-        </div>
+        <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
 
@@ -261,18 +258,61 @@
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
         <button class="start-btn" onclick="alert('Coming soon')">Start</button>
       </div>
-      <div class="list-item"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>+10 Coins</p></div><button class="start-btn" onclick="addCoins(10,'Watch & Earn')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>+2 Coins</p></div><button class="start-btn" onclick="addCoins(2,'Views & Earn')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>+15 Coins</p></div><button class="start-btn" onclick="addCoins(15,'Join Channel')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>+50 Coins</p></div><button class="start-btn" onclick="addCoins(50,'Join Bot')">Start</button></div>
-      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>+100 Coins</p></div><button class="start-btn" onclick="addCoins(100,'Install App')">Start</button></div>
+
+      <div class="list-item" onclick="openCategory('watch')">
+        <div class="icon" style="background:#E91E63;">▶️</div>
+        <div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('views')">
+        <div class="icon" style="background:#9C27B0;">👀</div>
+        <div class="info"><h4>Views & Earn</h4><p>Views & Likes tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('join')">
+        <div class="icon" style="background:#3F51B5;">📢</div>
+        <div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('bot')">
+        <div class="icon" style="background:#00BCD4;">🤖</div>
+        <div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('install')">
+        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="info"><h4>Install App</h4><p>App install tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('website')">
+        <div class="icon" style="background:#FF5722;">🌐</div>
+        <div class="info"><h4>Visit Website</h4><p>Website visit tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('affiliate')">
+        <div class="icon" style="background:#795548;">🔗</div>
+        <div class="info"><h4>Affiliate</h4><p>Affiliate link tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
+
+      <div class="list-item" onclick="openCategory('products')">
+        <div class="icon" style="background:#E91E63;">🛒</div>
+        <div class="info"><h4>View Products</h4><p>Product view tasks</p></div>
+        <button class="start-btn">Open</button>
+      </div>
     </div>
 
-    <!-- EARN TASKS (Inner Page) -->
-    <div id="earn-tasks" class="page">
-      <div class="header">Earn Tasks</div>
-      <div id="dynamic-tasks">
-        <div class="card" style="text-align:center; color:#888; margin: 14px;">Loading tasks...</div>
+    <!-- CATEGORY TASKS PAGE -->
+    <div id="category-tasks" class="page">
+      <div class="header" id="category-title">Tasks</div>
+      <div id="category-list">
+        <div class="card" style="text-align:center; color:#888; margin: 14px;">Loading...</div>
       </div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('earn')">← Back</button>
@@ -316,11 +356,13 @@
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
-      <div class="section-title">History</div>
+
+      <div class="section-title">Task History</div>
       <div id="history-list">
         <div class="card" style="text-align:center;color:#888;">No history yet</div>
       </div>
-      <div class="section-title">Withdraw</div>
+
+      <div class="section-title">Withdrawal</div>
       <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
         <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
@@ -331,6 +373,12 @@
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
+      <div class="list-item">
+        <div class="icon" style="background:#607D8B;">📋</div>
+        <div class="info"><h4>Withdrawal Status</h4><p>Check your requests</p></div>
+        <button class="start-btn" onclick="alert('No pending withdrawals')">Check</button>
+      </div>
+
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
       </div>
@@ -381,15 +429,17 @@
           <input type="number" id="task-reward" placeholder="e.g. 50" value="10">
         </div>
         <div class="form-group">
-          <label>Category</label>
+          <label>Category *</label>
           <select id="task-category">
             <option value="join">Join Channel / Group</option>
             <option value="bot">Join Bot</option>
+            <option value="watch">Watch Video / Ads</option>
             <option value="views">Views & Likes</option>
             <option value="install">Install App</option>
             <option value="website">Visit Website</option>
-            <option value="watch">Watch Video / Ads</option>
-            <option value="other">Other</option>
+            <option value="affiliate">Affiliate</option>
+            <option value="products">View Products</option>
+            <option value="other">Other / General</option>
           </select>
         </div>
         <div class="form-group">
@@ -479,6 +529,19 @@
     let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
     let currentTasks = [];
     let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
+    let currentCategory = 'other';
+
+    const categoryNames = {
+      join: 'Join Channel / Group',
+      bot: 'Join Bot',
+      watch: 'Watch & Earn',
+      views: 'Views & Earn',
+      install: 'Install App',
+      website: 'Visit Website',
+      affiliate: 'Affiliate',
+      products: 'View Products',
+      other: 'Earn Tasks'
+    };
 
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
@@ -550,7 +613,7 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'earn-tasks':1 };
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1 };
       if (map[id] !== undefined) {
         document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       }
@@ -619,9 +682,16 @@
       }
     }
 
-    // ========== LOAD TASKS ==========
-    async function loadUserTasks() {
-      const container = document.getElementById('dynamic-tasks');
+    // ========== CATEGORY SYSTEM ==========
+    function openCategory(cat) {
+      currentCategory = cat;
+      document.getElementById('category-title').innerText = categoryNames[cat] || 'Tasks';
+      showPage('category-tasks');
+      loadCategoryTasks(cat);
+    }
+
+    async function loadCategoryTasks(cat) {
+      const container = document.getElementById('category-list');
       if (!container) return;
 
       container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">Loading tasks...</div>';
@@ -632,7 +702,16 @@
       }
 
       try {
-        const { data, error } = await sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
+        let query = sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
+        
+        if (cat === 'other') {
+          // Show tasks that are 'other' or have no specific category
+          query = query.or('category.eq.other,category.is.null');
+        } else {
+          query = query.eq('category', cat);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
           container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Error: ' + error.message + '</div>';
@@ -640,7 +719,7 @@
         }
 
         if (!data || data.length === 0) {
-          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No tasks available yet</div>';
+          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No tasks in this category yet</div>';
           return;
         }
 
@@ -648,9 +727,8 @@
 
         let html = '';
         data.forEach((task, index) => {
-          // Skip if already completed and not a watch-type task
-          const isWatch = task.category === 'watch';
-          if (!isWatch && completedTasks.includes(task.id)) return;
+          const isRepeatable = task.category === 'watch';
+          if (!isRepeatable && completedTasks.includes(task.id)) return;
 
           html += `
             <div class="list-item">
@@ -699,11 +777,9 @@
             }
           }
 
-          // Save to history
           saveToHistory(title, reward);
-
           addCoins(reward, title);
-          loadUserTasks(); // Refresh list
+          loadCategoryTasks(currentCategory);
         } else {
           alert('Task not completed. No coins added.');
         }
@@ -717,8 +793,7 @@
         amount: amount,
         time: new Date().toLocaleString()
       });
-      // Keep only last 20
-      if (history.length > 20) history.length = 20;
+      if (history.length > 30) history.length = 30;
       localStorage.setItem('vtn_history_' + userId, JSON.stringify(history));
     }
 
@@ -780,7 +855,7 @@
           return;
         }
 
-        alert('✅ Task Added Successfully!');
+        alert('✅ Task Added Successfully!\nCategory: ' + category);
         document.getElementById('task-title').value = '';
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
@@ -804,7 +879,7 @@
 
         let html = '';
         data.forEach(task => {
-          const status = task.is_active ? '🟢 Active' : '🔴 Disabled';
+          const status = task.is_active ? '🟢' : '🔴';
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
@@ -849,4 +924,4 @@
     loadUser();
   </script>
 </body>
-</html>
+          </html>
