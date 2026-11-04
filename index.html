@@ -418,6 +418,24 @@
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
 
+      <!-- USER TOOLS -->
+      <div class="section-title">User Tools</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Telegram User ID</label>
+          <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
+        </div>
+        <div class="form-group">
+          <label>Coins to Add</label>
+          <input type="number" id="admin-coins" placeholder="e.g. 100" value="100">
+        </div>
+        <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
+        <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
+        <button class="start-btn" style="width:100%;background:#009688;" onclick="adminViewHistory()">View History</button>
+        <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
+      </div>
+
+      <!-- ADD TASK -->
       <div class="section-title">Add New Task</div>
       <div class="card">
         <div class="form-group">
@@ -840,6 +858,103 @@
       container.innerHTML = html;
     }
 
+    // ========== ADMIN USER TOOLS ==========
+    async function adminAddCoins() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const coins = Number(document.getElementById('admin-coins').value) || 0;
+      const result = document.getElementById('admin-result');
+
+      if (!tid) return alert('Enter Telegram User ID');
+      if (coins <= 0) return alert('Enter valid coins amount');
+
+      try {
+        const { data, error } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        
+        if (error) {
+          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
+          return;
+        }
+
+        if (!data) {
+          result.innerHTML = '<span style="color:red;">User not found</span>';
+          return;
+        }
+
+        const newBalance = (data.balance || 0) + coins;
+        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
+        
+        await sb.from('transactions').insert([{
+          telegram_id: tid,
+          amount: coins,
+          type: 'admin',
+          description: 'Admin added coins'
+        }]);
+
+        result.innerHTML = '<span style="color:green;">✅ Added ' + coins + ' coins to user ' + tid + '<br>New Balance: ' + newBalance + '</span>';
+        alert('Coins added successfully!');
+      } catch (e) {
+        result.innerHTML = '<span style="color:red;">Failed</span>';
+      }
+    }
+
+    async function adminCheckBalance() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+
+      if (!tid) return alert('Enter Telegram User ID');
+
+      try {
+        const { data, error } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        
+        if (error) {
+          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
+          return;
+        }
+
+        if (!data) {
+          result.innerHTML = '<span style="color:red;">User not found</span>';
+          return;
+        }
+
+        result.innerHTML = '<span style="color:#333;">User: ' + (data.first_name || tid) + '<br>Balance: <b>' + (data.balance || 0) + ' Coins</b><br>VIP: ' + (data.is_vip ? 'Yes' : 'No') + '</span>';
+      } catch (e) {
+        result.innerHTML = '<span style="color:red;">Failed</span>';
+      }
+    }
+
+    async function adminViewHistory() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+
+      if (!tid) return alert('Enter Telegram User ID');
+
+      try {
+        const { data, error } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id', { ascending: false }).limit(10);
+        
+        if (error) {
+          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          result.innerHTML = '<span style="color:#888;">No transactions found</span>';
+          return;
+        }
+
+        let html = '<b>Last 10 transactions:</b><br>';
+        data.forEach(t => {
+          html += (t.description || t.type) + ': +' + t.amount + '<br>';
+        });
+        result.innerHTML = html;
+      } catch (e) {
+        result.innerHTML = '<span style="color:red;">Failed</span>';
+      }
+    }
+
+    // ========== ADMIN TASKS ==========
     async function addNewTask() {
       if (!sb) return alert('Supabase not connected');
 
@@ -952,4 +1067,4 @@
     loadUser();
   </script>
 </body>
-        </html>
+</html>
