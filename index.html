@@ -338,14 +338,27 @@
     <!-- FUN -->
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
-      <div class="section-title">Games (Play & Earn)</div>
+      
+      <div class="section-title">Chat</div>
+      <div class="list-item" onclick="enterWithAd('chat')">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info">
+          <h4>Community Chat</h4>
+          <p>Watch ad to enter • Earn coins</p>
+        </div>
+        <button class="start-btn">Enter</button>
+      </div>
+
+      <div class="section-title">Games (Watch Ad to Play)</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="startGame('Dart')"><span class="icon">🎯</span>Dart</div>
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="startGame('Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="startGame('Shoot')"><span class="icon">🔫</span>Shoot</div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="startGame('Tower')"><span class="icon">🗼</span>Tower</div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="startGame('Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="alert('Daily Quiz at 8 PM')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
+        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
+        <div class="btn" style="background: linear-gradient(135deg, #607D8B, #455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
       </div>
     </div>
 
@@ -394,7 +407,7 @@
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
     <!-- REFER -->
@@ -417,6 +430,30 @@
     <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
+
+      <!-- AD SETTINGS -->
+      <div class="section-title">Ad Settings (Chat / Games)</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Ad Link</label>
+          <input type="text" id="ad-link" placeholder="https://..." value="https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Wait Seconds</label>
+            <input type="number" id="ad-wait" value="15">
+          </div>
+          <div class="form-group">
+            <label>Cooldown (Minutes)</label>
+            <input type="number" id="ad-cooldown" value="15">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Coins Reward for Watching Ad</label>
+          <input type="number" id="ad-reward" value="5">
+        </div>
+        <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
+      </div>
 
       <!-- USER TOOLS -->
       <div class="section-title">User Tools</div>
@@ -467,7 +504,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>Wait Seconds (Timer)</label>
-            <input type="number" id="task-wait" value="0" placeholder="0 = no wait">
+            <input type="number" id="task-wait" value="0">
           </div>
           <div class="form-group">
             <label>Max Users (0 = Unlimited)</label>
@@ -550,6 +587,7 @@
     const officialKey = 'vtn_o_' + userId;
     const firstDayKey = 'vtn_f_' + userId;
     const completedKey = 'vtn_completed_' + userId;
+    const lastAdKey = 'vtn_lastad_' + userId;
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
@@ -558,6 +596,20 @@
     let currentTasks = [];
     let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
     let currentCategory = 'other';
+
+    // Ad Settings (default)
+    let adSettings = {
+      link: 'https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3',
+      wait: 15,
+      cooldown: 15,
+      reward: 5
+    };
+
+    // Load saved ad settings
+    try {
+      const saved = localStorage.getItem('vtn_ad_settings');
+      if (saved) adSettings = JSON.parse(saved);
+    } catch(e) {}
 
     const categoryNames = {
       join: 'Join Channel / Group',
@@ -697,10 +749,6 @@
       alert('Official Task Completed! +50 Coins');
     }
 
-    function startGame(g) {
-      alert('Play & Earn!\n\n' + g + ' starting...');
-    }
-
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
       if (navigator.clipboard) {
@@ -710,6 +758,61 @@
       }
     }
 
+    // ========== AD SYSTEM FOR CHAT / GAMES ==========
+    function enterWithAd(type, gameName) {
+      const now = Date.now();
+      const lastAd = Number(localStorage.getItem(lastAdKey)) || 0;
+      const cooldownMs = (adSettings.cooldown || 15) * 60 * 1000;
+
+      if (now - lastAd < cooldownMs) {
+        const remaining = Math.ceil((cooldownMs - (now - lastAd)) / 60000);
+        alert('Please wait ' + remaining + ' more minute(s) before watching ad again.');
+        return;
+      }
+
+      if (!confirm('Watch ad to enter ' + (type === 'chat' ? 'Chat' : gameName) + '?\n\nYou will earn ' + adSettings.reward + ' coins.')) return;
+
+      // Open ad
+      window.open(adSettings.link, '_blank');
+
+      // Wait
+      const waitSec = adSettings.wait || 15;
+      alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
+
+      setTimeout(function() {
+        // Give coins
+        balance += adSettings.reward;
+        updateUI();
+        saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
+        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
+        localStorage.setItem(lastAdKey, Date.now());
+
+        if (type === 'chat') {
+          alert('✅ Ad completed! +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0 for now.');
+        } else {
+          alert('✅ Ad completed! +' + adSettings.reward + ' Coins\n\n' + gameName + ' starting...');
+        }
+      }, waitSec * 1000);
+    }
+
+    function saveAdSettings() {
+      adSettings.link = document.getElementById('ad-link').value.trim() || adSettings.link;
+      adSettings.wait = Number(document.getElementById('ad-wait').value) || 15;
+      adSettings.cooldown = Number(document.getElementById('ad-cooldown').value) || 15;
+      adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
+
+      localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
+      alert('✅ Ad Settings Saved!\n\nLink: ' + adSettings.link.substring(0,40) + '...\nWait: ' + adSettings.wait + 's\nCooldown: ' + adSettings.cooldown + ' min\nReward: ' + adSettings.reward + ' coins');
+    }
+
+    function loadAdSettings() {
+      document.getElementById('ad-link').value = adSettings.link || '';
+      document.getElementById('ad-wait').value = adSettings.wait || 15;
+      document.getElementById('ad-cooldown').value = adSettings.cooldown || 15;
+      document.getElementById('ad-reward').value = adSettings.reward || 5;
+    }
+
+    // ========== CATEGORY SYSTEM ==========
     function openCategory(cat) {
       currentCategory = cat;
       document.getElementById('category-title').innerText = categoryNames[cat] || 'Tasks';
@@ -1067,4 +1170,4 @@
     loadUser();
   </script>
 </body>
-</html>
+                                </html>
