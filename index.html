@@ -178,6 +178,52 @@
     .form-row .form-group {
       flex: 1;
     }
+
+    /* Games */
+    .ttt-board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .ttt-cell {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      border: 2px solid #c8102e;
+      border-radius: 12px;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .spin-wheel {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: conic-gradient(#c8102e 0deg 60deg, #ffd700 60deg 120deg, #4CAF50 120deg 180deg, #2196F3 180deg 240deg, #9C27B0 240deg 300deg, #FF9800 300deg 360deg);
+      margin: 20px auto;
+      position: relative;
+      transition: transform 3s ease-out;
+    }
+    .spin-pointer {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: -10px;
+    }
+    .quiz-option {
+      background: white;
+      border: 2px solid #c8102e;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 8px 14px;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -200,13 +246,11 @@
         <div class="amount" id="balance">0 Coins</div>
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
-
       <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
         <div style="font-size:12px;opacity:0.8;">Sponsored</div>
         <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
         <div style="font-size:12px;">Reach thousands of users</div>
       </div>
-
       <div class="section-title">Quick Actions</div>
       <div class="grid">
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
@@ -234,7 +278,6 @@
     <!-- EARN -->
     <div id="earn" class="page">
       <div class="header">Earn Money</div>
-      
       <div class="section-title">Official Task</div>
       <div class="list-item" id="official-task" onclick="doOfficialTask()">
         <div class="icon" style="background:#c8102e;">⭐</div>
@@ -244,63 +287,52 @@
         </div>
         <button class="start-btn">Join</button>
       </div>
-
       <div class="section-title">Tasks</div>
-      
       <div class="list-item" onclick="openCategory('other')">
         <div class="icon" style="background:#c8102e;">📋</div>
         <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item">
         <div class="icon" style="background:#FF9800;">⚡</div>
         <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
         <button class="start-btn" onclick="alert('Coming soon')">Start</button>
       </div>
-
       <div class="list-item" onclick="openCategory('watch')">
         <div class="icon" style="background:#E91E63;">▶️</div>
         <div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('views')">
         <div class="icon" style="background:#9C27B0;">👀</div>
         <div class="info"><h4>Views & Earn</h4><p>Views & Likes tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('join')">
         <div class="icon" style="background:#3F51B5;">📢</div>
         <div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('bot')">
         <div class="icon" style="background:#00BCD4;">🤖</div>
         <div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('install')">
         <div class="icon" style="background:#4CAF50;">📱</div>
         <div class="info"><h4>Install App</h4><p>App install tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('website')">
         <div class="icon" style="background:#FF5722;">🌐</div>
         <div class="info"><h4>Visit Website</h4><p>Website visit tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('affiliate')">
         <div class="icon" style="background:#795548;">🔗</div>
         <div class="info"><h4>Affiliate</h4><p>Affiliate link tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-
       <div class="list-item" onclick="openCategory('products')">
         <div class="icon" style="background:#E91E63;">🛒</div>
         <div class="info"><h4>View Products</h4><p>Product view tasks</p></div>
@@ -308,7 +340,7 @@
       </div>
     </div>
 
-    <!-- CATEGORY TASKS PAGE -->
+    <!-- CATEGORY TASKS -->
     <div id="category-tasks" class="page">
       <div class="header" id="category-title">Tasks</div>
       <div id="category-list">
@@ -338,7 +370,6 @@
     <!-- FUN -->
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
-      
       <div class="section-title">Chat</div>
       <div class="list-item" onclick="enterWithAd('chat')">
         <div class="icon" style="background:#009688;">💬</div>
@@ -348,7 +379,6 @@
         </div>
         <button class="start-btn">Enter</button>
       </div>
-
       <div class="section-title">Games (Watch Ad to Play)</div>
       <div class="grid">
         <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
@@ -362,6 +392,40 @@
       </div>
     </div>
 
+    <!-- GAME: TIC TAC TOE -->
+    <div id="game-ttt" class="page">
+      <div class="header">Tic Tac Toe</div>
+      <div class="card" style="text-align:center;">
+        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;">Your turn (X)</div>
+        <div class="ttt-board" id="ttt-board"></div>
+        <button class="gold-btn" onclick="resetTTT()">Restart</button>
+        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- GAME: SPIN -->
+    <div id="game-spin" class="page">
+      <div class="header">Spin & Win</div>
+      <div class="card" style="text-align:center;">
+        <div class="spin-pointer">▼</div>
+        <div class="spin-wheel" id="spin-wheel"></div>
+        <div id="spin-result" style="margin:15px 0;font-weight:700;font-size:18px;"></div>
+        <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
+        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- GAME: QUIZ -->
+    <div id="game-quiz" class="page">
+      <div class="header">Quiz</div>
+      <div class="card">
+        <div id="quiz-question" style="font-weight:700;font-size:16px;margin-bottom:16px;text-align:center;"></div>
+        <div id="quiz-options"></div>
+        <div id="quiz-result" style="text-align:center;margin-top:14px;font-weight:700;"></div>
+        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
     <!-- WALLET -->
     <div id="wallet" class="page">
       <div class="header">Wallet & History</div>
@@ -369,12 +433,10 @@
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
-
       <div class="section-title">Task History</div>
       <div id="history-list">
         <div class="card" style="text-align:center;color:#888;">No history yet</div>
       </div>
-
       <div class="section-title">Withdrawal</div>
       <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
@@ -386,12 +448,6 @@
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
-      <div class="list-item">
-        <div class="icon" style="background:#607D8B;">📋</div>
-        <div class="info"><h4>Withdrawal Status</h4><p>Check your requests</p></div>
-        <button class="start-btn" onclick="alert('No pending withdrawals')">Check</button>
-      </div>
-
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
       </div>
@@ -431,12 +487,11 @@
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
 
-      <!-- AD SETTINGS -->
       <div class="section-title">Ad Settings (Chat / Games)</div>
       <div class="card">
         <div class="form-group">
           <label>Ad Link</label>
-          <input type="text" id="ad-link" placeholder="https://..." value="https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3">
+          <input type="text" id="ad-link" value="https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3">
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -449,13 +504,12 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Coins Reward for Watching Ad</label>
+          <label>Coins Reward</label>
           <input type="number" id="ad-reward" value="5">
         </div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
       </div>
 
-      <!-- USER TOOLS -->
       <div class="section-title">User Tools</div>
       <div class="card">
         <div class="form-group">
@@ -464,7 +518,7 @@
         </div>
         <div class="form-group">
           <label>Coins to Add</label>
-          <input type="number" id="admin-coins" placeholder="e.g. 100" value="100">
+          <input type="number" id="admin-coins" value="100">
         </div>
         <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
         <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
@@ -472,7 +526,6 @@
         <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
       </div>
 
-      <!-- ADD TASK -->
       <div class="section-title">Add New Task</div>
       <div class="card">
         <div class="form-group">
@@ -481,7 +534,7 @@
         </div>
         <div class="form-group">
           <label>Reward (Coins) *</label>
-          <input type="number" id="task-reward" placeholder="e.g. 50" value="10">
+          <input type="number" id="task-reward" value="10">
         </div>
         <div class="form-group">
           <label>Category *</label>
@@ -503,11 +556,11 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Wait Seconds (Timer)</label>
+            <label>Wait Seconds</label>
             <input type="number" id="task-wait" value="0">
           </div>
           <div class="form-group">
-            <label>Max Users (0 = Unlimited)</label>
+            <label>Max Users (0=Unlimited)</label>
             <input type="number" id="task-max-users" value="0">
           </div>
         </div>
@@ -518,36 +571,24 @@
           </div>
           <div class="form-group">
             <label>Proof Required</label>
-            <select id="task-proof">
-              <option value="false">No</option>
-              <option value="true">Yes</option>
-            </select>
+            <select id="task-proof"><option value="false">No</option><option value="true">Yes</option></select>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>VIP Only</label>
-            <select id="task-vip">
-              <option value="false">No</option>
-              <option value="true">Yes</option>
-            </select>
+            <select id="task-vip"><option value="false">No</option><option value="true">Yes</option></select>
           </div>
           <div class="form-group">
             <label>Active</label>
-            <select id="task-active">
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
+            <select id="task-active"><option value="true">Yes</option><option value="false">No</option></select>
           </div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
       </div>
 
       <div class="section-title">Current Tasks</div>
-      <div id="admin-tasks-list">
-        <div class="card" style="text-align:center;color:#888;">Loading...</div>
-      </div>
-
+      <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
       <div style="padding:14px;">
         <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
       </div>
@@ -567,15 +608,10 @@
     const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
     let sb = null;
-    try {
-      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } catch (e) {
-      console.log('Supabase error');
-    }
+    try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
 
     const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    tg.ready(); tg.expand();
     tg.setHeaderColor('#c8102e');
     tg.setBackgroundColor('#FFF8E7');
 
@@ -597,31 +633,34 @@
     let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
     let currentCategory = 'other';
 
-    // Ad Settings (default)
     let adSettings = {
       link: 'https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3',
-      wait: 15,
-      cooldown: 15,
-      reward: 5
+      wait: 15, cooldown: 15, reward: 5
     };
-
-    // Load saved ad settings
     try {
       const saved = localStorage.getItem('vtn_ad_settings');
       if (saved) adSettings = JSON.parse(saved);
     } catch(e) {}
 
     const categoryNames = {
-      join: 'Join Channel / Group',
-      bot: 'Join Bot',
-      watch: 'Watch & Earn',
-      views: 'Views & Earn',
-      install: 'Install App',
-      website: 'Visit Website',
-      affiliate: 'Affiliate',
-      products: 'View Products',
-      other: 'Earn Tasks'
+      join:'Join Channel / Group', bot:'Join Bot', watch:'Watch & Earn', views:'Views & Earn',
+      install:'Install App', website:'Visit Website', affiliate:'Affiliate', products:'View Products', other:'Earn Tasks'
     };
+
+    // Tic Tac Toe state
+    let tttBoard = ['','','','','','','','',''];
+    let tttTurn = 'X';
+    let tttOver = false;
+
+    // Quiz
+    const quizData = [
+      {q: 'What is the capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
+      {q: 'How many days in a week?', opts:['5','6','7','8'], ans:2},
+      {q: 'What color is the sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
+      {q: '2 + 2 = ?', opts:['3','4','5','6'], ans:1},
+      {q: 'Which is a fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+    ];
+    let quizIndex = 0;
 
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
@@ -664,39 +703,27 @@
           updateUI();
         } else {
           await sb.from('users').insert([{
-            telegram_id: user.id,
-            first_name: user.first_name || '',
-            username: user.username || '',
-            balance: balance,
-            is_vip: false,
-            daily_tasks: 0,
-            official_done: officialDone
+            telegram_id: user.id, first_name: user.first_name || '', username: user.username || '',
+            balance: balance, is_vip: false, daily_tasks: 0, official_done: officialDone
           }]);
         }
-      } catch (e) {}
+      } catch(e) {}
     }
 
     async function saveBalance(amount, type, desc) {
       if (!sb || !user) return;
       try {
         await sb.from('users').update({ balance: balance }).eq('telegram_id', user.id);
-        await sb.from('transactions').insert([{
-          telegram_id: user.id,
-          amount: amount,
-          type: type,
-          description: desc
-        }]);
-      } catch (e) {}
+        await sb.from('transactions').insert([{ telegram_id: user.id, amount, type, description: desc }]);
+      } catch(e) {}
     }
 
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1 };
-      if (map[id] !== undefined) {
-        document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
-      }
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3 };
+      if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       if (id === 'wallet') loadHistory();
     }
 
@@ -709,56 +736,35 @@
 
     function dailyCheckIn() {
       const today = new Date().toDateString();
-      if (lastCheckIn === today) {
-        alert("You already claimed today's reward.\nCome back tomorrow!");
-        return;
-      }
+      if (lastCheckIn === today) { alert("Already claimed today!"); return; }
       if (!confirm('Watch a short ad to claim?')) return;
-
       let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
-      if (isFirstDay) {
-        localStorage.setItem(firstDayKey, '1');
-        isFirstDay = false;
-        alert('🎉 First Day Bonus! +' + reward + ' Coins');
-      } else {
-        alert('Daily Check-in Successful! +' + reward + ' Coins');
-      }
-      balance += reward;
-      lastCheckIn = today;
-      localStorage.setItem(checkinKey, today);
-      updateUI();
+      if (isFirstDay) { localStorage.setItem(firstDayKey,'1'); isFirstDay=false; alert('🎉 First Day Bonus! +'+reward); }
+      else alert('Daily Check-in! +'+reward);
+      balance += reward; lastCheckIn = today;
+      localStorage.setItem(checkinKey, today); updateUI();
       saveBalance(reward, 'checkin', 'Daily Check-in');
     }
 
     function doOfficialTask() {
-      if (officialDone) {
-        alert('Already completed');
-        return;
-      }
+      if (officialDone) { alert('Already completed'); return; }
       if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
       window.open('https://t.me/vtnhub', '_blank');
-      balance += 50;
-      officialDone = true;
+      balance += 50; officialDone = true;
       localStorage.setItem(officialKey, '1');
       document.getElementById('official-task').style.display = 'none';
-      updateUI();
-      saveBalance(50, 'official', 'Official Task');
-      if (sb && user) {
-        sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
-      }
+      updateUI(); saveBalance(50, 'official', 'Official Task');
+      if (sb && user) sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
       alert('Official Task Completed! +50 Coins');
     }
 
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(code).then(() => alert('Copied: ' + code));
-      } else {
-        alert(code);
-      }
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => alert('Copied: '+code));
+      else alert(code);
     }
 
-    // ========== AD SYSTEM FOR CHAT / GAMES ==========
+    // ========== AD + GAMES ==========
     function enterWithAd(type, gameName) {
       const now = Date.now();
       const lastAd = Number(localStorage.getItem(lastAdKey)) || 0;
@@ -766,21 +772,17 @@
 
       if (now - lastAd < cooldownMs) {
         const remaining = Math.ceil((cooldownMs - (now - lastAd)) / 60000);
-        alert('Please wait ' + remaining + ' more minute(s) before watching ad again.');
+        alert('Please wait ' + remaining + ' more minute(s).');
         return;
       }
 
-      if (!confirm('Watch ad to enter ' + (type === 'chat' ? 'Chat' : gameName) + '?\n\nYou will earn ' + adSettings.reward + ' coins.')) return;
+      if (!confirm('Watch ad to enter ' + (type==='chat'?'Chat':gameName) + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
 
-      // Open ad
       window.open(adSettings.link, '_blank');
-
-      // Wait
       const waitSec = adSettings.wait || 15;
       alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
 
       setTimeout(function() {
-        // Give coins
         balance += adSettings.reward;
         updateUI();
         saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
@@ -788,11 +790,111 @@
         localStorage.setItem(lastAdKey, Date.now());
 
         if (type === 'chat') {
-          alert('✅ Ad completed! +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0 for now.');
+          alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
+        } else if (gameName === 'TicTacToe') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startTTT();
+        } else if (gameName === 'Spin') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          showPage('game-spin');
+          document.getElementById('spin-result').innerText = '';
+        } else if (gameName === 'Quiz') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startQuiz();
         } else {
-          alert('✅ Ad completed! +' + adSettings.reward + ' Coins\n\n' + gameName + ' starting...');
+          alert('✅ +' + adSettings.reward + ' Coins\n\n' + gameName + ' coming soon!');
         }
       }, waitSec * 1000);
+    }
+
+    // ========== TIC TAC TOE ==========
+    function startTTT() {
+      tttBoard = ['','','','','','','','',''];
+      tttTurn = 'X'; tttOver = false;
+      showPage('game-ttt');
+      renderTTT();
+    }
+    function renderTTT() {
+      const board = document.getElementById('ttt-board');
+      board.innerHTML = '';
+      tttBoard.forEach((cell, i) => {
+        const div = document.createElement('div');
+        div.className = 'ttt-cell';
+        div.innerText = cell;
+        div.onclick = () => playTTT(i);
+        board.appendChild(div);
+      });
+      document.getElementById('ttt-status').innerText = tttOver ? 'Game Over' : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer turn...');
+    }
+    function playTTT(i) {
+      if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
+      tttBoard[i] = 'X';
+      if (checkWin('X')) { tttOver=true; renderTTT(); alert('You Win! +3 Coins'); balance+=3; updateUI(); saveBalance(3,'game','TicTacToe Win'); return; }
+      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
+      tttTurn = 'O'; renderTTT();
+      setTimeout(computerMove, 500);
+    }
+    function computerMove() {
+      const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+      if (!empty.length) return;
+      const move = empty[Math.floor(Math.random()*empty.length)];
+      tttBoard[move] = 'O';
+      if (checkWin('O')) { tttOver=true; renderTTT(); alert('Computer Wins!'); return; }
+      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
+      tttTurn = 'X'; renderTTT();
+    }
+    function checkWin(p) {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return lines.some(([a,b,c]) => tttBoard[a]===p && tttBoard[b]===p && tttBoard[c]===p);
+    }
+    function resetTTT() { startTTT(); }
+
+    // ========== SPIN ==========
+    function doSpin() {
+      const btn = document.getElementById('spin-btn');
+      btn.disabled = true;
+      const rewards = [2,5,10,0,3,8];
+      const deg = 1800 + Math.floor(Math.random()*360);
+      document.getElementById('spin-wheel').style.transform = 'rotate(' + deg + 'deg)';
+      setTimeout(() => {
+        const prize = rewards[Math.floor(Math.random()*rewards.length)];
+        document.getElementById('spin-result').innerText = prize > 0 ? 'You won ' + prize + ' Coins!' : 'Try again!';
+        if (prize > 0) {
+          balance += prize; updateUI();
+          saveBalance(prize, 'game', 'Spin Win');
+          saveToHistory('Spin & Win', prize);
+        }
+        btn.disabled = false;
+      }, 3200);
+    }
+
+    // ========== QUIZ ==========
+    function startQuiz() {
+      quizIndex = Math.floor(Math.random() * quizData.length);
+      const q = quizData[quizIndex];
+      document.getElementById('quiz-question').innerText = q.q;
+      document.getElementById('quiz-result').innerText = '';
+      const opts = document.getElementById('quiz-options');
+      opts.innerHTML = '';
+      q.opts.forEach((o, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerText = o;
+        div.onclick = () => answerQuiz(i);
+        opts.appendChild(div);
+      });
+      showPage('game-quiz');
+    }
+    function answerQuiz(i) {
+      const q = quizData[quizIndex];
+      if (i === q.ans) {
+        document.getElementById('quiz-result').innerText = '✅ Correct! +3 Coins';
+        balance += 3; updateUI();
+        saveBalance(3, 'game', 'Quiz Correct');
+        saveToHistory('Quiz Win', 3);
+      } else {
+        document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
+      }
     }
 
     function saveAdSettings() {
@@ -800,11 +902,9 @@
       adSettings.wait = Number(document.getElementById('ad-wait').value) || 15;
       adSettings.cooldown = Number(document.getElementById('ad-cooldown').value) || 15;
       adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
-
       localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('✅ Ad Settings Saved!\n\nLink: ' + adSettings.link.substring(0,40) + '...\nWait: ' + adSettings.wait + 's\nCooldown: ' + adSettings.cooldown + ' min\nReward: ' + adSettings.reward + ' coins');
+      alert('✅ Ad Settings Saved!');
     }
-
     function loadAdSettings() {
       document.getElementById('ad-link').value = adSettings.link || '';
       document.getElementById('ad-wait').value = adSettings.wait || 15;
@@ -812,7 +912,6 @@
       document.getElementById('ad-reward').value = adSettings.reward || 5;
     }
 
-    // ========== CATEGORY SYSTEM ==========
     function openCategory(cat) {
       currentCategory = cat;
       document.getElementById('category-title').innerText = categoryNames[cat] || 'Tasks';
@@ -823,351 +922,180 @@
     async function loadCategoryTasks(cat) {
       const container = document.getElementById('category-list');
       if (!container) return;
-
-      container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">Loading tasks...</div>';
-
-      if (!sb) {
-        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Supabase not connected</div>';
-        return;
-      }
-
+      container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
+      if (!sb) { container.innerHTML = '<div class="card" style="text-align:center;color:#c8102e;margin:14px;">Supabase not connected</div>'; return; }
       try {
-        let query = sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
-        
-        if (cat === 'other') {
-          query = query.or('category.eq.other,category.is.null');
-        } else {
-          query = query.eq('category', cat);
-        }
-
+        let query = sb.from('tasks').select('*').eq('is_active', true).order('id', {ascending:false});
+        if (cat === 'other') query = query.or('category.eq.other,category.is.null');
+        else query = query.eq('category', cat);
         const { data, error } = await query;
-
-        if (error) {
-          container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Error: ' + error.message + '</div>';
+        if (error || !data || !data.length) {
+          container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
           return;
         }
-
-        if (!data || data.length === 0) {
-          container.innerHTML = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No tasks in this category yet</div>';
-          return;
-        }
-
         currentTasks = data;
-
         let html = '';
         data.forEach((task, index) => {
-          const isRepeatable = task.category === 'watch';
-          if (!isRepeatable && completedTasks.includes(task.id)) return;
-
+          if (task.category !== 'watch' && completedTasks.includes(task.id)) return;
           const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
-          html += '<div class="list-item">' +
-            '<div class="icon" style="background:#c8102e;">📋</div>' +
-            '<div class="info">' +
-              '<h4>' + (task.title || 'Task') + '</h4>' +
-              '<p>+' + (task.reward || 0) + ' Coins' + waitInfo + '</p>' +
-            '</div>' +
-            '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button>' +
-          '</div>';
+          html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>';
         });
-
-        if (!html) {
-          html = '<div class="card" style="text-align:center; color:#888; margin: 14px;">No new tasks available</div>';
-        }
-        container.innerHTML = html;
-      } catch (e) {
-        container.innerHTML = '<div class="card" style="text-align:center; color:#c8102e; margin: 14px;">Failed to load tasks</div>';
+        container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
+      } catch(e) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#c8102e;margin:14px;">Failed</div>';
       }
     }
 
     function doTaskByIndex(index) {
       const task = currentTasks[index];
-      if (!task) {
-        alert('Task not found');
-        return;
-      }
-
-      if (task.link) {
-        window.open(task.link, '_blank');
-      }
-
+      if (!task) return;
+      if (task.link) window.open(task.link, '_blank');
       const waitSec = Number(task.wait_seconds) || 0;
-
       if (waitSec > 0) {
-        alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
-        setTimeout(function() {
-          finishTask(task);
-        }, waitSec * 1000);
-      } else {
-        setTimeout(function() {
-          finishTask(task);
-        }, 1500);
-      }
+        alert('Please wait ' + waitSec + ' seconds...');
+        setTimeout(() => finishTask(task), waitSec * 1000);
+      } else setTimeout(() => finishTask(task), 1500);
     }
 
     function finishTask(task) {
-      const confirmed = confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"');
-      
-      if (confirmed) {
-        const reward = task.reward || 0;
-        const title = task.title || 'Task';
-        
-        if (task.category !== 'watch') {
-          if (!completedTasks.includes(task.id)) {
-            completedTasks.push(task.id);
-            localStorage.setItem(completedKey, JSON.stringify(completedTasks));
-          }
-        }
-
-        saveToHistory(title, reward);
-        addCoins(reward, title);
-        loadCategoryTasks(currentCategory);
-      } else {
-        alert('Task not completed. No coins added.');
+      if (!confirm('Did you complete the task?\n\n"' + (task.title||'Task') + '"')) {
+        alert('No coins added.'); return;
       }
+      const reward = task.reward || 0;
+      if (task.category !== 'watch' && !completedTasks.includes(task.id)) {
+        completedTasks.push(task.id);
+        localStorage.setItem(completedKey, JSON.stringify(completedTasks));
+      }
+      saveToHistory(task.title||'Task', reward);
+      addCoins(reward, task.title||'Task');
+      loadCategoryTasks(currentCategory);
     }
 
     function saveToHistory(title, amount) {
-      const history = JSON.parse(localStorage.getItem('vtn_history_' + userId) || '[]');
-      history.unshift({
-        title: title,
-        amount: amount,
-        time: new Date().toLocaleString()
-      });
+      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
+      history.unshift({ title, amount, time: new Date().toLocaleString() });
       if (history.length > 30) history.length = 30;
-      localStorage.setItem('vtn_history_' + userId, JSON.stringify(history));
+      localStorage.setItem('vtn_history_'+userId, JSON.stringify(history));
     }
 
     function loadHistory() {
       const container = document.getElementById('history-list');
       if (!container) return;
-
-      const history = JSON.parse(localStorage.getItem('vtn_history_' + userId) || '[]');
-      if (history.length === 0) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>';
-        return;
-      }
-
+      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
+      if (!history.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>'; return; }
       let html = '';
       history.forEach(item => {
-        html += '<div class="list-item">' +
-          '<div class="icon" style="background:#4CAF50;">✅</div>' +
-          '<div class="info">' +
-            '<h4>' + item.title + '</h4>' +
-            '<p>' + item.time + '</p>' +
-          '</div>' +
-          '<div style="font-weight:700;color:#c8102e;">+' + item.amount + '</div>' +
-        '</div>';
+        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">+'+item.amount+'</div></div>';
       });
       container.innerHTML = html;
     }
 
-    // ========== ADMIN USER TOOLS ==========
     async function adminAddCoins() {
       if (!sb) return alert('Supabase not connected');
       const tid = document.getElementById('admin-userid').value.trim();
       const coins = Number(document.getElementById('admin-coins').value) || 0;
       const result = document.getElementById('admin-result');
-
-      if (!tid) return alert('Enter Telegram User ID');
-      if (coins <= 0) return alert('Enter valid coins amount');
-
+      if (!tid || coins <= 0) return alert('Enter valid ID and coins');
       try {
-        const { data, error } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        
-        if (error) {
-          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
-          return;
-        }
-
-        if (!data) {
-          result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-
-        const newBalance = (data.balance || 0) + coins;
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        const newBalance = (data.balance||0) + coins;
         await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        
-        await sb.from('transactions').insert([{
-          telegram_id: tid,
-          amount: coins,
-          type: 'admin',
-          description: 'Admin added coins'
-        }]);
-
-        result.innerHTML = '<span style="color:green;">✅ Added ' + coins + ' coins to user ' + tid + '<br>New Balance: ' + newBalance + '</span>';
-        alert('Coins added successfully!');
-      } catch (e) {
-        result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
+        await sb.from('transactions').insert([{ telegram_id: tid, amount: coins, type:'admin', description:'Admin added coins' }]);
+        result.innerHTML = '<span style="color:green;">✅ Added '+coins+' coins. New: '+newBalance+'</span>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
     }
 
     async function adminCheckBalance() {
-      if (!sb) return alert('Supabase not connected');
+      if (!sb) return;
       const tid = document.getElementById('admin-userid').value.trim();
       const result = document.getElementById('admin-result');
-
-      if (!tid) return alert('Enter Telegram User ID');
-
+      if (!tid) return alert('Enter User ID');
       try {
-        const { data, error } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        
-        if (error) {
-          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
-          return;
-        }
-
-        if (!data) {
-          result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-
-        result.innerHTML = '<span style="color:#333;">User: ' + (data.first_name || tid) + '<br>Balance: <b>' + (data.balance || 0) + ' Coins</b><br>VIP: ' + (data.is_vip ? 'Yes' : 'No') + '</span>';
-      } catch (e) {
-        result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        result.innerHTML = 'User: '+(data.first_name||tid)+'<br>Balance: <b>'+(data.balance||0)+'</b>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
     }
 
     async function adminViewHistory() {
-      if (!sb) return alert('Supabase not connected');
+      if (!sb) return;
       const tid = document.getElementById('admin-userid').value.trim();
       const result = document.getElementById('admin-result');
-
-      if (!tid) return alert('Enter Telegram User ID');
-
+      if (!tid) return alert('Enter User ID');
       try {
-        const { data, error } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id', { ascending: false }).limit(10);
-        
-        if (error) {
-          result.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          result.innerHTML = '<span style="color:#888;">No transactions found</span>';
-          return;
-        }
-
-        let html = '<b>Last 10 transactions:</b><br>';
-        data.forEach(t => {
-          html += (t.description || t.type) + ': +' + t.amount + '<br>';
-        });
+        const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id',{ascending:false}).limit(10);
+        if (!data || !data.length) { result.innerHTML = 'No transactions'; return; }
+        let html = '<b>Last 10:</b><br>';
+        data.forEach(t => html += (t.description||t.type)+': +'+t.amount+'<br>');
         result.innerHTML = html;
-      } catch (e) {
-        result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
     }
 
-    // ========== ADMIN TASKS ==========
     async function addNewTask() {
       if (!sb) return alert('Supabase not connected');
-
       const title = document.getElementById('task-title').value.trim();
-      const reward = Number(document.getElementById('task-reward').value) || 0;
+      const reward = Number(document.getElementById('task-reward').value)||0;
       const category = document.getElementById('task-category').value;
       const link = document.getElementById('task-link').value.trim();
-      const waitSeconds = Number(document.getElementById('task-wait').value) || 0;
-      const maxUsers = Number(document.getElementById('task-max-users').value) || 0;
-      const dailyLimit = Number(document.getElementById('task-daily-limit').value) || 1;
+      const waitSeconds = Number(document.getElementById('task-wait').value)||0;
+      const maxUsers = Number(document.getElementById('task-max-users').value)||0;
+      const dailyLimit = Number(document.getElementById('task-daily-limit').value)||1;
       const proofRequired = document.getElementById('task-proof').value === 'true';
       const isVip = document.getElementById('task-vip').value === 'true';
       const isActive = document.getElementById('task-active').value === 'true';
-
-      if (!title) return alert('Please enter Task Title');
-
+      if (!title) return alert('Enter title');
       try {
         const { error } = await sb.from('tasks').insert([{
-          title: title,
-          reward: reward,
-          category: category,
-          link: link,
-          wait_seconds: waitSeconds,
-          max_users: maxUsers,
-          daily_limit: dailyLimit,
-          proof_required: proofRequired,
-          is_vip_only: isVip,
-          is_active: isActive
+          title, reward, category, link, wait_seconds: waitSeconds, max_users: maxUsers,
+          daily_limit: dailyLimit, proof_required: proofRequired, is_vip_only: isVip, is_active: isActive
         }]);
-
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
-
-        alert('✅ Task Added Successfully!\nCategory: ' + category + '\nWait: ' + waitSeconds + 's');
+        if (error) { alert('Error: '+error.message); return; }
+        alert('✅ Task Added!');
         document.getElementById('task-title').value = '';
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
-        document.getElementById('task-wait').value = '0';
-        document.getElementById('task-max-users').value = '0';
         loadAdminTasks();
-      } catch (e) {
-        alert('Failed to add task');
-      }
+      } catch(e) { alert('Failed'); }
     }
 
     async function loadAdminTasks() {
       if (!sb) return;
       const container = document.getElementById('admin-tasks-list');
       container.innerHTML = '<div class="card" style="text-align:center;color:#888;">Loading...</div>';
-
       try {
-        const { data, error } = await sb.from('tasks').select('*').order('id', { ascending: false });
-        if (error || !data || data.length === 0) {
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks yet</div>';
-          return;
-        }
-
+        const { data } = await sb.from('tasks').select('*').order('id',{ascending:false});
+        if (!data || !data.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks</div>'; return; }
         let html = '';
         data.forEach(task => {
           const btnText = task.is_active ? 'Off' : 'On';
           const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
           const statusDot = task.is_active ? '🟢' : '🔴';
-          const waitInfo = task.wait_seconds > 0 ? ' | ' + task.wait_seconds + 's' : '';
-
-          html += '<div class="list-item">' +
-            '<div class="icon" style="background:#c8102e;">📋</div>' +
-            '<div class="info">' +
-              '<h4>' + (task.title || 'Task') + '</h4>' +
-              '<p>+' + (task.reward || 0) + ' • ' + (task.category || '') + waitInfo + ' • ' + statusDot + '</p>' +
-            '</div>' +
-            '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ', ' + (!task.is_active) + ')">' + btnText + '</button>' +
-            '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button>' +
-          '</div>';
+          html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'')+'</h4><p>+'+(task.reward||0)+' • '+(task.category||'')+' • '+statusDot+'</p></div><button class="start-btn" style="background:'+btnColor+'" onclick="toggleTask('+task.id+','+(!task.is_active)+')">'+btnText+'</button><button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask('+task.id+')">Del</button></div>';
         });
         container.innerHTML = html;
-      } catch (e) {
-        container.innerHTML = '<div class="card">Failed to load</div>';
-      }
+      } catch(e) { container.innerHTML = '<div class="card">Failed</div>'; }
     }
 
     async function toggleTask(id, newStatus) {
       try {
-        const { error } = await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
-        alert(newStatus ? 'Task Enabled' : 'Task Disabled');
+        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+        alert(newStatus ? 'Enabled' : 'Disabled');
         loadAdminTasks();
-      } catch (e) {
-        alert('Failed to update');
-      }
+      } catch(e) { alert('Failed'); }
     }
 
     async function deleteTask(id) {
-      if (!confirm('Delete this task?')) return;
+      if (!confirm('Delete?')) return;
       try {
         await sb.from('tasks').delete().eq('id', id);
-        alert('Task deleted');
+        alert('Deleted');
         loadAdminTasks();
-      } catch (e) {
-        alert('Delete failed');
-      }
+      } catch(e) { alert('Failed'); }
     }
 
-    // Start
     setupUser();
     loadUser();
   </script>
 </body>
-                                </html>
+        </html>
