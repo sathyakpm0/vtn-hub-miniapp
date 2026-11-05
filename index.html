@@ -169,6 +169,34 @@
       background: white; margin: 4px; font-weight: 600; cursor: pointer;
     }
     .diff-btn.active { background: #c8102e; color: white; }
+
+    /* Simple game styles */
+    .game-area {
+      background: #1a1a2e;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 14px;
+      color: white;
+      text-align: center;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+    .score-box {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffd700;
+      margin-bottom: 12px;
+    }
+    .game-btn {
+      background: #c8102e;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -229,21 +257,23 @@
         <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins • Required</p></div>
         <button class="start-btn">Join</button>
       </div>
-      <div class="section-title">Tasks</div>
-      <div class="list-item" onclick="openCategory('other')">
-        <div class="icon" style="background:#c8102e;">📋</div>
-        <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
-        <button class="start-btn">Open</button>
+      <div class="section-title">Earn Tasks</div>
+      <div id="earn-tasks-list">
+        <div class="list-item" onclick="openCategory('other')">
+          <div class="icon" style="background:#c8102e;">📋</div>
+          <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
+          <button class="start-btn">Open</button>
+        </div>
+        <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div><button class="start-btn" onclick="alert('Coming soon')">Start</button></div>
+        <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installs</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>Product views</p></div><button class="start-btn">Open</button></div>
       </div>
-      <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div><button class="start-btn" onclick="alert('Coming soon')">Start</button></div>
-      <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installs</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div><button class="start-btn">Open</button></div>
-      <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>Product views</p></div><button class="start-btn">Open</button></div>
     </div>
 
     <div id="category-tasks" class="page">
@@ -255,16 +285,85 @@
     <!-- PROMOTE -->
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
+
       <div class="section-title">Promotion Services</div>
-      <div class="list-item"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Premium or Standard</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
-      <div class="list-item"><div class="icon" style="background:#9C27B0;">🤖</div><div class="info"><h4>Promote Bot</h4><p>Get new users</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
-      <div class="list-item"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
-      <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
+      <div class="list-item" onclick="openPromoteForm('channel')">
+        <div class="icon" style="background:#c8102e;">📢</div>
+        <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('bot')">
+        <div class="icon" style="background:#9C27B0;">🤖</div>
+        <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('views')">
+        <div class="icon" style="background:#3F51B5;">👀</div>
+        <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('install')">
+        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('test')">
+        <div class="icon" style="background:#FF9800;">🧪</div>
+        <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('traffic')">
+        <div class="icon" style="background:#00BCD4;">🌐</div>
+        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('affiliate')">
+        <div class="icon" style="background:#673AB7;">🔗</div>
+        <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Send link to @Vtnhub0')">
+      <div class="list-item" onclick="openPromoteForm('monetize')">
         <div class="icon" style="background:#2196F3;">💰</div>
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
+      </div>
+
+      <div class="section-title">Banner Ads</div>
+      <div class="list-item" onclick="openPromoteForm('banner')">
+        <div class="icon" style="background:#FF5722;">📣</div>
+        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+
+      <div class="section-title">Cross Promotion</div>
+      <div class="list-item" onclick="startCrossPromo()">
+        <div class="icon" style="background:#009688;">🔄</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
+        <button class="start-btn">Start</button>
+      </div>
+    </div>
+
+    <!-- PROMOTE FORM -->
+    <div id="promote-form" class="page">
+      <div class="header" id="promote-form-title">Place Order</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Your Link / Channel / Bot</label>
+          <input type="text" id="promo-link" placeholder="https://t.me/... or website">
+        </div>
+        <div class="form-group">
+          <label>Quantity / Days</label>
+          <input type="number" id="promo-qty" value="100" min="1">
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="promo-notes" rows="2" placeholder="Any special request..."></textarea>
+        </div>
+        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins</div>
+        <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Back</button>
       </div>
     </div>
 
@@ -332,6 +431,77 @@
       </div>
     </div>
 
+    <!-- DART -->
+    <div id="game-dart" class="page">
+      <div class="header">🎯 Dart Game</div>
+      <div class="game-area" id="dart-area">
+        <div class="score-box">Score: <span id="dart-score">0</span></div>
+        <div style="font-size:60px;margin:20px 0;" id="dart-target">🎯</div>
+        <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
+        <button class="game-btn" id="dart-btn" onclick="playDart()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="dart-claim" style="display:none;" onclick="claimGame('dart')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- FRUIT -->
+    <div id="game-fruit" class="page">
+      <div class="header">🍎 Fruit Slice</div>
+      <div class="game-area" id="fruit-area">
+        <div class="score-box">Score: <span id="fruit-score">0</span></div>
+        <div style="font-size:50px;margin:30px 0;" id="fruit-display">🍎</div>
+        <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
+        <button class="game-btn" id="fruit-btn" onclick="playFruit()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="fruit-claim" style="display:none;" onclick="claimGame('fruit')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- SHOOT -->
+    <div id="game-shoot" class="page">
+      <div class="header">🔫 Shoot</div>
+      <div class="game-area" id="shoot-area">
+        <div class="score-box">Hits: <span id="shoot-score">0</span></div>
+        <div style="font-size:50px;margin:30px 0;" id="shoot-target">🎯</div>
+        <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
+        <button class="game-btn" id="shoot-btn" onclick="playShoot()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="shoot-claim" style="display:none;" onclick="claimGame('shoot')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- TOWER -->
+    <div id="game-tower" class="page">
+      <div class="header">🗼 Tower Stack</div>
+      <div class="game-area" id="tower-area">
+        <div class="score-box">Height: <span id="tower-score">0</span></div>
+        <div style="font-size:40px;margin:20px 0;" id="tower-display">⬜</div>
+        <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
+        <button class="game-btn" id="tower-btn" onclick="playTower()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="tower-claim" style="display:none;" onclick="claimGame('tower')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- SUDOKU -->
+    <div id="game-sudoku" class="page">
+      <div class="header">🔢 Sudoku (Easy)</div>
+      <div class="card" style="text-align:center;">
+        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(9,32px);gap:2px;justify-content:center;margin:15px 0;"></div>
+        <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
+        <button class="gold-btn" onclick="checkSudoku()">Check</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
     <!-- WALLET -->
     <div id="wallet" class="page">
       <div class="header">Wallet & History</div>
@@ -342,9 +512,35 @@
       <div class="section-title">Task History</div>
       <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
       <div class="section-title">Withdrawal</div>
-      <div class="list-item" onclick="alert('Contact @Vtnhub0')"><div class="icon" style="background:#FF9800;">🇮🇳</div><div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div><button class="start-btn">Withdraw</button></div>
-      <div class="list-item" onclick="alert('Contact @Vtnhub0')"><div class="icon" style="background:#26A17B;">₮</div><div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div><button class="start-btn">Withdraw</button></div>
+      <div class="list-item" onclick="openWithdraw('upi')">
+        <div class="icon" style="background:#FF9800;">🇮🇳</div>
+        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
+      <div class="list-item" onclick="openWithdraw('usdt')">
+        <div class="icon" style="background:#26A17B;">₮</div>
+        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
+    </div>
+
+    <!-- WITHDRAW FORM -->
+    <div id="withdraw-form" class="page">
+      <div class="header">Withdraw</div>
+      <div class="card">
+        <div class="form-group">
+          <label id="withdraw-label">UPI ID / Wallet Address</label>
+          <input type="text" id="withdraw-address" placeholder="Enter details">
+        </div>
+        <div class="form-group">
+          <label>Amount (Coins)</label>
+          <input type="number" id="withdraw-amount" value="500" min="100">
+        </div>
+        <div style="font-size:13px;color:#888;margin-bottom:12px;">Minimum: 500 Coins</div>
+        <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
+      </div>
     </div>
 
     <!-- PROFILE -->
@@ -357,7 +553,7 @@
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
     <!-- REFER -->
@@ -377,6 +573,27 @@
     <!-- ADMIN -->
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
+
+      <div class="section-title">Service Prices (Coins)</div>
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group"><label>Channel Promote</label><input type="number" id="price-channel" value="200"></div>
+          <div class="form-group"><label>Bot Promote</label><input type="number" id="price-bot" value="150"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Views & Likes</label><input type="number" id="price-views" value="50"></div>
+          <div class="form-group"><label>App Installs</label><input type="number" id="price-install" value="300"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Website Traffic</label><input type="number" id="price-traffic" value="80"></div>
+          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
+          <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
+        </div>
+        <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
+      </div>
 
       <div class="section-title">Ad Settings</div>
       <div class="card">
@@ -432,14 +649,6 @@
           <div class="form-group"><label>Wait Seconds</label><input type="number" id="task-wait" value="0"></div>
           <div class="form-group"><label>Max Users (0=Unlimited)</label><input type="number" id="task-max-users" value="0"></div>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label>Daily Limit</label><input type="number" id="task-daily-limit" value="1"></div>
-          <div class="form-group"><label>Proof Required</label><select id="task-proof"><option value="false">No</option><option value="true">Yes</option></select></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>VIP Only</label><select id="task-vip"><option value="false">No</option><option value="true">Yes</option></select></div>
-          <div class="form-group"><label>Active</label><select id="task-active"><option value="true">Yes</option><option value="false">No</option></select></div>
-        </div>
         <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
       </div>
 
@@ -465,9 +674,13 @@
     try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
 
     const tg = window.Telegram.WebApp;
-    tg.ready(); tg.expand();
-    tg.setHeaderColor('#c8102e');
-    tg.setBackgroundColor('#FFF8E7');
+    try {
+      tg.ready();
+      tg.expand();
+      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+      tg.setHeaderColor('#c8102e');
+      tg.setBackgroundColor('#FFF8E7');
+    } catch(e) {}
 
     const user = tg.initDataUnsafe?.user || null;
     const userId = user ? String(user.id) : 'guest';
@@ -478,6 +691,7 @@
     const firstDayKey = 'vtn_f_' + userId;
     const completedKey = 'vtn_completed_' + userId;
     const blockedKey = 'vtn_blocked_users';
+    const ordersKey = 'vtn_orders';
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
@@ -487,6 +701,8 @@
     let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
     let currentCategory = 'other';
     let blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]');
+    let currentPromoType = '';
+    let currentWithdrawType = '';
 
     let adSettings = {
       links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
@@ -498,6 +714,15 @@
       if (saved) adSettings = JSON.parse(saved);
     } catch(e) {}
 
+    let prices = {
+      channel: 200, bot: 150, views: 50, install: 300,
+      traffic: 80, banner: 100, affiliate: 40, test: 60
+    };
+    try {
+      const saved = localStorage.getItem('vtn_prices');
+      if (saved) prices = JSON.parse(saved);
+    } catch(e) {}
+
     // Games state
     let tttBoard = ['','','','','','','','',''];
     let tttTurn = 'X';
@@ -505,6 +730,8 @@
     let tttDiff = 'easy';
     let tttPrize = 0;
     let spinPrize = 0;
+    let gamePrize = 0;
+    let gameType = '';
 
     const quizData = [
       {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
@@ -518,7 +745,6 @@
     // Check if blocked
     if (user && blockedUsers.includes(String(user.id))) {
       document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
-      throw new Error('Blocked');
     }
 
     function updateUI() {
@@ -581,7 +807,7 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3 };
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0 };
       if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
       if (id === 'wallet') loadHistory();
     }
@@ -656,13 +882,168 @@
         } else if (gameName === 'Quiz') {
           alert('✅ +' + adSettings.reward + ' Coins');
           startQuiz();
+        } else if (gameName === 'Dart') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startDart();
+        } else if (gameName === 'Fruit') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startFruit();
+        } else if (gameName === 'Shoot') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startShoot();
+        } else if (gameName === 'Tower') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startTower();
+        } else if (gameName === 'Sudoku') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startSudoku();
         } else {
           alert('✅ +' + adSettings.reward + ' Coins\n\n' + gameName + ' coming soon!');
         }
       }, waitSec * 1000);
     }
 
-    // ========== TIC TAC TOE ==========
+    // ========== PROMOTE ==========
+    function openPromoteForm(type) {
+      currentPromoType = type;
+      const titles = {
+        channel: 'Promote Channel / Group',
+        bot: 'Promote Bot',
+        views: 'Buy Views & Likes',
+        install: 'Buy App Installs',
+        test: 'Test App / Web',
+        traffic: 'Website Traffic',
+        affiliate: 'Affiliate / Product',
+        monetize: 'Monetize Channel / Group',
+        banner: 'Place Banner Ad'
+      };
+      document.getElementById('promote-form-title').innerText = titles[type] || 'Place Order';
+      document.getElementById('promo-link').value = '';
+      document.getElementById('promo-qty').value = type === 'banner' ? 1 : 100;
+      document.getElementById('promo-notes').value = '';
+      updatePromoCost();
+      showPage('promote-form');
+    }
+
+    function updatePromoCost() {
+      const qty = Number(document.getElementById('promo-qty').value) || 1;
+      let cost = 0;
+      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
+      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
+      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
+      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
+      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+      else if (currentPromoType === 'banner') cost = prices.banner * qty;
+      else if (currentPromoType === 'test') cost = prices.test;
+      else if (currentPromoType === 'monetize') cost = 0;
+      document.getElementById('promo-cost').innerText = 'Cost: ' + cost + ' Coins';
+    }
+
+    document.getElementById('promo-qty')?.addEventListener('input', updatePromoCost);
+
+    function submitPromoteOrder() {
+      const link = document.getElementById('promo-link').value.trim();
+      const qty = Number(document.getElementById('promo-qty').value) || 1;
+      const notes = document.getElementById('promo-notes').value.trim();
+      if (!link && currentPromoType !== 'monetize') {
+        alert('Please enter your link');
+        return;
+      }
+
+      let cost = 0;
+      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
+      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
+      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
+      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
+      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+      else if (currentPromoType === 'banner') cost = prices.banner * qty;
+      else if (currentPromoType === 'test') cost = prices.test;
+
+      if (cost > 0 && balance < cost) {
+        alert('Not enough coins! Need ' + cost + ' coins.');
+        return;
+      }
+
+      if (cost > 0) {
+        balance -= cost;
+        updateUI();
+        saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
+      }
+
+      // Create task for Earn page
+      const taskTitle = {
+        channel: 'Join Channel: ' + link,
+        bot: 'Start Bot: ' + link,
+        views: 'View / Like: ' + link,
+        install: 'Install App: ' + link,
+        traffic: 'Visit Website: ' + link,
+        affiliate: 'Open Affiliate: ' + link,
+        test: 'Test App: ' + link,
+        banner: 'Banner Ad: ' + link,
+        monetize: 'Monetize Request'
+      }[currentPromoType] || 'Promotion Task';
+
+      const rewardMap = {
+        channel: 15, bot: 20, views: 5, install: 40,
+        traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
+      };
+
+      const newTask = {
+        id: 'order_' + Date.now(),
+        title: taskTitle,
+        reward: rewardMap[currentPromoType] || 10,
+        category: currentPromoType === 'channel' ? 'join' :
+                  currentPromoType === 'bot' ? 'bot' :
+                  currentPromoType === 'views' ? 'views' :
+                  currentPromoType === 'install' ? 'install' :
+                  currentPromoType === 'traffic' ? 'website' :
+                  currentPromoType === 'affiliate' ? 'affiliate' : 'other',
+        link: link,
+        wait_seconds: 10,
+        is_active: true,
+        from_order: true
+      };
+
+      // Save to local orders (so it shows in Earn)
+      let orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+      orders.unshift(newTask);
+      if (orders.length > 50) orders.length = 50;
+      localStorage.setItem(ordersKey, JSON.stringify(orders));
+
+      // Also try to save to Supabase tasks table
+      if (sb) {
+        sb.from('tasks').insert([{
+          title: newTask.title,
+          reward: newTask.reward,
+          category: newTask.category,
+          link: newTask.link,
+          wait_seconds: 10,
+          is_active: true
+        }]).then(()=>{}).catch(()=>{});
+      }
+
+      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
+      showPage('promote');
+    }
+
+    function startCrossPromo() {
+      const today = new Date().toDateString();
+      const key = 'vtn_cross_' + userId + '_' + today;
+      let count = Number(localStorage.getItem(key) || 0);
+      if (count >= 3) {
+        alert('You already used 3 free cross promotions today.');
+        return;
+      }
+      const link = prompt('Enter your Channel / Bot / Post link:');
+      if (!link) return;
+      count++;
+      localStorage.setItem(key, count);
+      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
+    }
+
+    // ========== GAMES ==========
     function setDiff(d) {
       tttDiff = d;
       document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
@@ -706,9 +1087,7 @@
     function computerMove() {
       let move;
       if (tttDiff === 'hard') {
-        // Prefer center, then corners, block user
         const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
-        // Simple smart: try win, then block, then center/corner
         move = findBestMove('O') || findBestMove('X') || (tttBoard[4]===''?4:null) || empty[Math.floor(Math.random()*empty.length)];
       } else if (tttDiff === 'medium') {
         const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
@@ -753,26 +1132,22 @@
       }, (adSettings.wait||10)*1000);
     }
 
-    // ========== SPIN ==========
+    // SPIN
     function doSpin() {
       const btn = document.getElementById('spin-btn');
       btn.disabled = true;
       document.getElementById('spin-claim').style.display = 'none';
-
-      // Weighted: mostly 1 or 2, rare high
       const r = Math.random() * 100;
       let prize;
       if (r < 40) prize = 1;
       else if (r < 70) prize = 2;
-      else if (r < 82) prize = 0; // try again
+      else if (r < 82) prize = 0;
       else if (r < 90) prize = 3;
       else if (r < 96) prize = 5;
       else if (r < 99) prize = 10;
       else prize = 25;
-
       const deg = 1800 + Math.floor(Math.random()*360);
       document.getElementById('spin-wheel').style.transform = 'rotate(' + deg + 'deg)';
-
       setTimeout(() => {
         spinPrize = prize;
         if (prize === 0) {
@@ -800,7 +1175,7 @@
       }, (adSettings.wait||10)*1000);
     }
 
-    // ========== QUIZ ==========
+    // QUIZ
     function startQuiz() {
       quizIndex = Math.floor(Math.random() * quizData.length);
       const q = quizData[quizIndex];
@@ -827,6 +1202,277 @@
       } else {
         document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
       }
+    }
+
+    // DART
+    let dartScore = 0, dartTimer = null, dartRunning = false;
+    function startDart() {
+      dartScore = 0; dartRunning = false;
+      document.getElementById('dart-score').innerText = '0';
+      document.getElementById('dart-claim').style.display = 'none';
+      document.getElementById('dart-btn').innerText = 'Start';
+      showPage('game-dart');
+    }
+    function playDart() {
+      if (dartRunning) return;
+      dartRunning = true;
+      dartScore = 0;
+      document.getElementById('dart-score').innerText = '0';
+      document.getElementById('dart-btn').innerText = 'Playing...';
+      let timeLeft = 10;
+      const target = document.getElementById('dart-target');
+      target.onclick = () => {
+        if (!dartRunning) return;
+        dartScore++;
+        document.getElementById('dart-score').innerText = dartScore;
+        target.style.transform = 'scale(1.3)';
+        setTimeout(() => target.style.transform = 'scale(1)', 100);
+      };
+      dartTimer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(dartTimer);
+          dartRunning = false;
+          document.getElementById('dart-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(dartScore / 3), 8);
+          if (gamePrize > 0) {
+            document.getElementById('dart-claim').style.display = 'inline-block';
+            document.getElementById('dart-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          } else alert('Score too low. Try again!');
+        }
+      }, 1000);
+    }
+
+    // FRUIT
+    let fruitScore = 0, fruitRunning = false, fruitTimeout = null;
+    function startFruit() {
+      fruitScore = 0; fruitRunning = false;
+      document.getElementById('fruit-score').innerText = '0';
+      document.getElementById('fruit-claim').style.display = 'none';
+      document.getElementById('fruit-btn').innerText = 'Start';
+      showPage('game-fruit');
+    }
+    function playFruit() {
+      if (fruitRunning) return;
+      fruitRunning = true;
+      fruitScore = 0;
+      document.getElementById('fruit-score').innerText = '0';
+      document.getElementById('fruit-btn').innerText = 'Playing...';
+      const fruits = ['🍎','🍌','🍇','🍊','🍓','🍉'];
+      let count = 0;
+      function nextFruit() {
+        if (count >= 12) {
+          fruitRunning = false;
+          document.getElementById('fruit-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
+          if (gamePrize > 0) {
+            document.getElementById('fruit-claim').style.display = 'inline-block';
+            document.getElementById('fruit-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          }
+          return;
+        }
+        const disp = document.getElementById('fruit-display');
+        disp.innerText = fruits[Math.floor(Math.random()*fruits.length)];
+        disp.onclick = () => {
+          if (!fruitRunning) return;
+          fruitScore++;
+          document.getElementById('fruit-score').innerText = fruitScore;
+          disp.onclick = null;
+        };
+        count++;
+        fruitTimeout = setTimeout(nextFruit, 900);
+      }
+      nextFruit();
+    }
+
+    // SHOOT
+    let shootScore = 0, shootRunning = false;
+    function startShoot() {
+      shootScore = 0; shootRunning = false;
+      document.getElementById('shoot-score').innerText = '0';
+      document.getElementById('shoot-claim').style.display = 'none';
+      document.getElementById('shoot-btn').innerText = 'Start';
+      showPage('game-shoot');
+    }
+    function playShoot() {
+      if (shootRunning) return;
+      shootRunning = true;
+      shootScore = 0;
+      document.getElementById('shoot-score').innerText = '0';
+      document.getElementById('shoot-btn').innerText = 'Playing...';
+      let left = 12;
+      const target = document.getElementById('shoot-target');
+      function showTarget() {
+        if (left <= 0) {
+          shootRunning = false;
+          document.getElementById('shoot-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(shootScore / 2), 7);
+          if (gamePrize > 0) {
+            document.getElementById('shoot-claim').style.display = 'inline-block';
+            document.getElementById('shoot-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          }
+          return;
+        }
+        target.style.opacity = '1';
+        target.onclick = () => {
+          if (!shootRunning) return;
+          shootScore++;
+          document.getElementById('shoot-score').innerText = shootScore;
+          target.style.opacity = '0.3';
+          target.onclick = null;
+        };
+        left--;
+        setTimeout(showTarget, 800);
+      }
+      showTarget();
+    }
+
+    // TOWER
+    let towerScore = 0, towerRunning = false;
+    function startTower() {
+      towerScore = 0; towerRunning = false;
+      document.getElementById('tower-score').innerText = '0';
+      document.getElementById('tower-display').innerText = '⬜';
+      document.getElementById('tower-claim').style.display = 'none';
+      document.getElementById('tower-btn').innerText = 'Start';
+      showPage('game-tower');
+    }
+    function playTower() {
+      if (towerRunning) return;
+      towerRunning = true;
+      towerScore = 0;
+      document.getElementById('tower-score').innerText = '0';
+      document.getElementById('tower-btn').innerText = 'Drop Block';
+      document.getElementById('tower-btn').onclick = () => {
+        if (!towerRunning) return;
+        towerScore++;
+        document.getElementById('tower-score').innerText = towerScore;
+        document.getElementById('tower-display').innerText += '⬜';
+        if (towerScore >= 10) {
+          towerRunning = false;
+          document.getElementById('tower-btn').innerText = 'Finished';
+          gamePrize = Math.min(towerScore, 8);
+          document.getElementById('tower-claim').style.display = 'inline-block';
+          document.getElementById('tower-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+        }
+      };
+    }
+
+    // SUDOKU (simple 4x4 for mobile)
+    let sudokuSolution = [];
+    function startSudoku() {
+      // Simple 4x4 puzzle for mobile friendliness
+      const puzzle = [
+        [1,0,0,4],
+        [0,0,1,0],
+        [0,4,0,0],
+        [4,0,0,2]
+      ];
+      sudokuSolution = [
+        [1,2,3,4],
+        [3,4,1,2],
+        [2,3,4,1],
+        [4,1,2,3]
+      ];
+      const board = document.getElementById('sudoku-board');
+      board.innerHTML = '';
+      board.style.gridTemplateColumns = 'repeat(4, 50px)';
+      for (let r=0; r<4; r++) {
+        for (let c=0; c<4; c++) {
+          const inp = document.createElement('input');
+          inp.type = 'number';
+          inp.min = 1; inp.max = 4;
+          inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;';
+          if (puzzle[r][c] !== 0) {
+            inp.value = puzzle[r][c];
+            inp.disabled = true;
+            inp.style.background = '#ffe8e8';
+          }
+          inp.dataset.r = r;
+          inp.dataset.c = c;
+          board.appendChild(inp);
+        }
+      }
+      document.getElementById('sudoku-msg').innerText = '';
+      showPage('game-sudoku');
+    }
+    function checkSudoku() {
+      const inputs = document.querySelectorAll('#sudoku-board input');
+      let correct = true;
+      inputs.forEach(inp => {
+        const r = Number(inp.dataset.r);
+        const c = Number(inp.dataset.c);
+        const val = Number(inp.value);
+        if (val !== sudokuSolution[r][c]) correct = false;
+      });
+      if (correct) {
+        document.getElementById('sudoku-msg').innerText = '✅ Correct! +5 Coins';
+        balance += 5; updateUI();
+        saveBalance(5, 'game', 'Sudoku Win');
+        saveToHistory('Sudoku Win', 5);
+      } else {
+        document.getElementById('sudoku-msg').innerText = '❌ Not correct yet';
+      }
+    }
+
+    function claimGame(type) {
+      if (gamePrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
+      setTimeout(() => {
+        balance += gamePrize;
+        updateUI();
+        saveBalance(gamePrize, 'game', type + ' Win');
+        saveToHistory(type + ' Game', gamePrize);
+        alert('✅ Claimed +' + gamePrize + ' Coins!');
+        gamePrize = 0;
+        document.getElementById(type + '-claim').style.display = 'none';
+      }, (adSettings.wait||10)*1000);
+    }
+
+    // ========== WALLET WITHDRAW ==========
+    function openWithdraw(type) {
+      currentWithdrawType = type;
+      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank Account' : 'USDT Address (TRC20/BEP20)';
+      document.getElementById('withdraw-address').value = '';
+      document.getElementById('withdraw-amount').value = 500;
+      showPage('withdraw-form');
+    }
+    function submitWithdraw() {
+      const address = document.getElementById('withdraw-address').value.trim();
+      const amount = Number(document.getElementById('withdraw-amount').value) || 0;
+      if (!address) { alert('Enter address / UPI'); return; }
+      if (amount < 500) { alert('Minimum withdrawal is 500 Coins'); return; }
+      if (balance < amount) { alert('Not enough balance'); return; }
+      balance -= amount;
+      updateUI();
+      saveBalance(-amount, 'withdraw', 'Withdrawal request');
+      saveToHistory('Withdrawal Request', -amount);
+      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
+      showPage('wallet');
+    }
+
+    // ========== ADMIN ==========
+    function savePriceSettings() {
+      prices.channel = Number(document.getElementById('price-channel').value) || 200;
+      prices.bot = Number(document.getElementById('price-bot').value) || 150;
+      prices.views = Number(document.getElementById('price-views').value) || 50;
+      prices.install = Number(document.getElementById('price-install').value) || 300;
+      prices.traffic = Number(document.getElementById('price-traffic').value) || 80;
+      prices.banner = Number(document.getElementById('price-banner').value) || 100;
+      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
+      prices.test = Number(document.getElementById('price-test').value) || 60;
+      localStorage.setItem('vtn_prices', JSON.stringify(prices));
+      alert('✅ Prices saved!');
+    }
+    function loadPriceSettings() {
+      document.getElementById('price-channel').value = prices.channel;
+      document.getElementById('price-bot').value = prices.bot;
+      document.getElementById('price-views').value = prices.views;
+      document.getElementById('price-install').value = prices.install;
+      document.getElementById('price-traffic').value = prices.traffic;
+      document.getElementById('price-banner').value = prices.banner;
+      document.getElementById('price-affiliate').value = prices.affiliate;
+      document.getElementById('price-test').value = prices.test;
     }
 
     function saveAdSettings() {
@@ -858,27 +1504,37 @@
       const container = document.getElementById('category-list');
       if (!container) return;
       container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
-      if (!sb) { container.innerHTML = '<div class="card" style="text-align:center;color:#c8102e;margin:14px;">Supabase not connected</div>'; return; }
+
+      // Load from local orders first
+      let allTasks = [];
       try {
-        let query = sb.from('tasks').select('*').eq('is_active', true).order('id', {ascending:false});
-        if (cat === 'other') query = query.or('category.eq.other,category.is.null');
-        else query = query.eq('category', cat);
-        const { data, error } = await query;
-        if (error || !data || !data.length) {
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
-          return;
-        }
-        currentTasks = data;
-        let html = '';
-        data.forEach((task, index) => {
-          if (task.category !== 'watch' && completedTasks.includes(task.id)) return;
-          const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
-          html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>';
-        });
-        container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
-      } catch(e) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#c8102e;margin:14px;">Failed</div>';
+        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+        allTasks = orders.filter(t => t.category === cat || (cat === 'other' && !t.category));
+      } catch(e) {}
+
+      if (sb) {
+        try {
+          let query = sb.from('tasks').select('*').eq('is_active', true).order('id', {ascending:false});
+          if (cat === 'other') query = query.or('category.eq.other,category.is.null');
+          else query = query.eq('category', cat);
+          const { data } = await query;
+          if (data) allTasks = allTasks.concat(data);
+        } catch(e) {}
       }
+
+      if (!allTasks.length) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
+        return;
+      }
+
+      currentTasks = allTasks;
+      let html = '';
+      allTasks.forEach((task, index) => {
+        if (task.category !== 'watch' && completedTasks.includes(task.id)) return;
+        const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
+        html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>';
+      });
+      container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
     }
 
     function doTaskByIndex(index) {
@@ -920,12 +1576,12 @@
       if (!history.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>'; return; }
       let html = '';
       history.forEach(item => {
-        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">+'+item.amount+'</div></div>';
+        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
       });
       container.innerHTML = html;
     }
 
-    // ========== ADMIN ==========
+    // ADMIN functions
     async function adminAddCoins() {
       if (!sb) return alert('Supabase not connected');
       const tid = document.getElementById('admin-userid').value.trim();
@@ -1005,15 +1661,10 @@
       const link = document.getElementById('task-link').value.trim();
       const waitSeconds = Number(document.getElementById('task-wait').value)||0;
       const maxUsers = Number(document.getElementById('task-max-users').value)||0;
-      const dailyLimit = Number(document.getElementById('task-daily-limit').value)||1;
-      const proofRequired = document.getElementById('task-proof').value === 'true';
-      const isVip = document.getElementById('task-vip').value === 'true';
-      const isActive = document.getElementById('task-active').value === 'true';
       if (!title) return alert('Enter title');
       try {
         const { error } = await sb.from('tasks').insert([{
-          title, reward, category, link, wait_seconds: waitSeconds, max_users: maxUsers,
-          daily_limit: dailyLimit, proof_required: proofRequired, is_vip_only: isVip, is_active: isActive
+          title, reward, category, link, wait_seconds: waitSeconds, max_users: maxUsers, is_active: true
         }]);
         if (error) { alert('Error: '+error.message); return; }
         alert('✅ Task Added!');
@@ -1063,4 +1714,4 @@
     loadUser();
   </script>
 </body>
-  </html>
+                                                                                                                                                             </html>
