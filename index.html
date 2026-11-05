@@ -86,144 +86,89 @@
       border: 2px solid #c8102e;
     }
     .list-item .icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: white;
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: white;
     }
     .list-item .info { flex: 1; }
     .list-item .info h4 { font-size: 14px; }
     .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
     .start-btn {
-      background: #c8102e;
-      color: white;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
+      background: #c8102e; color: white; border: none;
+      padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
     }
     .banner {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px;
-      border-radius: 16px;
-      padding: 16px;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      margin: 14px; border-radius: 16px; padding: 16px; color: white;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .ad-banner {
       background: linear-gradient(135deg, #1a1a2e, #16213e);
-      margin: 14px;
-      border-radius: 14px;
-      padding: 14px;
-      color: white;
-      text-align: center;
-      border: 1px solid #ffd700;
+      margin: 14px; border-radius: 14px; padding: 14px; color: white;
+      text-align: center; border: 1px solid #ffd700;
     }
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      box-shadow: 0 -3px 15px rgba(0,0,0,0.08);
-      z-index: 200;
+      position: fixed; bottom: 0; left: 0; right: 0; background: white;
+      display: flex; justify-content: space-around; padding: 10px 0;
+      box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 200;
     }
-    .nav-item {
-      text-align: center;
-      font-size: 11px;
-      color: #888;
-      flex: 1;
-    }
+    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; }
     .nav-item.active { color: #c8102e; font-weight: 700; }
     .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
     .page { display: none; }
     .page.active { display: block; }
     .section-title {
-      margin: 16px 14px 10px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #c8102e;
+      margin: 16px 14px 10px; font-size: 15px; font-weight: 700; color: #c8102e;
     }
-    .form-group {
-      margin-bottom: 12px;
-    }
+    .form-group { margin-bottom: 12px; }
     .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #555;
+      display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555;
     }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 14px;
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #ddd;
+      border-radius: 10px; font-size: 14px;
     }
-    .form-row {
-      display: flex;
-      gap: 10px;
-    }
-    .form-row .form-group {
-      flex: 1;
-    }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
 
     /* Games */
     .ttt-board {
-      display: grid;
-      grid-template-columns: repeat(3, 80px);
-      gap: 8px;
-      justify-content: center;
-      margin: 20px 0;
+      display: grid; grid-template-columns: repeat(3, 85px); gap: 10px;
+      justify-content: center; margin: 20px 0;
     }
     .ttt-cell {
-      width: 80px;
-      height: 80px;
-      background: #fff;
-      border: 2px solid #c8102e;
-      border-radius: 12px;
-      font-size: 32px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 85px; height: 85px; background: linear-gradient(145deg, #fff, #ffe8e8);
+      border: 3px solid #c8102e; border-radius: 16px; font-size: 36px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(200,16,46,0.15);
     }
+    .spin-wrap { text-align: center; padding: 10px; }
+    .spin-pointer { font-size: 28px; color: #c8102e; margin-bottom: -15px; z-index: 2; position: relative; }
     .spin-wheel {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: conic-gradient(#c8102e 0deg 60deg, #ffd700 60deg 120deg, #4CAF50 120deg 180deg, #2196F3 180deg 240deg, #9C27B0 240deg 300deg, #FF9800 300deg 360deg);
-      margin: 20px auto;
+      width: 240px; height: 240px; border-radius: 50%; margin: 0 auto;
+      background: conic-gradient(
+        #c8102e 0deg 45deg, #ffd700 45deg 90deg, #4CAF50 90deg 135deg,
+        #2196F3 135deg 180deg, #9C27B0 180deg 225deg, #FF9800 225deg 270deg,
+        #E91E63 270deg 315deg, #00BCD4 315deg 360deg
+      );
+      border: 8px solid #5c3d00; box-shadow: 0 0 0 6px #ffd700, 0 8px 25px rgba(0,0,0,0.3);
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
       position: relative;
-      transition: transform 3s ease-out;
     }
-    .spin-pointer {
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: -10px;
+    .spin-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 50px; height: 50px; background: #fff; border-radius: 50%;
+      border: 4px solid #c8102e; z-index: 5;
     }
     .quiz-option {
-      background: white;
-      border: 2px solid #c8102e;
-      border-radius: 12px;
-      padding: 14px;
-      margin: 8px 14px;
-      text-align: center;
-      font-weight: 600;
-      cursor: pointer;
+      background: white; border: 2px solid #c8102e; border-radius: 12px;
+      padding: 14px; margin: 8px 14px; text-align: center; font-weight: 600; cursor: pointer;
     }
+    .diff-btn {
+      padding: 8px 16px; border-radius: 20px; border: 2px solid #c8102e;
+      background: white; margin: 4px; font-weight: 600; cursor: pointer;
+    }
+    .diff-btn.active { background: #c8102e; color: white; }
   </style>
 </head>
 <body>
@@ -281,10 +226,7 @@
       <div class="section-title">Official Task</div>
       <div class="list-item" id="official-task" onclick="doOfficialTask()">
         <div class="icon" style="background:#c8102e;">⭐</div>
-        <div class="info">
-          <h4>Join Official Channel & Group</h4>
-          <p>+50 Coins • Required</p>
-        </div>
+        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins • Required</p></div>
         <button class="start-btn">Join</button>
       </div>
       <div class="section-title">Tasks</div>
@@ -293,62 +235,21 @@
         <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
         <button class="start-btn">Open</button>
       </div>
-      <div class="list-item">
-        <div class="icon" style="background:#FF9800;">⚡</div>
-        <div class="info"><h4>Auto Earn</h4><p>Enable once → Earn automatically</p></div>
-        <button class="start-btn" onclick="alert('Coming soon')">Start</button>
-      </div>
-      <div class="list-item" onclick="openCategory('watch')">
-        <div class="icon" style="background:#E91E63;">▶️</div>
-        <div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('views')">
-        <div class="icon" style="background:#9C27B0;">👀</div>
-        <div class="info"><h4>Views & Earn</h4><p>Views & Likes tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('join')">
-        <div class="icon" style="background:#3F51B5;">📢</div>
-        <div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('bot')">
-        <div class="icon" style="background:#00BCD4;">🤖</div>
-        <div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('install')">
-        <div class="icon" style="background:#4CAF50;">📱</div>
-        <div class="info"><h4>Install App</h4><p>App install tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('website')">
-        <div class="icon" style="background:#FF5722;">🌐</div>
-        <div class="info"><h4>Visit Website</h4><p>Website visit tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('affiliate')">
-        <div class="icon" style="background:#795548;">🔗</div>
-        <div class="info"><h4>Affiliate</h4><p>Affiliate link tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
-      <div class="list-item" onclick="openCategory('products')">
-        <div class="icon" style="background:#E91E63;">🛒</div>
-        <div class="info"><h4>View Products</h4><p>Product view tasks</p></div>
-        <button class="start-btn">Open</button>
-      </div>
+      <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div><button class="start-btn" onclick="alert('Coming soon')">Start</button></div>
+      <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installs</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div><button class="start-btn">Open</button></div>
+      <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>Product views</p></div><button class="start-btn">Open</button></div>
     </div>
 
-    <!-- CATEGORY TASKS -->
     <div id="category-tasks" class="page">
       <div class="header" id="category-title">Tasks</div>
-      <div id="category-list">
-        <div class="card" style="text-align:center; color:#888; margin: 14px;">Loading...</div>
-      </div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('earn')">← Back</button>
-      </div>
+      <div id="category-list"><div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">← Back</button></div>
     </div>
 
     <!-- PROMOTE -->
@@ -360,7 +261,7 @@
       <div class="list-item"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="list-item"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div><button class="start-btn" onclick="alert('Contact @Vtnhub0')">Buy</button></div>
       <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="alert('Send Channel/Group link to @Vtnhub0')">
+      <div class="list-item" onclick="alert('Send link to @Vtnhub0')">
         <div class="icon" style="background:#2196F3;">💰</div>
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
@@ -373,49 +274,54 @@
       <div class="section-title">Chat</div>
       <div class="list-item" onclick="enterWithAd('chat')">
         <div class="icon" style="background:#009688;">💬</div>
-        <div class="info">
-          <h4>Community Chat</h4>
-          <p>Watch ad to enter • Earn coins</p>
-        </div>
+        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter • Earn coins</p></div>
         <button class="start-btn">Enter</button>
       </div>
       <div class="section-title">Games (Watch Ad to Play)</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #FF5722, #E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background: linear-gradient(135deg, #00BCD4, #0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
-        <div class="btn" style="background: linear-gradient(135deg, #607D8B, #455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
+        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
+        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
+        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
+        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
+        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
+        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
+        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
       </div>
     </div>
 
-    <!-- GAME: TIC TAC TOE -->
+    <!-- TIC TAC TOE -->
     <div id="game-ttt" class="page">
       <div class="header">Tic Tac Toe</div>
       <div class="card" style="text-align:center;">
-        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;">Your turn (X)</div>
+        <div style="margin-bottom:12px;">
+          <button class="diff-btn active" id="diff-easy" onclick="setDiff('easy')">Easy (1)</button>
+          <button class="diff-btn" id="diff-medium" onclick="setDiff('medium')">Medium (2)</button>
+          <button class="diff-btn" id="diff-hard" onclick="setDiff('hard')">Hard (3)</button>
+        </div>
+        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;color:#c8102e;">Your turn (X)</div>
         <div class="ttt-board" id="ttt-board"></div>
-        <button class="gold-btn" onclick="resetTTT()">Restart</button>
+        <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Watch Ad & Claim</button>
         <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
       </div>
     </div>
 
-    <!-- GAME: SPIN -->
+    <!-- SPIN -->
     <div id="game-spin" class="page">
       <div class="header">Spin & Win</div>
-      <div class="card" style="text-align:center;">
+      <div class="card spin-wrap">
         <div class="spin-pointer">▼</div>
-        <div class="spin-wheel" id="spin-wheel"></div>
-        <div id="spin-result" style="margin:15px 0;font-weight:700;font-size:18px;"></div>
+        <div style="position:relative;display:inline-block;">
+          <div class="spin-wheel" id="spin-wheel"></div>
+        </div>
+        <div id="spin-result" style="margin:16px 0;font-weight:800;font-size:20px;color:#c8102e;min-height:28px;"></div>
         <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
+        <button class="gold-btn" id="spin-claim" style="display:none;margin-top:10px;" onclick="claimSpin()">Watch Ad & Collect</button>
+        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">← Back</button>
       </div>
     </div>
 
-    <!-- GAME: QUIZ -->
+    <!-- QUIZ -->
     <div id="game-quiz" class="page">
       <div class="header">Quiz</div>
       <div class="card">
@@ -434,23 +340,11 @@
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
       <div class="section-title">Task History</div>
-      <div id="history-list">
-        <div class="card" style="text-align:center;color:#888;">No history yet</div>
-      </div>
+      <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
       <div class="section-title">Withdrawal</div>
-      <div class="list-item" onclick="alert('India - UPI / Bank\nContact @Vtnhub0')">
-        <div class="icon" style="background:#FF9800;">🇮🇳</div>
-        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div class="list-item" onclick="alert('USDT Withdrawal\nContact @Vtnhub0')">
-        <div class="icon" style="background:#26A17B;">₮</div>
-        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('home')">← Back</button>
-      </div>
+      <div class="list-item" onclick="alert('Contact @Vtnhub0')"><div class="icon" style="background:#FF9800;">🇮🇳</div><div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div><button class="start-btn">Withdraw</button></div>
+      <div class="list-item" onclick="alert('Contact @Vtnhub0')"><div class="icon" style="background:#26A17B;">₮</div><div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div><button class="start-btn">Withdraw</button></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
     </div>
 
     <!-- PROFILE -->
@@ -462,7 +356,7 @@
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0', '_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
       <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
     </div>
 
@@ -470,10 +364,7 @@
     <div id="refer" class="page">
       <div class="header">Refer & Earn</div>
       <div class="banner">
-        <div>
-          <div style="font-weight:700;">Invite Friends</div>
-          <div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div>
-        </div>
+        <div><div style="font-weight:700;">Invite Friends</div><div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div></div>
         <div style="font-size:28px;">🎁</div>
       </div>
       <div class="card" style="text-align:center;">
@@ -487,25 +378,15 @@
     <div id="admin" class="page">
       <div class="header">👑 Admin Panel</div>
 
-      <div class="section-title">Ad Settings (Chat / Games)</div>
+      <div class="section-title">Ad Settings</div>
       <div class="card">
         <div class="form-group">
-          <label>Ad Link</label>
-          <input type="text" id="ad-link" value="https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3">
+          <label>Ad Links (one per line – random pick)</label>
+          <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label>Wait Seconds</label>
-            <input type="number" id="ad-wait" value="15">
-          </div>
-          <div class="form-group">
-            <label>Cooldown (Minutes)</label>
-            <input type="number" id="ad-cooldown" value="15">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Coins Reward</label>
-          <input type="number" id="ad-reward" value="5">
+          <div class="form-group"><label>Wait Seconds</label><input type="number" id="ad-wait" value="15"></div>
+          <div class="form-group"><label>Coins Reward</label><input type="number" id="ad-reward" value="5"></div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
       </div>
@@ -517,25 +398,21 @@
           <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
         </div>
         <div class="form-group">
-          <label>Coins to Add</label>
+          <label>Coins Amount</label>
           <input type="number" id="admin-coins" value="100">
         </div>
         <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
+        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">− Remove Coins</button>
         <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
-        <button class="start-btn" style="width:100%;background:#009688;" onclick="adminViewHistory()">View History</button>
+        <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
+        <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
         <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
       </div>
 
       <div class="section-title">Add New Task</div>
       <div class="card">
-        <div class="form-group">
-          <label>Task Title *</label>
-          <input type="text" id="task-title" placeholder="e.g. Join My Channel">
-        </div>
-        <div class="form-group">
-          <label>Reward (Coins) *</label>
-          <input type="number" id="task-reward" value="10">
-        </div>
+        <div class="form-group"><label>Task Title *</label><input type="text" id="task-title" placeholder="e.g. Join My Channel"></div>
+        <div class="form-group"><label>Reward (Coins) *</label><input type="number" id="task-reward" value="10"></div>
         <div class="form-group">
           <label>Category *</label>
           <select id="task-category">
@@ -550,48 +427,25 @@
             <option value="other">Other / General</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Link</label>
-          <input type="text" id="task-link" placeholder="https://t.me/...">
+        <div class="form-group"><label>Link</label><input type="text" id="task-link" placeholder="https://t.me/..."></div>
+        <div class="form-row">
+          <div class="form-group"><label>Wait Seconds</label><input type="number" id="task-wait" value="0"></div>
+          <div class="form-group"><label>Max Users (0=Unlimited)</label><input type="number" id="task-max-users" value="0"></div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label>Wait Seconds</label>
-            <input type="number" id="task-wait" value="0">
-          </div>
-          <div class="form-group">
-            <label>Max Users (0=Unlimited)</label>
-            <input type="number" id="task-max-users" value="0">
-          </div>
+          <div class="form-group"><label>Daily Limit</label><input type="number" id="task-daily-limit" value="1"></div>
+          <div class="form-group"><label>Proof Required</label><select id="task-proof"><option value="false">No</option><option value="true">Yes</option></select></div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label>Daily Limit</label>
-            <input type="number" id="task-daily-limit" value="1">
-          </div>
-          <div class="form-group">
-            <label>Proof Required</label>
-            <select id="task-proof"><option value="false">No</option><option value="true">Yes</option></select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>VIP Only</label>
-            <select id="task-vip"><option value="false">No</option><option value="true">Yes</option></select>
-          </div>
-          <div class="form-group">
-            <label>Active</label>
-            <select id="task-active"><option value="true">Yes</option><option value="false">No</option></select>
-          </div>
+          <div class="form-group"><label>VIP Only</label><select id="task-vip"><option value="false">No</option><option value="true">Yes</option></select></div>
+          <div class="form-group"><label>Active</label><select id="task-active"><option value="true">Yes</option><option value="false">No</option></select></div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
       </div>
 
       <div class="section-title">Current Tasks</div>
       <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
-      <div style="padding:14px;">
-        <button class="btn" style="width:100%; background:#666;" onclick="showPage('profile')">← Back</button>
-      </div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Back</button></div>
     </div>
 
   </div>
@@ -623,7 +477,7 @@
     const officialKey = 'vtn_o_' + userId;
     const firstDayKey = 'vtn_f_' + userId;
     const completedKey = 'vtn_completed_' + userId;
-    const lastAdKey = 'vtn_lastad_' + userId;
+    const blockedKey = 'vtn_blocked_users';
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
@@ -632,35 +486,40 @@
     let currentTasks = [];
     let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
     let currentCategory = 'other';
+    let blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]');
 
     let adSettings = {
-      link: 'https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3',
-      wait: 15, cooldown: 15, reward: 5
+      links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
+      wait: 15,
+      reward: 5
     };
     try {
       const saved = localStorage.getItem('vtn_ad_settings');
       if (saved) adSettings = JSON.parse(saved);
     } catch(e) {}
 
-    const categoryNames = {
-      join:'Join Channel / Group', bot:'Join Bot', watch:'Watch & Earn', views:'Views & Earn',
-      install:'Install App', website:'Visit Website', affiliate:'Affiliate', products:'View Products', other:'Earn Tasks'
-    };
-
-    // Tic Tac Toe state
+    // Games state
     let tttBoard = ['','','','','','','','',''];
     let tttTurn = 'X';
     let tttOver = false;
+    let tttDiff = 'easy';
+    let tttPrize = 0;
+    let spinPrize = 0;
 
-    // Quiz
     const quizData = [
-      {q: 'What is the capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
-      {q: 'How many days in a week?', opts:['5','6','7','8'], ans:2},
-      {q: 'What color is the sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
-      {q: '2 + 2 = ?', opts:['3','4','5','6'], ans:1},
-      {q: 'Which is a fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+      {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
+      {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
+      {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
+      {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
+      {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
     ];
     let quizIndex = 0;
+
+    // Check if blocked
+    if (user && blockedUsers.includes(String(user.id))) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
+      throw new Error('Blocked');
+    }
 
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
@@ -703,8 +562,8 @@
           updateUI();
         } else {
           await sb.from('users').insert([{
-            telegram_id: user.id, first_name: user.first_name || '', username: user.username || '',
-            balance: balance, is_vip: false, daily_tasks: 0, official_done: officialDone
+            telegram_id: user.id, first_name: user.first_name||'', username: user.username||'',
+            balance, is_vip:false, daily_tasks:0, official_done: officialDone
           }]);
         }
       } catch(e) {}
@@ -713,7 +572,7 @@
     async function saveBalance(amount, type, desc) {
       if (!sb || !user) return;
       try {
-        await sb.from('users').update({ balance: balance }).eq('telegram_id', user.id);
+        await sb.from('users').update({ balance }).eq('telegram_id', user.id);
         await sb.from('transactions').insert([{ telegram_id: user.id, amount, type, description: desc }]);
       } catch(e) {}
     }
@@ -736,7 +595,7 @@
 
     function dailyCheckIn() {
       const today = new Date().toDateString();
-      if (lastCheckIn === today) { alert("Already claimed today!"); return; }
+      if (lastCheckIn === today) { alert('Already claimed today!'); return; }
       if (!confirm('Watch a short ad to claim?')) return;
       let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
       if (isFirstDay) { localStorage.setItem(firstDayKey,'1'); isFirstDay=false; alert('🎉 First Day Bonus! +'+reward); }
@@ -760,25 +619,20 @@
 
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
-      if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => alert('Copied: '+code));
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Copied: '+code));
       else alert(code);
     }
 
-    // ========== AD + GAMES ==========
+    function getRandomAd() {
+      const links = adSettings.links || [];
+      if (!links.length) return 'https://t.me/Vtnhub0';
+      return links[Math.floor(Math.random() * links.length)];
+    }
+
     function enterWithAd(type, gameName) {
-      const now = Date.now();
-      const lastAd = Number(localStorage.getItem(lastAdKey)) || 0;
-      const cooldownMs = (adSettings.cooldown || 15) * 60 * 1000;
-
-      if (now - lastAd < cooldownMs) {
-        const remaining = Math.ceil((cooldownMs - (now - lastAd)) / 60000);
-        alert('Please wait ' + remaining + ' more minute(s).');
-        return;
-      }
-
       if (!confirm('Watch ad to enter ' + (type==='chat'?'Chat':gameName) + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
 
-      window.open(adSettings.link, '_blank');
+      window.open(getRandomAd(), '_blank');
       const waitSec = adSettings.wait || 15;
       alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
 
@@ -787,7 +641,6 @@
         updateUI();
         saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
         saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
-        localStorage.setItem(lastAdKey, Date.now());
 
         if (type === 'chat') {
           alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
@@ -796,8 +649,10 @@
           startTTT();
         } else if (gameName === 'Spin') {
           alert('✅ +' + adSettings.reward + ' Coins');
-          showPage('game-spin');
+          spinPrize = 0;
           document.getElementById('spin-result').innerText = '';
+          document.getElementById('spin-claim').style.display = 'none';
+          showPage('game-spin');
         } else if (gameName === 'Quiz') {
           alert('✅ +' + adSettings.reward + ' Coins');
           startQuiz();
@@ -808,9 +663,15 @@
     }
 
     // ========== TIC TAC TOE ==========
+    function setDiff(d) {
+      tttDiff = d;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('diff-' + d).classList.add('active');
+    }
     function startTTT() {
       tttBoard = ['','','','','','','','',''];
-      tttTurn = 'X'; tttOver = false;
+      tttTurn = 'X'; tttOver = false; tttPrize = 0;
+      document.getElementById('ttt-claim').style.display = 'none';
       showPage('game-ttt');
       renderTTT();
     }
@@ -821,51 +682,122 @@
         const div = document.createElement('div');
         div.className = 'ttt-cell';
         div.innerText = cell;
+        div.style.color = cell === 'X' ? '#c8102e' : '#2196F3';
         div.onclick = () => playTTT(i);
         board.appendChild(div);
       });
-      document.getElementById('ttt-status').innerText = tttOver ? 'Game Over' : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer turn...');
+      document.getElementById('ttt-status').innerText = tttOver ? (tttPrize > 0 ? 'You Won!' : 'Game Over') : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer...');
     }
     function playTTT(i) {
       if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
       tttBoard[i] = 'X';
-      if (checkWin('X')) { tttOver=true; renderTTT(); alert('You Win! +3 Coins'); balance+=3; updateUI(); saveBalance(3,'game','TicTacToe Win'); return; }
+      if (checkWin('X')) {
+        tttOver = true;
+        tttPrize = tttDiff === 'easy' ? 1 : (tttDiff === 'medium' ? 2 : 3);
+        renderTTT();
+        document.getElementById('ttt-claim').style.display = 'inline-block';
+        document.getElementById('ttt-claim').innerText = 'Watch Ad & Claim ' + tttPrize + ' Coins';
+        return;
+      }
       if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
       tttTurn = 'O'; renderTTT();
-      setTimeout(computerMove, 500);
+      setTimeout(computerMove, 400);
     }
     function computerMove() {
-      const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
-      if (!empty.length) return;
-      const move = empty[Math.floor(Math.random()*empty.length)];
+      let move;
+      if (tttDiff === 'hard') {
+        // Prefer center, then corners, block user
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        // Simple smart: try win, then block, then center/corner
+        move = findBestMove('O') || findBestMove('X') || (tttBoard[4]===''?4:null) || empty[Math.floor(Math.random()*empty.length)];
+      } else if (tttDiff === 'medium') {
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        move = findBestMove('O') || empty[Math.floor(Math.random()*empty.length)];
+      } else {
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        move = empty[Math.floor(Math.random()*empty.length)];
+      }
+      if (move === undefined || move === null) return;
       tttBoard[move] = 'O';
       if (checkWin('O')) { tttOver=true; renderTTT(); alert('Computer Wins!'); return; }
       if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
       tttTurn = 'X'; renderTTT();
     }
+    function findBestMove(p) {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (const [a,b,c] of lines) {
+        const line = [tttBoard[a],tttBoard[b],tttBoard[c]];
+        if (line.filter(x=>x===p).length===2 && line.includes('')) {
+          if (tttBoard[a]==='') return a;
+          if (tttBoard[b]==='') return b;
+          if (tttBoard[c]==='') return c;
+        }
+      }
+      return null;
+    }
     function checkWin(p) {
       const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
       return lines.some(([a,b,c]) => tttBoard[a]===p && tttBoard[b]===p && tttBoard[c]===p);
     }
-    function resetTTT() { startTTT(); }
+    function claimTTT() {
+      if (tttPrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
+      setTimeout(() => {
+        balance += tttPrize;
+        updateUI();
+        saveBalance(tttPrize, 'game', 'TicTacToe Win');
+        saveToHistory('Tic Tac Toe Win', tttPrize);
+        alert('✅ Claimed +' + tttPrize + ' Coins!');
+        tttPrize = 0;
+        document.getElementById('ttt-claim').style.display = 'none';
+      }, (adSettings.wait||10)*1000);
+    }
 
     // ========== SPIN ==========
     function doSpin() {
       const btn = document.getElementById('spin-btn');
       btn.disabled = true;
-      const rewards = [2,5,10,0,3,8];
+      document.getElementById('spin-claim').style.display = 'none';
+
+      // Weighted: mostly 1 or 2, rare high
+      const r = Math.random() * 100;
+      let prize;
+      if (r < 40) prize = 1;
+      else if (r < 70) prize = 2;
+      else if (r < 82) prize = 0; // try again
+      else if (r < 90) prize = 3;
+      else if (r < 96) prize = 5;
+      else if (r < 99) prize = 10;
+      else prize = 25;
+
       const deg = 1800 + Math.floor(Math.random()*360);
       document.getElementById('spin-wheel').style.transform = 'rotate(' + deg + 'deg)';
+
       setTimeout(() => {
-        const prize = rewards[Math.floor(Math.random()*rewards.length)];
-        document.getElementById('spin-result').innerText = prize > 0 ? 'You won ' + prize + ' Coins!' : 'Try again!';
-        if (prize > 0) {
-          balance += prize; updateUI();
-          saveBalance(prize, 'game', 'Spin Win');
-          saveToHistory('Spin & Win', prize);
+        spinPrize = prize;
+        if (prize === 0) {
+          document.getElementById('spin-result').innerText = 'Try Again!';
+        } else {
+          document.getElementById('spin-result').innerText = 'You got ' + prize + ' Coins!';
+          document.getElementById('spin-claim').style.display = 'inline-block';
+          document.getElementById('spin-claim').innerText = 'Watch Ad & Collect ' + prize + ' Coins';
         }
         btn.disabled = false;
-      }, 3200);
+      }, 4200);
+    }
+    function claimSpin() {
+      if (spinPrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
+      setTimeout(() => {
+        balance += spinPrize;
+        updateUI();
+        saveBalance(spinPrize, 'game', 'Spin Win');
+        saveToHistory('Spin & Win', spinPrize);
+        alert('✅ Collected +' + spinPrize + ' Coins!');
+        spinPrize = 0;
+        document.getElementById('spin-claim').style.display = 'none';
+        document.getElementById('spin-result').innerText = '';
+      }, (adSettings.wait||10)*1000);
     }
 
     // ========== QUIZ ==========
@@ -898,23 +830,26 @@
     }
 
     function saveAdSettings() {
-      adSettings.link = document.getElementById('ad-link').value.trim() || adSettings.link;
+      const raw = document.getElementById('ad-links').value.trim();
+      const links = raw.split('\n').map(l => l.trim()).filter(l => l);
+      adSettings.links = links.length ? links : adSettings.links;
       adSettings.wait = Number(document.getElementById('ad-wait').value) || 15;
-      adSettings.cooldown = Number(document.getElementById('ad-cooldown').value) || 15;
       adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
       localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('✅ Ad Settings Saved!');
+      alert('✅ Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
     }
     function loadAdSettings() {
-      document.getElementById('ad-link').value = adSettings.link || '';
+      document.getElementById('ad-links').value = (adSettings.links || []).join('\n');
       document.getElementById('ad-wait').value = adSettings.wait || 15;
-      document.getElementById('ad-cooldown').value = adSettings.cooldown || 15;
       document.getElementById('ad-reward').value = adSettings.reward || 5;
     }
 
     function openCategory(cat) {
       currentCategory = cat;
-      document.getElementById('category-title').innerText = categoryNames[cat] || 'Tasks';
+      document.getElementById('category-title').innerText = ({
+        join:'Join Channel / Group', bot:'Join Bot', watch:'Watch & Earn', views:'Views & Earn',
+        install:'Install App', website:'Visit Website', affiliate:'Affiliate', products:'View Products', other:'Earn Tasks'
+      })[cat] || 'Tasks';
       showPage('category-tasks');
       loadCategoryTasks(cat);
     }
@@ -990,19 +925,36 @@
       container.innerHTML = html;
     }
 
+    // ========== ADMIN ==========
     async function adminAddCoins() {
       if (!sb) return alert('Supabase not connected');
       const tid = document.getElementById('admin-userid').value.trim();
       const coins = Number(document.getElementById('admin-coins').value) || 0;
       const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and coins');
+      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
       try {
         const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
         if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
         const newBalance = (data.balance||0) + coins;
         await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
         await sb.from('transactions').insert([{ telegram_id: tid, amount: coins, type:'admin', description:'Admin added coins' }]);
-        result.innerHTML = '<span style="color:green;">✅ Added '+coins+' coins. New: '+newBalance+'</span>';
+        result.innerHTML = '<span style="color:green;">✅ Added '+coins+'. New: '+newBalance+'</span>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
+
+    async function adminRemoveCoins() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const coins = Number(document.getElementById('admin-coins').value) || 0;
+      const result = document.getElementById('admin-result');
+      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
+      try {
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        const newBalance = Math.max(0, (data.balance||0) - coins);
+        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
+        await sb.from('transactions').insert([{ telegram_id: tid, amount: -coins, type:'admin', description:'Admin removed coins' }]);
+        result.innerHTML = '<span style="color:orange;">− Removed '+coins+'. New: '+newBalance+'</span>';
       } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
     }
 
@@ -1027,9 +979,22 @@
         const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id',{ascending:false}).limit(10);
         if (!data || !data.length) { result.innerHTML = 'No transactions'; return; }
         let html = '<b>Last 10:</b><br>';
-        data.forEach(t => html += (t.description||t.type)+': +'+t.amount+'<br>');
+        data.forEach(t => html += (t.description||t.type)+': '+t.amount+'<br>');
         result.innerHTML = html;
       } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
+
+    function adminBlockUser() {
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+      if (!tid) return alert('Enter User ID');
+      if (!confirm('Block user ' + tid + '?')) return;
+      if (!blockedUsers.includes(tid)) {
+        blockedUsers.push(tid);
+        localStorage.setItem(blockedKey, JSON.stringify(blockedUsers));
+      }
+      result.innerHTML = '<span style="color:red;">User ' + tid + ' blocked</span>';
+      alert('User blocked');
     }
 
     async function addNewTask() {
@@ -1098,4 +1063,4 @@
     loadUser();
   </script>
 </body>
-        </html>
+  </html>
