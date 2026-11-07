@@ -170,7 +170,6 @@
     }
     .diff-btn.active { background: #c8102e; color: white; }
 
-    /* Simple game styles */
     .game-area {
       background: #1a1a2e;
       border-radius: 16px;
@@ -217,7 +216,8 @@
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Your Balance</div>
         <div class="amount" id="balance">0 Coins</div>
-        <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
+        <button class="gold-btn" onclick="showPage('wallet')">Wallet</button>
+        <button class="gold-btn" style="margin-left:8px;background:linear-gradient(90deg,#fff,#f0f0f0);color:#333;" onclick="showPage('task-history')">Task History</button>
       </div>
       <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
         <div style="font-size:12px;opacity:0.8;">Sponsored</div>
@@ -292,6 +292,11 @@
         <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
         <button class="start-btn">Buy</button>
       </div>
+      <div class="list-item" onclick="openPromoteForm('watch')">
+        <div class="icon" style="background:#E91E63;">▶️</div>
+        <div class="info"><h4>Promote Watch / Video</h4><p>Get real watches on your video</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
       <div class="list-item" onclick="openPromoteForm('bot')">
         <div class="icon" style="background:#9C27B0;">🤖</div>
         <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
@@ -361,7 +366,7 @@
           <label>Notes (optional)</label>
           <textarea id="promo-notes" rows="2" placeholder="Any special request..."></textarea>
         </div>
-        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins</div>
+        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins (Users get 50%)</div>
         <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
         <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Back</button>
       </div>
@@ -495,7 +500,7 @@
     <div id="game-sudoku" class="page">
       <div class="header">🔢 Sudoku (Easy)</div>
       <div class="card" style="text-align:center;">
-        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(9,32px);gap:2px;justify-content:center;margin:15px 0;"></div>
+        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:2px;justify-content:center;margin:15px 0;"></div>
         <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
         <button class="gold-btn" onclick="checkSudoku()">Check</button>
         <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
@@ -504,13 +509,11 @@
 
     <!-- WALLET -->
     <div id="wallet" class="page">
-      <div class="header">Wallet & History</div>
+      <div class="header">Wallet</div>
       <div class="balance-card">
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
-      <div class="section-title">Task History</div>
-      <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
       <div class="section-title">Withdrawal</div>
       <div class="list-item" onclick="openWithdraw('upi')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
@@ -522,6 +525,13 @@
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
+    </div>
+
+    <!-- TASK HISTORY (only task related) -->
+    <div id="task-history" class="page">
+      <div class="header">Task History</div>
+      <div id="task-history-list"><div class="card" style="text-align:center;color:#888;margin:14px;">No task history yet</div></div>
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
     </div>
 
@@ -591,6 +601,10 @@
         <div class="form-row">
           <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
           <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Watch / Video</label><input type="number" id="price-watch" value="30"></div>
+          <div class="form-group"><label></label></div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
       </div>
@@ -692,6 +706,7 @@
     const completedKey = 'vtn_completed_' + userId;
     const blockedKey = 'vtn_blocked_users';
     const ordersKey = 'vtn_orders';
+    const historyKey = 'vtn_history_' + userId;
 
     let balance = Number(localStorage.getItem(balanceKey)) || 0;
     let lastCheckIn = localStorage.getItem(checkinKey) || '';
@@ -716,11 +731,14 @@
 
     let prices = {
       channel: 200, bot: 150, views: 50, install: 300,
-      traffic: 80, banner: 100, affiliate: 40, test: 60
+      traffic: 80, banner: 100, affiliate: 40, test: 60, watch: 30
     };
     try {
       const saved = localStorage.getItem('vtn_prices');
-      if (saved) prices = JSON.parse(saved);
+      if (saved) {
+        const p = JSON.parse(saved);
+        prices = { ...prices, ...p };
+      }
     } catch(e) {}
 
     // Games state
@@ -769,7 +787,6 @@
         if (el) el.style.display = 'none';
       }
       updateUI();
-      loadHistory();
     }
 
     async function loadUser() {
@@ -807,9 +824,9 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0 };
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0, 'task-history':0 };
       if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
-      if (id === 'wallet') loadHistory();
+      if (id === 'task-history') loadTaskHistory();
     }
 
     function addCoins(amount, title) {
@@ -829,6 +846,7 @@
       balance += reward; lastCheckIn = today;
       localStorage.setItem(checkinKey, today); updateUI();
       saveBalance(reward, 'checkin', 'Daily Check-in');
+      saveToHistory('Daily Check-in', reward, 'task');
     }
 
     function doOfficialTask() {
@@ -839,6 +857,7 @@
       localStorage.setItem(officialKey, '1');
       document.getElementById('official-task').style.display = 'none';
       updateUI(); saveBalance(50, 'official', 'Official Task');
+      saveToHistory('Official Task', 50, 'task');
       if (sb && user) sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
       alert('Official Task Completed! +50 Coins');
     }
@@ -866,7 +885,7 @@
         balance += adSettings.reward;
         updateUI();
         saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
-        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
+        saveToHistory('Watched Ad (' + (gameName || type) + ')', adSettings.reward, 'task');
 
         if (type === 'chat') {
           alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
@@ -878,6 +897,7 @@
           spinPrize = 0;
           document.getElementById('spin-result').innerText = '';
           document.getElementById('spin-claim').style.display = 'none';
+          document.getElementById('spin-btn').disabled = false;
           showPage('game-spin');
         } else if (gameName === 'Quiz') {
           alert('✅ +' + adSettings.reward + ' Coins');
@@ -915,7 +935,8 @@
         traffic: 'Website Traffic',
         affiliate: 'Affiliate / Product',
         monetize: 'Monetize Channel / Group',
-        banner: 'Place Banner Ad'
+        banner: 'Place Banner Ad',
+        watch: 'Promote Watch / Video'
       };
       document.getElementById('promote-form-title').innerText = titles[type] || 'Place Order';
       document.getElementById('promo-link').value = '';
@@ -936,8 +957,9 @@
       else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
       else if (currentPromoType === 'banner') cost = prices.banner * qty;
       else if (currentPromoType === 'test') cost = prices.test;
+      else if (currentPromoType === 'watch') cost = prices.watch * Math.ceil(qty/50);
       else if (currentPromoType === 'monetize') cost = 0;
-      document.getElementById('promo-cost').innerText = 'Cost: ' + cost + ' Coins';
+      document.getElementById('promo-cost').innerText = 'Cost: ' + cost + ' Coins (Users get 50%)';
     }
 
     document.getElementById('promo-qty')?.addEventListener('input', updatePromoCost);
@@ -960,19 +982,25 @@
       else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
       else if (currentPromoType === 'banner') cost = prices.banner * qty;
       else if (currentPromoType === 'test') cost = prices.test;
+      else if (currentPromoType === 'watch') cost = prices.watch * Math.ceil(qty/50);
 
       if (cost > 0 && balance < cost) {
         alert('Not enough coins! Need ' + cost + ' coins.');
         return;
       }
 
+      // Deduct full amount from promoter
       if (cost > 0) {
         balance -= cost;
         updateUI();
         saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
+        saveToHistory('Promotion: ' + currentPromoType, -cost, 'promo');
       }
 
-      // Create task for Earn page
+      // 50% of cost goes to users
+      const userBudget = Math.floor(cost * 0.5);
+      let perUserReward = Math.max(1, Math.floor(userBudget / Math.max(qty, 1)));
+
       const taskTitle = {
         channel: 'Join Channel: ' + link,
         bot: 'Start Bot: ' + link,
@@ -982,31 +1010,35 @@
         affiliate: 'Open Affiliate: ' + link,
         test: 'Test App: ' + link,
         banner: 'Banner Ad: ' + link,
+        watch: 'Watch Video: ' + link,
         monetize: 'Monetize Request'
       }[currentPromoType] || 'Promotion Task';
 
-      const rewardMap = {
-        channel: 15, bot: 20, views: 5, install: 40,
-        traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
-      };
+      const category = {
+        channel: 'join',
+        bot: 'bot',
+        views: 'views',
+        install: 'install',
+        traffic: 'website',
+        affiliate: 'affiliate',
+        watch: 'watch',
+        test: 'other',
+        banner: 'other',
+        monetize: 'other'
+      }[currentPromoType] || 'other';
 
       const newTask = {
         id: 'order_' + Date.now(),
         title: taskTitle,
-        reward: rewardMap[currentPromoType] || 10,
-        category: currentPromoType === 'channel' ? 'join' :
-                  currentPromoType === 'bot' ? 'bot' :
-                  currentPromoType === 'views' ? 'views' :
-                  currentPromoType === 'install' ? 'install' :
-                  currentPromoType === 'traffic' ? 'website' :
-                  currentPromoType === 'affiliate' ? 'affiliate' : 'other',
+        reward: perUserReward,
+        category: category,
         link: link,
-        wait_seconds: 10,
+        wait_seconds: currentPromoType === 'watch' ? 15 : 10,
         is_active: true,
         from_order: true
       };
 
-      // Save to local orders (so it shows in Earn)
+      // Save to local orders
       let orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
       orders.unshift(newTask);
       if (orders.length > 50) orders.length = 50;
@@ -1019,12 +1051,12 @@
           reward: newTask.reward,
           category: newTask.category,
           link: newTask.link,
-          wait_seconds: 10,
+          wait_seconds: newTask.wait_seconds,
           is_active: true
         }]).then(()=>{}).catch(()=>{});
       }
 
-      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
+      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\nUsers get ~' + perUserReward + ' coins each (50% share)\n\nTask is now available in Earn page.');
       showPage('promote');
     }
 
@@ -1125,7 +1157,7 @@
         balance += tttPrize;
         updateUI();
         saveBalance(tttPrize, 'game', 'TicTacToe Win');
-        saveToHistory('Tic Tac Toe Win', tttPrize);
+        saveToHistory('Tic Tac Toe Win', tttPrize, 'game');
         alert('✅ Claimed +' + tttPrize + ' Coins!');
         tttPrize = 0;
         document.getElementById('ttt-claim').style.display = 'none';
@@ -1137,6 +1169,7 @@
       const btn = document.getElementById('spin-btn');
       btn.disabled = true;
       document.getElementById('spin-claim').style.display = 'none';
+      document.getElementById('spin-result').innerText = '';
       const r = Math.random() * 100;
       let prize;
       if (r < 40) prize = 1;
@@ -1167,7 +1200,7 @@
         balance += spinPrize;
         updateUI();
         saveBalance(spinPrize, 'game', 'Spin Win');
-        saveToHistory('Spin & Win', spinPrize);
+        saveToHistory('Spin & Win', spinPrize, 'game');
         alert('✅ Collected +' + spinPrize + ' Coins!');
         spinPrize = 0;
         document.getElementById('spin-claim').style.display = 'none';
@@ -1194,11 +1227,13 @@
     }
     function answerQuiz(i) {
       const q = quizData[quizIndex];
+      // disable further clicks
+      document.querySelectorAll('.quiz-option').forEach(el => el.onclick = null);
       if (i === q.ans) {
         document.getElementById('quiz-result').innerText = '✅ Correct! +3 Coins';
         balance += 3; updateUI();
         saveBalance(3, 'game', 'Quiz Correct');
-        saveToHistory('Quiz Win', 3);
+        saveToHistory('Quiz Win', 3, 'game');
       } else {
         document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
       }
@@ -1207,18 +1242,22 @@
     // DART
     let dartScore = 0, dartTimer = null, dartRunning = false;
     function startDart() {
+      if (dartTimer) clearInterval(dartTimer);
       dartScore = 0; dartRunning = false;
       document.getElementById('dart-score').innerText = '0';
       document.getElementById('dart-claim').style.display = 'none';
       document.getElementById('dart-btn').innerText = 'Start';
+      document.getElementById('dart-target').onclick = null;
       showPage('game-dart');
     }
     function playDart() {
       if (dartRunning) return;
+      if (dartTimer) clearInterval(dartTimer);
       dartRunning = true;
       dartScore = 0;
       document.getElementById('dart-score').innerText = '0';
       document.getElementById('dart-btn').innerText = 'Playing...';
+      document.getElementById('dart-claim').style.display = 'none';
       let timeLeft = 10;
       const target = document.getElementById('dart-target');
       target.onclick = () => {
@@ -1234,6 +1273,7 @@
           clearInterval(dartTimer);
           dartRunning = false;
           document.getElementById('dart-btn').innerText = 'Finished';
+          target.onclick = null;
           gamePrize = Math.min(Math.floor(dartScore / 3), 8);
           if (gamePrize > 0) {
             document.getElementById('dart-claim').style.display = 'inline-block';
@@ -1246,28 +1286,35 @@
     // FRUIT
     let fruitScore = 0, fruitRunning = false, fruitTimeout = null;
     function startFruit() {
+      if (fruitTimeout) clearTimeout(fruitTimeout);
       fruitScore = 0; fruitRunning = false;
       document.getElementById('fruit-score').innerText = '0';
       document.getElementById('fruit-claim').style.display = 'none';
       document.getElementById('fruit-btn').innerText = 'Start';
+      document.getElementById('fruit-display').onclick = null;
       showPage('game-fruit');
     }
     function playFruit() {
       if (fruitRunning) return;
+      if (fruitTimeout) clearTimeout(fruitTimeout);
       fruitRunning = true;
       fruitScore = 0;
       document.getElementById('fruit-score').innerText = '0';
       document.getElementById('fruit-btn').innerText = 'Playing...';
+      document.getElementById('fruit-claim').style.display = 'none';
       const fruits = ['🍎','🍌','🍇','🍊','🍓','🍉'];
       let count = 0;
       function nextFruit() {
         if (count >= 12) {
           fruitRunning = false;
           document.getElementById('fruit-btn').innerText = 'Finished';
+          document.getElementById('fruit-display').onclick = null;
           gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
           if (gamePrize > 0) {
             document.getElementById('fruit-claim').style.display = 'inline-block';
             document.getElementById('fruit-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          } else {
+            alert('Score too low. Try again!');
           }
           return;
         }
@@ -1286,30 +1333,37 @@
     }
 
     // SHOOT
-    let shootScore = 0, shootRunning = false;
+    let shootScore = 0, shootRunning = false, shootTimeout = null;
     function startShoot() {
+      if (shootTimeout) clearTimeout(shootTimeout);
       shootScore = 0; shootRunning = false;
       document.getElementById('shoot-score').innerText = '0';
       document.getElementById('shoot-claim').style.display = 'none';
       document.getElementById('shoot-btn').innerText = 'Start';
+      document.getElementById('shoot-target').onclick = null;
       showPage('game-shoot');
     }
     function playShoot() {
       if (shootRunning) return;
+      if (shootTimeout) clearTimeout(shootTimeout);
       shootRunning = true;
       shootScore = 0;
       document.getElementById('shoot-score').innerText = '0';
       document.getElementById('shoot-btn').innerText = 'Playing...';
+      document.getElementById('shoot-claim').style.display = 'none';
       let left = 12;
       const target = document.getElementById('shoot-target');
       function showTarget() {
         if (left <= 0) {
           shootRunning = false;
           document.getElementById('shoot-btn').innerText = 'Finished';
+          target.onclick = null;
           gamePrize = Math.min(Math.floor(shootScore / 2), 7);
           if (gamePrize > 0) {
             document.getElementById('shoot-claim').style.display = 'inline-block';
             document.getElementById('shoot-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          } else {
+            alert('Score too low. Try again!');
           }
           return;
         }
@@ -1322,7 +1376,7 @@
           target.onclick = null;
         };
         left--;
-        setTimeout(showTarget, 800);
+        shootTimeout = setTimeout(showTarget, 800);
       }
       showTarget();
     }
@@ -1335,6 +1389,7 @@
       document.getElementById('tower-display').innerText = '⬜';
       document.getElementById('tower-claim').style.display = 'none';
       document.getElementById('tower-btn').innerText = 'Start';
+      document.getElementById('tower-btn').onclick = playTower;
       showPage('game-tower');
     }
     function playTower() {
@@ -1342,7 +1397,9 @@
       towerRunning = true;
       towerScore = 0;
       document.getElementById('tower-score').innerText = '0';
+      document.getElementById('tower-display').innerText = '⬜';
       document.getElementById('tower-btn').innerText = 'Drop Block';
+      document.getElementById('tower-claim').style.display = 'none';
       document.getElementById('tower-btn').onclick = () => {
         if (!towerRunning) return;
         towerScore++;
@@ -1351,6 +1408,7 @@
         if (towerScore >= 10) {
           towerRunning = false;
           document.getElementById('tower-btn').innerText = 'Finished';
+          document.getElementById('tower-btn').onclick = playTower;
           gamePrize = Math.min(towerScore, 8);
           document.getElementById('tower-claim').style.display = 'inline-block';
           document.getElementById('tower-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
@@ -1361,7 +1419,6 @@
     // SUDOKU (simple 4x4 for mobile)
     let sudokuSolution = [];
     function startSudoku() {
-      // Simple 4x4 puzzle for mobile friendliness
       const puzzle = [
         [1,0,0,4],
         [0,0,1,0],
@@ -1409,7 +1466,7 @@
         document.getElementById('sudoku-msg').innerText = '✅ Correct! +5 Coins';
         balance += 5; updateUI();
         saveBalance(5, 'game', 'Sudoku Win');
-        saveToHistory('Sudoku Win', 5);
+        saveToHistory('Sudoku Win', 5, 'game');
       } else {
         document.getElementById('sudoku-msg').innerText = '❌ Not correct yet';
       }
@@ -1422,10 +1479,11 @@
         balance += gamePrize;
         updateUI();
         saveBalance(gamePrize, 'game', type + ' Win');
-        saveToHistory(type + ' Game', gamePrize);
+        saveToHistory(type.charAt(0).toUpperCase() + type.slice(1) + ' Game', gamePrize, 'game');
         alert('✅ Claimed +' + gamePrize + ' Coins!');
         gamePrize = 0;
-        document.getElementById(type + '-claim').style.display = 'none';
+        const claimBtn = document.getElementById(type + '-claim');
+        if (claimBtn) claimBtn.style.display = 'none';
       }, (adSettings.wait||10)*1000);
     }
 
@@ -1446,9 +1504,37 @@
       balance -= amount;
       updateUI();
       saveBalance(-amount, 'withdraw', 'Withdrawal request');
-      saveToHistory('Withdrawal Request', -amount);
+      saveToHistory('Withdrawal Request', -amount, 'withdraw');
       alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
       showPage('wallet');
+    }
+
+    // ========== HISTORY ==========
+    function saveToHistory(title, amount, type) {
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      history.unshift({ title, amount, type: type || 'task', time: new Date().toLocaleString() });
+      if (history.length > 50) history.length = 50;
+      localStorage.setItem(historyKey, JSON.stringify(history));
+    }
+
+    // Only task related history
+    function loadTaskHistory() {
+      const container = document.getElementById('task-history-list');
+      if (!container) return;
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      // Show only task / checkin / official / ad related (exclude pure game & withdraw if you want only tasks)
+      // User asked for Task History → show task type items mainly
+      const taskItems = history.filter(item => item.type === 'task' || item.type === 'checkin' || item.type === 'official' || !item.type);
+      if (!taskItems.length) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No task history yet</div>';
+        return;
+      }
+      let html = '';
+      taskItems.forEach(item => {
+        const color = item.amount > 0 ? '#c8102e' : '#666';
+        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:'+color+';">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
+      });
+      container.innerHTML = html;
     }
 
     // ========== ADMIN ==========
@@ -1461,6 +1547,7 @@
       prices.banner = Number(document.getElementById('price-banner').value) || 100;
       prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
       prices.test = Number(document.getElementById('price-test').value) || 60;
+      prices.watch = Number(document.getElementById('price-watch').value) || 30;
       localStorage.setItem('vtn_prices', JSON.stringify(prices));
       alert('✅ Prices saved!');
     }
@@ -1473,6 +1560,7 @@
       document.getElementById('price-banner').value = prices.banner;
       document.getElementById('price-affiliate').value = prices.affiliate;
       document.getElementById('price-test').value = prices.test;
+      document.getElementById('price-watch').value = prices.watch || 30;
     }
 
     function saveAdSettings() {
@@ -1505,7 +1593,6 @@
       if (!container) return;
       container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
 
-      // Load from local orders first
       let allTasks = [];
       try {
         const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
@@ -1557,28 +1644,9 @@
         completedTasks.push(task.id);
         localStorage.setItem(completedKey, JSON.stringify(completedTasks));
       }
-      saveToHistory(task.title||'Task', reward);
+      saveToHistory(task.title||'Task', reward, 'task');
       addCoins(reward, task.title||'Task');
       loadCategoryTasks(currentCategory);
-    }
-
-    function saveToHistory(title, amount) {
-      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
-      history.unshift({ title, amount, time: new Date().toLocaleString() });
-      if (history.length > 30) history.length = 30;
-      localStorage.setItem('vtn_history_'+userId, JSON.stringify(history));
-    }
-
-    function loadHistory() {
-      const container = document.getElementById('history-list');
-      if (!container) return;
-      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
-      if (!history.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>'; return; }
-      let html = '';
-      history.forEach(item => {
-        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
-      });
-      container.innerHTML = html;
     }
 
     // ADMIN functions
@@ -1714,4 +1782,4 @@
     loadUser();
   </script>
 </body>
-                                                                                                                                                             </html>
+</html>
