@@ -202,76 +202,6 @@
       margin-top: 12px;
       cursor: pointer;
     }
-  
-/* ========== OVERDRIVE RACE GAME STYLES ========== */
-
-    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; -webkit-touch-callout: none; }
-    html, body { background: #020617; overflow: hidden; font-family: 'Chakra Petch', system-ui, -apple-system, sans-serif; color: #ffffff; height: 100%; width: 100%; overscroll-behavior: none; }
-    #game-container { position: relative; width: 100%; height: 100%; overflow: hidden; background: #020617; }
-    canvas { display: block; width: 100%; height: 100%; background: #020617; }
-    .crt-overlay::after { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03)); background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 15; }
-    #ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 10px; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; }
-    .hud-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .hud-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 8px 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); pointer-events: auto; }
-    .score-title { font-size: 10px; font-weight: 700; color: #38bdf8; letter-spacing: 1.5px; text-transform: uppercase; }
-    #score { font-size: 30px; font-weight: 800; line-height: 1; margin-top: 2px; font-variant-numeric: tabular-nums; text-shadow: 0 2px 10px rgba(56, 189, 248, 0.5); }
-    .best-score { font-size: 11px; opacity: 0.75; font-family: monospace; margin-top: 2px; }
-    #combo-badge { display: none; font-size: 10px; font-weight: 800; color: #fbbf24; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; padding: 2px 6px; border-radius: 4px; margin-top: 4px; animation: pulse 1s infinite; }
-    .stage-center { text-align: center; min-width: 180px; display: flex; flex-direction: column; align-items: center; }
-    #stage-title { font-size: 11px; font-weight: 800; color: #fbbf24; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
-    .progress-bar-container { width: 100%; height: 8px; background: #020617; border: 1px solid #334155; border-radius: 10px; overflow: hidden; margin: 4px 0 2px; }
-    #stage-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #06b6d4, #f59e0b, #ef4444); transition: width 0.3s; }
-    .progress-meta { display: flex; justify-content: space-between; width: 100%; font-size: 9px; color: #94a3b8; font-family: monospace; }
-    .top-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .timer-card { border-color: rgba(239, 68, 68, 0.4); text-align: right; min-width: 100px; }
-    .timer-title { font-size: 10px; font-weight: 700; color: #f87171; letter-spacing: 1px; text-transform: uppercase; }
-    #level-timer { font-size: 26px; font-weight: 800; line-height: 1; margin-top: 2px; font-variant-numeric: tabular-nums; color: #ffffff; }
-    .timer-warning { color: #ef4444 !important; animation: flash 0.6s infinite; }
-    .util-buttons { display: flex; gap: 4px; pointer-events: auto; }
-    .icon-btn { background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; color: #cbd5e1; padding: 6px 9px; font-size: 13px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .icon-btn:hover, .icon-btn:active { background: #1e293b; color: #ffffff; }
-    .hud-bottom { display: flex; flex-direction: column; gap: 8px; }
-    .dash-cluster { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
-    .speed-card { display: flex; align-items: center; gap: 12px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 14px; padding: 8px 14px; pointer-events: auto; }
-    .speed-num { font-size: 34px; font-weight: 900; color: #38bdf8; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(56, 189, 248, 0.6); }
-    .speed-unit { font-size: 11px; color: #94a3b8; font-family: monospace; margin-left: 2px; }
-    .dash-divider { width: 1px; height: 32px; background: #334155; }
-    .gear-num { font-size: 24px; font-weight: 800; color: #fbbf24; line-height: 1; }
-    .nitro-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 14px; padding: 8px 14px; min-width: 135px; pointer-events: auto; }
-    .nitro-header { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #06b6d4; letter-spacing: 1px; text-transform: uppercase; }
-    .nitro-bar-container { width: 100%; height: 10px; background: #020617; border: 1px solid #155e75; border-radius: 8px; overflow: hidden; margin-top: 4px; }
-    #nitro-fill { width: 35%; height: 100%; background: #06b6d4; transition: width 0.15s; }
-    .nitro-ready { background: linear-gradient(90deg, #06b6d4, #f43f5e) !important; animation: pulse 1s infinite; }
-    .nitro-hint { font-size: 9px; color: #67e8f9; text-align: center; margin-top: 3px; font-family: monospace; }
-    .touch-controls { display: flex; justify-content: space-between; align-items: center; gap: 8px; pointer-events: auto; }
-    .touch-btn { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(148, 163, 184, 0.4); color: #ffffff; font-weight: 800; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
-    .touch-btn:active { transform: scale(0.94); background: #0284c7; border-color: #38bdf8; }
-    .steer-btn { width: 64px; height: 52px; font-size: 22px; }
-    .action-btn { padding: 0 16px; height: 52px; font-size: 13px; letter-spacing: 1px; }
-    .brake-btn { background: rgba(136, 19, 55, 0.75); border-color: rgba(244, 63, 94, 0.5); color: #fda4af; }
-    .brake-btn:active { background: #e11d48 !important; color: #ffffff; }
-    .boost-btn { background: rgba(8, 145, 178, 0.85); border-color: #06b6d4; color: #ffffff; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
-    .boost-btn:active, .boost-btn.active { background: #06b6d4 !important; color: #020617 !important; transform: scale(0.95); }
-    .modal-overlay { position: absolute; inset: 0; background: rgba(2, 6, 23, 0.94); backdrop-filter: blur(4px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 25; padding: 20px; text-align: center; }
-    .modal-card { background: #0f172a; border: 2px solid #38bdf8; border-radius: 20px; padding: 26px 22px; max-width: 440px; width: 100%; box-shadow: 0 0 40px rgba(56, 189, 248, 0.25); }
-    .modal-badge { display: inline-block; font-size: 11px; font-family: monospace; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); padding: 4px 12px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
-    h1, h2 { font-size: 30px; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: 1px; line-height: 1.1; }
-    .retro-title { font-size: 38px; background: linear-gradient(135deg, #fef08a 0%, #f43f5e 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5)); margin-bottom: 6px; }
-    .modal-desc { font-size: 13px; color: #94a3b8; font-family: monospace; line-height: 1.5; margin: 10px 0 20px; }
-    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 22px; }
-    .feature-box { background: #020617; border: 1px solid #1e293b; border-radius: 10px; padding: 8px 4px; font-size: 10px; font-family: monospace; }
-    .feature-title { font-weight: 800; color: #ffffff; display: block; margin-bottom: 2px; }
-    .cta-btn { background: linear-gradient(90deg, #38bdf8, #f59e0b, #f43f5e); color: #020617; border: 2px solid #ffffff; padding: 14px 28px; font-size: 16px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); transition: transform 0.1s, filter 0.1s; width: 100%; }
-    .cta-btn:active { transform: scale(0.96); }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; text-align: left; }
-    .stat-box { background: #020617; border: 1px solid #1e293b; border-radius: 10px; padding: 10px; }
-    .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; font-family: monospace; }
-    .stat-val { font-size: 20px; font-weight: 800; color: #38bdf8; }
-    .control-hint { font-size: 11px; color: #64748b; font-family: monospace; margin-top: 14px; }
-    .back-btn { position: absolute; top: 12px; left: 12px; z-index: 30; background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; color: #fff; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; pointer-events: auto; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-    @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-  
   </style>
 </head>
 <body>
@@ -280,9 +210,9 @@
 
     <!-- HOME -->
     <div id="home" class="page active">
-      <div class="header">👑 VTN Hub Bot</div>
+      <div class="header">ðŸ‘‘ VTN Hub Bot</div>
       <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
-        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
+        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">ðŸ¤–</div>
         <div>
           <div style="font-weight:700;" id="username">User</div>
           <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
@@ -302,16 +232,16 @@
       <div class="section-title">Quick Actions</div>
       <div class="grid">
         <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
-          <span class="icon">✅</span>Claim up to 100
+          <span class="icon">âœ…</span>Claim up to 100
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
-          <span class="icon">🎯</span>Earn Tasks
+          <span class="icon">ðŸŽ¯</span>Earn Tasks
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
-          <span class="icon">📢</span>Promote
+          <span class="icon">ðŸ“¢</span>Promote
         </div>
         <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
-          <span class="icon">🎮</span>Fun Zone
+          <span class="icon">ðŸŽ®</span>Fun Zone
         </div>
       </div>
       <div class="banner">
@@ -328,59 +258,59 @@
       <div class="header">Earn Money</div>
       <div class="section-title">Official Task</div>
       <div class="list-item" id="official-task" onclick="doOfficialTask()">
-        <div class="icon" style="background:#c8102e;">⭐</div>
-        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins • Required</p></div>
+        <div class="icon" style="background:#c8102e;">â­</div>
+        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins â€¢ Required</p></div>
         <button class="start-btn">Join</button>
       </div>
       <div class="section-title">Earn Tasks</div>
       <div id="earn-tasks-list">
         <div class="list-item" onclick="openCategory('other')">
-          <div class="icon" style="background:#c8102e;">📋</div>
+          <div class="icon" style="background:#c8102e;">ðŸ“‹</div>
           <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item">
-          <div class="icon" style="background:#FF9800;">⚡</div>
+          <div class="icon" style="background:#FF9800;">âš¡</div>
           <div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div>
           <button class="start-btn" onclick="event.stopPropagation(); alert('Coming soon')">Start</button>
         </div>
         <div class="list-item" onclick="openCategory('watch')">
-          <div class="icon" style="background:#E91E63;">▶️</div>
+          <div class="icon" style="background:#E91E63;">â–¶ï¸</div>
           <div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('views')">
-          <div class="icon" style="background:#9C27B0;">👀</div>
+          <div class="icon" style="background:#9C27B0;">ðŸ‘€</div>
           <div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('join')">
-          <div class="icon" style="background:#3F51B5;">📢</div>
+          <div class="icon" style="background:#3F51B5;">ðŸ“¢</div>
           <div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('bot')">
-          <div class="icon" style="background:#00BCD4;">🤖</div>
+          <div class="icon" style="background:#00BCD4;">ðŸ¤–</div>
           <div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('install')">
-          <div class="icon" style="background:#4CAF50;">📱</div>
+          <div class="icon" style="background:#4CAF50;">ðŸ“±</div>
           <div class="info"><h4>Install App</h4><p>App installs</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('website')">
-          <div class="icon" style="background:#FF5722;">🌐</div>
+          <div class="icon" style="background:#FF5722;">ðŸŒ</div>
           <div class="info"><h4>Visit Website</h4><p>Website visits</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('affiliate')">
-          <div class="icon" style="background:#795548;">🔗</div>
+          <div class="icon" style="background:#795548;">ðŸ”—</div>
           <div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div>
           <button class="start-btn">Open</button>
         </div>
         <div class="list-item" onclick="openCategory('products')">
-          <div class="icon" style="background:#E91E63;">🛒</div>
+          <div class="icon" style="background:#E91E63;">ðŸ›’</div>
           <div class="info"><h4>View Products</h4><p>Product views</p></div>
           <button class="start-btn">Open</button>
         </div>
@@ -390,7 +320,7 @@
     <div id="category-tasks" class="page">
       <div class="header" id="category-title">Tasks</div>
       <div id="category-list"><div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">← Back</button></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">â† Back</button></div>
     </div>
 
     <!-- PROMOTE -->
@@ -399,59 +329,59 @@
 
       <div class="section-title">Promotion Services</div>
       <div class="list-item" onclick="openPromoteForm('channel')">
-        <div class="icon" style="background:#c8102e;">📢</div>
+        <div class="icon" style="background:#c8102e;">ðŸ“¢</div>
         <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('bot')">
-        <div class="icon" style="background:#9C27B0;">🤖</div>
+        <div class="icon" style="background:#9C27B0;">ðŸ¤–</div>
         <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('views')">
-        <div class="icon" style="background:#3F51B5;">👀</div>
+        <div class="icon" style="background:#3F51B5;">ðŸ‘€</div>
         <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('install')">
-        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="icon" style="background:#4CAF50;">ðŸ“±</div>
         <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('test')">
-        <div class="icon" style="background:#FF9800;">🧪</div>
+        <div class="icon" style="background:#FF9800;">ðŸ§ª</div>
         <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('traffic')">
-        <div class="icon" style="background:#00BCD4;">🌐</div>
+        <div class="icon" style="background:#00BCD4;">ðŸŒ</div>
         <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('affiliate')">
-        <div class="icon" style="background:#673AB7;">🔗</div>
+        <div class="icon" style="background:#673AB7;">ðŸ”—</div>
         <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
         <button class="start-btn">Buy</button>
       </div>
 
       <div class="section-title">Monetization</div>
       <div class="list-item" onclick="openPromoteForm('monetize')">
-        <div class="icon" style="background:#2196F3;">💰</div>
+        <div class="icon" style="background:#2196F3;">ðŸ’°</div>
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
       </div>
 
       <div class="section-title">Banner Ads</div>
       <div class="list-item" onclick="openPromoteForm('banner')">
-        <div class="icon" style="background:#FF5722;">📣</div>
+        <div class="icon" style="background:#FF5722;">ðŸ“£</div>
         <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
         <button class="start-btn">Buy</button>
       </div>
 
       <div class="section-title">Cross Promotion</div>
       <div class="list-item" onclick="startCrossPromo()">
-        <div class="icon" style="background:#009688;">🔄</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
+        <div class="icon" style="background:#009688;">ðŸ”„</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day â€¢ Auto delete</p></div>
         <button class="start-btn">Start</button>
       </div>
     </div>
@@ -474,7 +404,7 @@
         </div>
         <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins</div>
         <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Back</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">â† Back</button>
       </div>
     </div>
 
@@ -483,21 +413,21 @@
       <div class="header">Fun Zone</div>
       <div class="section-title">Chat</div>
       <div class="list-item" onclick="enterWithAd('chat')">
-        <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter • Earn coins</p></div>
+        <div class="icon" style="background:#009688;">ðŸ’¬</div>
+        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter â€¢ Earn coins</p></div>
         <button class="start-btn">Enter</button>
       </div>
       <div class="section-title">Games (Watch Ad to Play)</div>
       <div class="grid">
-        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
-        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
-        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
-        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
-        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
-        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
-        <div class="btn" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);" onclick="enterWithAd('game','Race')"><span class="icon">🏎️</span>Race</div>
+        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">ðŸŽ¯</span>Dart</div>
+        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">ðŸŽ</span>Fruit</div>
+        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">ðŸ”«</span>Shoot</div>
+        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">ðŸ—¼</span>Tower</div>
+        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">ðŸŽ¡</span>Spin</div>
+        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">â“</span>Quiz</div>
+        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">âŒ</span>Tic Tac Toe</div>
+        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">ðŸ”¢</span>Sudoku</div>
+        <div class="btn" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);" onclick="enterWithAd('game','Race')"><span class="icon">ðŸŽï¸</span>Race</div>
       </div>
     </div>
 
@@ -513,7 +443,7 @@
         <div id="ttt-status" style="font-weight:700;margin-bottom:10px;color:#c8102e;">Your turn (X)</div>
         <div class="ttt-board" id="ttt-board"></div>
         <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Watch Ad & Claim</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
@@ -521,14 +451,14 @@
     <div id="game-spin" class="page">
       <div class="header">Spin & Win</div>
       <div class="card spin-wrap">
-        <div class="spin-pointer">▼</div>
+        <div class="spin-pointer">â–¼</div>
         <div style="position:relative;display:inline-block;">
           <div class="spin-wheel" id="spin-wheel"></div>
         </div>
         <div id="spin-result" style="margin:16px 0;font-weight:800;font-size:20px;color:#c8102e;min-height:28px;"></div>
         <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
         <button class="gold-btn" id="spin-claim" style="display:none;margin-top:10px;" onclick="claimSpin()">Watch Ad & Collect</button>
-        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
@@ -539,78 +469,108 @@
         <div id="quiz-question" style="font-weight:700;font-size:16px;margin-bottom:16px;text-align:center;"></div>
         <div id="quiz-options"></div>
         <div id="quiz-result" style="text-align:center;margin-top:14px;font-weight:700;"></div>
-        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
     <!-- DART -->
     <div id="game-dart" class="page">
-      <div class="header">🎯 Dart Game</div>
+      <div class="header">ðŸŽ¯ Dart Game</div>
       <div class="game-area" id="dart-area">
         <div class="score-box">Score: <span id="dart-score">0</span></div>
-        <div style="font-size:60px;margin:20px 0;cursor:pointer;" id="dart-target">🎯</div>
+        <div style="font-size:60px;margin:20px 0;cursor:pointer;" id="dart-target">ðŸŽ¯</div>
         <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
         <button class="game-btn" id="dart-btn" onclick="playDart()">Start</button>
       </div>
       <div style="text-align:center;padding:10px;">
         <button class="gold-btn" id="dart-claim" style="display:none;" onclick="claimGame('dart')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
     <!-- FRUIT -->
     <div id="game-fruit" class="page">
-      <div class="header">🍎 Fruit Slice</div>
+      <div class="header">ðŸŽ Fruit Slice</div>
       <div class="game-area" id="fruit-area">
         <div class="score-box">Score: <span id="fruit-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="fruit-display">🍎</div>
+        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="fruit-display">ðŸŽ</div>
         <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
         <button class="game-btn" id="fruit-btn" onclick="playFruit()">Start</button>
       </div>
       <div style="text-align:center;padding:10px;">
         <button class="gold-btn" id="fruit-claim" style="display:none;" onclick="claimGame('fruit')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
     <!-- SHOOT -->
     <div id="game-shoot" class="page">
-      <div class="header">🔫 Shoot</div>
+      <div class="header">ðŸ”« Shoot</div>
       <div class="game-area" id="shoot-area">
         <div class="score-box">Hits: <span id="shoot-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="shoot-target">🎯</div>
+        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="shoot-target">ðŸŽ¯</div>
         <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
         <button class="game-btn" id="shoot-btn" onclick="playShoot()">Start</button>
       </div>
       <div style="text-align:center;padding:10px;">
         <button class="gold-btn" id="shoot-claim" style="display:none;" onclick="claimGame('shoot')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
     <!-- TOWER -->
     <div id="game-tower" class="page">
-      <div class="header">🗼 Tower Stack</div>
+      <div class="header">ðŸ—¼ Tower Stack</div>
       <div class="game-area" id="tower-area">
         <div class="score-box">Height: <span id="tower-score">0</span></div>
-        <div style="font-size:40px;margin:20px 0;" id="tower-display">⬜</div>
+        <div style="font-size:40px;margin:20px 0;" id="tower-display">â¬œ</div>
         <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
         <button class="game-btn" id="tower-btn" onclick="playTower()">Start</button>
       </div>
       <div style="text-align:center;padding:10px;">
         <button class="gold-btn" id="tower-claim" style="display:none;" onclick="claimGame('tower')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
       </div>
     </div>
 
     <!-- SUDOKU -->
     <div id="game-sudoku" class="page">
-      <div class="header">🔢 Sudoku (Easy 4×4)</div>
+      <div class="header">ðŸ”¢ Sudoku (Easy 4Ã—4)</div>
       <div class="card" style="text-align:center;">
         <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:2px;justify-content:center;margin:15px 0;"></div>
         <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
         <button class="gold-btn" onclick="checkSudoku()">Check</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
+      </div>
+    </div>
+
+    
+    <!-- RACE GAME -->
+    <div id="game-race" class="page">
+      <div class="header">ðŸŽï¸ Overdrive Race</div>
+      <div style="position:relative;margin:0;padding:0;">
+        <canvas id="raceCanvas" style="width:100%;height:70vh;background:#020617;display:block;"></canvas>
+        <div id="raceHUD" style="position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;pointer-events:none;">
+          <div style="background:rgba(0,0,0,0.7);color:#fff;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
+            Score: <span id="rScore">0</span>
+          </div>
+          <div style="background:rgba(0,0,0,0.7);color:#ffd700;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
+            <span id="rSpeed">0</span> km/h
+          </div>
+          <div style="background:rgba(0,0,0,0.7);color:#38bdf8;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
+            Nitro: <span id="rNitro">35</span>%
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:10px;padding:12px;background:#111;">
+          <button id="rLeft" class="start-btn" style="width:70px;height:48px;font-size:20px;background:#333;">â—€</button>
+          <button id="rBrake" class="start-btn" style="height:48px;background:#c8102e;">BRAKE</button>
+          <button id="rNitroBtn" class="start-btn" style="height:48px;background:#0ea5e9;">âš¡ BOOST</button>
+          <button id="rRight" class="start-btn" style="width:70px;height:48px;font-size:20px;background:#333;">â–¶</button>
+        </div>
+        <div style="text-align:center;padding:8px;">
+          <button class="gold-btn" id="race-start-btn" onclick="startRaceGame()">START RACE</button>
+          <button class="start-btn" style="background:#666;margin-left:8px;" onclick="showPage('fun')">â† Back</button>
+        </div>
       </div>
     </div>
 
@@ -625,16 +585,16 @@
       <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
       <div class="section-title">Withdrawal</div>
       <div class="list-item" onclick="openWithdraw('upi')">
-        <div class="icon" style="background:#FF9800;">🇮🇳</div>
+        <div class="icon" style="background:#FF9800;">ðŸ‡®ðŸ‡³</div>
         <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
       <div class="list-item" onclick="openWithdraw('usdt')">
-        <div class="icon" style="background:#26A17B;">₮</div>
+        <div class="icon" style="background:#26A17B;">â‚®</div>
         <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">â† Back</button></div>
     </div>
 
     <!-- WITHDRAW FORM -->
@@ -651,7 +611,7 @@
         </div>
         <div style="font-size:13px;color:#888;margin-bottom:12px;">Minimum: 500 Coins</div>
         <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">â† Back</button>
       </div>
     </div>
 
@@ -659,20 +619,20 @@
     <div id="profile" class="page">
       <div class="header">My Profile</div>
       <div class="card" style="text-align:center;">
-        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">ðŸ¤–</div>
         <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
         <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')">
-        <div class="icon" style="background:#009688;">💬</div>
+        <div class="icon" style="background:#009688;">ðŸ’¬</div>
         <div class="info"><h4>Contact Support @Vtnhub0</h4></div>
-        <div>›</div>
+        <div>â€º</div>
       </div>
       <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();">
-        <div class="icon" style="background:#c8102e;">👑</div>
+        <div class="icon" style="background:#c8102e;">ðŸ‘‘</div>
         <div class="info"><h4>Admin Panel</h4></div>
-        <div>›</div>
+        <div>â€º</div>
       </div>
     </div>
 
@@ -681,7 +641,7 @@
       <div class="header">Refer & Earn</div>
       <div class="banner">
         <div><div style="font-weight:700;">Invite Friends</div><div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div></div>
-        <div style="font-size:28px;">🎁</div>
+        <div style="font-size:28px;">ðŸŽ</div>
       </div>
       <div class="card" style="text-align:center;">
         <div style="font-size:13px;color:#777;">Your Referral Code</div>
@@ -692,7 +652,7 @@
 
     <!-- ADMIN -->
     <div id="admin" class="page">
-      <div class="header">👑 Admin Panel</div>
+      <div class="header">ðŸ‘‘ Admin Panel</div>
 
       <div class="section-title">Service Prices (Coins)</div>
       <div class="card">
@@ -718,7 +678,7 @@
       <div class="section-title">Ad Settings</div>
       <div class="card">
         <div class="form-group">
-          <label>Ad Links (one per line – random pick)</label>
+          <label>Ad Links (one per line â€“ random pick)</label>
           <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
         </div>
         <div class="form-row">
@@ -739,7 +699,7 @@
           <input type="number" id="admin-coins" value="100">
         </div>
         <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
-        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">− Remove Coins</button>
+        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">âˆ’ Remove Coins</button>
         <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
         <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
         <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
@@ -774,937 +734,17 @@
 
       <div class="section-title">Current Tasks</div>
       <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Back</button></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">â† Back</button></div>
     </div>
 
   </div>
-
-  
-    <!-- RACE GAME PAGE (full screen) -->
-    <div id="game-race" class="page" style="padding:0;margin:0;position:fixed;inset:0;z-index:300;background:#020617;display:none;">
-      <div id="race-container" style="width:100%;height:100%;position:relative;overflow:hidden;">
-
-  <div id="race-game-container" class="crt-overlay">
-    <canvas id="race-canvas"></canvas>
-    <button class="back-btn" onclick="try{history.back()}catch(e){location.href='VTN_HUB_Final.html'}">← Back</button>
-
-    <div id="ui">
-      <div class="hud-top">
-        <div class="hud-card">
-          <div class="score-title">Score</div>
-          <div id="score">0</div>
-          <div id="best-score" class="best-score">BEST: 0</div>
-          <div id="combo-badge">2x CLOSE CALL</div>
-        </div>
-        <div class="stage-center">
-          <div id="stage-title">STAGE 1: SUNSET COASTWAY</div>
-          <div class="progress-bar-container"><div id="stage-progress-fill"></div></div>
-          <div class="progress-meta">
-            <span id="stage-elapsed-text">TIME: 0:00</span>
-            <span style="color:#38bdf8">GOAL: 3:00</span>
-          </div>
-        </div>
-        <div class="top-right">
-          <div class="hud-card timer-card">
-            <div class="timer-title">Time Left</div>
-            <div id="level-timer">60s</div>
-          </div>
-          <div class="util-buttons">
-            <button id="btn-audio" class="icon-btn">🔊</button>
-            <button id="btn-music" class="icon-btn">🎵</button>
-            <button id="btn-crt" class="icon-btn">📺</button>
-            <button id="btn-pause" class="icon-btn">⏸</button>
-          </div>
-        </div>
-      </div>
-      <div class="hud-bottom">
-        <div class="dash-cluster">
-          <div class="speed-card">
-            <div>
-              <div class="score-title" style="color:#64748b">SPEED</div>
-              <div style="display:flex;align-items:baseline">
-                <span id="speed-val" class="speed-num">95</span>
-                <span class="speed-unit">KM/H</span>
-              </div>
-            </div>
-            <div class="dash-divider"></div>
-            <div>
-              <div class="score-title" style="color:#64748b">GEAR</div>
-              <div id="gear-val" class="gear-num">2</div>
-            </div>
-          </div>
-          <div class="nitro-card">
-            <div class="nitro-header"><span>⚡ NITRO</span><span id="nitro-percent">35%</span></div>
-            <div class="nitro-bar-container"><div id="nitro-fill"></div></div>
-            <div id="nitro-hint-text" class="nitro-hint">CHARGE VIA CLOSE CALLS</div>
-          </div>
-        </div>
-        <div class="touch-controls">
-          <div style="display:flex;gap:8px">
-            <button id="btn-touch-left" class="touch-btn steer-btn">◀</button>
-            <button id="btn-touch-right" class="touch-btn steer-btn">▶</button>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button id="btn-touch-brake" class="touch-btn action-btn brake-btn">BRAKE</button>
-            <button id="btn-touch-nitro" class="touch-btn action-btn boost-btn">⚡ BOOST</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="start-screen" class="modal-overlay">
-      <div class="modal-card">
-        <div class="modal-badge">1980s Retro Arcade Racer</div>
-        <h1 class="retro-title">OVERDRIVE</h1>
-        <p class="modal-desc">Survive and accelerate across <b style="color:#f59e0b">3-minute escalating stages</b>.<br>Weave through traffic, trigger near-miss nitro boosts, and unlock shifting biomes!</p>
-        <div class="feature-grid">
-          <div class="feature-box"><span class="feature-title" style="color:#f43f5e">3-MIN STAGE</span>Escalating Speed</div>
-          <div class="feature-box"><span class="feature-title" style="color:#06b6d4">NITRO BOOST</span>Close-Call Refill</div>
-          <div class="feature-box"><span class="feature-title" style="color:#a855f7">FM SYNTH</span>Live SFX & Music</div>
-        </div>
-        <button id="start-btn" class="cta-btn">INSERT COIN / START RACE</button>
-        <div class="control-hint">CONTROLS: A/D or ◀/▶ Steer · SPACE Nitro · S Brake · P Pause · M Audio</div>
-      </div>
-    </div>
-
-    <div id="stage-clear-modal" class="modal-overlay" style="display:none">
-      <div class="modal-card" style="border-color:#f59e0b;box-shadow:0 0 40px rgba(245,158,11,0.3)">
-        <div class="modal-badge" style="color:#f59e0b;border-color:#f59e0b;background:rgba(245,158,11,0.15)">3-Minute Milestone Reached!</div>
-        <h2 id="stage-clear-title" style="color:#fff;margin-bottom:6px">STAGE 1 CLEAR!</h2>
-        <p id="next-stage-tagline" class="modal-desc" style="color:#fbbf24">Atmosphere Shift: Neon Metropolis Incoming!</p>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="stat-label">Current Score</div><div id="stage-clear-score" class="stat-val">0</div></div>
-          <div class="stat-box"><div class="stat-label">Close Calls</div><div id="stage-clear-misses" class="stat-val" style="color:#06b6d4">0</div></div>
-        </div>
-        <button id="next-stage-btn" class="cta-btn" style="background:linear-gradient(90deg,#f59e0b,#ef4444)">ENTER NEXT BIOME [SPACE]</button>
-      </div>
-    </div>
-
-    <div id="game-over" class="modal-overlay" style="display:none">
-      <div class="modal-card" style="border-color:#ef4444;box-shadow:0 0 40px rgba(239,68,68,0.3)">
-        <div class="modal-badge" style="color:#ef4444;border-color:#ef4444;background:rgba(239,68,68,0.15)">Race Finished</div>
-        <h2 id="game-over-title" style="color:#fff">CAR CRASHED!</h2>
-        <p id="game-over-stage-name" class="modal-desc">Reached Stage 1 · Sunset Coastway</p>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="stat-label">Final Score</div><div id="final-score" class="stat-val">0</div></div>
-          <div class="stat-box"><div class="stat-label">Record Best</div><div id="final-best-score" class="stat-val" style="color:#fbbf24">0</div></div>
-          <div class="stat-box"><div class="stat-label">Distance</div><div id="final-distance" class="stat-val" style="color:#fff;font-size:16px">0.0 km</div></div>
-          <div class="stat-box"><div class="stat-label">Near Misses</div><div id="final-misses" class="stat-val" style="color:#06b6d4;font-size:16px">0</div></div>
-        </div>
-        <button id="restart-btn" class="cta-btn">TRY AGAIN [SPACE / ENTER]</button>
-      </div>
-    </div>
-
-    <div id="pause-modal" class="modal-overlay" style="display:none">
-      <div class="modal-card">
-        <h2 style="color:#38bdf8;margin-bottom:12px">RACE PAUSED</h2>
-        <p class="modal-desc">Adjust audio or press resume to continue the race.</p>
-        <button id="btn-resume" class="cta-btn" style="margin-bottom:10px">RESUME RACE [ESC/P]</button>
-        <button id="btn-pause-restart" class="icon-btn" style="width:100%;padding:12px;font-weight:700">RESTART RUN</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-/* ========== TELEGRAM ========== */
-const tg = window.Telegram && window.Telegram.WebApp;
-if (tg) {
-  try {
-    tg.ready();
-    tg.expand();
-    if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes();
-    tg.setHeaderColor('#020617');
-    tg.setBackgroundColor('#020617');
-  } catch(e){}
-}
-
-/* ========== SOUND ENGINE ========== */
-class SoundEngine {
-  constructor() {
-    this.ctx = null; this.masterGain = null; this.sfxGain = null; this.musicGain = null;
-    this.engineOsc1 = null; this.engineOsc2 = null; this.engineFilter = null; this.engineGain = null;
-    this.isEngineRunning = false; this.musicInterval = null; this.musicStep = 0;
-    this.currentBpm = 124; this.isMuted = false; this.isMusicMuted = false; this.noiseBuffer = null;
-  }
-  init() {
-    try {
-      if (!this.ctx) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        this.ctx = new AudioCtx();
-        this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.setValueAtTime(0.8, this.ctx.currentTime);
-        this.masterGain.connect(this.ctx.destination);
-        this.sfxGain = this.ctx.createGain();
-        this.sfxGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
-        this.sfxGain.connect(this.masterGain);
-        this.musicGain = this.ctx.createGain();
-        this.musicGain.gain.setValueAtTime(0.38, this.ctx.currentTime);
-        this.musicGain.connect(this.masterGain);
-        const sr = this.ctx.sampleRate || 44100;
-        this.noiseBuffer = this.ctx.createBuffer(1, sr, sr);
-        const d = this.noiseBuffer.getChannelData(0);
-        for (let i = 0; i < sr; i++) d[i] = Math.random() * 2 - 1;
-      }
-      if (this.ctx.state === 'suspended') this.ctx.resume().catch(()=>{});
-    } catch(e){}
-  }
-  toggleMute() {
-    this.init(); this.isMuted = !this.isMuted;
-    try { if (this.masterGain) this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.8, this.ctx.currentTime); } catch(e){}
-    return this.isMuted;
-  }
-  toggleMusic() {
-    this.init(); this.isMusicMuted = !this.isMusicMuted;
-    try { if (this.musicGain) this.musicGain.gain.setValueAtTime(this.isMusicMuted ? 0 : 0.38, this.ctx.currentTime); } catch(e){}
-    return this.isMusicMuted;
-  }
-  startEngine() {
-    this.init();
-    if (!this.ctx || !this.sfxGain || this.isEngineRunning) return;
-    try {
-      const now = this.ctx.currentTime;
-      this.engineOsc1 = this.ctx.createOscillator();
-      this.engineOsc2 = this.ctx.createOscillator();
-      this.engineFilter = this.ctx.createBiquadFilter();
-      this.engineGain = this.ctx.createGain();
-      this.engineOsc1.type = 'sawtooth'; this.engineOsc2.type = 'triangle';
-      this.engineOsc1.frequency.setValueAtTime(45, now);
-      this.engineOsc2.frequency.setValueAtTime(90, now);
-      this.engineFilter.type = 'lowpass';
-      this.engineFilter.frequency.setValueAtTime(260, now);
-      this.engineFilter.Q.setValueAtTime(2.5, now);
-      this.engineGain.gain.setValueAtTime(0.01, now);
-      this.engineGain.gain.linearRampToValueAtTime(0.2, now + 0.15);
-      this.engineOsc1.connect(this.engineFilter);
-      this.engineOsc2.connect(this.engineFilter);
-      this.engineFilter.connect(this.engineGain);
-      this.engineGain.connect(this.sfxGain);
-      this.engineOsc1.start(now); this.engineOsc2.start(now);
-      this.isEngineRunning = true;
-    } catch(e){ this.isEngineRunning = false; }
-  }
-  updateEngine(speedKmh, maxSpeed, isNitro) {
-    if (!this.ctx || !this.isEngineRunning || !this.engineOsc1) return;
-    try {
-      const norm = Math.min(1.2, Math.max(0.1, speedKmh / maxSpeed));
-      const now = this.ctx.currentTime;
-      const base = 48 + norm * 110 + (isNitro ? 35 : 0);
-      this.engineOsc1.frequency.setValueAtTime(base, now);
-      this.engineOsc2.frequency.setValueAtTime(base * 1.5, now);
-      this.engineFilter.frequency.setValueAtTime(220 + norm * 650 + (isNitro ? 420 : 0), now);
-    } catch(e){}
-  }
-  stopEngine() {
-    if (!this.ctx || !this.isEngineRunning) return;
-    try {
-      const now = this.ctx.currentTime;
-      if (this.engineGain) this.engineGain.gain.setValueAtTime(0.001, now);
-      if (this.engineOsc1) this.engineOsc1.stop(now + 0.05);
-      if (this.engineOsc2) this.engineOsc2.stop(now + 0.05);
-    } catch(e){}
-    this.isEngineRunning = false;
-  }
-  playTireScreech() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator(), filter = this.ctx.createBiquadFilter(), gain = this.ctx.createGain();
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(750, now); osc.frequency.linearRampToValueAtTime(350, now+0.18);
-      filter.type = 'bandpass'; filter.frequency.setValueAtTime(1400, now); filter.Q.setValueAtTime(4, now);
-      gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.001, now+0.18);
-      osc.connect(filter); filter.connect(gain); gain.connect(this.sfxGain);
-      osc.start(now); osc.stop(now+0.2);
-    } catch(e){}
-  }
-  playNitroBoost() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(130, now); osc.frequency.linearRampToValueAtTime(45, now+0.45);
-      gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.001, now+0.45);
-      osc.connect(gain); gain.connect(this.sfxGain); osc.start(now); osc.stop(now+0.46);
-    } catch(e){}
-  }
-  playNearMiss() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(420, now); osc.frequency.linearRampToValueAtTime(180, now+0.16);
-      gain.gain.setValueAtTime(0.25, now); gain.gain.linearRampToValueAtTime(0.001, now+0.16);
-      osc.connect(gain); gain.connect(this.sfxGain); osc.start(now); osc.stop(now+0.18);
-    } catch(e){}
-  }
-  playCrash() {
-    this.init(); if (!this.ctx || !this.sfxGain) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(160, now); osc.frequency.linearRampToValueAtTime(25, now+0.6);
-      gain.gain.setValueAtTime(0.5, now); gain.gain.linearRampToValueAtTime(0.001, now+0.6);
-      osc.connect(gain); gain.connect(this.sfxGain); osc.start(now); osc.stop(now+0.65);
-    } catch(e){}
-  }
-  playPickupChime() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      [659.25, 987.77].forEach((freq, idx) => {
-        const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, now + idx*0.08);
-        gain.gain.setValueAtTime(0.2, now + idx*0.08); gain.gain.linearRampToValueAtTime(0.001, now + idx*0.08 + 0.22);
-        osc.connect(gain); gain.connect(this.sfxGain); osc.start(now+idx*0.08); osc.stop(now+idx*0.08+0.25);
-      });
-    } catch(e){}
-  }
-  playLevelUpFanfare() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      [261.63,329.63,392,523.25,659.25,783.99].forEach((freq, idx) => {
-        const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-        osc.type = 'square'; osc.frequency.setValueAtTime(freq, now + idx*0.07);
-        gain.gain.setValueAtTime(0.18, now + idx*0.07); gain.gain.linearRampToValueAtTime(0.001, now + idx*0.07 + 0.3);
-        osc.connect(gain); gain.connect(this.sfxGain); osc.start(now+idx*0.07); osc.stop(now+idx*0.07+0.32);
-      });
-    } catch(e){}
-  }
-  playTimeWarning() {
-    this.init(); if (!this.ctx || !this.sfxGain || this.isMuted) return;
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(987.77, now);
-      gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.001, now+0.1);
-      osc.connect(gain); gain.connect(this.sfxGain); osc.start(now); osc.stop(now+0.12);
-    } catch(e){}
-  }
-  startMusic(bpm=124) {
-    this.init(); this.stopMusic(); this.currentBpm = bpm;
-    const stepMs = (60/bpm/4)*1000;
-    this.musicStep = 0;
-    this.musicInterval = setInterval(() => { try { this.playMusicStep(); } catch(e){} }, stepMs);
-  }
-  stopMusic() { if (this.musicInterval) { clearInterval(this.musicInterval); this.musicInterval = null; } }
-  playMusicStep() {
-    if (!this.ctx || !this.musicGain || this.isMuted || this.isMusicMuted) { this.musicStep = (this.musicStep+1)%64; return; }
-    const now = this.ctx.currentTime, step = this.musicStep;
-    if (step % 4 === 0) {
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(130, now); osc.frequency.linearRampToValueAtTime(35, now+0.1);
-      gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.001, now+0.1);
-      osc.connect(gain); gain.connect(this.musicGain); osc.start(now); osc.stop(now+0.12);
-    }
-    if (step % 8 === 4) {
-      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(170, now); osc.frequency.linearRampToValueAtTime(80, now+0.08);
-      gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.001, now+0.08);
-      osc.connect(gain); gain.connect(this.musicGain); osc.start(now); osc.stop(now+0.1);
-    }
-    const roots = [110, 87.31, 130.81, 98];
-    const root = roots[Math.floor(step/16)%4];
-    const isOct = step % 4 === 2;
-    const bass = this.ctx.createOscillator(), filt = this.ctx.createBiquadFilter(), gain = this.ctx.createGain();
-    bass.type = 'sawtooth'; bass.frequency.setValueAtTime(isOct ? root*2 : root, now);
-    filt.type = 'lowpass'; filt.frequency.setValueAtTime(420, now); filt.frequency.linearRampToValueAtTime(150, now+0.09);
-    gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.001, now+0.1);
-    bass.connect(filt); filt.connect(gain); gain.connect(this.musicGain); bass.start(now); bass.stop(now+0.11);
-    this.musicStep = (this.musicStep + 1) % 64;
-  }
-}
-const audio = new SoundEngine();
-
-/* ========== STAGES ========== */
-const STAGE_DURATION_SEC = 180;
-const STAGES = [
-  { id:1, name:'SUNSET COASTWAY', tagline:'Warm amber twilight', minSpeed:95, maxSpeed:195, sky:['#1e1b4b','#f97316'], horizon:'#fb923c', road:['#1e293b','#334155','#1e293b'], kerbs:['#ef4444','#f8fafc'], lane:'#fef08a', terrain:'#064e3b', roadside:'palm', weather:'clear', headlight:'#fef08a', bpm:124 },
-  { id:2, name:'NEON METROPOLIS', tagline:'Cyberpunk rain', minSpeed:120, maxSpeed:230, sky:['#0f051d','#3b0764'], horizon:'#a855f7', road:['#090d16','#182138','#090d16'], kerbs:['#06b6d4','#ec4899'], lane:'#38bdf8', terrain:'#090514', roadside:'neon_building', weather:'rain', headlight:'#38bdf8', bpm:132 },
-  { id:3, name:'DESERT CANYON', tagline:'Red rock mesas', minSpeed:140, maxSpeed:255, sky:['#451a03','#d97706'], horizon:'#f59e0b', road:['#292524','#44403c','#292524'], kerbs:['#ea580c','#fef3c7'], lane:'#fef08a', terrain:'#78350f', roadside:'canyon_rock', weather:'dust', headlight:'#fef08a', bpm:138 },
-  { id:4, name:'MIDNIGHT BLIZZARD', tagline:'Frosted mountain', minSpeed:160, maxSpeed:280, sky:['#020617','#1e293b'], horizon:'#38bdf8', road:['#0f172a','#1e293b','#0f172a'], kerbs:['#38bdf8','#f8fafc'], lane:'#e0f2fe', terrain:'#0f2942', roadside:'pine_tree', weather:'snow', headlight:'#bae6fd', bpm:144 },
-  { id:5, name:'SYNTHWAVE OVERDRIVE', tagline:'1980s laser grid', minSpeed:180, maxSpeed:310, sky:['#18052e','#be185d'], horizon:'#f43f5e', road:['#050510','#130e29','#050510'], kerbs:['#ec4899','#8b5cf6'], lane:'#22d3ee', terrain:'#090014', roadside:'synth_pyramid', weather:'cyber_grid', headlight:'#22d3ee', bpm:150 }
-];
-function getAtmosphere(lvl) { return STAGES[(lvl-1) % STAGES.length]; }
-
-/* ========== GAME STATE ========== */
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-const container = document.getElementById('game-container');
-
-const scoreEl = document.getElementById('score');
-const bestScoreEl = document.getElementById('best-score');
-const comboBadgeEl = document.getElementById('combo-badge');
-const stageTitleEl = document.getElementById('stage-title');
-const stageProgressFillEl = document.getElementById('stage-progress-fill');
-const stageElapsedTextEl = document.getElementById('stage-elapsed-text');
-const levelTimerEl = document.getElementById('level-timer');
-const speedValEl = document.getElementById('speed-val');
-const gearValEl = document.getElementById('gear-val');
-const nitroPercentEl = document.getElementById('nitro-percent');
-const nitroFillEl = document.getElementById('nitro-fill');
-const nitroHintTextEl = document.getElementById('nitro-hint-text');
-
-const startScreen = document.getElementById('start-screen');
-const startBtn = document.getElementById('start-btn');
-const gameOverEl = document.getElementById('game-over');
-const gameOverTitle = document.getElementById('game-over-title');
-const gameOverStageName = document.getElementById('game-over-stage-name');
-const finalScoreEl = document.getElementById('final-score');
-const finalBestScoreEl = document.getElementById('final-best-score');
-const finalDistanceEl = document.getElementById('final-distance');
-const finalMissesEl = document.getElementById('final-misses');
-const restartBtn = document.getElementById('restart-btn');
-const stageClearModal = document.getElementById('stage-clear-modal');
-const stageClearTitle = document.getElementById('stage-clear-title');
-const nextStageTagline = document.getElementById('next-stage-tagline');
-const stageClearScore = document.getElementById('stage-clear-score');
-const stageClearMisses = document.getElementById('stage-clear-misses');
-const nextStageBtn = document.getElementById('next-stage-btn');
-const pauseModal = document.getElementById('pause-modal');
-const btnResume = document.getElementById('btn-resume');
-const btnPauseRestart = document.getElementById('btn-pause-restart');
-const btnAudio = document.getElementById('btn-audio');
-const btnMusic = document.getElementById('btn-music');
-const btnCrt = document.getElementById('btn-crt');
-const btnPause = document.getElementById('btn-pause');
-const btnTouchLeft = document.getElementById('btn-touch-left');
-const btnTouchRight = document.getElementById('btn-touch-right');
-const btnTouchBrake = document.getElementById('btn-touch-brake');
-const btnTouchNitro = document.getElementById('btn-touch-nitro');
-
-let width = window.innerWidth, height = window.innerHeight;
-let player = { x: width/2, y: height-140, width:52, height:104, color:'#0284c7', speed:0 };
-
-function resize() {
-  width = window.innerWidth; height = window.innerHeight;
-  canvas.width = width; canvas.height = height;
-  if (!player.x || isNaN(player.x)) player.x = width/2;
-  player.y = height - 140;
-}
-window.addEventListener('resize', resize);
-
-let gameState = 'title';
-let score = 0;
-let bestScore = parseInt(localStorage.getItem('realisticCarBest') || '0', 10);
-bestScoreEl.textContent = 'BEST: ' + bestScore.toLocaleString();
-let level = 1, stageTimer = 65, stageElapsedTime = 0, distanceKm = 0, nearMisses = 0;
-let nitroMeter = 35, isNitroActive = false, boostHoldTimer = 0;
-let comboCount = 0, comboMultiplier = 1, comboTimer = 0;
-let roadAnim = 0, steering = 0, isBraking = false, isNitroPressed = false, currentSpeedKmh = 95;
-let cameraShake = { x:0, y:0, trauma:0 };
-const keys = new Set();
-let obstacles = [], pickups = [], particles = [], floatingTexts = [], props = [];
-let spawnTimer = 0, pickupTimer = 0, propsTimer = 0, lastTime = 0;
-
-function formatTime(sec) {
-  const s = Math.max(0, Math.floor(sec));
-  const m = Math.floor(s/60), rem = s%60;
-  return m + ':' + (rem<10?'0':'') + rem;
-}
-
-function initGame() {
-  audio.init(); audio.startEngine(); audio.startMusic(getAtmosphere(1).bpm);
-  level = 1; score = 0; distanceKm = 0; nearMisses = 0; nitroMeter = 35;
-  isNitroActive = false; boostHoldTimer = 0; comboCount = 0; comboMultiplier = 1;
-  stageTimer = 65; stageElapsedTime = 0;
-  obstacles = []; pickups = []; particles = []; floatingTexts = []; props = [];
-  player.x = width/2; player.y = height-140;
-  setGameState('playing');
-  startScreen.style.display = 'none';
-  gameOverEl.style.display = 'none';
-  stageClearModal.style.display = 'none';
-  pauseModal.style.display = 'none';
-}
-
-function setGameState(state) { gameState = state; document.body.dataset.state = state; }
-
-function advanceToNextLevel() {
-  level++;
-  const atmo = getAtmosphere(level);
-  audio.playLevelUpFanfare(); audio.startMusic(atmo.bpm);
-  obstacles = []; pickups = [];
-  stageTimer = Math.max(50, 70 - level*2); stageElapsedTime = 0; score += 5000;
-  floatingTexts.push({ text: atmo.name + ' UNLOCKED!', x: width/2, y: height/2-80, color:'#38bdf8', alpha:1, scale:1.2, life:80 });
-  stageClearModal.style.display = 'none';
-  setGameState('playing');
-}
-
-function triggerGameOver(reason) {
-  setGameState('gameover');
-  audio.stopEngine(); audio.playCrash();
-  cameraShake.trauma = 1;
-  for (let i=0; i<35; i++) {
-    const ang = Math.random()*Math.PI*2, spd = 2+Math.random()*8;
-    particles.push({ x:player.x, y:player.y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:3+Math.random()*5, color:['#f43f5e','#f59e0b','#fbbf24','#fff'][Math.floor(Math.random()*4)], alpha:1, life:45, maxLife:45, type:'spark' });
-  }
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('realisticCarBest', bestScore);
-    bestScoreEl.textContent = 'BEST: ' + bestScore.toLocaleString();
-  }
-  gameOverTitle.textContent = reason === "Time's Up!" ? "TIME'S UP!" : "CAR CRASHED!";
-  gameOverStageName.textContent = 'Reached Stage ' + level + ' · ' + getAtmosphere(level).name;
-  finalScoreEl.textContent = score.toLocaleString();
-  finalBestScoreEl.textContent = bestScore.toLocaleString();
-  finalDistanceEl.textContent = distanceKm.toFixed(1) + ' km';
-  finalMissesEl.textContent = nearMisses + ' misses';
-  gameOverEl.style.display = 'flex';
-}
-
-/* ========== CONTROLS ========== */
-window.addEventListener('keydown', e => {
-  keys.add(e.code);
-  if ((e.code==='Space'||e.code==='Enter') && gameState==='title') { e.preventDefault(); initGame(); return; }
-  if ((e.code==='Space'||e.code==='Enter') && gameState==='stage_clear') { e.preventDefault(); advanceToNextLevel(); return; }
-  if ((e.code==='Space'||e.code==='Enter') && gameState==='gameover') { e.preventDefault(); initGame(); return; }
-  if (e.code==='KeyP'||e.code==='Escape') { e.preventDefault(); togglePause(); return; }
-  if (e.code==='KeyM') toggleMute();
-});
-window.addEventListener('keyup', e => keys.delete(e.code));
-window.addEventListener('blur', () => { keys.clear(); steering=0; isBraking=false; isNitroPressed=false; btnTouchNitro.classList.remove('active'); });
-
-function bindTouch(el, onStart, onEnd) {
-  if (!el) return;
-  const s = e => { if (e.cancelable) e.preventDefault(); audio.init(); onStart(); };
-  const en = e => { if (e.cancelable) e.preventDefault(); onEnd(); };
-  el.addEventListener('pointerdown', s, {passive:false});
-  el.addEventListener('pointerup', en, {passive:false});
-  el.addEventListener('pointercancel', en, {passive:false});
-  el.addEventListener('pointerleave', en, {passive:false});
-  el.addEventListener('touchstart', s, {passive:false});
-  el.addEventListener('touchend', en, {passive:false});
-  el.addEventListener('touchcancel', en, {passive:false});
-}
-bindTouch(btnTouchLeft, () => steering=-1, () => steering=0);
-bindTouch(btnTouchRight, () => steering=1, () => steering=0);
-bindTouch(btnTouchBrake, () => isBraking=true, () => isBraking=false);
-bindTouch(btnTouchNitro, () => { isNitroPressed=true; boostHoldTimer=1.2; btnTouchNitro.classList.add('active'); }, () => { isNitroPressed=false; btnTouchNitro.classList.remove('active'); });
-
-container.addEventListener('pointerdown', e => {
-  if (gameState !== 'playing') return;
-  if (e.target.closest('button')) return;
-  audio.init();
-  steering = e.clientX < width/2 ? -1 : 1;
-});
-
-function togglePause() {
-  if (gameState === 'playing') { setGameState('paused'); audio.stopEngine(); pauseModal.style.display='flex'; }
-  else if (gameState === 'paused') { setGameState('playing'); audio.startEngine(); pauseModal.style.display='none'; }
-}
-function toggleMute() {
-  const muted = audio.toggleMute();
-  btnAudio.textContent = muted ? '🔇' : '🔊';
-}
-btnAudio.addEventListener('click', toggleMute);
-btnMusic.addEventListener('click', () => { const m = audio.toggleMusic(); btnMusic.style.opacity = m ? '0.4' : '1'; });
-btnCrt.addEventListener('click', () => container.classList.toggle('crt-overlay'));
-btnPause.addEventListener('click', togglePause);
-btnResume.addEventListener('click', togglePause);
-btnPauseRestart.addEventListener('click', initGame);
-startBtn.addEventListener('click', initGame);
-restartBtn.addEventListener('click', initGame);
-nextStageBtn.addEventListener('click', advanceToNextLevel);
-
-/* ========== DRAW HELPERS ========== */
-function drawDetailedSportsCar(x, y, w, h, color, isPlayer, steerTilt=0, isNitro=false) {
-  ctx.save(); ctx.translate(x, y);
-  if (isPlayer && steerTilt) ctx.rotate(steerTilt * 0.05);
-  const hw = w/2, hh = h/2;
-  ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.beginPath(); ctx.roundRect(-hw-5, -hh+8, w+10, h+6, 16); ctx.fill();
-  [[-hw-4,-hh+16],[hw-5,-hh+16],[-hw-4,hh-36],[hw-5,hh-36]].forEach(([tx,ty]) => {
-    ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.roundRect(tx,ty,9,22,3); ctx.fill();
-    ctx.fillStyle = '#94a3b8'; ctx.fillRect(tx+2,ty+4,3,14);
-  });
-  ctx.beginPath();
-  ctx.moveTo(-hw+12,-hh); ctx.quadraticCurveTo(0,-hh-5,hw-12,-hh);
-  ctx.quadraticCurveTo(hw,-hh+15,hw-2,-hh+35); ctx.lineTo(hw-4,hh-35);
-  ctx.quadraticCurveTo(hw+2,hh-15,hw-8,hh); ctx.lineTo(-hw+8,hh);
-  ctx.quadraticCurveTo(-hw-2,hh-15,-hw+4,hh-35); ctx.lineTo(-hw+2,-hh+35);
-  ctx.quadraticCurveTo(-hw,-hh+15,-hw+12,-hh); ctx.closePath();
-  const grad = ctx.createLinearGradient(-hw,0,hw,0);
-  grad.addColorStop(0,'#0f172a'); grad.addColorStop(0.25,color); grad.addColorStop(0.75,color); grad.addColorStop(1,'#0f172a');
-  ctx.fillStyle = grad; ctx.fill(); ctx.strokeStyle='#020617'; ctx.lineWidth=1.5; ctx.stroke();
-  if (isPlayer) { ctx.fillStyle='#fff'; ctx.globalAlpha=0.85; ctx.fillRect(-5,-hh+6,4,h-12); ctx.fillRect(1,-hh+6,4,h-12); ctx.globalAlpha=1; }
-  ctx.fillStyle = color; ctx.fillRect(-hw-6,-hh+34,6,9); ctx.fillRect(hw,-hh+34,6,9);
-  ctx.fillStyle = '#0f172a';
-  ctx.beginPath(); ctx.moveTo(-hw+10,-hh+35); ctx.quadraticCurveTo(0,-hh+28,hw-10,-hh+35); ctx.lineTo(hw-12,-hh+54); ctx.lineTo(-hw+12,-hh+54); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = 'rgba(56,189,248,0.45)';
-  ctx.beginPath(); ctx.moveTo(-hw+12,-hh+37); ctx.lineTo(-4,-hh+32); ctx.lineTo(-8,-hh+52); ctx.lineTo(-hw+13,-hh+52); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(-hw+10,-hh+52,w-20,24,4); ctx.fill();
-  ctx.fillStyle = '#0f172a';
-  ctx.beginPath(); ctx.moveTo(-hw+12,-hh+76); ctx.lineTo(hw-12,-hh+76); ctx.lineTo(hw-10,-hh+90); ctx.lineTo(-hw+10,-hh+90); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#020617'; ctx.beginPath(); ctx.roundRect(-hw+5,hh-6,w-10,5,2); ctx.fill();
-  ctx.fillStyle = '#fef08a'; ctx.shadowColor='#facc15'; ctx.shadowBlur=10;
-  ctx.beginPath(); ctx.arc(-hw+12,-hh+4,4,0,Math.PI*2); ctx.arc(hw-12,-hh+4,4,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-  ctx.fillStyle = '#ef4444'; ctx.shadowColor='#ef4444'; ctx.shadowBlur=12;
-  ctx.fillRect(-hw+6,hh-4,12,4); ctx.fillRect(hw-18,hh-4,12,4); ctx.shadowBlur=0;
-  if (isPlayer && isNitro) {
-    const flameH = 24 + Math.random()*16;
-    const fl = ctx.createLinearGradient(0,hh,0,hh+flameH);
-    fl.addColorStop(0,'#38bdf8'); fl.addColorStop(0.5,'#06b6d4'); fl.addColorStop(1,'rgba(236,72,153,0)');
-    ctx.fillStyle = fl;
-    ctx.beginPath(); ctx.moveTo(-10,hh); ctx.lineTo(-6,hh+flameH); ctx.lineTo(-2,hh); ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(2,hh); ctx.lineTo(6,hh+flameH); ctx.lineTo(10,hh); ctx.closePath(); ctx.fill();
-  }
-  ctx.restore();
-}
-
-function drawTruck(x, y, w, h, color) {
-  ctx.save(); ctx.translate(x,y);
-  const hw=w/2, hh=h/2;
-  ctx.fillStyle=color; ctx.beginPath(); ctx.roundRect(-hw+4,-hh+35,w-8,h-40,6); ctx.fill();
-  ctx.strokeStyle='#1e293b'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#f59e0b'; ctx.fillRect(-hw+6,hh-12,w-12,8);
-  ctx.fillStyle='#334155'; ctx.beginPath(); ctx.roundRect(-hw+6,-hh,w-12,32,5); ctx.fill();
-  ctx.fillStyle='#0f172a'; ctx.fillRect(-hw+10,-hh+4,w-20,14);
-  ctx.restore();
-}
-
-/* ========== UPDATE ========== */
-function update(dt) {
-  if (gameState !== 'playing') return;
-  const atmo = getAtmosphere(level);
-  const roadHalfW = Math.min(230, Math.max(150, width*0.38));
-  const roadLeft = width/2 - roadHalfW, roadRight = width/2 + roadHalfW, roadWidth = roadRight - roadLeft;
-
-  let steerInput = steering;
-  if (keys.has('KeyA') || keys.has('ArrowLeft')) steerInput = -1;
-  if (keys.has('KeyD') || keys.has('ArrowRight')) steerInput = 1;
-  const braking = isBraking || keys.has('KeyS') || keys.has('ArrowDown');
-  if (boostHoldTimer > 0) boostHoldTimer -= dt;
-  const wantsNitro = isNitroPressed || boostHoldTimer > 0 || keys.has('Space') || keys.has('KeyW') || keys.has('ArrowUp');
-
-  if (wantsNitro && nitroMeter > 5) {
-    if (!isNitroActive) audio.playNitroBoost();
-    isNitroActive = true;
-    nitroMeter = Math.max(0, nitroMeter - dt*25);
-  } else {
-    isNitroActive = false;
-    nitroMeter = Math.min(100, nitroMeter + dt*2.5);
-  }
-
-  const progress = Math.min(1, stageElapsedTime / STAGE_DURATION_SEC);
-  const ease = progress < 0.5 ? 2*progress*progress : 1 - Math.pow(-2*progress+2,2)/2;
-  let targetKmh = atmo.minSpeed + (atmo.maxSpeed - atmo.minSpeed) * ease;
-  if (isNitroActive) targetKmh += 55;
-  if (braking) targetKmh = Math.max(50, targetKmh * 0.6);
-  currentSpeedKmh = Math.round(targetKmh);
-  audio.updateEngine(currentSpeedKmh, atmo.maxSpeed+60, isNitroActive);
-
-  const roadSpeed = (currentSpeedKmh / 3.6) * 0.38;
-  player.speed = roadSpeed;
-  roadAnim = (roadAnim + roadSpeed) % 52;
-
-  const steerSpeed = (7.5 + level*0.4) * (currentSpeedKmh/160);
-  player.x += steerInput * steerSpeed;
-  const carHalfW = player.width/2;
-  if (player.x < roadLeft + carHalfW + 12) { player.x = roadLeft + carHalfW + 12; audio.playTireScreech(); }
-  if (player.x > roadRight - carHalfW - 12) { player.x = roadRight - carHalfW - 12; audio.playTireScreech(); }
-  if (steerInput !== 0 && Math.random() < 0.04) audio.playTireScreech();
-
-  distanceKm += ((currentSpeedKmh/3.6)*dt)/1000;
-  stageElapsedTime += dt;
-  stageTimer -= dt;
-
-  if (stageTimer <= 15 && Math.floor(stageTimer) !== Math.floor(stageTimer+dt)) audio.playTimeWarning();
-  if (stageElapsedTime >= STAGE_DURATION_SEC) {
-    setGameState('stage_clear'); audio.playLevelUpFanfare();
-    const nextAtmo = getAtmosphere(level+1);
-    stageClearTitle.textContent = 'STAGE ' + level + ' CLEAR!';
-    nextStageTagline.textContent = 'Atmosphere Shift: ' + nextAtmo.name + ' Incoming!';
-    stageClearScore.textContent = score.toLocaleString();
-    stageClearMisses.textContent = String(nearMisses);
-    stageClearModal.style.display = 'flex';
-    return;
-  }
-  if (stageTimer <= 0) { triggerGameOver("Time's Up!"); return; }
-
-  score = Math.floor((distanceKm*400 + nearMisses*250 + (level-1)*3000) * comboMultiplier);
-
-  // Props
-  propsTimer += dt;
-  if (propsTimer > 0.45) {
-    propsTimer = 0;
-    const side = Math.random()<0.5 ? 'left' : 'right';
-    const px = side==='left' ? roadLeft-40-Math.random()*80 : roadRight+40+Math.random()*80;
-    props.push({ side, x:px, y:-80, scale:0.8+Math.random()*0.4, type:atmo.roadside, variant:Math.floor(Math.random()*4) });
-  }
-  for (let i=props.length-1; i>=0; i--) { props[i].y += roadSpeed; if (props[i].y > height+100) props.splice(i,1); }
-
-  // Pickups
-  pickupTimer += dt;
-  if (pickupTimer > 7) {
-    pickupTimer = 0;
-    const pType = Math.random()<0.6 ? 'nitro' : 'time';
-    const lanes = [roadLeft+roadWidth*0.22, roadLeft+roadWidth*0.5, roadLeft+roadWidth*0.78];
-    pickups.push({ type:pType, x:lanes[Math.floor(Math.random()*3)], y:-60, width:32, height:32, rot:0 });
-  }
-  for (let i=pickups.length-1; i>=0; i--) {
-    const p = pickups[i];
-    p.y += roadSpeed; p.rot += 0.04;
-    if (Math.abs(player.x-p.x)<35 && Math.abs(player.y-p.y)<45) {
-      audio.playPickupChime();
-      if (p.type==='nitro') { nitroMeter=Math.min(100,nitroMeter+40); floatingTexts.push({text:'NITRO +40%',x:p.x,y:p.y,color:'#06b6d4',alpha:1,life:50}); }
-      else { stageTimer+=25; floatingTexts.push({text:'+25s TIME BONUS!',x:p.x,y:p.y,color:'#f59e0b',alpha:1,life:50}); }
-      pickups.splice(i,1); continue;
-    }
-    if (p.y > height+80) pickups.splice(i,1);
-  }
-
-  // Obstacles
-  spawnTimer += dt;
-  const interval = Math.max(0.65, 1.85 - level*0.18);
-  if (spawnTimer > interval) {
-    spawnTimer = 0;
-    const lanes = [roadLeft+roadWidth*0.2, roadLeft+roadWidth*0.5, roadLeft+roadWidth*0.8];
-    const lx = lanes[Math.floor(Math.random()*3)];
-    const rand = Math.random();
-    let type='sedan', w=50, h=100, col=['#16a34a','#ca8a04','#7c3aed','#0284c7','#ea580c'][Math.floor(Math.random()*5)], spd=roadSpeed*0.45;
-    if (rand < 0.22) { type='truck'; w=58; h=160; col='#475569'; spd=roadSpeed*0.32; }
-    else if (rand < 0.45) { type='sports'; col='#e11d48'; spd=roadSpeed*0.58; }
-    obstacles.push({ type, x:lx, y:-h-20, width:w, height:h, color:col, speed:spd, passed:false });
-  }
-  for (let i=obstacles.length-1; i>=0; i--) {
-    const obs = obstacles[i];
-    obs.y += (roadSpeed - obs.speed) + 2.5;
-    const halfW = (player.width*0.8)/2 + (obs.width*0.8)/2;
-    const halfH = (player.height*0.8)/2 + (obs.height*0.8)/2;
-    if (Math.abs(player.x-obs.x)<halfW && Math.abs(player.y-obs.y)<halfH) { triggerGameOver('Crash!'); return; }
-    if (!obs.passed) {
-      const hDist = Math.abs(player.x-obs.x), vDist = Math.abs(player.y-obs.y);
-      if (hDist <= (player.width+obs.width)*0.85 && vDist <= (player.height+obs.height)*0.55) {
-        obs.passed = true; nearMisses++;
-        nitroMeter = Math.min(100, nitroMeter+15);
-        comboCount++; comboMultiplier = Math.min(4, 1+Math.floor(comboCount/2)); comboTimer=4;
-        audio.playNearMiss();
-        floatingTexts.push({ text:'CLOSE CALL! +'+(250*comboMultiplier), x:player.x, y:player.y-40, color:'#38bdf8', alpha:1, life:45 });
-      }
-    }
-    if (obs.y > height+180) obstacles.splice(i,1);
-  }
-
-  if (comboTimer > 0) { comboTimer -= dt; if (comboTimer<=0) { comboMultiplier=1; comboCount=0; } }
-
-  if (Math.random() < 0.6) {
-    particles.push({ x:player.x-10+Math.random()*20, y:player.y+player.height/2, vx:(Math.random()-0.5)*1.5, vy:roadSpeed*0.4+Math.random()*3, size:3+Math.random()*4, color:isNitroActive?'#38bdf8':'#64748b', alpha:0.6, life:20, maxLife:20, type:'smoke' });
-  }
-  for (let i=particles.length-1; i>=0; i--) {
-    const p = particles[i]; p.x+=p.vx; p.y+=p.vy; p.life--; p.alpha=Math.max(0,p.life/p.maxLife);
-    if (p.life<=0) particles.splice(i,1);
-  }
-  for (let i=floatingTexts.length-1; i>=0; i--) {
-    const t = floatingTexts[i]; t.y-=1.2; t.life--; t.alpha=Math.max(0,t.life/45);
-    if (t.life<=0) floatingTexts.splice(i,1);
-  }
-  if (cameraShake.trauma > 0) {
-    cameraShake.trauma = Math.max(0, cameraShake.trauma - dt*2.5);
-    cameraShake.x = (Math.random()*2-1)*cameraShake.trauma*15;
-    cameraShake.y = (Math.random()*2-1)*cameraShake.trauma*15;
-  } else { cameraShake.x=0; cameraShake.y=0; }
-
-  updateUI();
-}
-
-function updateUI() {
-  scoreEl.textContent = score.toLocaleString();
-  levelTimerEl.textContent = Math.ceil(stageTimer) + 's';
-  if (stageTimer <= 15) levelTimerEl.classList.add('timer-warning');
-  else levelTimerEl.classList.remove('timer-warning');
-  const atmo = getAtmosphere(level);
-  stageTitleEl.textContent = 'STAGE ' + level + ': ' + atmo.name;
-  stageProgressFillEl.style.width = Math.min(100, Math.floor((stageElapsedTime/STAGE_DURATION_SEC)*100)) + '%';
-  stageElapsedTextEl.textContent = 'TIME: ' + formatTime(stageElapsedTime);
-  speedValEl.textContent = currentSpeedKmh;
-  gearValEl.textContent = Math.min(6, Math.max(1, Math.floor((currentSpeedKmh/320)*5.8)+1));
-  nitroPercentEl.textContent = Math.floor(nitroMeter) + '%';
-  nitroFillEl.style.width = nitroMeter + '%';
-  if (nitroMeter >= 100) {
-    nitroFillEl.classList.add('nitro-ready');
-    nitroHintTextEl.textContent = 'READY! [SPACE / BOOST]';
-    nitroHintTextEl.style.color = '#38bdf8';
-  } else {
-    nitroFillEl.classList.remove('nitro-ready');
-    nitroHintTextEl.textContent = 'CHARGE VIA CLOSE CALLS';
-    nitroHintTextEl.style.color = '#67e8f9';
-  }
-  if (comboMultiplier > 1) { comboBadgeEl.style.display='inline-block'; comboBadgeEl.textContent=comboMultiplier+'x BOOST'; }
-  else comboBadgeEl.style.display='none';
-}
-
-/* ========== DRAW ========== */
-function draw() {
-  ctx.clearRect(0,0,width,height);
-  const atmo = getAtmosphere(level);
-  const roadHalfW = Math.min(230, Math.max(150, width*0.38));
-  const roadLeft = width/2-roadHalfW, roadRight = width/2+roadHalfW, roadWidth = roadRight-roadLeft;
-
-  ctx.save();
-  if (cameraShake.x||cameraShake.y) ctx.translate(cameraShake.x, cameraShake.y);
-
-  ctx.fillStyle = atmo.terrain; ctx.fillRect(0,0,width,height);
-  const skyGrad = ctx.createLinearGradient(0,0,0,height*0.22);
-  skyGrad.addColorStop(0, atmo.sky[0]); skyGrad.addColorStop(1, atmo.sky[1]);
-  ctx.fillStyle = skyGrad; ctx.fillRect(0,0,width,height*0.22);
-
-  props.forEach(p => {
-    ctx.save(); ctx.translate(p.x,p.y); ctx.scale(p.scale,p.scale);
-    if (atmo.roadside==='palm') {
-      ctx.strokeStyle='#78350f'; ctx.lineWidth=5;
-      ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(p.side==='left'?-10:10,-25,0,-50); ctx.stroke();
-      ctx.fillStyle='#15803d';
-      for (let a=0; a<Math.PI*2; a+=Math.PI/3) { ctx.beginPath(); ctx.ellipse(Math.cos(a)*22,-50+Math.sin(a)*12,16,6,a,0,Math.PI*2); ctx.fill(); }
-    } else if (atmo.roadside==='neon_building') {
-      ctx.fillStyle='#0f172a'; ctx.fillRect(-28,-38,56,76);
-      ctx.strokeStyle = p.variant%2===0?'#06b6d4':'#ec4899'; ctx.lineWidth=2; ctx.strokeRect(-28,-38,56,76);
-      ctx.fillStyle = p.variant%2===0?'#38bdf8':'#f472b6';
-      for (let gx=-16; gx<=16; gx+=16) for (let gy=-24; gy<=24; gy+=16) ctx.fillRect(gx-4,gy-4,8,8);
-    } else if (atmo.roadside==='canyon_rock') {
-      ctx.fillStyle = p.variant%2===0?'#9a3412':'#c2410c';
-      ctx.beginPath(); ctx.moveTo(-25,15); ctx.lineTo(-30,-10); ctx.lineTo(-5,-35); ctx.lineTo(25,-20); ctx.lineTo(30,20); ctx.closePath(); ctx.fill();
-    } else if (atmo.roadside==='pine_tree') {
-      ctx.fillStyle='#064e3b'; ctx.beginPath(); ctx.moveTo(0,-45); ctx.lineTo(22,10); ctx.lineTo(-22,10); ctx.closePath(); ctx.fill();
-      ctx.fillStyle='#f8fafc'; ctx.beginPath(); ctx.moveTo(0,-45); ctx.lineTo(10,-25); ctx.lineTo(-10,-25); ctx.closePath(); ctx.fill();
-    } else {
-      ctx.strokeStyle='#f43f5e'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(0,-35); ctx.lineTo(25,20); ctx.lineTo(-25,20); ctx.closePath(); ctx.stroke();
-    }
-    ctx.restore();
-  });
-
-  const rGrad = ctx.createLinearGradient(roadLeft,0,roadRight,0);
-  rGrad.addColorStop(0,atmo.road[0]); rGrad.addColorStop(0.5,atmo.road[1]); rGrad.addColorStop(1,atmo.road[2]);
-  ctx.fillStyle = rGrad; ctx.fillRect(roadLeft,0,roadWidth,height);
-
-  const kerbW=12, kerbH=26;
-  for (let y=-kerbH*2+(roadAnim%(kerbH*2)); y<height+kerbH*2; y+=kerbH) {
-    ctx.fillStyle = Math.floor(y/kerbH)%2===0 ? atmo.kerbs[0] : atmo.kerbs[1];
-    ctx.fillRect(roadLeft-kerbW,y,kerbW,kerbH); ctx.fillRect(roadRight,y,kerbW,kerbH);
-  }
-  ctx.fillStyle='#64748b'; ctx.fillRect(roadLeft-kerbW-3,0,3,height); ctx.fillRect(roadRight+kerbW,0,3,height);
-
-  const laneW = roadWidth/3;
-  ctx.strokeStyle=atmo.lane; ctx.lineWidth=4; ctx.setLineDash([28,24]); ctx.lineDashOffset=-roadAnim;
-  for (let i=1; i<3; i++) { const lx=roadLeft+i*laneW; ctx.beginPath(); ctx.moveTo(lx,0); ctx.lineTo(lx,height); ctx.stroke(); }
-  ctx.setLineDash([]);
-
-  // Headlights
-  ctx.save(); ctx.globalCompositeOperation='screen';
-  const drawCone = (x,y,isFwd,col,len) => {
-    const cGrad = ctx.createRadialGradient(x,y,10,x,isFwd?y-len:y+len,len*0.9);
-    cGrad.addColorStop(0,col); cGrad.addColorStop(0.25,'rgba(255,255,255,0.25)'); cGrad.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=cGrad;
-    ctx.beginPath(); ctx.moveTo(x-12,y); ctx.lineTo(x-35,isFwd?y-len:y+len); ctx.lineTo(x+35,isFwd?y-len:y+len); ctx.lineTo(x+12,y); ctx.closePath(); ctx.fill();
-  };
-  drawCone(player.x-14, player.y-player.height/2, true, atmo.headlight, 220);
-  drawCone(player.x+14, player.y-player.height/2, true, atmo.headlight, 220);
-  obstacles.forEach(o => {
-    if (o.y>-80 && o.y<height+80) {
-      drawCone(o.x-14, o.y+o.height/2, false, atmo.headlight, 120);
-      drawCone(o.x+14, o.y+o.height/2, false, atmo.headlight, 120);
-    }
-  });
-  ctx.restore();
-
-  // Pickups
-  pickups.forEach(p => {
-    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
-    if (p.type==='nitro') {
-      ctx.fillStyle='#06b6d4'; ctx.shadowColor='#06b6d4'; ctx.shadowBlur=12;
-      ctx.beginPath(); ctx.roundRect(-12,-18,24,36,6); ctx.fill(); ctx.shadowBlur=0;
-      ctx.fillStyle='#020617'; ctx.font='bold 10px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('N₂O',0,0);
-    } else {
-      ctx.fillStyle='#f59e0b'; ctx.shadowColor='#f59e0b'; ctx.shadowBlur=12;
-      ctx.beginPath(); ctx.arc(0,0,16,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-      ctx.fillStyle='#020617'; ctx.font='bold 11px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('+25s',0,0);
-    }
-    ctx.restore();
-  });
-
-  // Obstacles
-  obstacles.forEach(obs => {
-    if (obs.type==='truck') drawTruck(obs.x, obs.y, obs.width, obs.height, obs.color);
-    else drawDetailedSportsCar(obs.x, obs.y, obs.width, obs.height, obs.color, false);
-  });
-
-  // Player
-  drawDetailedSportsCar(player.x, player.y, player.width, player.height, player.color, true, steering, isNitroActive);
-
-  // Particles
-  particles.forEach(p => {
-    ctx.save(); ctx.globalAlpha=p.alpha; ctx.fillStyle=p.color;
-    if (p.type==='spark') { ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); }
-    else ctx.fillRect(p.x-p.size/2, p.y-p.size/2, p.size, p.size);
-    ctx.restore();
-  });
-
-  // Weather
-  if (atmo.weather==='rain') {
-    ctx.strokeStyle='rgba(56,189,248,0.4)'; ctx.lineWidth=1.5; ctx.beginPath();
-    for (let i=0; i<35; i++) {
-      const rx=(Math.sin(i*99+Date.now()*0.003)*0.5+0.5)*width;
-      const ry=(Math.cos(i*33+Date.now()*0.005)*0.5+0.5)*height;
-      ctx.moveTo(rx,ry); ctx.lineTo(rx-4,ry+18);
-    }
-    ctx.stroke();
-  } else if (atmo.weather==='snow') {
-    ctx.fillStyle='rgba(248,250,252,0.7)';
-    for (let i=0; i<30; i++) {
-      const sx=(Math.sin(i*77+Date.now()*0.001)*0.5+0.5)*width;
-      const sy=(Math.cos(i*44+Date.now()*0.002)*0.5+0.5)*height;
-      ctx.beginPath(); ctx.arc(sx,sy,2+(i%3),0,Math.PI*2); ctx.fill();
-    }
-  }
-
-  // Floating texts
-  floatingTexts.forEach(t => {
-    ctx.save(); ctx.globalAlpha=t.alpha;
-    ctx.font='700 16px "Press Start 2P", monospace'; ctx.textAlign='center';
-    ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeText(t.text,t.x,t.y);
-    ctx.fillStyle=t.color; ctx.fillText(t.text,t.x,t.y);
-    ctx.restore();
-  });
-
-  // Speed lines
-  if (isNitroActive || currentSpeedKmh>230) {
-    ctx.strokeStyle = isNitroActive ? 'rgba(56,189,248,0.5)' : 'rgba(255,255,255,0.3)';
-    ctx.lineWidth = isNitroActive ? 3 : 1.5; ctx.beginPath();
-    for (let i=0; i<12; i++) {
-      const lx = roadLeft + Math.random()*roadWidth, ly = Math.random()*height;
-      ctx.moveTo(lx,ly); ctx.lineTo(lx,ly+50);
-    }
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
-/* ========== LOOP ========== */
-function loop(timestamp) {
-  requestAnimationFrame(loop);
-  try {
-    if (!lastTime) lastTime = timestamp;
-    const dt = Math.min((timestamp - lastTime)/1000, 0.05);
-    lastTime = timestamp;
-    update(dt);
-    draw();
-  } catch(err) { console.warn('Loop recovery:', err); }
-}
-
-resize();
-requestAnimationFrame(loop);
-</script>
-
-      </div>
-    </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
-    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
-    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
-    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
-    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
+    <div class="nav-item active" onclick="showPage('home')"><span class="icon">ðŸ </span>Home</div>
+    <div class="nav-item" onclick="showPage('earn')"><span class="icon">ðŸ’°</span>Earn</div>
+    <div class="nav-item" onclick="showPage('promote')"><span class="icon">ðŸ“¢</span>Promote</div>
+    <div class="nav-item" onclick="showPage('fun')"><span class="icon">ðŸŽ®</span>Fun</div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="icon">ðŸ‘¤</span>Profile</div>
   </div>
 
   <script>
@@ -1907,25 +947,14 @@ requestAnimationFrame(loop);
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const page = document.getElementById(id);
-      if (page) {
-        page.classList.add('active');
-        // Full screen for race
-        if (id === 'game-race') {
-          page.style.display = 'block';
-          document.querySelector('.bottom-nav').style.display = 'none';
-        } else {
-          document.querySelector('.bottom-nav').style.display = 'flex';
-          const racePage = document.getElementById('game-race');
-          if (racePage) racePage.style.display = 'none';
-        }
-      }
+      if (page) page.classList.add('active');
 
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       const map = {
         home: 0, earn: 1, promote: 2, fun: 3, profile: 4,
         wallet: 0, refer: 4, admin: 4,
         'category-tasks': 1,
-        'game-ttt': 3, 'game-spin': 3, 'game-quiz': 3,
+        'game-ttt': 3, 'game-spin': 3, 'game-quiz': 3, 'game-race': 3,
         'game-dart': 3, 'game-fruit': 3, 'game-shoot': 3,
         'game-tower': 3, 'game-sudoku': 3,
         'promote-form': 2, 'withdraw-form': 0
@@ -1958,7 +987,7 @@ requestAnimationFrame(loop);
         reward = Math.floor(Math.random() * 70) + 30; // 30-99
         localStorage.setItem(firstDayKey, '1');
         isFirstDay = false;
-        alert('🎉 First Day Bonus! +' + reward);
+        alert('ðŸŽ‰ First Day Bonus! +' + reward);
       } else {
         reward = Math.floor(Math.random() * 13) + 3; // 3-15
         alert('Daily Check-in! +' + reward);
@@ -2036,12 +1065,12 @@ requestAnimationFrame(loop);
         saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
 
         if (type === 'chat') {
-          alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
+          alert('âœ… +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
         } else if (gameName === 'TicTacToe') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startTTT();
         } else if (gameName === 'Spin') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           spinPrize = 0;
           const res = document.getElementById('spin-result');
           const claim = document.getElementById('spin-claim');
@@ -2049,29 +1078,29 @@ requestAnimationFrame(loop);
           if (claim) claim.style.display = 'none';
           showPage('game-spin');
         } else if (gameName === 'Quiz') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startQuiz();
         } else if (gameName === 'Dart') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startDart();
         } else if (gameName === 'Fruit') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startFruit();
         } else if (gameName === 'Shoot') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startShoot();
         } else if (gameName === 'Tower') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startTower();
         } else if (gameName === 'Sudoku') {
-          alert('✅ +' + adSettings.reward + ' Coins');
+          alert('âœ… +' + adSettings.reward + ' Coins');
           startSudoku();
         } else if (gameName === 'Race') {
-          alert('✅ +' + adSettings.reward + ' Coins\n\nOpening Overdrive Racer...');
+          alert('âœ… +' + adSettings.reward + ' Coins\n\nOpening Overdrive Racer...');
           // Open the racing game
-          showPage('game-race'); initRaceGame();
+          showPage('game-race');
         } else {
-          alert('✅ +' + adSettings.reward + ' Coins\n\n' + (gameName || '') + ' coming soon!');
+          alert('âœ… +' + adSettings.reward + ' Coins\n\n' + (gameName || '') + ' coming soon!');
         }
       }, waitSec * 1000);
     }
@@ -2222,7 +1251,7 @@ requestAnimationFrame(loop);
         }]).then(function(){}).catch(function(){});
       }
 
-      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
+      alert('âœ… Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
       showPage('promote');
     }
 
@@ -2238,7 +1267,7 @@ requestAnimationFrame(loop);
       if (!link) return;
       count++;
       localStorage.setItem(key, String(count));
-      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
+      alert('âœ… Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
     }
 
     // ========== GAMES ==========
@@ -2364,7 +1393,7 @@ requestAnimationFrame(loop);
         updateUI();
         saveBalance(tttPrize, 'game', 'TicTacToe Win');
         saveToHistory('Tic Tac Toe Win', tttPrize);
-        alert('✅ Claimed +' + tttPrize + ' Coins!');
+        alert('âœ… Claimed +' + tttPrize + ' Coins!');
         tttPrize = 0;
         const claim = document.getElementById('ttt-claim');
         if (claim) claim.style.display = 'none';
@@ -2420,7 +1449,7 @@ requestAnimationFrame(loop);
         updateUI();
         saveBalance(spinPrize, 'game', 'Spin Win');
         saveToHistory('Spin & Win', spinPrize);
-        alert('✅ Collected +' + spinPrize + ' Coins!');
+        alert('âœ… Collected +' + spinPrize + ' Coins!');
         spinPrize = 0;
         const claim = document.getElementById('spin-claim');
         const result = document.getElementById('spin-result');
@@ -2455,13 +1484,13 @@ requestAnimationFrame(loop);
       const rEl = document.getElementById('quiz-result');
       if (!rEl) return;
       if (i === q.ans) {
-        rEl.innerText = '✅ Correct! +3 Coins';
+        rEl.innerText = 'âœ… Correct! +3 Coins';
         balance += 3;
         updateUI();
         saveBalance(3, 'game', 'Quiz Correct');
         saveToHistory('Quiz Win', 3);
       } else {
-        rEl.innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
+        rEl.innerText = 'âŒ Wrong! Answer: ' + q.opts[q.ans];
       }
     }
 
@@ -2542,7 +1571,7 @@ requestAnimationFrame(loop);
       if (scoreEl) scoreEl.innerText = '0';
       if (btn) btn.innerText = 'Playing...';
 
-      const fruits = ['🍎','🍌','🍇','🍊','🍓','🍉'];
+      const fruits = ['ðŸŽ','ðŸŒ','ðŸ‡','ðŸŠ','ðŸ“','ðŸ‰'];
       let count = 0;
 
       function nextFruit() {
@@ -2634,7 +1663,7 @@ requestAnimationFrame(loop);
       const claim = document.getElementById('tower-claim');
       const btn = document.getElementById('tower-btn');
       if (scoreEl) scoreEl.innerText = '0';
-      if (disp) disp.innerText = '⬜';
+      if (disp) disp.innerText = 'â¬œ';
       if (claim) claim.style.display = 'none';
       if (btn) {
         btn.innerText = 'Start';
@@ -2657,7 +1686,7 @@ requestAnimationFrame(loop);
           if (!towerRunning) return;
           towerScore++;
           if (scoreEl) scoreEl.innerText = towerScore;
-          if (disp) disp.innerText += '⬜';
+          if (disp) disp.innerText += 'â¬œ';
           if (towerScore >= 10) {
             towerRunning = false;
             btn.innerText = 'Finished';
@@ -2723,13 +1752,13 @@ requestAnimationFrame(loop);
       });
       const msg = document.getElementById('sudoku-msg');
       if (correct) {
-        if (msg) msg.innerText = '✅ Correct! +5 Coins';
+        if (msg) msg.innerText = 'âœ… Correct! +5 Coins';
         balance += 5;
         updateUI();
         saveBalance(5, 'game', 'Sudoku Win');
         saveToHistory('Sudoku Win', 5);
       } else {
-        if (msg) msg.innerText = '❌ Not correct yet';
+        if (msg) msg.innerText = 'âŒ Not correct yet';
       }
     }
 
@@ -2741,7 +1770,7 @@ requestAnimationFrame(loop);
         updateUI();
         saveBalance(gamePrize, 'game', type + ' Win');
         saveToHistory(type + ' Game', gamePrize);
-        alert('✅ Claimed +' + gamePrize + ' Coins!');
+        alert('âœ… Claimed +' + gamePrize + ' Coins!');
         gamePrize = 0;
         const claim = document.getElementById(type + '-claim');
         if (claim) claim.style.display = 'none';
@@ -2774,7 +1803,7 @@ requestAnimationFrame(loop);
       updateUI();
       saveBalance(-amount, 'withdraw', 'Withdrawal request');
       saveToHistory('Withdrawal Request', -amount);
-      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
+      alert('âœ… Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
       showPage('wallet');
     }
 
@@ -2789,7 +1818,7 @@ requestAnimationFrame(loop);
       prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
       prices.test      = Number(document.getElementById('price-test').value) || 60;
       localStorage.setItem('vtn_prices', JSON.stringify(prices));
-      alert('✅ Prices saved!');
+      alert('âœ… Prices saved!');
     }
 
     function loadPriceSettings() {
@@ -2814,7 +1843,7 @@ requestAnimationFrame(loop);
       adSettings.wait   = Number(document.getElementById('ad-wait').value) || 15;
       adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
       localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('✅ Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
+      alert('âœ… Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
     }
 
     function loadAdSettings() {
@@ -2883,9 +1912,9 @@ requestAnimationFrame(loop);
       let html = '';
       allTasks.forEach(function(task, index) {
         if (task.category !== 'watch' && completedTasks.indexOf(task.id) !== -1) return;
-        const waitInfo = (task.wait_seconds > 0) ? (' • Wait ' + task.wait_seconds + 's') : '';
+        const waitInfo = (task.wait_seconds > 0) ? (' â€¢ Wait ' + task.wait_seconds + 's') : '';
         html += '<div class="list-item">' +
-          '<div class="icon" style="background:#c8102e;">📋</div>' +
+          '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
           '<div class="info"><h4>' + (task.title || 'Task') + '</h4>' +
           '<p>+' + (task.reward || 0) + ' Coins' + waitInfo + '</p></div>' +
           '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button></div>';
@@ -2941,7 +1970,7 @@ requestAnimationFrame(loop);
       let html = '';
       history.forEach(function(item) {
         html += '<div class="list-item">' +
-          '<div class="icon" style="background:#4CAF50;">✅</div>' +
+          '<div class="icon" style="background:#4CAF50;">âœ…</div>' +
           '<div class="info"><h4>' + item.title + '</h4><p>' + item.time + '</p></div>' +
           '<div style="font-weight:700;color:#c8102e;">' + (item.amount > 0 ? '+' : '') + item.amount + '</div></div>';
       });
@@ -2966,7 +1995,7 @@ requestAnimationFrame(loop);
         await sb.from('transactions').insert([{
           telegram_id: tid, amount: coins, type: 'admin', description: 'Admin added coins'
         }]);
-        if (result) result.innerHTML = '<span style="color:green;">✅ Added ' + coins + '. New: ' + newBalance + '</span>';
+        if (result) result.innerHTML = '<span style="color:green;">âœ… Added ' + coins + '. New: ' + newBalance + '</span>';
       } catch (e) {
         if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
       }
@@ -2989,7 +2018,7 @@ requestAnimationFrame(loop);
         await sb.from('transactions').insert([{
           telegram_id: tid, amount: -coins, type: 'admin', description: 'Admin removed coins'
         }]);
-        if (result) result.innerHTML = '<span style="color:orange;">− Removed ' + coins + '. New: ' + newBalance + '</span>';
+        if (result) result.innerHTML = '<span style="color:orange;">âˆ’ Removed ' + coins + '. New: ' + newBalance + '</span>';
       } catch (e) {
         if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
       }
@@ -3069,7 +2098,7 @@ requestAnimationFrame(loop);
           alert('Error: ' + error.message);
           return;
         }
-        alert('✅ Task Added!');
+        alert('âœ… Task Added!');
         document.getElementById('task-title').value = '';
         document.getElementById('task-reward').value = '10';
         document.getElementById('task-link').value = '';
@@ -3094,11 +2123,11 @@ requestAnimationFrame(loop);
         data.forEach(function(task) {
           const btnText = task.is_active ? 'Off' : 'On';
           const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
-          const statusDot = task.is_active ? '🟢' : '🔴';
+          const statusDot = task.is_active ? 'ðŸŸ¢' : 'ðŸ”´';
           html += '<div class="list-item">' +
-            '<div class="icon" style="background:#c8102e;">📋</div>' +
+            '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
             '<div class="info"><h4>' + (task.title || '') + '</h4>' +
-            '<p>+' + (task.reward || 0) + ' • ' + (task.category || '') + ' • ' + statusDot + '</p></div>' +
+            '<p>+' + (task.reward || 0) + ' â€¢ ' + (task.category || '') + ' â€¢ ' + statusDot + '</p></div>' +
             '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ',' + (!task.is_active) + ')">' + btnText + '</button>' +
             '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button></div>';
         });
@@ -3130,6 +2159,207 @@ requestAnimationFrame(loop);
     }
 
     // ========== INIT ==========
+    
+    // ========== CAR RACE GAME ==========
+    let raceRunning = false;
+    let raceAnimId = null;
+
+    function startRaceGame() {
+      const canvas = document.getElementById('raceCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.parentElement.clientWidth || window.innerWidth;
+      const H = Math.floor(window.innerHeight * 0.70);
+      canvas.width = W;
+      canvas.height = H;
+
+      let playerX = W / 2;
+      let score = 0;
+      let speed = 120;
+      let nitro = 35;
+      let roadOff = 0;
+      let cars = [];
+      let keys = { left: false, right: false, brake: false, nitro: false };
+      let last = performance.now();
+      let spawnT = 0;
+      raceRunning = true;
+
+      const btn = document.getElementById('race-start-btn');
+      if (btn) btn.style.display = 'none';
+
+      function spawnCar() {
+        const lanes = [W * 0.28, W * 0.5, W * 0.72];
+        cars.push({
+          x: lanes[Math.floor(Math.random() * 3)],
+          y: -90,
+          w: 46, h: 88,
+          color: ['#16a34a','#ca8a04','#e11d48','#7c3aed','#0284c7'][Math.floor(Math.random()*5)],
+          spd: 0.35 + Math.random() * 0.4
+        });
+      }
+
+      // Controls
+      const leftBtn = document.getElementById('rLeft');
+      const rightBtn = document.getElementById('rRight');
+      const brakeBtn = document.getElementById('rBrake');
+      const nitroBtn = document.getElementById('rNitroBtn');
+
+      function bind(btn, key) {
+        if (!btn) return;
+        btn.onpointerdown = (e) => { e.preventDefault(); keys[key] = true; };
+        btn.onpointerup = () => keys[key] = false;
+        btn.onpointerleave = () => keys[key] = false;
+      }
+      bind(leftBtn, 'left');
+      bind(rightBtn, 'right');
+      bind(brakeBtn, 'brake');
+      bind(nitroBtn, 'nitro');
+
+      function onKeyDown(e) {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+        if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.brake = true;
+        if (e.code === 'Space') { e.preventDefault(); keys.nitro = true; }
+      }
+      function onKeyUp(e) {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+        if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.brake = false;
+        if (e.code === 'Space') keys.nitro = false;
+      }
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+
+      function endRace(crashed) {
+        raceRunning = false;
+        if (raceAnimId) cancelAnimationFrame(raceAnimId);
+        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+        const prize = Math.min(Math.floor(score / 80), 15);
+        if (btn) btn.style.display = 'inline-block';
+        if (crashed) {
+          alert('CRASHED!\\nScore: ' + score + (prize > 0 ? '\\n+' + prize + ' Coins' : ''));
+        } else {
+          alert('Race Finished!\\nScore: ' + score + (prize > 0 ? '\\n+' + prize + ' Coins' : ''));
+        }
+        if (prize > 0) {
+          balance += prize;
+          updateUI();
+          saveToHistory('Race Game', prize);
+          if (typeof saveBalance === 'function') saveBalance(prize, 'game', 'Race');
+        }
+      }
+
+      function loop(now) {
+        if (!raceRunning) return;
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+
+        // Speed & nitro
+        if (keys.nitro && nitro > 0) {
+          speed = Math.min(280, speed + 90 * dt);
+          nitro = Math.max(0, nitro - 28 * dt);
+        } else if (keys.brake) {
+          speed = Math.max(50, speed - 70 * dt);
+        } else {
+          speed = Math.min(175, speed + 12 * dt);
+        }
+        if (!keys.nitro) nitro = Math.min(100, nitro + 5 * dt);
+
+        // Steering
+        if (keys.left) playerX -= 240 * dt * (speed / 140);
+        if (keys.right) playerX += 240 * dt * (speed / 140);
+        playerX = Math.max(W * 0.20, Math.min(W * 0.80, playerX));
+
+        roadOff = (roadOff + speed * 0.45) % 60;
+        score += Math.floor(speed * dt * 0.9);
+
+        // Spawn traffic
+        spawnT += dt;
+        if (spawnT > Math.max(0.65, 1.5 - score / 6000)) {
+          spawnT = 0;
+          spawnCar();
+        }
+
+        // Move cars + collision
+        for (let i = cars.length - 1; i >= 0; i--) {
+          const c = cars[i];
+          c.y += (speed * (1 - c.spd)) * 0.38;
+          if (Math.abs(c.x - playerX) < 42 && Math.abs(c.y - (H - 140)) < 70) {
+            endRace(true);
+            return;
+          }
+          if (c.y > H + 100) cars.splice(i, 1);
+        }
+
+        // Draw background
+        ctx.fillStyle = '#064e3b';
+        ctx.fillRect(0, 0, W, H);
+
+        // Road
+        const roadW = Math.min(300, W * 0.58);
+        const roadL = (W - roadW) / 2;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(roadL, 0, roadW, H);
+
+        // Kerbs
+        for (let y = -60 + (roadOff % 40); y < H; y += 40) {
+          ctx.fillStyle = (Math.floor(y / 40) % 2 === 0) ? '#ef4444' : '#f8fafc';
+          ctx.fillRect(roadL - 9, y, 9, 20);
+          ctx.fillRect(roadL + roadW, y, 9, 20);
+        }
+
+        // Center dashed line
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([22, 20]);
+        ctx.lineDashOffset = -roadOff;
+        ctx.beginPath();
+        ctx.moveTo(W / 2, 0);
+        ctx.lineTo(W / 2, H);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Traffic cars
+        cars.forEach(c => {
+          ctx.fillStyle = c.color;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(c.x - c.w/2, c.y, c.w, c.h, 8);
+          else ctx.rect(c.x - c.w/2, c.y, c.w, c.h);
+          ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(c.x - 13, c.y + 12, 26, 13);
+        });
+
+        // Player car
+        ctx.fillStyle = '#0284c7';
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(playerX - 25, H - 145, 50, 95, 10);
+        else ctx.rect(playerX - 25, H - 145, 50, 95);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(playerX - 15, H - 130, 30, 16);
+        // Headlights
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(playerX - 13, H - 143, 4, 0, Math.PI * 2);
+        ctx.arc(playerX + 13, H - 143, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // HUD
+        const sEl = document.getElementById('rScore');
+        const spEl = document.getElementById('rSpeed');
+        const nEl = document.getElementById('rNitro');
+        if (sEl) sEl.textContent = score;
+        if (spEl) spEl.textContent = Math.round(speed);
+        if (nEl) nEl.textContent = Math.round(nitro);
+
+        raceAnimId = requestAnimationFrame(loop);
+      }
+      raceAnimId = requestAnimationFrame(loop);
+    }
+
+
     setupUser();
     loadUser();
   </script>
