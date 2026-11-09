@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Dart Master</title>
+  <title>Knife Hit Fruits</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -61,7 +61,7 @@
       margin-top: 2px;
     }
 
-    #darts-left {
+    #knives-left {
       font-size: 18px;
       font-weight: 600;
       color: #38bdf8;
@@ -150,14 +150,14 @@
         <div id="score">0</div>
         <div id="best">Best: 0</div>
       </div>
-      <div id="darts-left">Darts: 10</div>
+      <div id="knives-left">Knives: 7</div>
     </div>
 
-    <div id="instruction">Drag back & release to throw!</div>
+    <div id="instruction">Tap anywhere to throw the knife!</div>
 
     <div id="start-screen">
-      <h1>Dart Master</h1>
-      <p>Time your throw and hit the bullseye!<br>Watch out for the spinning board.</p>
+      <h1>Knife Hit Fruits</h1>
+      <p>Throw knives into the spinning fruit log.<br>Don't hit other knives! Gets tougher!</p>
       <button id="start-btn">Start Game</button>
     </div>
 
@@ -182,7 +182,7 @@
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const dartsLeftEl = document.getElementById('darts-left');
+    const knivesLeftEl = document.getElementById('knives-left');
     const gameOverEl = document.getElementById('game-over');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
@@ -201,239 +201,181 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('dartBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('knifeHitBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
-    let dartsLeft = 10;
+    let knivesLeft = 7;
     let gameState = 'start';
-    let boardAngle = 0;
-    let boardSpeed = 0.015;
-    let stuckDarts = [];
-    let activeDart = null;
+    let logAngle = 0;
+    let logSpeed = 0.02;
+    let stuckKnives = [];
+    let activeKnife = null;
+    let currentLevelKnives = 7;
 
-    // Board position
-    const board = {
+    const log = {
       x: () => width / 2,
-      y: () => height * 0.32,
-      radius: 110
+      y: () => height * 0.3,
+      radius: 85
     };
 
-    // Input tracking for dragging
-    let dragStart = { x: 0, y: 0 };
-    let dragCurrent = { x: 0, y: 0 };
-    let isDragging = false;
+    function throwKnife() {
+      if (gameState !== 'playing' || activeKnife || knivesLeft <= 0) return;
 
-    function startDrag(e) {
-      if (gameState !== 'playing' || activeDart) return;
-      const pos = e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY };
-      
-      // Allow dragging from lower screen area
-      if (pos.y > height * 0.6) {
-        isDragging = true;
-        dragStart = pos;
-        dragCurrent = pos;
-      }
-    }
+      knivesLeft--;
+      knivesLeftEl.textContent = `Knives: ${knivesLeft}`;
 
-    function moveDrag(e) {
-      if (!isDragging) return;
-      const pos = e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY };
-      dragCurrent = pos;
-    }
-
-    function endDrag(e) {
-      if (!isDragging) return;
-      isDragging = false;
-
-      const dx = dragCurrent.x - dragStart.x;
-      const dy = dragCurrent.y - dragStart.y;
-
-      // Check if pulled backward (dy < -20)
-      if (dy < -20) {
-        const power = Math.min(Math.sqrt(dx*dx + dy*dy), 200);
-        throwDart(dx * 0.5, dy * 0.8);
-      }
-    }
-
-    canvas.addEventListener('mousedown', startDrag);
-    canvas.addEventListener('mousemove', moveDrag);
-    canvas.addEventListener('mouseup', endDrag);
-    canvas.addEventListener('touchstart', startDrag, { passive: false });
-    canvas.addEventListener('touchmove', moveDrag, { passive: false });
-    canvas.addEventListener('touchend', endDrag);
-
-    function throwDart(vx, vy) {
-      dartsLeft--;
-      dartsLeftEl.textContent = `Darts: ${dartsLeft}`;
-
-      activeDart = {
-        x: width / 2 + (dragStart.x - width/2) * 0.3,
-        y: height * 0.75,
-        vx: vx * 0.08,
-        vy: vy * 0.08,
-        scale: 1.5
+      activeKnife = {
+        x: width / 2,
+        y: height * 0.78,
+        vy: -22
       };
     }
 
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      throwKnife();
+    });
+
     function update() {
-      // Rotate board
-      boardAngle += boardSpeed;
+      // Dynamic rotating speed changes to make it tougher
+      logAngle += logSpeed;
 
-      // Update active flying dart
-      if (activeDart) {
-        activeDart.x += activeDart.vx;
-        activeDart.y += activeDart.vy;
-        activeDart.scale = Math.max(0.6, activeDart.scale - 0.03);
+      if (activeKnife) {
+        activeKnife.y += activeKnife.vy;
 
-        const bx = board.x();
-        const by = board.y();
-        const dist = Math.hypot(activeDart.x - bx, activeDart.y - by);
+        const lx = log.x();
+        const ly = log.y();
+        const dist = Math.hypot(activeKnife.x - lx, activeKnife.y - ly);
 
-        // Check hit collision with board
-        if (dist <= board.radius) {
-          // Calculate angle relative to spinning board
-          const hitAngle = Math.atan2(activeDart.y - by, activeDart.x - bx) - boardAngle;
-          
-          stuckDarts.push({
-            angle: hitAngle,
-            dist: dist,
-            color: '#38bdf8'
-          });
+        // Check if knife hits the rotating fruit log surface
+        if (dist <= log.radius + 10) {
+          // Calculate angle relative to log center
+          const hitAngle = Math.atan2(activeKnife.y - ly, activeKnife.x - lx) - logAngle;
 
-          // Calculate score based on distance from center
-          let pts = 10;
-          if (dist < 18) { pts = 50; showPopup("+50 BULLSEYE!"); }
-          else if (dist < 45) { pts = 25; }
-          else if (dist < 80) { pts = 15; }
-
-          score += pts;
-          scoreEl.textContent = score;
-
-          activeDart = null;
-
-          if (dartsLeft <= 0) {
-            setTimeout(gameOver, 400);
+          // Check collision with already stuck knives (tough constraint: ~0.3 radians clearance)
+          let collided = false;
+          for (let k of stuckKnives) {
+            let diff = Math.abs(k.angle - hitAngle);
+            while (diff > Math.PI * 2) diff -= Math.PI * 2;
+            if (Math.min(diff, Math.PI * 2 - diff) < 0.28) {
+              collided = true;
+              break;
+            }
           }
-        } else if (activeDart.y < -50 || activeDart.x < -50 || activeDart.x > width + 50) {
-          // Missed board entirely
-          activeDart = null;
-          if (dartsLeft <= 0) {
+
+          if (collided) {
+            // Hit another knife -> Game Over!
+            activeKnife = null;
+            setTimeout(gameOver, 300);
+            return;
+          }
+
+          // Successfully stuck!
+          stuckKnives.push({ angle: hitAngle });
+          score += 10;
+          scoreEl.textContent = score;
+          activeKnife = null;
+
+          // Check if level / stage cleared
+          if (stuckKnives.length >= currentLevelKnives) {
+            score += 50; // Level bonus
+            scoreEl.textContent = score;
+            stuckKnives = [];
+            currentLevelKnives = Math.min(12, currentLevelKnives + 2);
+            knivesLeft = currentLevelKnives;
+            knivesLeftEl.textContent = `Knives: ${knivesLeft}`;
+            // Increase rotation difficulty randomly
+            logSpeed = (Math.random() > 0.5 ? 1 : -1) * (Math.abs(logSpeed) + 0.008);
+          } else if (knivesLeft <= 0) {
             setTimeout(gameOver, 400);
           }
         }
       }
     }
 
-    function showPopup(text) {
-      const el = document.createElement('div');
-      el.className = 'perfect';
-      el.style.position = 'absolute';
-      el.style.left = (width / 2 - 50) + 'px';
-      el.style.top = (height * 0.3) + 'px';
-      el.style.color = '#4ade80';
-      el.style.fontWeight = '700';
-      el.style.fontSize = '24px';
-      el.style.zIndex = '15';
-      el.style.pointerEvents = 'none';
-      el.style.transition = 'all 0.8s ease-out';
-      el.textContent = text;
-      document.getElementById('game-container').appendChild(el);
-      setTimeout(() => {
-        el.style.transform = 'translateY(-40px)';
-        el.style.opacity = '0';
-      }, 20);
-      setTimeout(() => el.remove(), 800);
-    }
-
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      const bx = board.x();
-      const by = board.y();
+      const lx = log.x();
+      const ly = log.y();
 
-      // Draw Dartboard
+      // Draw Rotating Fruit Log / Target
       ctx.save();
-      ctx.translate(bx, by);
-      ctx.rotate(boardAngle);
+      ctx.translate(lx, ly);
+      ctx.rotate(logAngle);
 
-      // Outer ring
+      // Outer watermelon/orange peel look
       ctx.beginPath();
-      ctx.arc(0, 0, board.radius, 0, Math.PI * 2);
-      ctx.fillStyle = '#1e293b';
+      ctx.arc(0, 0, log.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#16a34a';
       ctx.fill();
-      ctx.strokeStyle = '#ef4444';
       ctx.lineWidth = 6;
+      ctx.strokeStyle = '#15803d';
       ctx.stroke();
 
-      // Board segments colors
-      const colors = ['#f8fafc', '#0f172a', '#ef4444', '#1e293b'];
-      for (let i = 0; i < 8; i++) {
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.arc(0, 0, board.radius - 6, i * Math.PI / 4, (i + 1) * Math.PI / 4);
-        ctx.fillStyle = i % 2 === 0 ? '#ef4444' : '#1e293b';
-        ctx.fill();
-      }
-
-      // Inner rings
+      // Inner juicy fruit pulp design
       ctx.beginPath();
-      ctx.arc(0, 0, 75, 0, Math.PI * 2);
-      ctx.strokeStyle = '#f8fafc';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(0, 0, 45, 0, Math.PI * 2);
-      ctx.fillStyle = '#22c55e';
-      ctx.fill();
-
-      // Bullseye
-      ctx.beginPath();
-      ctx.arc(0, 0, 18, 0, Math.PI * 2);
+      ctx.arc(0, 0, log.radius - 12, 0, Math.PI * 2);
       ctx.fillStyle = '#ef4444';
       ctx.fill();
 
-      // Draw stuck darts on board
-      stuckDarts.forEach(d => {
-        const da = d.angle + boardAngle;
-        const dx = Math.cos(da) * d.dist;
-        const dy = Math.sin(da) * d.dist;
+      // Fruit segments pattern
+      ctx.strokeStyle = '#b91c1c';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(i * Math.PI / 3) * (log.radius - 12), Math.sin(i * Math.PI / 3) * (log.radius - 12));
+        ctx.stroke();
+      }
 
+      // Center core
+      ctx.beginPath();
+      ctx.arc(0, 0, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#fef08a';
+      ctx.fill();
+
+      // Draw stuck knives on the log
+      stuckKnives.forEach(k => {
         ctx.save();
-        ctx.translate(dx, dy);
-        ctx.rotate(da + Math.PI / 2);
-        ctx.fillStyle = '#38bdf8';
-        ctx.fillRect(-3, -12, 6, 24);
+        ctx.rotate(k.angle);
+        ctx.translate(log.radius - 2, 0);
+        ctx.rotate(Math.PI / 2);
+
+        // Blade
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(-3, -32, 6, 32);
+        // Handle
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(-4, 0, 8, 18);
+
         ctx.restore();
       });
 
       ctx.restore();
 
-      // Draw active flying dart
-      if (activeDart) {
+      // Draw active flying knife
+      if (activeKnife) {
         ctx.save();
-        ctx.translate(activeDart.x, activeDart.y);
-        ctx.scale(activeDart.scale, activeDart.scale);
-        ctx.fillStyle = '#38bdf8';
-        ctx.beginPath();
-        ctx.moveTo(0, -15);
-        ctx.lineTo(6, 15);
-        ctx.lineTo(-6, 15);
-        ctx.closePath();
-        ctx.fill();
+        ctx.translate(activeKnife.x, activeKnife.y);
+        // Blade
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(-3, -26, 6, 32);
+        // Handle
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(-4, 6, 8, 18);
         ctx.restore();
       }
 
-      // Draw pull-back aiming indicator line
-      if (isDragging) {
-        ctx.beginPath();
-        ctx.moveTo(width / 2, height * 0.75);
-        ctx.lineTo(width / 2 + (dragCurrent.x - dragStart.x), height * 0.75 + (dragCurrent.y - dragStart.y));
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
-        ctx.lineWidth = 4;
-        ctx.setLineDash([6, 6]);
-        ctx.stroke();
-        ctx.setLineDash([]);
+      // Draw waiting ready knife at the bottom
+      if (!activeKnife && gameState === 'playing') {
+        ctx.save();
+        ctx.translate(width / 2, height * 0.78);
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(-3, -26, 6, 32);
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(-4, 6, 8, 18);
+        ctx.restore();
       }
     }
 
@@ -446,10 +388,12 @@
     function startGame() {
       score = 0;
       scoreEl.textContent = '0';
-      dartsLeft = 10;
-      dartsLeftEl.textContent = `Darts: ${dartsLeft}`;
-      stuckDarts = [];
-      activeDart = null;
+      currentLevelKnives = 7;
+      knivesLeft = 7;
+      knivesLeftEl.textContent = `Knives: ${knivesLeft}`;
+      stuckKnives = [];
+      activeKnife = null;
+      logSpeed = 0.022;
       gameState = 'playing';
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
@@ -459,7 +403,7 @@
       gameState = 'gameover';
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('dartBest', bestScore);
+        localStorage.setItem('knifeHitBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
