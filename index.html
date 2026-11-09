@@ -108,8 +108,7 @@
     .ad-banner {
       background: linear-gradient(135deg, #1a1a2e, #16213e);
       margin: 14px; border-radius: 14px; padding: 14px; color: white;
-      text-align: center; border: 1px solid #ffd700;
-      cursor: pointer;
+      text-align: center; border: 1px solid #ffd700; cursor: pointer;
     }
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; background: white;
@@ -134,8 +133,6 @@
     }
     .form-row { display: flex; gap: 10px; }
     .form-row .form-group { flex: 1; }
-
-    /* Games */
     .ttt-board {
       display: grid; grid-template-columns: repeat(3, 85px); gap: 10px;
       justify-content: center; margin: 20px 0;
@@ -144,8 +141,7 @@
       width: 85px; height: 85px; background: linear-gradient(145deg, #fff, #ffe8e8);
       border: 3px solid #c8102e; border-radius: 16px; font-size: 36px; font-weight: 800;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(200,16,46,0.15);
-      user-select: none;
+      box-shadow: 0 4px 10px rgba(200,16,46,0.15); user-select: none;
     }
     .spin-wrap { text-align: center; padding: 10px; }
     .spin-pointer { font-size: 28px; color: #c8102e; margin-bottom: -15px; z-index: 2; position: relative; }
@@ -160,11 +156,6 @@
       transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
       position: relative;
     }
-    .spin-center {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 50px; height: 50px; background: #fff; border-radius: 50%;
-      border: 4px solid #c8102e; z-index: 5;
-    }
     .quiz-option {
       background: white; border: 2px solid #c8102e; border-radius: 12px;
       padding: 14px; margin: 8px 14px; text-align: center; font-weight: 600; cursor: pointer;
@@ -174,44 +165,24 @@
       background: white; margin: 4px; font-weight: 600; cursor: pointer;
     }
     .diff-btn.active { background: #c8102e; color: white; }
-
     .game-area {
-      background: #1a1a2e;
-      border-radius: 16px;
-      padding: 20px;
-      margin: 14px;
-      color: white;
-      text-align: center;
-      min-height: 280px;
-      position: relative;
-      overflow: hidden;
+      background: #1a1a2e; border-radius: 16px; padding: 20px; margin: 14px;
+      color: white; text-align: center; min-height: 280px; position: relative; overflow: hidden;
     }
-    .score-box {
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 12px;
-    }
+    .score-box { font-size: 22px; font-weight: 800; color: #ffd700; margin-bottom: 12px; }
     .game-btn {
-      background: #c8102e;
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-weight: 700;
-      margin-top: 12px;
-      cursor: pointer;
+      background: #c8102e; color: white; border: none; padding: 12px 28px;
+      border-radius: 30px; font-weight: 700; margin-top: 12px; cursor: pointer;
     }
   </style>
 </head>
 <body>
-
   <div id="main-app">
 
     <!-- HOME -->
     <div id="home" class="page active">
-      <div class="header">ðŸ‘‘ VTN Hub Bot</div>
-      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
+      <div class="header">VTN Hub Bot</div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">ðŸ¤–</div>
         <div>
           <div style="font-weight:700;" id="username">User</div>
@@ -224,23 +195,23 @@
         <div class="amount" id="balance">0 Coins</div>
         <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
-      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
+      <div class="ad-banner" onclick="alert('Banner Ad\\nContact @Vtnhub0')">
         <div style="font-size:12px;opacity:0.8;">Sponsored</div>
         <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
         <div style="font-size:12px;">Reach thousands of users</div>
       </div>
       <div class="section-title">Quick Actions</div>
       <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
+        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#2E7D32);" onclick="dailyCheckIn()">
           <span class="icon">âœ…</span>Claim up to 100
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="showPage('earn')">
           <span class="icon">ðŸŽ¯</span>Earn Tasks
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
+        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="showPage('promote')">
           <span class="icon">ðŸ“¢</span>Promote
         </div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
+        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="showPage('fun')">
           <span class="icon">ðŸŽ®</span>Fun Zone
         </div>
       </div>
@@ -272,7 +243,7 @@
         <div class="list-item">
           <div class="icon" style="background:#FF9800;">âš¡</div>
           <div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div>
-          <button class="start-btn" onclick="event.stopPropagation(); alert('Coming soon')">Start</button>
+          <button class="start-btn" onclick="event.stopPropagation();alert('Coming soon')">Start</button>
         </div>
         <div class="list-item" onclick="openCategory('watch')">
           <div class="icon" style="background:#E91E63;">â–¶ï¸</div>
@@ -326,7 +297,6 @@
     <!-- PROMOTE -->
     <div id="promote" class="page">
       <div class="header">Promote Services</div>
-
       <div class="section-title">Promotion Services</div>
       <div class="list-item" onclick="openPromoteForm('channel')">
         <div class="icon" style="background:#c8102e;">ðŸ“¢</div>
@@ -363,21 +333,18 @@
         <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
         <button class="start-btn">Buy</button>
       </div>
-
       <div class="section-title">Monetization</div>
       <div class="list-item" onclick="openPromoteForm('monetize')">
         <div class="icon" style="background:#2196F3;">ðŸ’°</div>
         <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
         <button class="start-btn">Apply</button>
       </div>
-
       <div class="section-title">Banner Ads</div>
       <div class="list-item" onclick="openPromoteForm('banner')">
         <div class="icon" style="background:#FF5722;">ðŸ“£</div>
         <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
         <button class="start-btn">Buy</button>
       </div>
-
       <div class="section-title">Cross Promotion</div>
       <div class="list-item" onclick="startCrossPromo()">
         <div class="icon" style="background:#009688;">ðŸ”„</div>
@@ -475,8 +442,8 @@
 
     <!-- DART -->
     <div id="game-dart" class="page">
-      <div class="header">ðŸŽ¯ Dart Game</div>
-      <div class="game-area" id="dart-area">
+      <div class="header">Dart Game</div>
+      <div class="game-area">
         <div class="score-box">Score: <span id="dart-score">0</span></div>
         <div style="font-size:60px;margin:20px 0;cursor:pointer;" id="dart-target">ðŸŽ¯</div>
         <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
@@ -490,8 +457,8 @@
 
     <!-- FRUIT -->
     <div id="game-fruit" class="page">
-      <div class="header">ðŸŽ Fruit Slice</div>
-      <div class="game-area" id="fruit-area">
+      <div class="header">Fruit Slice</div>
+      <div class="game-area">
         <div class="score-box">Score: <span id="fruit-score">0</span></div>
         <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="fruit-display">ðŸŽ</div>
         <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
@@ -505,8 +472,8 @@
 
     <!-- SHOOT -->
     <div id="game-shoot" class="page">
-      <div class="header">ðŸ”« Shoot</div>
-      <div class="game-area" id="shoot-area">
+      <div class="header">Shoot</div>
+      <div class="game-area">
         <div class="score-box">Hits: <span id="shoot-score">0</span></div>
         <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="shoot-target">ðŸŽ¯</div>
         <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
@@ -520,8 +487,8 @@
 
     <!-- TOWER -->
     <div id="game-tower" class="page">
-      <div class="header">ðŸ—¼ Tower Stack</div>
-      <div class="game-area" id="tower-area">
+      <div class="header">Tower Stack</div>
+      <div class="game-area">
         <div class="score-box">Height: <span id="tower-score">0</span></div>
         <div style="font-size:40px;margin:20px 0;" id="tower-display">â¬œ</div>
         <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
@@ -535,7 +502,7 @@
 
     <!-- SUDOKU -->
     <div id="game-sudoku" class="page">
-      <div class="header">ðŸ”¢ Sudoku (Easy 4Ã—4)</div>
+      <div class="header">Sudoku (Easy 4x4)</div>
       <div class="card" style="text-align:center;">
         <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:2px;justify-content:center;margin:15px 0;"></div>
         <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
@@ -599,7 +566,7 @@
         <div class="info"><h4>Contact Support @Vtnhub0</h4></div>
         <div>â€º</div>
       </div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();">
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin');loadAdminTasks();loadAdSettings();loadPriceSettings();">
         <div class="icon" style="background:#c8102e;">ðŸ‘‘</div>
         <div class="info"><h4>Admin Panel</h4></div>
         <div>â€º</div>
@@ -622,8 +589,7 @@
 
     <!-- ADMIN -->
     <div id="admin" class="page">
-      <div class="header">ðŸ‘‘ Admin Panel</div>
-
+      <div class="header">Admin Panel</div>
       <div class="section-title">Service Prices (Coins)</div>
       <div class="card">
         <div class="form-row">
@@ -644,11 +610,10 @@
         </div>
         <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
       </div>
-
       <div class="section-title">Ad Settings</div>
       <div class="card">
         <div class="form-group">
-          <label>Ad Links (one per line â€“ random pick)</label>
+          <label>Ad Links (one per line)</label>
           <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
         </div>
         <div class="form-row">
@@ -657,25 +622,17 @@
         </div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
       </div>
-
       <div class="section-title">User Tools</div>
       <div class="card">
-        <div class="form-group">
-          <label>Telegram User ID</label>
-          <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
-        </div>
-        <div class="form-group">
-          <label>Coins Amount</label>
-          <input type="number" id="admin-coins" value="100">
-        </div>
+        <div class="form-group"><label>Telegram User ID</label><input type="text" id="admin-userid" placeholder="e.g. 8150531247"></div>
+        <div class="form-group"><label>Coins Amount</label><input type="number" id="admin-coins" value="100"></div>
         <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
-        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">âˆ’ Remove Coins</button>
+        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">- Remove Coins</button>
         <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
         <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
         <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
         <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
       </div>
-
       <div class="section-title">Add New Task</div>
       <div class="card">
         <div class="form-group"><label>Task Title *</label><input type="text" id="task-title" placeholder="e.g. Join My Channel"></div>
@@ -701,7 +658,6 @@
         </div>
         <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
       </div>
-
       <div class="section-title">Current Tasks</div>
       <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">â† Back</button></div>
@@ -717,1420 +673,331 @@
     <div class="nav-item" onclick="showPage('profile')"><span class="icon">ðŸ‘¤</span>Profile</div>
   </div>
 
-  <script>
-    // ========== CONFIG ==========
-    // IMPORTANT: Replace with your real Supabase project URL and anon/public key (JWT starting with eyJ...)
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
+<script>
+const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
+let sb = null;
+try { if (window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e){}
 
-    let sb = null;
-    try {
-      if (window.supabase && window.supabase.createClient) {
-        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-    } catch (e) {
-      console.warn('Supabase init failed', e);
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) {
+  try {
+    tg.ready(); tg.expand();
+    if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes();
+    if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#c8102e');
+    if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#FFF8E7');
+  } catch(e){}
+}
+
+const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+const userId = user ? String(user.id) : 'guest';
+
+const balanceKey = 'vtn_b_' + userId;
+const checkinKey = 'vtn_c_' + userId;
+const officialKey = 'vtn_o_' + userId;
+const firstDayKey = 'vtn_f_' + userId;
+const completedKey = 'vtn_completed_' + userId;
+const blockedKey = 'vtn_blocked_users';
+const ordersKey = 'vtn_orders';
+const historyKey = 'vtn_history_' + userId;
+
+let balance = Number(localStorage.getItem(balanceKey)) || 0;
+let lastCheckIn = localStorage.getItem(checkinKey) || '';
+let officialDone = localStorage.getItem(officialKey) === '1';
+let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
+let currentTasks = [];
+let completedTasks = [];
+try { completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]'); } catch(e){}
+let currentCategory = 'other';
+let blockedUsers = [];
+try { blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]'); } catch(e){}
+let currentPromoType = '';
+let currentWithdrawType = '';
+
+let adSettings = { links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'], wait: 15, reward: 5 };
+try { const s = localStorage.getItem('vtn_ad_settings'); if (s) adSettings = Object.assign(adSettings, JSON.parse(s)); } catch(e){}
+
+let prices = { channel:200, bot:150, views:50, install:300, traffic:80, banner:100, affiliate:40, test:60 };
+try { const s = localStorage.getItem('vtn_prices'); if (s) prices = Object.assign(prices, JSON.parse(s)); } catch(e){}
+
+let tttBoard = ['','','','','','','','',''], tttTurn='X', tttOver=false, tttDiff='easy', tttPrize=0;
+let spinPrize=0, gamePrize=0;
+let dartTimer=null, dartRunning=false, dartScore=0;
+let fruitRunning=false, fruitScore=0, fruitTimeout=null;
+let shootRunning=false, shootScore=0;
+let towerRunning=false, towerScore=0;
+let quizIndex=0, sudokuSolution=[];
+
+const quizData = [
+  {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
+  {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
+  {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
+  {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
+  {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+];
+
+if (user && blockedUsers.includes(String(user.id))) {
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
+  throw new Error('blocked');
+}
+
+function updateUI() {
+  const b = document.getElementById('balance');
+  const w = document.getElementById('wallet-balance');
+  if (b) b.innerText = balance + ' Coins';
+  if (w) w.innerText = balance + ' Coins';
+  localStorage.setItem(balanceKey, String(balance));
+}
+
+function setupUser() {
+  if (user) {
+    const name = user.first_name || 'User';
+    const idStr = 'ID: ' + user.id;
+    ['username','profile-name'].forEach(id => { const el=document.getElementById(id); if(el) el.innerText=name; });
+    ['userid','profile-id'].forEach(id => { const el=document.getElementById(id); if(el) el.innerText=idStr; });
+    const ref = document.getElementById('ref-code'); if (ref) ref.innerText = 'VTN' + user.id;
+    if (Number(user.id) === 8150531247) {
+      const ab = document.getElementById('admin-btn'); if (ab) ab.style.display = 'flex';
     }
+  }
+  if (officialDone) {
+    const el = document.getElementById('official-task'); if (el) el.style.display = 'none';
+  }
+  updateUI();
+  loadHistory();
+}
 
-    // Telegram WebApp
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) {
-      try {
-        tg.ready();
-        tg.expand();
-        if (typeof tg.disableVerticalSwipes === 'function') {
-          tg.disableVerticalSwipes();
-        }
-        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#c8102e');
-        if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#FFF8E7');
-      } catch (e) {
-        console.warn('Telegram WebApp init warning', e);
-      }
-    }
-
-    const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-    const userId = user ? String(user.id) : 'guest';
-
-    // Local storage keys
-    const balanceKey   = 'vtn_b_' + userId;
-    const checkinKey   = 'vtn_c_' + userId;
-    const officialKey  = 'vtn_o_' + userId;
-    const firstDayKey  = 'vtn_f_' + userId;
-    const completedKey = 'vtn_completed_' + userId;
-    const blockedKey   = 'vtn_blocked_users';
-    const ordersKey    = 'vtn_orders';
-    const historyKey   = 'vtn_history_' + userId;
-
-    // State
-    let balance        = Number(localStorage.getItem(balanceKey)) || 0;
-    let lastCheckIn    = localStorage.getItem(checkinKey) || '';
-    let officialDone   = localStorage.getItem(officialKey) === '1';
-    let isFirstDay     = localStorage.getItem(firstDayKey) !== '1';
-    let currentTasks   = [];
-    let completedTasks = [];
-    try { completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]'); } catch(e) { completedTasks = []; }
-    let currentCategory = 'other';
-    let blockedUsers   = [];
-    try { blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]'); } catch(e) { blockedUsers = []; }
-    let currentPromoType = '';
-    let currentWithdrawType = '';
-
-    // Ad settings
-    let adSettings = {
-      links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
-      wait: 15,
-      reward: 5
-    };
-    try {
-      const saved = localStorage.getItem('vtn_ad_settings');
-      if (saved) adSettings = Object.assign(adSettings, JSON.parse(saved));
-    } catch(e) {}
-
-    // Prices
-    let prices = {
-      channel: 200, bot: 150, views: 50, install: 300,
-      traffic: 80, banner: 100, affiliate: 40, test: 60
-    };
-    try {
-      const saved = localStorage.getItem('vtn_prices');
-      if (saved) prices = Object.assign(prices, JSON.parse(saved));
-    } catch(e) {}
-
-    // Games state
-    let tttBoard = ['','','','','','','','',''];
-    let tttTurn  = 'X';
-    let tttOver  = false;
-    let tttDiff  = 'easy';
-    let tttPrize = 0;
-    let spinPrize = 0;
-    let gamePrize = 0;
-
-    // Dart / Fruit / Shoot / Tower timers
-    let dartTimer = null;
-    let dartRunning = false;
-    let dartScore = 0;
-    let fruitRunning = false;
-    let fruitScore = 0;
-    let fruitTimeout = null;
-    let shootRunning = false;
-    let shootScore = 0;
-    let towerRunning = false;
-    let towerScore = 0;
-
-    const quizData = [
-      {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
-      {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
-      {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
-      {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
-      {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
-    ];
-    let quizIndex = 0;
-    let sudokuSolution = [];
-
-    // Blocked user check
-    if (user && blockedUsers.includes(String(user.id))) {
-      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
-      // Stop further execution
-      throw new Error('User blocked');
-    }
-
-    // ========== CORE UI ==========
-    function updateUI() {
-      const balEl = document.getElementById('balance');
-      const walEl = document.getElementById('wallet-balance');
-      if (balEl) balEl.innerText = balance + ' Coins';
-      if (walEl) walEl.innerText = balance + ' Coins';
+async function loadUser() {
+  if (!sb || !user) return;
+  try {
+    const { data } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
+    if (data) {
+      balance = Number(data.balance) || 0;
+      officialDone = !!data.official_done;
       localStorage.setItem(balanceKey, String(balance));
-    }
-
-    function setupUser() {
-      if (user) {
-        const name = user.first_name || 'User';
-        const idStr = 'ID: ' + user.id;
-        const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
-        setText('username', name);
-        setText('userid', idStr);
-        setText('profile-name', name);
-        setText('profile-id', idStr);
-        setText('ref-code', 'VTN' + user.id);
-
-        // Admin access (change this ID to your own Telegram ID)
-        if (Number(user.id) === 8150531247) {
-          const adminBtn = document.getElementById('admin-btn');
-          if (adminBtn) adminBtn.style.display = 'flex';
-        }
-      }
       if (officialDone) {
-        const el = document.getElementById('official-task');
-        if (el) el.style.display = 'none';
+        localStorage.setItem(officialKey, '1');
+        const el = document.getElementById('official-task'); if (el) el.style.display = 'none';
       }
       updateUI();
-      loadHistory();
+    } else {
+      await sb.from('users').insert([{ telegram_id:user.id, first_name:user.first_name||'', username:user.username||'', balance, is_vip:false, daily_tasks:0, official_done:officialDone }]);
     }
-
-    async function loadUser() {
-      if (!sb || !user) return;
-      try {
-        const { data, error } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
-        if (error) throw error;
-        if (data) {
-          balance = Number(data.balance) || 0;
-          officialDone = !!data.official_done;
-          localStorage.setItem(balanceKey, String(balance));
-          if (officialDone) {
-            localStorage.setItem(officialKey, '1');
-            const el = document.getElementById('official-task');
-            if (el) el.style.display = 'none';
-          }
-          updateUI();
-        } else {
-          await sb.from('users').insert([{
-            telegram_id: user.id,
-            first_name: user.first_name || '',
-            username: user.username || '',
-            balance: balance,
-            is_vip: false,
-            daily_tasks: 0,
-            official_done: officialDone
-          }]);
-        }
-      } catch (e) {
-        console.warn('loadUser failed', e);
-      }
-    }
-
-    async function saveBalance(amount, type, desc) {
-      if (!sb || !user) return;
-      try {
-        await sb.from('users').update({ balance: balance }).eq('telegram_id', user.id);
-        await sb.from('transactions').insert([{
-          telegram_id: user.id,
-          amount: amount,
-          type: type,
-          description: desc
-        }]);
-      } catch (e) {
-        console.warn('saveBalance failed', e);
-      }
-    }
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const page = document.getElementById(id);
-      if (page) page.classList.add('active');
-
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = {
-        home: 0, earn: 1, promote: 2, fun: 3, profile: 4,
-        wallet: 0, refer: 4, admin: 4,
-        'category-tasks': 1,
-        'game-ttt': 3, 'game-spin': 3, 'game-quiz': 3,
-        'game-dart': 3, 'game-fruit': 3, 'game-shoot': 3,
-        'game-tower': 3, 'game-sudoku': 3,
-        'promote-form': 2, 'withdraw-form': 0
-      };
-      if (map[id] !== undefined) {
-        const navs = document.querySelectorAll('.nav-item');
-        if (navs[map[id]]) navs[map[id]].classList.add('active');
-      }
-      if (id === 'wallet') loadHistory();
-    }
-
-    function addCoins(amount, title) {
-      balance += amount;
-      updateUI();
-      saveBalance(amount, 'task', title);
-      alert(title + ' Successful! +' + amount + ' Coins');
-    }
-
-    // ========== DAILY & OFFICIAL ==========
-    function dailyCheckIn() {
-      const today = new Date().toDateString();
-      if (lastCheckIn === today) {
-        alert('Already claimed today!');
-        return;
-      }
-      if (!confirm('Watch a short ad to claim?')) return;
-
-      let reward;
-      if (isFirstDay) {
-        reward = Math.floor(Math.random() * 70) + 30; // 30-99
-        localStorage.setItem(firstDayKey, '1');
-        isFirstDay = false;
-        alert('ðŸŽ‰ First Day Bonus! +' + reward);
-      } else {
-        reward = Math.floor(Math.random() * 13) + 3; // 3-15
-        alert('Daily Check-in! +' + reward);
-      }
-
-      balance += reward;
-      lastCheckIn = today;
-      localStorage.setItem(checkinKey, today);
-      updateUI();
-      saveBalance(reward, 'checkin', 'Daily Check-in');
-      saveToHistory('Daily Check-in', reward);
-    }
-
-    function doOfficialTask() {
-      if (officialDone) {
-        alert('Already completed');
-        return;
-      }
-      if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
-
-      window.open('https://t.me/vtnhub', '_blank');
-      // Optionally open second link after a short delay
-      setTimeout(function() {
-        window.open('https://t.me/vtnhub1', '_blank');
-      }, 800);
-
-      balance += 50;
-      officialDone = true;
-      localStorage.setItem(officialKey, '1');
-      const el = document.getElementById('official-task');
-      if (el) el.style.display = 'none';
-      updateUI();
-      saveBalance(50, 'official', 'Official Task');
-      saveToHistory('Official Task', 50);
-
-      if (sb && user) {
-        sb.from('users').update({ official_done: true }).eq('telegram_id', user.id).then(function(){}).catch(function(){});
-      }
-      alert('Official Task Completed! +50 Coins');
-    }
-
-    function copyCode() {
-      const el = document.getElementById('ref-code');
-      const code = el ? el.innerText : '';
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(function() {
-          alert('Copied: ' + code);
-        }).catch(function() {
-          alert(code);
-        });
-      } else {
-        alert(code);
-      }
-    }
-
-    // ========== ADS ==========
-    function getRandomAd() {
-      const links = adSettings.links || [];
-      if (!links.length) return 'https://t.me/Vtnhub0';
-      return links[Math.floor(Math.random() * links.length)];
-    }
-
-    function enterWithAd(type, gameName) {
-      const label = (type === 'chat') ? 'Chat' : (gameName || 'Game');
-      if (!confirm('Watch ad to enter ' + label + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
-
-      window.open(getRandomAd(), '_blank');
-      const waitSec = adSettings.wait || 15;
-      alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
-
-      setTimeout(function() {
-        balance += adSettings.reward;
-        updateUI();
-        saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
-        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
-
-        if (type === 'chat') {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
-        } else if (gameName === 'TicTacToe') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startTTT();
-        } else if (gameName === 'Spin') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          spinPrize = 0;
-          const res = document.getElementById('spin-result');
-          const claim = document.getElementById('spin-claim');
-          if (res) res.innerText = '';
-          if (claim) claim.style.display = 'none';
-          showPage('game-spin');
-        } else if (gameName === 'Quiz') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startQuiz();
-        } else if (gameName === 'Dart') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startDart();
-        } else if (gameName === 'Fruit') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startFruit();
-        } else if (gameName === 'Shoot') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startShoot();
-        } else if (gameName === 'Tower') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startTower();
-        } else if (gameName === 'Sudoku') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startSudoku();
-        } else if (gameName === 'Race') {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\nOpening Overdrive Racer...');
-          // Open the racing game
-          window.location.href = 'Overdrive_Race.html';
-        } else {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\n' + (gameName || '') + ' coming soon!');
-        }
-      }, waitSec * 1000);
-    }
-
-    // ========== PROMOTE ==========
-    function openPromoteForm(type) {
-      currentPromoType = type;
-      const titles = {
-        channel: 'Promote Channel / Group',
-        bot: 'Promote Bot',
-        views: 'Buy Views & Likes',
-        install: 'Buy App Installs',
-        test: 'Test App / Web',
-        traffic: 'Website Traffic',
-        affiliate: 'Affiliate / Product',
-        monetize: 'Monetize Channel / Group',
-        banner: 'Place Banner Ad'
-      };
-      const titleEl = document.getElementById('promote-form-title');
-      if (titleEl) titleEl.innerText = titles[type] || 'Place Order';
-
-      const linkEl = document.getElementById('promo-link');
-      const qtyEl  = document.getElementById('promo-qty');
-      const notesEl = document.getElementById('promo-notes');
-      if (linkEl) linkEl.value = '';
-      if (qtyEl) qtyEl.value = (type === 'banner') ? 1 : 100;
-      if (notesEl) notesEl.value = '';
-      updatePromoCost();
-      showPage('promote-form');
-    }
-
-    function updatePromoCost() {
-      const qtyEl = document.getElementById('promo-qty');
-      const costEl = document.getElementById('promo-cost');
-      if (!qtyEl || !costEl) return;
-
-      const qty = Number(qtyEl.value) || 1;
-      let cost = 0;
-      if (currentPromoType === 'channel')   cost = prices.channel * Math.ceil(qty / 100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty / 100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty / 100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty / 50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty / 100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty / 50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-      else if (currentPromoType === 'monetize') cost = 0;
-
-      costEl.innerText = 'Cost: ' + cost + ' Coins';
-    }
-
-    // Attach listener after DOM is ready
-    (function() {
-      const qtyEl = document.getElementById('promo-qty');
-      if (qtyEl) qtyEl.addEventListener('input', updatePromoCost);
-    })();
-
-    function submitPromoteOrder() {
-      const linkEl = document.getElementById('promo-link');
-      const qtyEl  = document.getElementById('promo-qty');
-      const notesEl = document.getElementById('promo-notes');
-
-      const link  = linkEl ? linkEl.value.trim() : '';
-      const qty   = qtyEl ? (Number(qtyEl.value) || 1) : 1;
-      const notes = notesEl ? notesEl.value.trim() : '';
-
-      if (!link && currentPromoType !== 'monetize') {
-        alert('Please enter your link');
-        return;
-      }
-
-      let cost = 0;
-      if (currentPromoType === 'channel')   cost = prices.channel * Math.ceil(qty / 100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty / 100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty / 100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty / 50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty / 100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty / 50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-
-      if (cost > 0 && balance < cost) {
-        alert('Not enough coins! Need ' + cost + ' coins.');
-        return;
-      }
-
-      if (cost > 0) {
-        balance -= cost;
-        updateUI();
-        saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
-        saveToHistory('Promotion: ' + currentPromoType, -cost);
-      }
-
-      const taskTitleMap = {
-        channel: 'Join Channel: ' + link,
-        bot: 'Start Bot: ' + link,
-        views: 'View / Like: ' + link,
-        install: 'Install App: ' + link,
-        traffic: 'Visit Website: ' + link,
-        affiliate: 'Open Affiliate: ' + link,
-        test: 'Test App: ' + link,
-        banner: 'Banner Ad: ' + link,
-        monetize: 'Monetize Request'
-      };
-      const taskTitle = taskTitleMap[currentPromoType] || 'Promotion Task';
-
-      const rewardMap = {
-        channel: 15, bot: 20, views: 5, install: 40,
-        traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
-      };
-
-      const categoryMap = {
-        channel: 'join',
-        bot: 'bot',
-        views: 'views',
-        install: 'install',
-        traffic: 'website',
-        affiliate: 'affiliate'
-      };
-
-      const newTask = {
-        id: 'order_' + Date.now(),
-        title: taskTitle,
-        reward: rewardMap[currentPromoType] || 10,
-        category: categoryMap[currentPromoType] || 'other',
-        link: link,
-        wait_seconds: 10,
-        is_active: true,
-        from_order: true
-      };
-
-      // Save to local orders
-      let orders = [];
-      try { orders = JSON.parse(localStorage.getItem(ordersKey) || '[]'); } catch(e) { orders = []; }
-      orders.unshift(newTask);
-      if (orders.length > 50) orders.length = 50;
-      localStorage.setItem(ordersKey, JSON.stringify(orders));
-
-      // Try Supabase
-      if (sb) {
-        sb.from('tasks').insert([{
-          title: newTask.title,
-          reward: newTask.reward,
-          category: newTask.category,
-          link: newTask.link,
-          wait_seconds: 10,
-          is_active: true
-        }]).then(function(){}).catch(function(){});
-      }
-
-      alert('âœ… Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
-      showPage('promote');
-    }
-
-    function startCrossPromo() {
-      const today = new Date().toDateString();
-      const key = 'vtn_cross_' + userId + '_' + today;
-      let count = Number(localStorage.getItem(key) || 0);
-      if (count >= 3) {
-        alert('You already used 3 free cross promotions today.');
-        return;
-      }
-      const link = prompt('Enter your Channel / Bot / Post link:');
-      if (!link) return;
-      count++;
-      localStorage.setItem(key, String(count));
-      alert('âœ… Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
-    }
-
-    // ========== GAMES ==========
-    function setDiff(d) {
-      tttDiff = d;
-      document.querySelectorAll('.diff-btn').forEach(function(b) { b.classList.remove('active'); });
-      const btn = document.getElementById('diff-' + d);
-      if (btn) btn.classList.add('active');
-    }
-
-    function startTTT() {
-      tttBoard = ['','','','','','','','',''];
-      tttTurn = 'X';
-      tttOver = false;
-      tttPrize = 0;
-      const claim = document.getElementById('ttt-claim');
-      if (claim) claim.style.display = 'none';
-      showPage('game-ttt');
-      renderTTT();
-    }
-
-    function renderTTT() {
-      const board = document.getElementById('ttt-board');
-      if (!board) return;
-      board.innerHTML = '';
-      tttBoard.forEach(function(cell, i) {
-        const div = document.createElement('div');
-        div.className = 'ttt-cell';
-        div.innerText = cell;
-        div.style.color = (cell === 'X') ? '#c8102e' : '#2196F3';
-        div.onclick = function() { playTTT(i); };
-        board.appendChild(div);
-      });
-      const status = document.getElementById('ttt-status');
-      if (status) {
-        status.innerText = tttOver
-          ? (tttPrize > 0 ? 'You Won!' : 'Game Over')
-          : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer...');
-      }
-    }
-
-    function playTTT(i) {
-      if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
-      tttBoard[i] = 'X';
-      if (checkWin('X')) {
-        tttOver = true;
-        tttPrize = (tttDiff === 'easy') ? 1 : (tttDiff === 'medium' ? 2 : 3);
-        renderTTT();
-        const claim = document.getElementById('ttt-claim');
-        if (claim) {
-          claim.style.display = 'inline-block';
-          claim.innerText = 'Watch Ad & Claim ' + tttPrize + ' Coins';
-        }
-        return;
-      }
-      if (tttBoard.every(function(c) { return c; })) {
-        tttOver = true;
-        renderTTT();
-        alert('Draw!');
-        return;
-      }
-      tttTurn = 'O';
-      renderTTT();
-      setTimeout(computerMove, 400);
-    }
-
-    function computerMove() {
-      let move = null;
-      const empty = tttBoard.map(function(c, i) { return c === '' ? i : null; }).filter(function(x) { return x !== null; });
-
-      if (tttDiff === 'hard') {
-        move = findBestMove('O') || findBestMove('X') || (tttBoard[4] === '' ? 4 : null) || empty[Math.floor(Math.random() * empty.length)];
-      } else if (tttDiff === 'medium') {
-        move = findBestMove('O') || empty[Math.floor(Math.random() * empty.length)];
-      } else {
-        move = empty[Math.floor(Math.random() * empty.length)];
-      }
-
-      if (move === undefined || move === null) return;
-      tttBoard[move] = 'O';
-      if (checkWin('O')) {
-        tttOver = true;
-        renderTTT();
-        alert('Computer Wins!');
-        return;
-      }
-      if (tttBoard.every(function(c) { return c; })) {
-        tttOver = true;
-        renderTTT();
-        alert('Draw!');
-        return;
-      }
-      tttTurn = 'X';
-      renderTTT();
-    }
-
-    function findBestMove(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (let i = 0; i < lines.length; i++) {
-        const a = lines[i][0], b = lines[i][1], c = lines[i][2];
-        const line = [tttBoard[a], tttBoard[b], tttBoard[c]];
-        if (line.filter(function(x) { return x === p; }).length === 2 && line.indexOf('') !== -1) {
-          if (tttBoard[a] === '') return a;
-          if (tttBoard[b] === '') return b;
-          if (tttBoard[c] === '') return c;
-        }
-      }
-      return null;
-    }
-
-    function checkWin(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return lines.some(function(line) {
-        return tttBoard[line[0]] === p && tttBoard[line[1]] === p && tttBoard[line[2]] === p;
-      });
-    }
-
-    function claimTTT() {
-      if (tttPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += tttPrize;
-        updateUI();
-        saveBalance(tttPrize, 'game', 'TicTacToe Win');
-        saveToHistory('Tic Tac Toe Win', tttPrize);
-        alert('âœ… Claimed +' + tttPrize + ' Coins!');
-        tttPrize = 0;
-        const claim = document.getElementById('ttt-claim');
-        if (claim) claim.style.display = 'none';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // SPIN
-    function doSpin() {
-      const btn = document.getElementById('spin-btn');
-      const claim = document.getElementById('spin-claim');
-      const result = document.getElementById('spin-result');
-      const wheel = document.getElementById('spin-wheel');
-      if (!btn || !wheel) return;
-
-      btn.disabled = true;
-      if (claim) claim.style.display = 'none';
-
-      const r = Math.random() * 100;
-      let prize;
-      if (r < 40) prize = 1;
-      else if (r < 70) prize = 2;
-      else if (r < 82) prize = 0;
-      else if (r < 90) prize = 3;
-      else if (r < 96) prize = 5;
-      else if (r < 99) prize = 10;
-      else prize = 25;
-
-      const deg = 1800 + Math.floor(Math.random() * 360);
-      wheel.style.transform = 'rotate(' + deg + 'deg)';
-
-      setTimeout(function() {
-        spinPrize = prize;
-        if (result) {
-          if (prize === 0) {
-            result.innerText = 'Try Again!';
-          } else {
-            result.innerText = 'You got ' + prize + ' Coins!';
-            if (claim) {
-              claim.style.display = 'inline-block';
-              claim.innerText = 'Watch Ad & Collect ' + prize + ' Coins';
-            }
-          }
-        }
-        btn.disabled = false;
-      }, 4200);
-    }
-
-    function claimSpin() {
-      if (spinPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += spinPrize;
-        updateUI();
-        saveBalance(spinPrize, 'game', 'Spin Win');
-        saveToHistory('Spin & Win', spinPrize);
-        alert('âœ… Collected +' + spinPrize + ' Coins!');
-        spinPrize = 0;
-        const claim = document.getElementById('spin-claim');
-        const result = document.getElementById('spin-result');
-        if (claim) claim.style.display = 'none';
-        if (result) result.innerText = '';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // QUIZ
-    function startQuiz() {
-      quizIndex = Math.floor(Math.random() * quizData.length);
-      const q = quizData[quizIndex];
-      const qEl = document.getElementById('quiz-question');
-      const rEl = document.getElementById('quiz-result');
-      const opts = document.getElementById('quiz-options');
-      if (qEl) qEl.innerText = q.q;
-      if (rEl) rEl.innerText = '';
-      if (!opts) return;
-      opts.innerHTML = '';
-      q.opts.forEach(function(o, i) {
-        const div = document.createElement('div');
-        div.className = 'quiz-option';
-        div.innerText = o;
-        div.onclick = function() { answerQuiz(i); };
-        opts.appendChild(div);
-      });
-      showPage('game-quiz');
-    }
-
-    function answerQuiz(i) {
-      const q = quizData[quizIndex];
-      const rEl = document.getElementById('quiz-result');
-      if (!rEl) return;
-      if (i === q.ans) {
-        rEl.innerText = 'âœ… Correct! +3 Coins';
-        balance += 3;
-        updateUI();
-        saveBalance(3, 'game', 'Quiz Correct');
-        saveToHistory('Quiz Win', 3);
-      } else {
-        rEl.innerText = 'âŒ Wrong! Answer: ' + q.opts[q.ans];
-      }
-    }
-
-    // DART
-    function startDart() {
-      dartScore = 0;
-      dartRunning = false;
-      if (dartTimer) { clearInterval(dartTimer); dartTimer = null; }
-      const scoreEl = document.getElementById('dart-score');
-      const claim = document.getElementById('dart-claim');
-      const btn = document.getElementById('dart-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-dart');
-    }
-
-    function playDart() {
-      if (dartRunning) return;
-      dartRunning = true;
-      dartScore = 0;
-      const scoreEl = document.getElementById('dart-score');
-      const btn = document.getElementById('dart-btn');
-      const target = document.getElementById('dart-target');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      let timeLeft = 10;
-      if (target) {
-        target.onclick = function() {
-          if (!dartRunning) return;
-          dartScore++;
-          if (scoreEl) scoreEl.innerText = dartScore;
-          target.style.transform = 'scale(1.3)';
-          setTimeout(function() { target.style.transform = 'scale(1)'; }, 100);
-        };
-      }
-
-      dartTimer = setInterval(function() {
-        timeLeft--;
-        if (timeLeft <= 0) {
-          clearInterval(dartTimer);
-          dartTimer = null;
-          dartRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(dartScore / 3), 8);
-          const claim = document.getElementById('dart-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          } else {
-            alert('Score too low. Try again!');
-          }
-        }
-      }, 1000);
-    }
-
-    // FRUIT
-    function startFruit() {
-      fruitScore = 0;
-      fruitRunning = false;
-      if (fruitTimeout) { clearTimeout(fruitTimeout); fruitTimeout = null; }
-      const scoreEl = document.getElementById('fruit-score');
-      const claim = document.getElementById('fruit-claim');
-      const btn = document.getElementById('fruit-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-fruit');
-    }
-
-    function playFruit() {
-      if (fruitRunning) return;
-      fruitRunning = true;
-      fruitScore = 0;
-      const scoreEl = document.getElementById('fruit-score');
-      const btn = document.getElementById('fruit-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      const fruits = ['ðŸŽ','ðŸŒ','ðŸ‡','ðŸŠ','ðŸ“','ðŸ‰'];
-      let count = 0;
-
-      function nextFruit() {
-        if (count >= 12) {
-          fruitRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
-          const claim = document.getElementById('fruit-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          }
-          return;
-        }
-        const disp = document.getElementById('fruit-display');
-        if (disp) {
-          disp.innerText = fruits[Math.floor(Math.random() * fruits.length)];
-          disp.onclick = function() {
-            if (!fruitRunning) return;
-            fruitScore++;
-            if (scoreEl) scoreEl.innerText = fruitScore;
-            disp.onclick = null;
-          };
-        }
-        count++;
-        fruitTimeout = setTimeout(nextFruit, 900);
-      }
-      nextFruit();
-    }
-
-    // SHOOT
-    function startShoot() {
-      shootScore = 0;
-      shootRunning = false;
-      const scoreEl = document.getElementById('shoot-score');
-      const claim = document.getElementById('shoot-claim');
-      const btn = document.getElementById('shoot-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-shoot');
-    }
-
-    function playShoot() {
-      if (shootRunning) return;
-      shootRunning = true;
-      shootScore = 0;
-      const scoreEl = document.getElementById('shoot-score');
-      const btn = document.getElementById('shoot-btn');
-      const target = document.getElementById('shoot-target');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      let left = 12;
-      function showTarget() {
-        if (left <= 0) {
-          shootRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(shootScore / 2), 7);
-          const claim = document.getElementById('shoot-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          }
-          return;
-        }
-        if (target) {
-          target.style.opacity = '1';
-          target.onclick = function() {
-            if (!shootRunning) return;
-            shootScore++;
-            if (scoreEl) scoreEl.innerText = shootScore;
-            target.style.opacity = '0.3';
-            target.onclick = null;
-          };
-        }
-        left--;
-        setTimeout(showTarget, 800);
-      }
-      showTarget();
-    }
-
-    // TOWER
-    function startTower() {
-      towerScore = 0;
-      towerRunning = false;
-      const scoreEl = document.getElementById('tower-score');
-      const disp = document.getElementById('tower-display');
-      const claim = document.getElementById('tower-claim');
-      const btn = document.getElementById('tower-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (disp) disp.innerText = 'â¬œ';
-      if (claim) claim.style.display = 'none';
-      if (btn) {
-        btn.innerText = 'Start';
-        btn.onclick = playTower;
-      }
-      showPage('game-tower');
-    }
-
-    function playTower() {
-      if (towerRunning) return;
-      towerRunning = true;
-      towerScore = 0;
-      const scoreEl = document.getElementById('tower-score');
-      const disp = document.getElementById('tower-display');
-      const btn = document.getElementById('tower-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) {
-        btn.innerText = 'Drop Block';
-        btn.onclick = function() {
-          if (!towerRunning) return;
-          towerScore++;
-          if (scoreEl) scoreEl.innerText = towerScore;
-          if (disp) disp.innerText += 'â¬œ';
-          if (towerScore >= 10) {
-            towerRunning = false;
-            btn.innerText = 'Finished';
-            gamePrize = Math.min(towerScore, 8);
-            const claim = document.getElementById('tower-claim');
-            if (claim) {
-              claim.style.display = 'inline-block';
-              claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-            }
-          }
-        };
-      }
-    }
-
-    // SUDOKU (simple 4x4 for mobile)
-    function startSudoku() {
-      const puzzle = [
-        [1,0,0,4],
-        [0,0,1,0],
-        [0,4,0,0],
-        [4,0,0,2]
-      ];
-      sudokuSolution = [
-        [1,2,3,4],
-        [3,4,1,2],
-        [2,3,4,1],
-        [4,1,2,3]
-      ];
-      const board = document.getElementById('sudoku-board');
-      if (!board) return;
-      board.innerHTML = '';
-      board.style.gridTemplateColumns = 'repeat(4, 50px)';
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          const inp = document.createElement('input');
-          inp.type = 'number';
-          inp.min = 1;
-          inp.max = 4;
-          inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;';
-          if (puzzle[r][c] !== 0) {
-            inp.value = puzzle[r][c];
-            inp.disabled = true;
-            inp.style.background = '#ffe8e8';
-          }
-          inp.dataset.r = r;
-          inp.dataset.c = c;
-          board.appendChild(inp);
-        }
-      }
-      const msg = document.getElementById('sudoku-msg');
-      if (msg) msg.innerText = '';
-      showPage('game-sudoku');
-    }
-
-    function checkSudoku() {
-      const inputs = document.querySelectorAll('#sudoku-board input');
-      let correct = true;
-      inputs.forEach(function(inp) {
-        const r = Number(inp.dataset.r);
-        const c = Number(inp.dataset.c);
-        const val = Number(inp.value);
-        if (val !== sudokuSolution[r][c]) correct = false;
-      });
-      const msg = document.getElementById('sudoku-msg');
-      if (correct) {
-        if (msg) msg.innerText = 'âœ… Correct! +5 Coins';
-        balance += 5;
-        updateUI();
-        saveBalance(5, 'game', 'Sudoku Win');
-        saveToHistory('Sudoku Win', 5);
-      } else {
-        if (msg) msg.innerText = 'âŒ Not correct yet';
-      }
-    }
-
-    function claimGame(type) {
-      if (gamePrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += gamePrize;
-        updateUI();
-        saveBalance(gamePrize, 'game', type + ' Win');
-        saveToHistory(type + ' Game', gamePrize);
-        alert('âœ… Claimed +' + gamePrize + ' Coins!');
-        gamePrize = 0;
-        const claim = document.getElementById(type + '-claim');
-        if (claim) claim.style.display = 'none';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // ========== WALLET ==========
-    function openWithdraw(type) {
-      currentWithdrawType = type;
-      const label = document.getElementById('withdraw-label');
-      const addr = document.getElementById('withdraw-address');
-      const amt = document.getElementById('withdraw-amount');
-      if (label) label.innerText = (type === 'upi') ? 'UPI ID / Bank Account' : 'USDT Address (TRC20/BEP20)';
-      if (addr) addr.value = '';
-      if (amt) amt.value = 500;
-      showPage('withdraw-form');
-    }
-
-    function submitWithdraw() {
-      const addrEl = document.getElementById('withdraw-address');
-      const amtEl  = document.getElementById('withdraw-amount');
-      const address = addrEl ? addrEl.value.trim() : '';
-      const amount  = amtEl ? (Number(amtEl.value) || 0) : 0;
-
-      if (!address) { alert('Enter address / UPI'); return; }
-      if (amount < 500) { alert('Minimum withdrawal is 500 Coins'); return; }
-      if (balance < amount) { alert('Not enough balance'); return; }
-
-      balance -= amount;
-      updateUI();
-      saveBalance(-amount, 'withdraw', 'Withdrawal request');
-      saveToHistory('Withdrawal Request', -amount);
-      alert('âœ… Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
-      showPage('wallet');
-    }
-
-    // ========== ADMIN ==========
-    function savePriceSettings() {
-      prices.channel   = Number(document.getElementById('price-channel').value) || 200;
-      prices.bot       = Number(document.getElementById('price-bot').value) || 150;
-      prices.views     = Number(document.getElementById('price-views').value) || 50;
-      prices.install   = Number(document.getElementById('price-install').value) || 300;
-      prices.traffic   = Number(document.getElementById('price-traffic').value) || 80;
-      prices.banner    = Number(document.getElementById('price-banner').value) || 100;
-      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
-      prices.test      = Number(document.getElementById('price-test').value) || 60;
-      localStorage.setItem('vtn_prices', JSON.stringify(prices));
-      alert('âœ… Prices saved!');
-    }
-
-    function loadPriceSettings() {
-      const setVal = function(id, val) {
-        const el = document.getElementById(id);
-        if (el) el.value = val;
-      };
-      setVal('price-channel', prices.channel);
-      setVal('price-bot', prices.bot);
-      setVal('price-views', prices.views);
-      setVal('price-install', prices.install);
-      setVal('price-traffic', prices.traffic);
-      setVal('price-banner', prices.banner);
-      setVal('price-affiliate', prices.affiliate);
-      setVal('price-test', prices.test);
-    }
-
-    function saveAdSettings() {
-      const raw = document.getElementById('ad-links').value.trim();
-      const links = raw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l; });
-      adSettings.links  = links.length ? links : adSettings.links;
-      adSettings.wait   = Number(document.getElementById('ad-wait').value) || 15;
-      adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
-      localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('âœ… Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
-    }
-
-    function loadAdSettings() {
-      const linksEl = document.getElementById('ad-links');
-      const waitEl  = document.getElementById('ad-wait');
-      const rewardEl = document.getElementById('ad-reward');
-      if (linksEl) linksEl.value = (adSettings.links || []).join('\n');
-      if (waitEl) waitEl.value = adSettings.wait || 15;
-      if (rewardEl) rewardEl.value = adSettings.reward || 5;
-    }
-
-    // ========== TASKS ==========
-    function openCategory(cat) {
-      currentCategory = cat;
-      const titles = {
-        join: 'Join Channel / Group',
-        bot: 'Join Bot',
-        watch: 'Watch & Earn',
-        views: 'Views & Earn',
-        install: 'Install App',
-        website: 'Visit Website',
-        affiliate: 'Affiliate',
-        products: 'View Products',
-        other: 'Earn Tasks'
-      };
-      const titleEl = document.getElementById('category-title');
-      if (titleEl) titleEl.innerText = titles[cat] || 'Tasks';
-      showPage('category-tasks');
-      loadCategoryTasks(cat);
-    }
-
-    async function loadCategoryTasks(cat) {
-      const container = document.getElementById('category-list');
-      if (!container) return;
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
-
-      let allTasks = [];
-      try {
-        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-        allTasks = orders.filter(function(t) {
-          return t.category === cat || (cat === 'other' && !t.category);
-        });
-      } catch(e) {}
-
-      if (sb) {
-        try {
-          let query = sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
-          if (cat === 'other') {
-            query = query.or('category.eq.other,category.is.null');
-          } else {
-            query = query.eq('category', cat);
-          }
-          const { data } = await query;
-          if (data && data.length) allTasks = allTasks.concat(data);
-        } catch(e) {
-          console.warn('loadCategoryTasks supabase', e);
-        }
-      }
-
-      if (!allTasks.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
-        return;
-      }
-
-      currentTasks = allTasks;
-      let html = '';
-      allTasks.forEach(function(task, index) {
-        if (task.category !== 'watch' && completedTasks.indexOf(task.id) !== -1) return;
-        const waitInfo = (task.wait_seconds > 0) ? (' â€¢ Wait ' + task.wait_seconds + 's') : '';
-        html += '<div class="list-item">' +
-          '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
-          '<div class="info"><h4>' + (task.title || 'Task') + '</h4>' +
-          '<p>+' + (task.reward || 0) + ' Coins' + waitInfo + '</p></div>' +
-          '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button></div>';
-      });
-      container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
-    }
-
-    function doTaskByIndex(index) {
-      const task = currentTasks[index];
-      if (!task) return;
-      if (task.link) window.open(task.link, '_blank');
-      const waitSec = Number(task.wait_seconds) || 0;
-      if (waitSec > 0) {
-        alert('Please wait ' + waitSec + ' seconds...');
-        setTimeout(function() { finishTask(task); }, waitSec * 1000);
-      } else {
-        setTimeout(function() { finishTask(task); }, 1500);
-      }
-    }
-
-    function finishTask(task) {
-      if (!confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"')) {
-        alert('No coins added.');
-        return;
-      }
-      const reward = task.reward || 0;
-      if (task.category !== 'watch' && completedTasks.indexOf(task.id) === -1) {
-        completedTasks.push(task.id);
-        localStorage.setItem(completedKey, JSON.stringify(completedTasks));
-      }
-      saveToHistory(task.title || 'Task', reward);
-      addCoins(reward, task.title || 'Task');
-      loadCategoryTasks(currentCategory);
-    }
-
-    function saveToHistory(title, amount) {
-      let history = [];
-      try { history = JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch(e) { history = []; }
-      history.unshift({ title: title, amount: amount, time: new Date().toLocaleString() });
-      if (history.length > 30) history.length = 30;
-      localStorage.setItem(historyKey, JSON.stringify(history));
-    }
-
-    function loadHistory() {
-      const container = document.getElementById('history-list');
-      if (!container) return;
-      let history = [];
-      try { history = JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch(e) { history = []; }
-      if (!history.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>';
-        return;
-      }
-      let html = '';
-      history.forEach(function(item) {
-        html += '<div class="list-item">' +
-          '<div class="icon" style="background:#4CAF50;">âœ…</div>' +
-          '<div class="info"><h4>' + item.title + '</h4><p>' + item.time + '</p></div>' +
-          '<div style="font-weight:700;color:#c8102e;">' + (item.amount > 0 ? '+' : '') + item.amount + '</div></div>';
-      });
-      container.innerHTML = html;
-    }
-
-    // ========== ADMIN FUNCTIONS ==========
-    async function adminAddCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        const newBalance = (data.balance || 0) + coins;
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{
-          telegram_id: tid, amount: coins, type: 'admin', description: 'Admin added coins'
-        }]);
-        if (result) result.innerHTML = '<span style="color:green;">âœ… Added ' + coins + '. New: ' + newBalance + '</span>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminRemoveCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        const newBalance = Math.max(0, (data.balance || 0) - coins);
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{
-          telegram_id: tid, amount: -coins, type: 'admin', description: 'Admin removed coins'
-        }]);
-        if (result) result.innerHTML = '<span style="color:orange;">âˆ’ Removed ' + coins + '. New: ' + newBalance + '</span>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminCheckBalance() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        if (result) result.innerHTML = 'User: ' + (data.first_name || tid) + '<br>Balance: <b>' + (data.balance || 0) + '</b>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminViewHistory() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id', { ascending: false }).limit(10);
-        if (!data || !data.length) {
-          if (result) result.innerHTML = 'No transactions';
-          return;
-        }
-        let html = '<b>Last 10:</b><br>';
-        data.forEach(function(t) {
-          html += (t.description || t.type) + ': ' + t.amount + '<br>';
-        });
-        if (result) result.innerHTML = html;
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    function adminBlockUser() {
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      if (!confirm('Block user ' + tid + '?')) return;
-      if (blockedUsers.indexOf(tid) === -1) {
-        blockedUsers.push(tid);
-        localStorage.setItem(blockedKey, JSON.stringify(blockedUsers));
-      }
-      if (result) result.innerHTML = '<span style="color:red;">User ' + tid + ' blocked</span>';
-      alert('User blocked');
-    }
-
-    async function addNewTask() {
-      if (!sb) return alert('Supabase not connected');
-      const title = document.getElementById('task-title').value.trim();
-      const reward = Number(document.getElementById('task-reward').value) || 0;
-      const category = document.getElementById('task-category').value;
-      const link = document.getElementById('task-link').value.trim();
-      const waitSeconds = Number(document.getElementById('task-wait').value) || 0;
-      const maxUsers = Number(document.getElementById('task-max-users').value) || 0;
-      if (!title) return alert('Enter title');
-      try {
-        const { error } = await sb.from('tasks').insert([{
-          title: title,
-          reward: reward,
-          category: category,
-          link: link,
-          wait_seconds: waitSeconds,
-          max_users: maxUsers,
-          is_active: true
-        }]);
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
-        alert('âœ… Task Added!');
-        document.getElementById('task-title').value = '';
-        document.getElementById('task-reward').value = '10';
-        document.getElementById('task-link').value = '';
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    async function loadAdminTasks() {
-      if (!sb) return;
-      const container = document.getElementById('admin-tasks-list');
-      if (!container) return;
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;">Loading...</div>';
-      try {
-        const { data } = await sb.from('tasks').select('*').order('id', { ascending: false });
-        if (!data || !data.length) {
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks</div>';
-          return;
-        }
-        let html = '';
-        data.forEach(function(task) {
-          const btnText = task.is_active ? 'Off' : 'On';
-          const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
-          const statusDot = task.is_active ? 'ðŸŸ¢' : 'ðŸ”´';
-          html += '<div class="list-item">' +
-            '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
-            '<div class="info"><h4>' + (task.title || '') + '</h4>' +
-            '<p>+' + (task.reward || 0) + ' â€¢ ' + (task.category || '') + ' â€¢ ' + statusDot + '</p></div>' +
-            '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ',' + (!task.is_active) + ')">' + btnText + '</button>' +
-            '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button></div>';
-        });
-        container.innerHTML = html;
-      } catch (e) {
-        container.innerHTML = '<div class="card">Failed</div>';
-      }
-    }
-
-    async function toggleTask(id, newStatus) {
-      try {
-        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
-        alert(newStatus ? 'Enabled' : 'Disabled');
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    async function deleteTask(id) {
-      if (!confirm('Delete?')) return;
-      try {
-        await sb.from('tasks').delete().eq('id', id);
-        alert('Deleted');
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    // ========== INIT ==========
-    setupUser();
-    loadUser();
-  </script>
+  } catch(e){}
+}
+
+async function saveBalance(amount, type, desc) {
+  if (!sb || !user) return;
+  try {
+    await sb.from('users').update({ balance }).eq('telegram_id', user.id);
+    await sb.from('transactions').insert([{ telegram_id:user.id, amount, type, description:desc }]);
+  } catch(e){}
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(id); if (page) page.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0 };
+  if (map[id] !== undefined) {
+    const navs = document.querySelectorAll('.nav-item');
+    if (navs[map[id]]) navs[map[id]].classList.add('active');
+  }
+  if (id === 'wallet') loadHistory();
+}
+
+function addCoins(amount, title) {
+  balance += amount; updateUI(); saveBalance(amount, 'task', title);
+  alert(title + ' Successful! +' + amount + ' Coins');
+}
+
+function dailyCheckIn() {
+  const today = new Date().toDateString();
+  if (lastCheckIn === today) { alert('Already claimed today!'); return; }
+  if (!confirm('Watch a short ad to claim?')) return;
+  let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
+  if (isFirstDay) { localStorage.setItem(firstDayKey,'1'); isFirstDay=false; alert('First Day Bonus! +'+reward); }
+  else alert('Daily Check-in! +'+reward);
+  balance += reward; lastCheckIn = today;
+  localStorage.setItem(checkinKey, today); updateUI();
+  saveBalance(reward, 'checkin', 'Daily Check-in');
+  saveToHistory('Daily Check-in', reward);
+}
+
+function doOfficialTask() {
+  if (officialDone) { alert('Already completed'); return; }
+  if (!confirm('Join Official Channel & Group?\\n\\nhttps://t.me/vtnhub\\nhttps://t.me/vtnhub1')) return;
+  window.open('https://t.me/vtnhub', '_blank');
+  setTimeout(() => window.open('https://t.me/vtnhub1', '_blank'), 800);
+  balance += 50; officialDone = true;
+  localStorage.setItem(officialKey, '1');
+  const el = document.getElementById('official-task'); if (el) el.style.display = 'none';
+  updateUI(); saveBalance(50, 'official', 'Official Task'); saveToHistory('Official Task', 50);
+  if (sb && user) sb.from('users').update({ official_done:true }).eq('telegram_id', user.id).then(()=>{}).catch(()=>{});
+  alert('Official Task Completed! +50 Coins');
+}
+
+function copyCode() {
+  const code = (document.getElementById('ref-code') || {}).innerText || '';
+  if (navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Copied: '+code)).catch(()=>alert(code));
+  else alert(code);
+}
+
+function getRandomAd() {
+  const links = adSettings.links || [];
+  return links.length ? links[Math.floor(Math.random()*links.length)] : 'https://t.me/Vtnhub0';
+}
+
+function enterWithAd(type, gameName) {
+  const label = type==='chat' ? 'Chat' : (gameName||'Game');
+  if (!confirm('Watch ad to enter ' + label + '?\\n\\nEarn ' + adSettings.reward + ' coins.')) return;
+  window.open(getRandomAd(), '_blank');
+  const waitSec = adSettings.wait || 15;
+  alert('Please wait ' + waitSec + ' seconds...\\n\\nDo not close the app.');
+  setTimeout(function() {
+    balance += adSettings.reward; updateUI();
+    saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
+    saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
+    if (type === 'chat') alert('+' + adSettings.reward + ' Coins\\n\\nChat coming soon. Contact @Vtnhub0');
+    else if (gameName === 'TicTacToe') { alert('+' + adSettings.reward + ' Coins'); startTTT(); }
+    else if (gameName === 'Spin') { alert('+' + adSettings.reward + ' Coins'); spinPrize=0; const r=document.getElementById('spin-result'); const c=document.getElementById('spin-claim'); if(r)r.innerText=''; if(c)c.style.display='none'; showPage('game-spin'); }
+    else if (gameName === 'Quiz') { alert('+' + adSettings.reward + ' Coins'); startQuiz(); }
+    else if (gameName === 'Dart') { alert('+' + adSettings.reward + ' Coins'); startDart(); }
+    else if (gameName === 'Fruit') { alert('+' + adSettings.reward + ' Coins'); startFruit(); }
+    else if (gameName === 'Shoot') { alert('+' + adSettings.reward + ' Coins'); startShoot(); }
+    else if (gameName === 'Tower') { alert('+' + adSettings.reward + ' Coins'); startTower(); }
+    else if (gameName === 'Sudoku') { alert('+' + adSettings.reward + ' Coins'); startSudoku(); }
+    else if (gameName === 'Race') { alert('+' + adSettings.reward + ' Coins\\n\\nOpening Race...'); window.open('Overdrive_Race_COMPLETE.html', '_blank'); }
+    else alert('+' + adSettings.reward + ' Coins\\n\\n' + (gameName||'') + ' coming soon!');
+  }, waitSec * 1000);
+}
+
+// Promote functions
+function openPromoteForm(type) {
+  currentPromoType = type;
+  const titles = { channel:'Promote Channel / Group', bot:'Promote Bot', views:'Buy Views & Likes', install:'Buy App Installs', test:'Test App / Web', traffic:'Website Traffic', affiliate:'Affiliate / Product', monetize:'Monetize Channel / Group', banner:'Place Banner Ad' };
+  const t = document.getElementById('promote-form-title'); if (t) t.innerText = titles[type] || 'Place Order';
+  const l = document.getElementById('promo-link'); if (l) l.value = '';
+  const q = document.getElementById('promo-qty'); if (q) q.value = type==='banner' ? 1 : 100;
+  const n = document.getElementById('promo-notes'); if (n) n.value = '';
+  updatePromoCost(); showPage('promote-form');
+}
+function updatePromoCost() {
+  const qty = Number((document.getElementById('promo-qty')||{}).value) || 1;
+  let cost = 0;
+  if (currentPromoType==='channel') cost = prices.channel * Math.ceil(qty/100);
+  else if (currentPromoType==='bot') cost = prices.bot * Math.ceil(qty/100);
+  else if (currentPromoType==='views') cost = prices.views * Math.ceil(qty/100);
+  else if (currentPromoType==='install') cost = prices.install * Math.ceil(qty/50);
+  else if (currentPromoType==='traffic') cost = prices.traffic * Math.ceil(qty/100);
+  else if (currentPromoType==='affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+  else if (currentPromoType==='banner') cost = prices.banner * qty;
+  else if (currentPromoType==='test') cost = prices.test;
+  const c = document.getElementById('promo-cost'); if (c) c.innerText = 'Cost: ' + cost + ' Coins';
+}
+(function(){ const q=document.getElementById('promo-qty'); if(q) q.addEventListener('input', updatePromoCost); })();
+
+function submitPromoteOrder() {
+  const link = ((document.getElementById('promo-link')||{}).value||'').trim();
+  const qty = Number((document.getElementById('promo-qty')||{}).value)||1;
+  if (!link && currentPromoType!=='monetize') { alert('Please enter your link'); return; }
+  let cost = 0;
+  if (currentPromoType==='channel') cost = prices.channel * Math.ceil(qty/100);
+  else if (currentPromoType==='bot') cost = prices.bot * Math.ceil(qty/100);
+  else if (currentPromoType==='views') cost = prices.views * Math.ceil(qty/100);
+  else if (currentPromoType==='install') cost = prices.install * Math.ceil(qty/50);
+  else if (currentPromoType==='traffic') cost = prices.traffic * Math.ceil(qty/100);
+  else if (currentPromoType==='affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+  else if (currentPromoType==='banner') cost = prices.banner * qty;
+  else if (currentPromoType==='test') cost = prices.test;
+  if (cost>0 && balance<cost) { alert('Not enough coins! Need '+cost); return; }
+  if (cost>0) { balance-=cost; updateUI(); saveBalance(-cost,'promo','Promotion: '+currentPromoType); saveToHistory('Promotion: '+currentPromoType,-cost); }
+  const taskTitleMap = { channel:'Join Channel: '+link, bot:'Start Bot: '+link, views:'View / Like: '+link, install:'Install App: '+link, traffic:'Visit Website: '+link, affiliate:'Open Affiliate: '+link, test:'Test App: '+link, banner:'Banner Ad: '+link, monetize:'Monetize Request' };
+  const rewardMap = { channel:15, bot:20, views:5, install:40, traffic:8, affiliate:6, test:15, banner:10, monetize:0 };
+  const categoryMap = { channel:'join', bot:'bot', views:'views', install:'install', traffic:'website', affiliate:'affiliate' };
+  const newTask = { id:'order_'+Date.now(), title:taskTitleMap[currentPromoType]||'Promotion Task', reward:rewardMap[currentPromoType]||10, category:categoryMap[currentPromoType]||'other', link:link, wait_seconds:10, is_active:true, from_order:true };
+  let orders = []; try { orders = JSON.parse(localStorage.getItem(ordersKey)||'[]'); } catch(e){}
+  orders.unshift(newTask); if (orders.length>50) orders.length=50;
+  localStorage.setItem(ordersKey, JSON.stringify(orders));
+  if (sb) sb.from('tasks').insert([{ title:newTask.title, reward:newTask.reward, category:newTask.category, link:newTask.link, wait_seconds:10, is_active:true }]).then(()=>{}).catch(()=>{});
+  alert('Order submitted!\\nCost: '+cost+' Coins\\n\\nTask is now available in Earn page.');
+  showPage('promote');
+}
+
+function startCrossPromo() {
+  const today = new Date().toDateString();
+  const key = 'vtn_cross_'+userId+'_'+today;
+  let count = Number(localStorage.getItem(key)||0);
+  if (count >= 3) { alert('You already used 3 free cross promotions today.'); return; }
+  const link = prompt('Enter your Channel / Bot / Post link:');
+  if (!link) return;
+  count++; localStorage.setItem(key, String(count));
+  alert('Cross promotion submitted!\\nRemaining today: '+(3-count)+'\\n\\nContact @Vtnhub0 for confirmation.');
+}
+
+// Games (TTT, Spin, Quiz, Dart, Fruit, Shoot, Tower, Sudoku) - full working code from previous version
+function setDiff(d){ tttDiff=d; document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active')); const el=document.getElementById('diff-'+d); if(el)el.classList.add('active'); }
+function startTTT(){ tttBoard=['','','','','','','','','']; tttTurn='X'; tttOver=false; tttPrize=0; const c=document.getElementById('ttt-claim'); if(c)c.style.display='none'; showPage('game-ttt'); renderTTT(); }
+function renderTTT(){ const board=document.getElementById('ttt-board'); if(!board)return; board.innerHTML=''; tttBoard.forEach((cell,i)=>{ const div=document.createElement('div'); div.className='ttt-cell'; div.innerText=cell; div.style.color=cell==='X'?'#c8102e':'#2196F3'; div.onclick=()=>playTTT(i); board.appendChild(div); }); const st=document.getElementById('ttt-status'); if(st) st.innerText=tttOver?(tttPrize>0?'You Won!':'Game Over'):(tttTurn==='X'?'Your turn (X)':'Computer...'); }
+function playTTT(i){ if(tttOver||tttBoard[i]||tttTurn!=='X')return; tttBoard[i]='X'; if(checkWin('X')){ tttOver=true; tttPrize=tttDiff==='easy'?1:(tttDiff==='medium'?2:3); renderTTT(); const c=document.getElementById('ttt-claim'); if(c){c.style.display='inline-block'; c.innerText='Watch Ad & Claim '+tttPrize+' Coins';} return; } if(tttBoard.every(c=>c)){ tttOver=true; renderTTT(); alert('Draw!'); return; } tttTurn='O'; renderTTT(); setTimeout(computerMove,400); }
+function computerMove(){ let move=null; const empty=tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null); if(tttDiff==='hard') move=findBestMove('O')||findBestMove('X')||(tttBoard[4]===''?4:null)||empty[Math.floor(Math.random()*empty.length)]; else if(tttDiff==='medium') move=findBestMove('O')||empty[Math.floor(Math.random()*empty.length)]; else move=empty[Math.floor(Math.random()*empty.length)]; if(move==null)return; tttBoard[move]='O'; if(checkWin('O')){ tttOver=true; renderTTT(); alert('Computer Wins!'); return; } if(tttBoard.every(c=>c)){ tttOver=true; renderTTT(); alert('Draw!'); return; } tttTurn='X'; renderTTT(); }
+function findBestMove(p){ const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(const [a,b,c] of lines){ const line=[tttBoard[a],tttBoard[b],tttBoard[c]]; if(line.filter(x=>x===p).length===2&&line.includes('')){ if(tttBoard[a]==='')return a; if(tttBoard[b]==='')return b; if(tttBoard[c]==='')return c; } } return null; }
+function checkWin(p){ return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(([a,b,c])=>tttBoard[a]===p&&tttBoard[b]===p&&tttBoard[c]===p); }
+function claimTTT(){ if(tttPrize<=0)return; window.open(getRandomAd(),'_blank'); setTimeout(()=>{ balance+=tttPrize; updateUI(); saveBalance(tttPrize,'game','TicTacToe Win'); saveToHistory('Tic Tac Toe Win',tttPrize); alert('Claimed +'+tttPrize+' Coins!'); tttPrize=0; const c=document.getElementById('ttt-claim'); if(c)c.style.display='none'; },(adSettings.wait||10)*1000); }
+
+function doSpin(){ const btn=document.getElementById('spin-btn'); const claim=document.getElementById('spin-claim'); const result=document.getElementById('spin-result'); const wheel=document.getElementById('spin-wheel'); if(!btn||!wheel)return; btn.disabled=true; if(claim)claim.style.display='none'; const r=Math.random()*100; let prize; if(r<40)prize=1; else if(r<70)prize=2; else if(r<82)prize=0; else if(r<90)prize=3; else if(r<96)prize=5; else if(r<99)prize=10; else prize=25; const deg=1800+Math.floor(Math.random()*360); wheel.style.transform='rotate('+deg+'deg)'; setTimeout(()=>{ spinPrize=prize; if(result){ if(prize===0) result.innerText='Try Again!'; else { result.innerText='You got '+prize+' Coins!'; if(claim){ claim.style.display='inline-block'; claim.innerText='Watch Ad & Collect '+prize+' Coins'; } } } btn.disabled=false; },4200); }
+function claimSpin(){ if(spinPrize<=0)return; window.open(getRandomAd(),'_blank'); setTimeout(()=>{ balance+=spinPrize; updateUI(); saveBalance(spinPrize,'game','Spin Win'); saveToHistory('Spin & Win',spinPrize); alert('Collected +'+spinPrize+' Coins!'); spinPrize=0; const c=document.getElementById('spin-claim'); const r=document.getElementById('spin-result'); if(c)c.style.display='none'; if(r)r.innerText=''; },(adSettings.wait||10)*1000); }
+
+function startQuiz(){ quizIndex=Math.floor(Math.random()*quizData.length); const q=quizData[quizIndex]; const qe=document.getElementById('quiz-question'); const re=document.getElementById('quiz-result'); const opts=document.getElementById('quiz-options'); if(qe)qe.innerText=q.q; if(re)re.innerText=''; if(!opts)return; opts.innerHTML=''; q.opts.forEach((o,i)=>{ const div=document.createElement('div'); div.className='quiz-option'; div.innerText=o; div.onclick=()=>answerQuiz(i); opts.appendChild(div); }); showPage('game-quiz'); }
+function answerQuiz(i){ const q=quizData[quizIndex]; const re=document.getElementById('quiz-result'); if(!re)return; if(i===q.ans){ re.innerText='Correct! +3 Coins'; balance+=3; updateUI(); saveBalance(3,'game','Quiz Correct'); saveToHistory('Quiz Win',3); } else re.innerText='Wrong! Answer: '+q.opts[q.ans]; }
+
+function startDart(){ dartScore=0; dartRunning=false; if(dartTimer){clearInterval(dartTimer);dartTimer=null;} const s=document.getElementById('dart-score'); const c=document.getElementById('dart-claim'); const b=document.getElementById('dart-btn'); if(s)s.innerText='0'; if(c)c.style.display='none'; if(b)b.innerText='Start'; showPage('game-dart'); }
+function playDart(){ if(dartRunning)return; dartRunning=true; dartScore=0; const s=document.getElementById('dart-score'); const b=document.getElementById('dart-btn'); const t=document.getElementById('dart-target'); if(s)s.innerText='0'; if(b)b.innerText='Playing...'; let timeLeft=10; if(t) t.onclick=()=>{ if(!dartRunning)return; dartScore++; if(s)s.innerText=dartScore; t.style.transform='scale(1.3)'; setTimeout(()=>t.style.transform='scale(1)',100); }; dartTimer=setInterval(()=>{ timeLeft--; if(timeLeft<=0){ clearInterval(dartTimer); dartTimer=null; dartRunning=false; if(b)b.innerText='Finished'; gamePrize=Math.min(Math.floor(dartScore/3),8); const c=document.getElementById('dart-claim'); if(gamePrize>0&&c){ c.style.display='inline-block'; c.innerText='Watch Ad & Claim '+gamePrize+' Coins'; } else alert('Score too low. Try again!'); } },1000); }
+
+function startFruit(){ fruitScore=0; fruitRunning=false; if(fruitTimeout){clearTimeout(fruitTimeout);fruitTimeout=null;} const s=document.getElementById('fruit-score'); const c=document.getElementById('fruit-claim'); const b=document.getElementById('fruit-btn'); if(s)s.innerText='0'; if(c)c.style.display='none'; if(b)b.innerText='Start'; showPage('game-fruit'); }
+function playFruit(){ if(fruitRunning)return; fruitRunning=true; fruitScore=0; const s=document.getElementById('fruit-score'); const b=document.getElementById('fruit-btn'); if(s)s.innerText='0'; if(b)b.innerText='Playing...'; const fruits=['ðŸŽ','ðŸŒ','ðŸ‡','ðŸŠ','ðŸ“','ðŸ‰']; let count=0; function next(){ if(count>=12){ fruitRunning=false; if(b)b.innerText='Finished'; gamePrize=Math.min(Math.floor(fruitScore/2),6); const c=document.getElementById('fruit-claim'); if(gamePrize>0&&c){ c.style.display='inline-block'; c.innerText='Watch Ad & Claim '+gamePrize+' Coins'; } return; } const d=document.getElementById('fruit-display'); if(d){ d.innerText=fruits[Math.floor(Math.random()*fruits.length)]; d.onclick=()=>{ if(!fruitRunning)return; fruitScore++; if(s)s.innerText=fruitScore; d.onclick=null; }; } count++; fruitTimeout=setTimeout(next,900); } next(); }
+
+function startShoot(){ shootScore=0; shootRunning=false; const s=document.getElementById('shoot-score'); const c=document.getElementById('shoot-claim'); const b=document.getElementById('shoot-btn'); if(s)s.innerText='0'; if(c)c.style.display='none'; if(b)b.innerText='Start'; showPage('game-shoot'); }
+function playShoot(){ if(shootRunning)return; shootRunning=true; shootScore=0; const s=document.getElementById('shoot-score'); const b=document.getElementById('shoot-btn'); const t=document.getElementById('shoot-target'); if(s)s.innerText='0'; if(b)b.innerText='Playing...'; let left=12; function show(){ if(left<=0){ shootRunning=false; if(b)b.innerText='Finished'; gamePrize=Math.min(Math.floor(shootScore/2),7); const c=document.getElementById('shoot-claim'); if(gamePrize>0&&c){ c.style.display='inline-block'; c.innerText='Watch Ad & Claim '+gamePrize+' Coins'; } return; } if(t){ t.style.opacity='1'; t.onclick=()=>{ if(!shootRunning)return; shootScore++; if(s)s.innerText=shootScore; t.style.opacity='0.3'; t.onclick=null; }; } left--; setTimeout(show,800); } show(); }
+
+function startTower(){ towerScore=0; towerRunning=false; const s=document.getElementById('tower-score'); const d=document.getElementById('tower-display'); const c=document.getElementById('tower-claim'); const b=document.getElementById('tower-btn'); if(s)s.innerText='0'; if(d)d.innerText='â¬œ'; if(c)c.style.display='none'; if(b){ b.innerText='Start'; b.onclick=playTower; } showPage('game-tower'); }
+function playTower(){ if(towerRunning)return; towerRunning=true; towerScore=0; const s=document.getElementById('tower-score'); const d=document.getElementById('tower-display'); const b=document.getElementById('tower-btn'); if(s)s.innerText='0'; if(b){ b.innerText='Drop Block'; b.onclick=()=>{ if(!towerRunning)return; towerScore++; if(s)s.innerText=towerScore; if(d)d.innerText+='â¬œ'; if(towerScore>=10){ towerRunning=false; b.innerText='Finished'; gamePrize=Math.min(towerScore,8); const c=document.getElementById('tower-claim'); if(c){ c.style.display='inline-block'; c.innerText='Watch Ad & Claim '+gamePrize+' Coins'; } } }; } }
+
+function startSudoku(){ const puzzle=[[1,0,0,4],[0,0,1,0],[0,4,0,0],[4,0,0,2]]; sudokuSolution=[[1,2,3,4],[3,4,1,2],[2,3,4,1],[4,1,2,3]]; const board=document.getElementById('sudoku-board'); if(!board)return; board.innerHTML=''; board.style.gridTemplateColumns='repeat(4,50px)'; for(let r=0;r<4;r++) for(let c=0;c<4;c++){ const inp=document.createElement('input'); inp.type='number'; inp.min=1; inp.max=4; inp.style.cssText='width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;'; if(puzzle[r][c]!==0){ inp.value=puzzle[r][c]; inp.disabled=true; inp.style.background='#ffe8e8'; } inp.dataset.r=r; inp.dataset.c=c; board.appendChild(inp); } const m=document.getElementById('sudoku-msg'); if(m)m.innerText=''; showPage('game-sudoku'); }
+function checkSudoku(){ const inputs=document.querySelectorAll('#sudoku-board input'); let correct=true; inputs.forEach(inp=>{ const r=Number(inp.dataset.r), c=Number(inp.dataset.c), val=Number(inp.value); if(val!==sudokuSolution[r][c]) correct=false; }); const m=document.getElementById('sudoku-msg'); if(correct){ if(m)m.innerText='Correct! +5 Coins'; balance+=5; updateUI(); saveBalance(5,'game','Sudoku Win'); saveToHistory('Sudoku Win',5); } else if(m) m.innerText='Not correct yet'; }
+
+function claimGame(type){ if(gamePrize<=0)return; window.open(getRandomAd(),'_blank'); setTimeout(()=>{ balance+=gamePrize; updateUI(); saveBalance(gamePrize,'game',type+' Win'); saveToHistory(type+' Game',gamePrize); alert('Claimed +'+gamePrize+' Coins!'); gamePrize=0; const c=document.getElementById(type+'-claim'); if(c)c.style.display='none'; },(adSettings.wait||10)*1000); }
+
+// Wallet
+function openWithdraw(type){ currentWithdrawType=type; const l=document.getElementById('withdraw-label'); const a=document.getElementById('withdraw-address'); const m=document.getElementById('withdraw-amount'); if(l)l.innerText=type==='upi'?'UPI ID / Bank Account':'USDT Address (TRC20/BEP20)'; if(a)a.value=''; if(m)m.value=500; showPage('withdraw-form'); }
+function submitWithdraw(){ const address=((document.getElementById('withdraw-address')||{}).value||'').trim(); const amount=Number((document.getElementById('withdraw-amount')||{}).value)||0; if(!address){alert('Enter address / UPI');return;} if(amount<500){alert('Minimum withdrawal is 500 Coins');return;} if(balance<amount){alert('Not enough balance');return;} balance-=amount; updateUI(); saveBalance(-amount,'withdraw','Withdrawal request'); saveToHistory('Withdrawal Request',-amount); alert('Withdrawal request submitted!\\nAmount: '+amount+' Coins\\n\\nWe will process within 24-48 hours.\\nContact @Vtnhub0 for status.'); showPage('wallet'); }
+
+// History & Tasks
+function saveToHistory(title, amount){ let history=[]; try{history=JSON.parse(localStorage.getItem(historyKey)||'[]');}catch(e){} history.unshift({title,amount,time:new Date().toLocaleString()}); if(history.length>30)history.length=30; localStorage.setItem(historyKey,JSON.stringify(history)); }
+function loadHistory(){ const container=document.getElementById('history-list'); if(!container)return; let history=[]; try{history=JSON.parse(localStorage.getItem(historyKey)||'[]');}catch(e){} if(!history.length){container.innerHTML='<div class="card" style="text-align:center;color:#888;">No history yet</div>';return;} let html=''; history.forEach(item=>{ html+='<div class="list-item"><div class="icon" style="background:#4CAF50;">âœ…</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">'+(item.amount>0?'+':'')+item.amount+'</div></div>'; }); container.innerHTML=html; }
+
+function openCategory(cat){ currentCategory=cat; const titles={join:'Join Channel / Group',bot:'Join Bot',watch:'Watch & Earn',views:'Views & Earn',install:'Install App',website:'Visit Website',affiliate:'Affiliate',products:'View Products',other:'Earn Tasks'}; const t=document.getElementById('category-title'); if(t)t.innerText=titles[cat]||'Tasks'; showPage('category-tasks'); loadCategoryTasks(cat); }
+async function loadCategoryTasks(cat){ const container=document.getElementById('category-list'); if(!container)return; container.innerHTML='<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>'; let allTasks=[]; try{const orders=JSON.parse(localStorage.getItem(ordersKey)||'[]'); allTasks=orders.filter(t=>t.category===cat||(cat==='other'&&!t.category));}catch(e){} if(sb){ try{ let query=sb.from('tasks').select('*').eq('is_active',true).order('id',{ascending:false}); if(cat==='other') query=query.or('category.eq.other,category.is.null'); else query=query.eq('category',cat); const {data}=await query; if(data&&data.length) allTasks=allTasks.concat(data); }catch(e){} } if(!allTasks.length){ container.innerHTML='<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>'; return; } currentTasks=allTasks; let html=''; allTasks.forEach((task,index)=>{ if(task.category!=='watch'&&completedTasks.indexOf(task.id)!==-1)return; const waitInfo=task.wait_seconds>0?' â€¢ Wait '+task.wait_seconds+'s':''; html+='<div class="list-item"><div class="icon" style="background:#c8102e;">ðŸ“‹</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>'; }); container.innerHTML=html||'<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>'; }
+function doTaskByIndex(index){ const task=currentTasks[index]; if(!task)return; if(task.link)window.open(task.link,'_blank'); const waitSec=Number(task.wait_seconds)||0; if(waitSec>0){ alert('Please wait '+waitSec+' seconds...'); setTimeout(()=>finishTask(task),waitSec*1000); } else setTimeout(()=>finishTask(task),1500); }
+function finishTask(task){ if(!confirm('Did you complete the task?\\n\\n"'+(task.title||'Task')+'"')){ alert('No coins added.'); return; } const reward=task.reward||0; if(task.category!=='watch'&&completedTasks.indexOf(task.id)===-1){ completedTasks.push(task.id); localStorage.setItem(completedKey,JSON.stringify(completedTasks)); } saveToHistory(task.title||'Task',reward); addCoins(reward,task.title||'Task'); loadCategoryTasks(currentCategory); }
+
+// Admin
+function savePriceSettings(){ prices.channel=Number(document.getElementById('price-channel').value)||200; prices.bot=Number(document.getElementById('price-bot').value)||150; prices.views=Number(document.getElementById('price-views').value)||50; prices.install=Number(document.getElementById('price-install').value)||300; prices.traffic=Number(document.getElementById('price-traffic').value)||80; prices.banner=Number(document.getElementById('price-banner').value)||100; prices.affiliate=Number(document.getElementById('price-affiliate').value)||40; prices.test=Number(document.getElementById('price-test').value)||60; localStorage.setItem('vtn_prices',JSON.stringify(prices)); alert('Prices saved!'); }
+function loadPriceSettings(){ const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;}; set('price-channel',prices.channel); set('price-bot',prices.bot); set('price-views',prices.views); set('price-install',prices.install); set('price-traffic',prices.traffic); set('price-banner',prices.banner); set('price-affiliate',prices.affiliate); set('price-test',prices.test); }
+function saveAdSettings(){ const raw=document.getElementById('ad-links').value.trim(); const links=raw.split('\\n').map(l=>l.trim()).filter(l=>l); adSettings.links=links.length?links:adSettings.links; adSettings.wait=Number(document.getElementById('ad-wait').value)||15; adSettings.reward=Number(document.getElementById('ad-reward').value)||5; localStorage.setItem('vtn_ad_settings',JSON.stringify(adSettings)); alert('Ad Settings Saved!\\n'+adSettings.links.length+' ad link(s)'); }
+function loadAdSettings(){ const l=document.getElementById('ad-links'); const w=document.getElementById('ad-wait'); const r=document.getElementById('ad-reward'); if(l)l.value=(adSettings.links||[]).join('\\n'); if(w)w.value=adSettings.wait||15; if(r)r.value=adSettings.reward||5; }
+async function adminAddCoins(){ if(!sb)return alert('Supabase not connected'); const tid=document.getElementById('admin-userid').value.trim(); const coins=Number(document.getElementById('admin-coins').value)||0; const result=document.getElementById('admin-result'); if(!tid||coins<=0)return alert('Enter valid ID and amount'); try{ const {data}=await sb.from('users').select('*').eq('telegram_id',tid).maybeSingle(); if(!data){if(result)result.innerHTML='<span style="color:red;">User not found</span>';return;} const newBalance=(data.balance||0)+coins; await sb.from('users').update({balance:newBalance}).eq('telegram_id',tid); await sb.from('transactions').insert([{telegram_id:tid,amount:coins,type:'admin',description:'Admin added coins'}]); if(result)result.innerHTML='<span style="color:green;">Added '+coins+'. New: '+newBalance+'</span>'; }catch(e){if(result)result.innerHTML='<span style="color:red;">Failed</span>';} }
+async function adminRemoveCoins(){ if(!sb)return alert('Supabase not connected'); const tid=document.getElementById('admin-userid').value.trim(); const coins=Number(document.getElementById('admin-coins').value)||0; const result=document.getElementById('admin-result'); if(!tid||coins<=0)return alert('Enter valid ID and amount'); try{ const {data}=await sb.from('users').select('*').eq('telegram_id',tid).maybeSingle(); if(!data){if(result)result.innerHTML='<span style="color:red;">User not found</span>';return;} const newBalance=Math.max(0,(data.balance||0)-coins); await sb.from('users').update({balance:newBalance}).eq('telegram_id',tid); await sb.from('transactions').insert([{telegram_id:tid,amount:-coins,type:'admin',description:'Admin removed coins'}]); if(result)result.innerHTML='<span style="color:orange;">Removed '+coins+'. New: '+newBalance+'</span>'; }catch(e){if(result)result.innerHTML='<span style="color:red;">Failed</span>';} }
+async function adminCheckBalance(){ if(!sb)return; const tid=document.getElementById('admin-userid').value.trim(); const result=document.getElementById('admin-result'); if(!tid)return alert('Enter User ID'); try{ const {data}=await sb.from('users').select('*').eq('telegram_id',tid).maybeSingle(); if(!data){if(result)result.innerHTML='<span style="color:red;">User not found</span>';return;} if(result)result.innerHTML='User: '+(data.first_name||tid)+'<br>Balance: <b>'+(data.balance||0)+'</b>'; }catch(e){if(result)result.innerHTML='<span style="color:red;">Failed</span>';} }
+async function adminViewHistory(){ if(!sb)return; const tid=document.getElementById('admin-userid').value.trim(); const result=document.getElementById('admin-result'); if(!tid)return alert('Enter User ID'); try{ const {data}=await sb.from('transactions').select('*').eq('telegram_id',tid).order('id',{ascending:false}).limit(10); if(!data||!data.length){if(result)result.innerHTML='No transactions';return;} let html='<b>Last 10:</b><br>'; data.forEach(t=>html+=(t.description||t.type)+': '+t.amount+'<br>'); if(result)result.innerHTML=html; }catch(e){if(result)result.innerHTML='<span style="color:red;">Failed</span>';} }
+function adminBlockUser(){ const tid=document.getElementById('admin-userid').value.trim(); const result=document.getElementById('admin-result'); if(!tid)return alert('Enter User ID'); if(!confirm('Block user '+tid+'?'))return; if(blockedUsers.indexOf(tid)===-1){ blockedUsers.push(tid); localStorage.setItem(blockedKey,JSON.stringify(blockedUsers)); } if(result)result.innerHTML='<span style="color:red;">User '+tid+' blocked</span>'; alert('User blocked'); }
+async function addNewTask(){ if(!sb)return alert('Supabase not connected'); const title=document.getElementById('task-title').value.trim(); const reward=Number(document.getElementById('task-reward').value)||0; const category=document.getElementById('task-category').value; const link=document.getElementById('task-link').value.trim(); const waitSeconds=Number(document.getElementById('task-wait').value)||0; const maxUsers=Number(document.getElementById('task-max-users').value)||0; if(!title)return alert('Enter title'); try{ const {error}=await sb.from('tasks').insert([{title,reward,category,link,wait_seconds:waitSeconds,max_users:maxUsers,is_active:true}]); if(error){alert('Error: '+error.message);return;} alert('Task Added!'); document.getElementById('task-title').value=''; document.getElementById('task-reward').value='10'; document.getElementById('task-link').value=''; loadAdminTasks(); }catch(e){alert('Failed');} }
+async function loadAdminTasks(){ if(!sb)return; const container=document.getElementById('admin-tasks-list'); if(!container)return; container.innerHTML='<div class="card" style="text-align:center;color:#888;">Loading...</div>'; try{ const {data}=await sb.from('tasks').select('*').order('id',{ascending:false}); if(!data||!data.length){container.innerHTML='<div class="card" style="text-align:center;color:#888;">No tasks</div>';return;} let html=''; data.forEach(task=>{ const btnText=task.is_active?'Off':'On'; const btnColor=task.is_active?'#c8102e':'#4CAF50'; const statusDot=task.is_active?'ðŸŸ¢':'ðŸ”´'; html+='<div class="list-item"><div class="icon" style="background:#c8102e;">ðŸ“‹</div><div class="info"><h4>'+(task.title||'')+'</h4><p>+'+(task.reward||0)+' â€¢ '+(task.category||'')+' â€¢ '+statusDot+'</p></div><button class="start-btn" style="background:'+btnColor+'" onclick="toggleTask('+task.id+','+(!task.is_active)+')">'+btnText+'</button><button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask('+task.id+')">Del</button></div>'; }); container.innerHTML=html; }catch(e){container.innerHTML='<div class="card">Failed</div>';} }
+async function toggleTask(id,newStatus){ try{ await sb.from('tasks').update({is_active:newStatus}).eq('id',id); alert(newStatus?'Enabled':'Disabled'); loadAdminTasks(); }catch(e){alert('Failed');} }
+async function deleteTask(id){ if(!confirm('Delete?'))return; try{ await sb.from('tasks').delete().eq('id',id); alert('Deleted'); loadAdminTasks(); }catch(e){alert('Failed');} }
+
+setupUser();
+loadUser();
+</script>
 </body>
-</html>
+          </html>
