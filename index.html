@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Tower Climb - Timed Levels</title>
+  <title>Car Race - Timed Levels</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      background: #1e293b;
     }
 
     #ui {
@@ -159,19 +159,19 @@
       </div>
       <div id="level-info">
         <div id="level-badge">Level 1</div>
-        <div id="level-timer">Time: 20s</div>
+        <div id="level-timer">Time: 25s</div>
       </div>
     </div>
 
     <div id="start-screen">
-      <h1>Tower Climb</h1>
-      <p>Tap left or right to jump!<br>Beat the timer to clear each tough level before time runs out!</p>
+      <h1>Car Race</h1>
+      <p>Tap left or right side to steer!<br>Survive and beat the timer on increasingly fast highway traffic!</p>
       <button id="start-btn">Start Game</button>
     </div>
 
     <div id="level-banner">
       <div id="banner-text">LEVEL 2</div>
-      <p style="opacity: 0.8; font-size: 16px;">Platforms shrink & speed up! Beat the timer!</p>
+      <p style="opacity: 0.8; font-size: 16px;">Traffic speeds up! Beat the timer!</p>
     </div>
 
     <div id="game-over">
@@ -218,25 +218,27 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('towerClimbTimedBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('carRaceBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
     let level = 1;
-    let timeLeft = 20; // 20 seconds to clear level target height
-    let targetHeight = 15; // 15 meters target per level
-    let currentLevelHeight = 0;
-    let gameState = 'start'; // start, playing, leveling, gameover
-    let cameraY = 0;
+    let timeLeft = 25;
+    let levelDistance = 0;
+    let targetDistance = 300; // Target distance to clear level
+    let gameState = 'start';
+    let roadAnim = 0;
 
     let player = {
       x: width / 2,
-      y: 0,
-      vx: 0,
-      vy: 0,
-      radius: 16
+      y: height - 140,
+      width: 44,
+      height: 80,
+      speed: 0
     };
 
-    let platforms = [];
+    let obstacles = [];
+    let spawnTimer = 0;
+    let steering = 0; // -1 left, 1 right, 0 straight
 
     function initGame() {
       score = 0;
@@ -250,58 +252,29 @@
     }
 
     function setupLevel() {
-      currentLevelHeight = 0;
-      timeLeft = Math.max(12, 22 - (level * 2)); // Less time on higher levels!
-      targetHeight = 15 + (level * 5); // Taller target each level
+      levelDistance = 0;
+      timeLeft = Math.max(15, 28 - (level * 2));
+      targetDistance = 250 + (level * 70);
       levelBadge.textContent = `Level ${level}`;
-      cameraY = 0;
-
+      obstacles = [];
       player.x = width / 2;
-      player.y = height - 160;
-      player.vx = 0;
-      player.vy = -12;
-
-      generatePlatforms();
     }
 
-    function generatePlatforms() {
-      platforms = [];
-      platforms.push({ x: width / 2 - 60, y: height - 100, width: 120, height: 16, moving: false, dir: 1 });
-
-      let currentY = height - 180;
-      while (currentY > -4000) {
-        // Tougher: platforms become much narrower with level increase
-        let pWidth = Math.max(40, 110 - (level * 10));
-        let pX = Math.random() * (width - pWidth);
-        let isMoving = level >= 2 && Math.random() < (0.3 + level * 0.05);
-
-        platforms.push({
-          x: pX,
-          y: currentY,
-          width: pWidth,
-          height: 16,
-          moving: isMoving,
-          dir: Math.random() > 0.5 ? 1 : -1
-        });
-        currentY -= 65 + Math.random() * 25;
-      }
-    }
-
-    // Touch controls
+    // Touch controls: left vs right side steering
     window.addEventListener('pointerdown', (e) => {
       if (gameState !== 'playing') return;
       if (e.clientX < width / 2) {
-        player.vx = -7;
+        steering = -1;
       } else {
-        player.vx = 7;
+        steering = 1;
       }
     });
 
     window.addEventListener('pointerup', () => {
-      player.vx = 0;
+      steering = 0;
     });
 
-    // Level timer countdown loop interval
+    // Timer interval
     setInterval(() => {
       if (gameState === 'playing') {
         timeLeft--;
@@ -315,55 +288,63 @@
     function update() {
       if (gameState !== 'playing') return;
 
-      player.vy += 0.46;
-      player.x += player.vx;
-      player.y += player.vy;
+      // Road boundaries (3-lane highway simulation)
+      let roadLeft = width / 2 - 130;
+      let roadRight = width / 2 + 130;
 
-      if (player.x < 0) player.x = width;
-      if (player.x > width) player.x = 0;
+      // Steer player car
+      player.x += steering * (6 + level * 0.8);
+      if (player.x < roadLeft + 25) player.x = roadLeft + 25;
+      if (player.x > roadRight - 25) player.x = roadRight - 25;
 
-      // Move platforms faster on higher levels
-      platforms.forEach(p => {
-        if (p.moving) {
-          p.x += p.dir * (2 + level * 0.5);
-          if (p.x <= 0 || p.x + p.width >= width) {
-            p.dir *= -1;
-          }
-        }
-      });
+      // Road lines animation
+      let roadSpeed = 7 + (level * 2);
+      roadAnim = (roadAnim + roadSpeed) % 40;
 
-      // Jump / Bounce collisions
-      if (player.vy > 0) {
-        platforms.forEach(p => {
-          if (
-            player.x + player.radius > p.x &&
-            player.x - player.radius < p.x + p.width &&
-            player.y + player.radius >= p.y &&
-            player.y + player.radius <= p.y + p.height + 6
-          ) {
-            player.vy = -14.5;
-          }
-        });
-      }
-
-      // Camera follow
-      let targetCameraY = player.y - height * 0.45;
-      if (targetCameraY < cameraY) {
-        cameraY += (targetCameraY - cameraY) * 0.1;
-      }
-
-      // Track level target height progress
-      currentLevelHeight = Math.max(0, Math.floor((height - 100 - player.y) / 10));
-      score = (level - 1) * 200 + currentLevelHeight * 10;
+      // Distance progress
+      levelDistance += roadSpeed * 0.1;
+      score = (level - 1) * 300 + Math.floor(levelDistance * 10);
       scoreEl.textContent = score;
 
-      if (currentLevelHeight >= targetHeight) {
+      if (levelDistance >= targetDistance) {
         triggerLevelUp();
       }
 
-      // Fall below screen = instant failure
-      if (player.y > cameraY + height + 50) {
-        gameOver("Fall Down!");
+      // Spawn traffic obstacles
+      spawnTimer++;
+      let spawnInterval = Math.max(35, 75 - (level * 8));
+      if (spawnTimer >= spawnInterval) {
+        spawnTimer = 0;
+        let lanes = [roadLeft + 45, width / 2, roadRight - 45];
+        let laneX = lanes[Math.floor(Math.random() * lanes.length)];
+        obstacles.push({
+          x: laneX,
+          y: -100,
+          width: 44,
+          height: 80,
+          speed: roadSpeed * 0.55 + Math.random() * 2,
+          color: ['#ef4444', '#38bdf8', '#eab308', '#a855f7'][Math.floor(Math.random() * 4)]
+        });
+      }
+
+      // Update obstacles
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        obs.y += roadSpeed + obs.speed;
+
+        // Collision check
+        if (
+          player.x - player.width / 2 < obs.x + obs.width / 2 &&
+          player.x + player.width / 2 > obs.x - obs.width / 2 &&
+          player.y - player.height / 2 < obs.y + obs.height / 2 &&
+          player.y + player.height / 2 > obs.y - obs.height / 2
+        ) {
+          gameOver("Crash!");
+        }
+
+        if (obs.y > height + 100) {
+          obstacles.splice(i, 1);
+        }
       }
     }
 
@@ -383,30 +364,57 @@
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      ctx.save();
-      ctx.translate(0, -cameraY);
+      let roadLeft = width / 2 - 130;
+      let roadRight = width / 2 + 130;
 
-      platforms.forEach(p => {
-        ctx.fillStyle = p.moving ? '#f59e0b' : '#38bdf8';
+      // Grass background
+      ctx.fillStyle = '#065f46';
+      ctx.fillRect(0, 0, width, height);
+
+      // Asphalt Road
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(roadLeft, 0, roadRight - roadLeft, height);
+
+      // Road side borders
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(roadLeft, 0, 8, height);
+      ctx.fillRect(roadRight - 8, 0, 8, height);
+
+      // Center dashed lines
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 6;
+      ctx.setLineDash([25, 25]);
+      ctx.lineDashOffset = -roadAnim;
+      ctx.beginPath();
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width / 2, height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw obstacles (traffic cars)
+      obstacles.forEach(obs => {
+        ctx.save();
+        ctx.translate(obs.x, obs.y);
+        ctx.fillStyle = obs.color;
         ctx.beginPath();
-        ctx.roundRect(p.x, p.y, p.width, p.height, 8);
+        ctx.roundRect(-obs.width / 2, -obs.height / 2, obs.width, obs.height, 10);
         ctx.fill();
-
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
-        ctx.fillRect(p.x, p.y, p.width, 4);
+        // Windshield
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(-obs.width / 2 + 6, -obs.height / 2 + 12, obs.width - 12, 16);
+        ctx.restore();
       });
 
-      // Player
-      ctx.fillStyle = '#f43f5e';
+      // Draw Player Car
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.fillStyle = '#38bdf8';
       ctx.beginPath();
-      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.roundRect(-player.width / 2, -player.height / 2, player.width, player.height, 10);
       ctx.fill();
-
-      ctx.fillStyle = 'rgba(255,255,255,0.4)';
-      ctx.beginPath();
-      ctx.arc(player.x - 4, player.y - 4, 5, 0, Math.PI * 2);
-      ctx.fill();
-
+      // Windshield
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-player.width / 2 + 6, -player.height / 2 + 12, player.width - 12, 16);
       ctx.restore();
     }
 
@@ -418,10 +426,10 @@
 
     function gameOver(reason) {
       gameState = 'gameover';
-      gameOverTitle.textContent = reason === "Time's Up!" ? "Time's Up!" : "Game Over";
+      gameOverTitle.textContent = reason === "Time's Up!" ? "Time's Up!" : "Car Crashed!";
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('towerClimbTimedBest', bestScore);
+        localStorage.setItem('carRaceBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
