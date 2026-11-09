@@ -427,6 +427,7 @@
         <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">â“</span>Quiz</div>
         <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">âŒ</span>Tic Tac Toe</div>
         <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">ðŸ”¢</span>Sudoku</div>
+        <div class="btn" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);" onclick="enterWithAd('game','Race')"><span class="icon">ðŸŽï¸</span>Race</div>
       </div>
     </div>
 
@@ -1064,6 +1065,10 @@
         } else if (gameName === 'Sudoku') {
           alert('âœ… +' + adSettings.reward + ' Coins');
           startSudoku();
+        } else if (gameName === 'Race') {
+          alert('âœ… +' + adSettings.reward + ' Coins\n\nOpening Overdrive Racer...');
+          // Open the racing game
+          window.location.href = 'Overdrive_Race.html';
         } else {
           alert('âœ… +' + adSettings.reward + ' Coins\n\n' + (gameName || '') + ' coming soon!');
         }
