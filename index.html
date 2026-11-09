@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: #1e293b;
+      background: #0f172a;
     }
 
     #ui {
@@ -165,7 +165,7 @@
 
     <div id="start-screen">
       <h1>Realistic Car Race</h1>
-      <p>Tap left or right side to steer!<br>Navigate hyper-realistic 3D-shaded traffic cars against the timer.</p>
+      <p>Tap left or right side to steer!<br>Evade realistic traffic cars and reach the goal before time runs out!</p>
       <button id="start-btn">Start Game</button>
     </div>
 
@@ -231,9 +231,9 @@
     let player = {
       x: width / 2,
       y: height - 150,
-      width: 48,
-      height: 92,
-      color: '#0284c7' // Sports blue
+      width: 52,
+      height: 105,
+      color: '#0284c7'
     };
 
     let obstacles = [];
@@ -286,14 +286,14 @@
     function update() {
       if (gameState !== 'playing') return;
 
-      let roadLeft = width / 2 - 140;
-      let roadRight = width / 2 + 140;
+      let roadLeft = width / 2 - 145;
+      let roadRight = width / 2 + 145;
 
       player.x += steering * (6.5 + level * 0.8);
-      if (player.x < roadLeft + 28) player.x = roadLeft + 28;
-      if (player.x > roadRight - 28) player.x = roadRight - 28;
+      if (player.x < roadLeft + 30) player.x = roadLeft + 30;
+      if (player.x > roadRight - 30) player.x = roadRight - 30;
 
-      let roadSpeed = 7.5 + (level * 2);
+      let roadSpeed = 8 + (level * 2);
       roadAnim = (roadAnim + roadSpeed) % 40;
 
       levelDistance += roadSpeed * 0.1;
@@ -305,18 +305,18 @@
       }
 
       spawnTimer++;
-      let spawnInterval = Math.max(32, 70 - (level * 8));
+      let spawnInterval = Math.max(30, 68 - (level * 7));
       if (spawnTimer >= spawnInterval) {
         spawnTimer = 0;
         let lanes = [roadLeft + 48, width / 2, roadRight - 48];
         let laneX = lanes[Math.floor(Math.random() * lanes.length)];
         obstacles.push({
           x: laneX,
-          y: -120,
-          width: 48,
-          height: 92,
+          y: -130,
+          width: 52,
+          height: 105,
           speed: roadSpeed * 0.52 + Math.random() * 2,
-          color: ['#dc2626', '#16a34a', '#ca8a04', '#7c3aed', '#0f172a'][Math.floor(Math.random() * 5)]
+          color: ['#dc2626', '#16a34a', '#ca8a04', '#7c3aed', '#b91c1c', '#0284c7'][Math.floor(Math.random() * 6)]
         });
       }
 
@@ -333,7 +333,7 @@
           gameOver("Crash!");
         }
 
-        if (obs.y > height + 120) {
+        if (obs.y > height + 130) {
           obstacles.splice(i, 1);
         }
       }
@@ -352,85 +352,138 @@
       }, 1500);
     }
 
-    // Helper function to render a realistic 3D animated style car with shadows, windshields, headlights, and body contours
-    function drawRealisticCar(x, y, w, h, mainColor) {
+    // Advanced realistic top-down car renderer
+    function drawDetailedSportsCar(x, y, w, h, bodyColor, isPlayer) {
       ctx.save();
       ctx.translate(x, y);
 
-      // Drop Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      const halfW = w / 2;
+      const halfH = h / 2;
+
+      // Realistic Ambient Drop Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.beginPath();
-      ctx.roundRect(-w/2 - 4, -h/2 + 6, w + 8, h, 14);
+      ctx.roundRect(-halfW - 5, -halfH + 8, w + 10, h + 4, 18);
       ctx.fill();
 
-      // Tires
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(-w/2 - 5, -h/2 + 14, 7, 20); // Front Left
-      ctx.fillRect(w/2 - 2, -h/2 + 14, 7, 20);  // Front Right
-      ctx.fillRect(-w/2 - 5, h/2 - 30, 7, 20);  // Rear Left
-      ctx.fillRect(w/2 - 2, h/2 - 30, 7, 20);   // Rear Right
+      // Detailed Treaded Rubber Wheels
+      const tireW = 9;
+      const tireH = 22;
+      const tirePositions = [
+        [-halfW - 4, -halfH + 16], // Front Left
+        [halfW - 5, -halfH + 16],  // Front Right
+        [-halfW - 4, halfH - 36],  // Rear Left
+        [halfW - 5, halfH - 36]    // Rear Right
+      ];
 
-      // Main Body Chassis Gradient
-      let gradient = ctx.createLinearGradient(-w/2, 0, w/2, 0);
-      gradient.addColorStop(0, '#090d16');
-      gradient.addColorStop(0.3, mainColor);
-      gradient.addColorStop(0.7, mainColor);
-      gradient.addColorStop(1, '#090d16');
+      tirePositions.forEach(([tx, ty]) => {
+        ctx.fillStyle = '#111827';
+        ctx.beginPath();
+        ctx.roundRect(tx, ty, tireW, tireH, 4);
+        ctx.fill();
+        // Alloy Rims Inner Line
+        ctx.fillStyle = '#9ca3af';
+        ctx.fillRect(tx + 3, ty + 4, 3, tireH - 8);
+      });
 
-      ctx.fillStyle = gradient;
+      // Car Body Silhouette Path
       ctx.beginPath();
-      ctx.roundRect(-w/2, -h/2, w, h, [16, 16, 10, 10]);
-      ctx.fill();
+      ctx.moveTo(-halfW + 12, -halfH); // Nose center-left
+      ctx.quadraticCurveTo(0, -halfH - 5, halfW - 12, -halfH); // Aerodynamic front nose curve
+      ctx.quadraticCurveTo(halfW, -halfH + 15, halfW - 2, -halfH + 35); // Front fender
+      ctx.lineTo(halfW - 4, halfH - 35); // Side skirt
+      ctx.quadraticCurveTo(halfW + 2, halfH - 15, halfW - 8, halfH); // Rear quarter panel
+      ctx.lineTo(-halfW + 8, halfH); // Rear bumper
+      ctx.quadraticCurveTo(-halfW - 2, halfH - 15, -halfW + 4, halfH - 35); // Left skirt
+      ctx.lineTo(-halfW + 2, -halfH + 35);
+      ctx.quadraticCurveTo(-halfW, -halfH + 15, -halfW + 12, -halfH);
+      ctx.closePath();
 
-      // Body panel highlight line
-      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      // Main metallic body linear gradient
+      let bodyGrad = ctx.createLinearGradient(-halfW, 0, halfW, 0);
+      bodyGrad.addColorStop(0, '#090d16');
+      bodyGrad.addColorStop(0.25, bodyColor);
+      bodyGrad.addColorStop(0.75, bodyColor);
+      bodyGrad.addColorStop(1, '#090d16');
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+      ctx.strokeStyle = '#000';
       ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(-w/2 + 4, -h/2 + 10);
-      ctx.lineTo(-w/2 + 4, h/2 - 10);
       ctx.stroke();
 
-      // Roof Cabin & Windows
-      ctx.fillStyle = '#090d16';
+      // Side Mirrors
+      ctx.fillStyle = bodyColor;
+      ctx.fillRect(-halfW - 7, -halfH + 34, 7, 10);
+      ctx.fillRect(halfW, -halfH + 34, 7, 10);
+
+      // Hood Vents / Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(-w/2 + 6, -h/2 + 30, w - 12, h - 50, 6);
+      ctx.moveTo(-10, -halfH + 12);
+      ctx.lineTo(-6, -halfH + 34);
+      ctx.moveTo(10, -halfH + 12);
+      ctx.lineTo(6, -halfH + 34);
+      ctx.stroke();
+
+      // Curved Windshield Front
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.moveTo(-halfW + 10, -halfH + 35);
+      ctx.quadraticCurveTo(0, -halfH + 28, halfW - 10, -halfH + 35);
+      ctx.lineTo(halfW - 12, -halfH + 54);
+      ctx.lineTo(-halfW + 12, -halfH + 54);
+      ctx.closePath();
       ctx.fill();
 
-      // Front Windshield Glass reflection
+      // Windshield Glass Highlight Reflection
       ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
       ctx.beginPath();
-      ctx.moveTo(-w/2 + 8, -h/2 + 32);
-      ctx.lineTo(w/2 - 8, -h/2 + 32);
-      ctx.lineTo(w/2 - 10, -h/2 + 48);
-      ctx.lineTo(-w/2 + 10, -h/2 + 48);
+      ctx.moveTo(-halfW + 12, -halfH + 37);
+      ctx.lineTo(-4, -halfH + 32);
+      ctx.lineTo(-8, -halfH + 52);
+      ctx.lineTo(-halfW + 13, -halfH + 52);
       ctx.closePath();
       ctx.fill();
 
-      // Rear Windshield Glass
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+      // Cabin Roof Pillar Contour
+      ctx.fillStyle = bodyColor;
       ctx.beginPath();
-      ctx.moveTo(-w/2 + 10, h/2 - 26);
-      ctx.lineTo(w/2 - 10, h/2 - 26);
-      ctx.lineTo(w/2 - 8, h/2 - 36);
-      ctx.lineTo(-w/2 + 8, h/2 - 36);
+      ctx.roundRect(-halfW + 10, -halfH + 52, w - 20, 24, 4);
+      ctx.fill();
+
+      // Rear Glass
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.moveTo(-halfW + 12, -halfH + 76);
+      ctx.lineTo(halfW - 12, -halfH + 76);
+      ctx.lineTo(halfW - 10, -halfH + 90);
+      ctx.lineTo(-halfW + 10, -halfH + 90);
       ctx.closePath();
       ctx.fill();
 
-      // Headlights
+      // Headlights with dynamic glow beam
       ctx.fillStyle = '#fef08a';
       ctx.shadowColor = '#facc15';
-      ctx.shadowBlur = 8;
-      ctx.fillRect(-w/2 + 3, -h/2, 9, 5);
-      ctx.fillRect(w/2 - 12, -h/2, 9, 5);
-      ctx.shadowBlur = 0; // reset
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(-halfW + 12, -halfH + 4, 4, 0, Math.PI * 2);
+      ctx.arc(halfW - 12, -halfH + 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
 
-      // Tail lights
+      // Tail Lights / Brake Glow
       ctx.fillStyle = '#ef4444';
       ctx.shadowColor = '#ef4444';
-      ctx.shadowBlur = 6;
-      ctx.fillRect(-w/2 + 4, h/2 - 4, 8, 4);
-      ctx.fillRect(w/2 - 12, h/2 - 4, 8, 4);
+      ctx.shadowBlur = 10;
+      ctx.fillRect(-halfW + 6, halfH - 4, 12, 4);
+      ctx.fillRect(halfW - 18, halfH - 4, 12, 4);
       ctx.shadowBlur = 0;
+
+      // Dual Exhaust Pipes
+      ctx.fillStyle = '#9ca3af';
+      ctx.fillRect(-8, halfH - 2, 4, 4);
+      ctx.fillRect(4, halfH - 2, 4, 4);
 
       ctx.restore();
     }
@@ -438,14 +491,14 @@
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      let roadLeft = width / 2 - 140;
-      let roadRight = width / 2 + 140;
+      let roadLeft = width / 2 - 145;
+      let roadRight = width / 2 + 145;
 
-      // Realistic environment grass background
+      // Realistic Grass Terrain
       ctx.fillStyle = '#044e38';
       ctx.fillRect(0, 0, width, height);
 
-      // Asphalt Road Surface with texture gradient
+      // Asphalt Road Texture Gradient
       let roadGrad = ctx.createLinearGradient(roadLeft, 0, roadRight, 0);
       roadGrad.addColorStop(0, '#1e293b');
       roadGrad.addColorStop(0.5, '#334155');
@@ -453,12 +506,15 @@
       ctx.fillStyle = roadGrad;
       ctx.fillRect(roadLeft, 0, roadRight - roadLeft, height);
 
-      // Concrete road shoulders
-      ctx.fillStyle = '#64748b';
-      ctx.fillRect(roadLeft, 0, 10, height);
-      ctx.fillRect(roadRight - 10, 0, 10, height);
+      // Red/White Racing Kerb Shoulders
+      const kerbHeight = 20;
+      for (let y = -40 + (roadAnim % 40); y < height + 40; y += kerbHeight) {
+        ctx.fillStyle = Math.floor(y / kerbHeight) % 2 === 0 ? '#ef4444' : '#f8fafc';
+        ctx.fillRect(roadLeft - 8, y, 8, kerbHeight);
+        ctx.fillRect(roadRight, y, 8, kerbHeight);
+      }
 
-      // Center highway dashed lines
+      // Highway Dashed Lanes
       ctx.strokeStyle = '#f8fafc';
       ctx.lineWidth = 5;
       ctx.setLineDash([24, 24]);
@@ -469,13 +525,13 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Draw realistic traffic obstacle cars
+      // Draw Detailed Traffic Cars
       obstacles.forEach(obs => {
-        drawRealisticCar(obs.x, obs.y, obs.width, obs.height, obs.color);
+        drawDetailedSportsCar(obs.x, obs.y, obs.width, obs.height, obs.color, false);
       });
 
-      // Draw realistic player sports car
-      drawRealisticCar(player.x, player.y, player.width, player.height, player.color);
+      // Draw Player Sports Car
+      drawDetailedSportsCar(player.x, player.y, player.width, player.height, player.color, true);
     }
 
     function loop() {
