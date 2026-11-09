@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Stack Tower</title>
+  <title>Fruit Slice</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
     }
 
     #ui {
@@ -41,53 +41,66 @@
       top: 0;
       left: 0;
       width: 100%;
-      padding: 16px;
+      padding: 14px 16px;
       z-index: 10;
       pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    #score-box {
+      text-align: left;
     }
 
     #score {
-      font-size: 42px;
+      font-size: 36px;
       font-weight: 700;
-      text-align: center;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
     #best {
-      font-size: 14px;
-      text-align: center;
+      font-size: 13px;
       opacity: 0.7;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
-    #instruction {
+    #combo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4ade80;
+      text-align: right;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    #timer {
       position: absolute;
-      bottom: 40px;
+      top: 70px;
       left: 0;
       width: 100%;
       text-align: center;
-      font-size: 16px;
-      opacity: 0.8;
+      font-size: 18px;
+      opacity: 0.85;
       z-index: 10;
       pointer-events: none;
-      transition: opacity 0.3s;
     }
 
     #game-over {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(15, 23, 42, 0.93);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 20;
-      gap: 12px;
+      gap: 10px;
     }
 
     #game-over h2 {
-      font-size: 32px;
-      margin-bottom: 8px;
+      font-size: 30px;
+      margin-bottom: 6px;
     }
 
     #final-score {
@@ -97,17 +110,17 @@
     }
 
     #best-score-text {
-      font-size: 16px;
+      font-size: 15px;
       opacity: 0.8;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     button {
       background: #38bdf8;
       color: #0f172a;
       border: none;
-      padding: 14px 36px;
-      font-size: 18px;
+      padding: 14px 40px;
+      font-size: 17px;
       font-weight: 600;
       border-radius: 50px;
       cursor: pointer;
@@ -118,19 +131,28 @@
       transform: scale(0.96);
     }
 
-    .perfect {
+    #start-screen {
       position: absolute;
-      color: #4ade80;
-      font-weight: 700;
-      font-size: 22px;
-      pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
-      z-index: 15;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 25;
+      gap: 16px;
     }
 
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-40px); }
+    #start-screen h1 {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    #start-screen p {
+      font-size: 15px;
+      opacity: 0.75;
+      text-align: center;
+      padding: 0 30px;
     }
   </style>
 </head>
@@ -139,11 +161,20 @@
     <canvas id="game"></canvas>
 
     <div id="ui">
-      <div id="score">0</div>
-      <div id="best">Best: 0</div>
+      <div id="score-box">
+        <div id="score">0</div>
+        <div id="best">Best: 0</div>
+      </div>
+      <div id="combo">Combo x2</div>
     </div>
 
-    <div id="instruction">Tap to drop the block</div>
+    <div id="timer">Time: 40</div>
+
+    <div id="start-screen">
+      <h1>Fruit Slice</h1>
+      <p>Swipe to slice fruits.<br>Avoid the bombs!</p>
+      <button id="start-btn">Start Game</button>
+    </div>
 
     <div id="game-over">
       <h2>Game Over</h2>
@@ -154,7 +185,7 @@
   </div>
 
   <script>
-    // ========== Telegram Mini App ==========
+    // ========== Telegram ==========
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
@@ -163,15 +194,18 @@
       tg.setBackgroundColor('#0f172a');
     }
 
-    // ========== Canvas Setup ==========
+    // ========== Canvas ==========
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const instructionEl = document.getElementById('instruction');
+    const comboEl = document.getElementById('combo');
+    const timerEl = document.getElementById('timer');
     const gameOverEl = document.getElementById('game-over');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
+    const startScreen = document.getElementById('start-screen');
+    const startBtn = document.getElementById('start-btn');
     const restartBtn = document.getElementById('restart-btn');
 
     let width, height;
@@ -184,175 +218,366 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // ========== Game Variables ==========
+    // ========== Game State ==========
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('stackTowerBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('fruitSliceBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
-    let blocks = [];
-    let currentBlock = null;
-    let gameState = 'playing'; // playing | gameover
-    let speed = 2.2;
-    let direction = 1;
-    let cameraY = 0;
+    let fruits = [];
+    let particles = [];
+    let slashPoints = [];
+    let gameState = 'start'; // start | playing | gameover
+    let timeLeft = 40;
+    let combo = 0;
+    let lastSliceTime = 0;
+    let spawnTimer = 0;
+    let gameTime = 0;
 
-    const BLOCK_HEIGHT = 28;
-    const COLORS = [
-      '#38bdf8', '#818cf8', '#c084fc', '#f472b6',
-      '#fb7185', '#fb923c', '#facc15', '#4ade80'
+    // Fruit types
+    const FRUIT_TYPES = [
+      { name: 'apple', color: '#ef4444', radius: 22, points: 1 },
+      { name: 'orange', color: '#f97316', radius: 24, points: 1 },
+      { name: 'watermelon', color: '#22c55e', radius: 28, points: 2 },
+      { name: 'banana', color: '#eab308', radius: 20, points: 1 },
+      { name: 'grape', color: '#a855f7', radius: 18, points: 1 },
+      { name: 'bomb', color: '#1e293b', radius: 23, points: 0, isBomb: true }
     ];
 
-    // ========== Init ==========
-    function init() {
-      score = 0;
-      scoreEl.textContent = '0';
-      blocks = [];
-      cameraY = 0;
-      gameState = 'playing';
-      gameOverEl.style.display = 'none';
-      instructionEl.style.opacity = '1';
-      speed = 2.2;
+    // ========== Input (Swipe) ==========
+    let isDrawing = false;
+    let lastX = 0, lastY = 0;
 
-      // Base block
-      const baseWidth = Math.min(width * 0.55, 220);
-      blocks.push({
-        x: (width - baseWidth) / 2,
-        y: height - 120,
-        width: baseWidth,
-        color: COLORS[0]
-      });
-
-      spawnBlock();
+    function getPos(e) {
+      if (e.touches) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
     }
 
-    function spawnBlock() {
-      const last = blocks[blocks.length - 1];
-      const newWidth = last.width;
-      currentBlock = {
-        x: direction > 0 ? -newWidth : width,
-        y: last.y - BLOCK_HEIGHT - 8,
-        width: newWidth,
-        color: COLORS[blocks.length % COLORS.length],
-        moving: true
-      };
+    function startDraw(e) {
+      e.preventDefault();
+      if (gameState !== 'playing') return;
+      isDrawing = true;
+      const pos = getPos(e);
+      lastX = pos.x;
+      lastY = pos.y;
+      slashPoints = [{ x: pos.x, y: pos.y, life: 8 }];
+    }
+
+    function moveDraw(e) {
+      e.preventDefault();
+      if (!isDrawing || gameState !== 'playing') return;
+      const pos = getPos(e);
+
+      // Add slash trail
+      slashPoints.push({ x: pos.x, y: pos.y, life: 8 });
+      if (slashPoints.length > 12) slashPoints.shift();
+
+      // Check collision with fruits
+      checkSlice(lastX, lastY, pos.x, pos.y);
+
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function endDraw(e) {
+      e.preventDefault();
+      isDrawing = false;
+      slashPoints = [];
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+
+    // ========== Slice Detection ==========
+    function checkSlice(x1, y1, x2, y2) {
+      for (let i = fruits.length - 1; i >= 0; i--) {
+        const f = fruits[i];
+        if (f.sliced) continue;
+
+        // Simple line-circle intersection
+        const dist = pointToSegmentDistance(f.x, f.y, x1, y1, x2, y2);
+        if (dist < f.radius + 8) {
+          sliceFruit(f, i);
+        }
+      }
+    }
+
+    function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+      const A = px - x1;
+      const B = py - y1;
+      const C = x2 - x1;
+      const D = y2 - y1;
+      const dot = A * C + B * D;
+      const lenSq = C * C + D * D;
+      let param = lenSq !== 0 ? dot / lenSq : -1;
+      let xx, yy;
+      if (param < 0) { xx = x1; yy = y1; }
+      else if (param > 1) { xx = x2; yy = y2; }
+      else { xx = x1 + param * C; yy = y1 + param * D; }
+      const dx = px - xx;
+      const dy = py - yy;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function sliceFruit(fruit, index) {
+      fruit.sliced = true;
+
+      if (fruit.isBomb) {
+        // Bomb → Game Over
+        createExplosion(fruit.x, fruit.y, '#ef4444');
+        gameOver();
+        return;
+      }
+
+      // Normal fruit
+      score += fruit.points * (combo > 0 ? combo : 1);
+      scoreEl.textContent = score;
+
+      // Combo
+      const now = Date.now();
+      if (now - lastSliceTime < 900) {
+        combo++;
+      } else {
+        combo = 1;
+      }
+      lastSliceTime = now;
+
+      if (combo > 1) {
+        comboEl.textContent = `Combo x${combo}`;
+        comboEl.style.opacity = '1';
+      }
+
+      // Particles
+      createParticles(fruit.x, fruit.y, fruit.color);
+
+      // Remove after short delay
+      setTimeout(() => {
+        fruits = fruits.filter(f => f !== fruit);
+      }, 120);
+    }
+
+    // ========== Particles ==========
+    function createParticles(x, y, color) {
+      for (let i = 0; i < 10; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8 - 2,
+          life: 30 + Math.random() * 20,
+          color,
+          size: 3 + Math.random() * 4
+        });
+      }
+    }
+
+    function createExplosion(x, y, color) {
+      for (let i = 0; i < 25; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.5) * 14,
+          life: 40 + Math.random() * 20,
+          color,
+          size: 4 + Math.random() * 5
+        });
+      }
+    }
+
+    // ========== Spawn Fruits ==========
+    function spawnFruit() {
+      const isBomb = Math.random() < 0.13; // 13% chance of bomb
+      const type = isBomb ? FRUIT_TYPES[5] : FRUIT_TYPES[Math.floor(Math.random() * 5)];
+
+      const fromLeft = Math.random() > 0.5;
+      const x = fromLeft ? -30 : width + 30;
+      const y = height * 0.55 + Math.random() * (height * 0.25);
+
+      const speed = 4.5 + Math.random() * 2.5;
+      const angle = fromLeft ? (-0.6 - Math.random() * 0.5) : (Math.PI + 0.6 + Math.random() * 0.5);
+
+      fruits.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 3.5,
+        radius: type.radius,
+        color: type.color,
+        points: type.points,
+        isBomb: type.isBomb || false,
+        sliced: false,
+        rotation: 0,
+        rotSpeed: (Math.random() - 0.5) * 0.2
+      });
     }
 
     // ========== Game Loop ==========
-    function update() {
-      if (gameState !== 'playing' || !currentBlock) return;
+    function update(dt) {
+      if (gameState !== 'playing') return;
 
-      // Move current block
-      currentBlock.x += speed * direction;
+      gameTime += dt;
+      spawnTimer += dt;
 
-      // Bounce
-      if (currentBlock.x + currentBlock.width > width + 40) direction = -1;
-      if (currentBlock.x < -40) direction = 1;
+      // Spawn rate increases over time
+      const spawnInterval = Math.max(0.55, 1.1 - gameTime * 0.012);
+      if (spawnTimer > spawnInterval) {
+        spawnFruit();
+        if (Math.random() < 0.35) spawnFruit(); // sometimes double
+        spawnTimer = 0;
+      }
 
-      // Camera follow (smooth)
-      const targetCamera = Math.max(0, (height - 180) - currentBlock.y);
-      cameraY += (targetCamera - cameraY) * 0.08;
+      // Update fruits
+      for (let i = fruits.length - 1; i >= 0; i--) {
+        const f = fruits[i];
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vy += 0.18; // gravity
+        f.rotation += f.rotSpeed;
+
+        // Remove if off screen
+        if (f.y > height + 60 || f.x < -80 || f.x > width + 80) {
+          fruits.splice(i, 1);
+        }
+      }
+
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.15;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      // Slash trail fade
+      for (let i = slashPoints.length - 1; i >= 0; i--) {
+        slashPoints[i].life--;
+        if (slashPoints[i].life <= 0) slashPoints.splice(i, 1);
+      }
+
+      // Combo fade
+      if (Date.now() - lastSliceTime > 1000) {
+        combo = 0;
+        comboEl.style.opacity = '0';
+      }
+
+      // Timer
+      timeLeft -= dt;
+      timerEl.textContent = `Time: ${Math.max(0, Math.ceil(timeLeft))}`;
+      if (timeLeft <= 0) {
+        gameOver();
+      }
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw all placed blocks
-      blocks.forEach(block => {
-        drawBlock(block.x, block.y + cameraY, block.width, BLOCK_HEIGHT, block.color);
+      // Draw fruits
+      fruits.forEach(f => {
+        if (f.sliced) return;
+
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        ctx.rotate(f.rotation);
+
+        // Shadow
+        ctx.beginPath();
+        ctx.arc(3, 4, f.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.fill();
+
+        // Fruit body
+        ctx.beginPath();
+        ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
+        ctx.fillStyle = f.color;
+        ctx.fill();
+
+        // Highlight
+        ctx.beginPath();
+        ctx.arc(-f.radius * 0.3, -f.radius * 0.3, f.radius * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fill();
+
+        // Bomb fuse
+        if (f.isBomb) {
+          ctx.beginPath();
+          ctx.moveTo(0, -f.radius);
+          ctx.lineTo(0, -f.radius - 10);
+          ctx.strokeStyle = '#f87171';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+
+        ctx.restore();
       });
 
-      // Draw current moving block
-      if (currentBlock) {
-        drawBlock(currentBlock.x, currentBlock.y + cameraY, currentBlock.width, BLOCK_HEIGHT, currentBlock.color);
+      // Particles
+      particles.forEach(p => {
+        ctx.globalAlpha = Math.max(0, p.life / 40);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+
+      // Slash trail
+      if (slashPoints.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(slashPoints[0].x, slashPoints[0].y);
+        for (let i = 1; i < slashPoints.length; i++) {
+          ctx.lineTo(slashPoints[i].x, slashPoints[i].y);
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+
+        // Glow
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.lineWidth = 10;
+        ctx.stroke();
       }
     }
 
-    function drawBlock(x, y, w, h, color) {
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      ctx.fillRect(x + 4, y + 6, w, h);
-
-      // Main block
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.roundRect(x, y, w, h, 6);
-      ctx.fill();
-
-      // Top highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x, y, w, 6);
-    }
-
-    function loop() {
-      update();
+    let lastTime = performance.now();
+    function loop(now) {
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+      update(dt);
       draw();
       requestAnimationFrame(loop);
     }
 
-    // ========== Drop Logic ==========
-    function dropBlock() {
-      if (gameState !== 'playing' || !currentBlock || !currentBlock.moving) return;
-
-      currentBlock.moving = false;
-      instructionEl.style.opacity = '0';
-
-      const last = blocks[blocks.length - 1];
-
-      // Calculate overlap
-      const left = Math.max(currentBlock.x, last.x);
-      const right = Math.min(currentBlock.x + currentBlock.width, last.x + last.width);
-      const overlap = right - left;
-
-      if (overlap <= 0) {
-        // Completely missed
-        gameOver();
-        return;
-      }
-
-      // Perfect check (within 6px)
-      const isPerfect = Math.abs(currentBlock.x - last.x) < 6 && 
-                       Math.abs((currentBlock.x + currentBlock.width) - (last.x + last.width)) < 6;
-
-      if (isPerfect) {
-        // Perfect placement
-        currentBlock.x = last.x;
-        currentBlock.width = last.width;
-        showPerfect();
-        score += 2; // bonus
-      } else {
-        // Cut the block
-        currentBlock.x = left;
-        currentBlock.width = overlap;
-        score += 1;
-      }
-
-      scoreEl.textContent = score;
-      blocks.push({ ...currentBlock });
-
-      // Increase speed slightly
-      speed = Math.min(speed + 0.08, 4.5);
-
-      // Next block
-      setTimeout(() => {
-        if (gameState === 'playing') spawnBlock();
-      }, 180);
-    }
-
-    function showPerfect() {
-      const el = document.createElement('div');
-      el.className = 'perfect';
-      el.textContent = 'PERFECT!';
-      el.style.left = (width / 2 - 40) + 'px';
-      el.style.top = (height / 2 - 40) + 'px';
-      document.getElementById('game-container').appendChild(el);
-      setTimeout(() => el.remove(), 800);
+    // ========== Game Control ==========
+    function startGame() {
+      score = 0;
+      scoreEl.textContent = '0';
+      timeLeft = 40;
+      combo = 0;
+      fruits = [];
+      particles = [];
+      slashPoints = [];
+      spawnTimer = 0;
+      gameTime = 0;
+      gameState = 'playing';
+      startScreen.style.display = 'none';
+      gameOverEl.style.display = 'none';
+      comboEl.style.opacity = '0';
     }
 
     function gameOver() {
       gameState = 'gameover';
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('stackTowerBest', bestScore);
+        localStorage.setItem('fruitSliceBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
@@ -360,21 +585,11 @@
       gameOverEl.style.display = 'flex';
     }
 
-    // ========== Controls ==========
-    function handleInput(e) {
-      e.preventDefault();
-      if (gameState === 'playing') {
-        dropBlock();
-      }
-    }
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
 
-    canvas.addEventListener('mousedown', handleInput);
-    canvas.addEventListener('touchstart', handleInput, { passive: false });
-    restartBtn.addEventListener('click', init);
-
-    // Start
-    init();
-    loop();
+    // Start loop
+    requestAnimationFrame(loop);
   </script>
 </body>
 </html>
