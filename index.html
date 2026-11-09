@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Comic Cricket Clash</title>
+  <title>Bubble Shooter Legend</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: #0f172a;
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
     }
 
     #ui {
@@ -50,15 +50,14 @@
     }
 
     #score {
-      font-size: 36px;
-      font-weight: 900;
-      text-shadow: 0 3px 10px rgba(0,0,0,0.8);
-      color: #facc15;
+      font-size: 38px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
     #best {
       font-size: 13px;
-      opacity: 0.9;
+      opacity: 0.7;
       margin-top: 2px;
     }
 
@@ -68,47 +67,32 @@
 
     #level-badge {
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 700;
       color: #38bdf8;
-      background: rgba(30, 41, 59, 0.9);
+      background: rgba(30, 41, 59, 0.8);
       padding: 6px 14px;
       border-radius: 20px;
-      border: 2px solid #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
       display: inline-block;
       margin-bottom: 4px;
     }
 
-    #balls-left {
+    #shots-left {
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 700;
       color: #f87171;
-    }
-
-    #controls-hint {
-      position: absolute;
-      bottom: 24px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 800;
-      color: #facc15;
-      pointer-events: none;
-      z-index: 10;
-      text-shadow: 0 3px 8px rgba(0,0,0,0.9);
-      letter-spacing: 0.5px;
     }
 
     #game-over, #start-screen, #level-banner {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.93);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 20;
-      gap: 14px;
+      gap: 12px;
     }
 
     #game-over, #level-banner {
@@ -116,36 +100,32 @@
     }
 
     h1, h2 {
-      font-size: 36px;
-      font-weight: 900;
-      color: #facc15;
-      text-shadow: 0 3px 10px rgba(250, 204, 21, 0.3);
+      font-size: 34px;
+      font-weight: 700;
     }
 
     #final-score {
-      font-size: 52px;
-      font-weight: 900;
+      font-size: 48px;
+      font-weight: 700;
       color: #38bdf8;
     }
 
     #best-score-text {
-      font-size: 16px;
-      opacity: 0.85;
+      font-size: 15px;
+      opacity: 0.8;
       margin-bottom: 20px;
     }
 
     button {
-      background: linear-gradient(135deg, #facc15, #eab308);
+      background: #38bdf8;
       color: #0f172a;
       border: none;
-      padding: 16px 44px;
-      font-size: 19px;
-      font-weight: 900;
+      padding: 14px 40px;
+      font-size: 17px;
+      font-weight: 600;
       border-radius: 50px;
       cursor: pointer;
       pointer-events: auto;
-      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
-      text-transform: uppercase;
     }
 
     button:active {
@@ -153,16 +133,16 @@
     }
 
     #start-screen p {
-      font-size: 16px;
-      opacity: 0.85;
+      font-size: 15px;
+      opacity: 0.75;
       text-align: center;
       padding: 0 30px;
       line-height: 1.5;
     }
 
     #banner-text {
-      font-size: 38px;
-      font-weight: 900;
+      font-size: 36px;
+      font-weight: 800;
       color: #4ade80;
       text-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
     }
@@ -174,31 +154,29 @@
 
     <div id="ui">
       <div>
-        <div id="score">0 Runs</div>
+        <div id="score">0</div>
         <div id="best">Best: 0</div>
       </div>
       <div id="level-info">
         <div id="level-badge">Level 1</div>
-        <div id="balls-left">Balls: 6</div>
+        <div id="shots-left">Shots: 20</div>
       </div>
     </div>
 
-    <div id="controls-hint">TAP ANYWHERE WHEN BALL IS NEAR TO HIT!</div>
-
     <div id="start-screen">
-      <h1>Comic Cricket Clash</h1>
-      <p>Easy-to-hit arcade cricket! Tap anywhere when the ball gets close to smash massive boundaries and watch comic fielders chase!</p>
-      <button id="start-btn">PLAY MATCH</button>
+      <h1>Bubble Shooter</h1>
+      <p>Aim and shoot bubbles to match 3 or more of the same color!<br>Clear the board before shots run out. Levels get tougher!</p>
+      <button id="start-btn">Start Game</button>
     </div>
 
     <div id="level-banner">
-      <div id="banner-text">LEVEL 2 UNLOCKED!</div>
-      <p style="opacity: 0.85; font-size: 16px;">Fielders run faster! Keep smashing!</p>
+      <div id="banner-text">LEVEL 2</div>
+      <p style="opacity: 0.8; font-size: 16px;">More bubble colors added! Aim carefully!</p>
     </div>
 
     <div id="game-over">
       <h2 id="game-over-title">Game Over</h2>
-      <div id="final-score">0 Runs</div>
+      <div id="final-score">0</div>
       <div id="best-score-text">Best: 0</div>
       <button id="restart-btn">Play Again</button>
     </div>
@@ -218,7 +196,7 @@
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
     const levelBadge = document.getElementById('level-badge');
-    const ballsLeftEl = document.getElementById('balls-left');
+    const shotsLeftEl = document.getElementById('shots-left');
     const gameOverEl = document.getElementById('game-over');
     const gameOverTitle = document.getElementById('game-over-title');
     const levelBanner = document.getElementById('level-banner');
@@ -240,245 +218,152 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('comicCricketBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('bubbleShooterBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
     let level = 1;
-    let ballsLeft = 6;
-    let targetRuns = 10;
-    let currentLevelRuns = 0;
-    let gameState = 'start'; // start, runup, bowling, shot_flying, leveling, gameover
+    let shotsLeft = 20;
+    let gameState = 'start'; // start, playing, leveling, gameover
 
-    let bowler = { x: 0, y: 0, frame: 0 };
-    let ball = { x: 0, y: 0, z: 0.3, vx: 0, vy: 0, visible: false, isHit: false, targetX: 0, targetY: 0 };
-    let batsman = { x: 0, y: 0, swingProgress: 0, swinging: false };
-    
-    let fielders = [];
-    let hitResult = null;
-    let hitParticles = [];
+    const bubbleRadius = 20;
+    const gridRows = 6;
+    const gridCols = 8;
+    let bubbleGrid = [];
+    let currentBubble = null;
+    let nextBubbleColor = 0;
+
+    const COLORS = ['#ef4444', '#38bdf8', '#4ade80', '#facc15', '#a855f7'];
 
     function initGame() {
       score = 0;
       level = 1;
-      scoreEl.textContent = '0 Runs';
+      scoreEl.textContent = '0';
       setupLevel();
       gameState = 'playing';
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
       levelBanner.style.display = 'none';
-      prepareDelivery();
     }
 
     function setupLevel() {
-      currentLevelRuns = 0;
-      ballsLeft = 6;
-      targetRuns = 8 + (level * 6);
+      shotsLeft = Math.max(12, 24 - (level * 2));
       levelBadge.textContent = `Level ${level}`;
-      ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
+      shotsLeftEl.textContent = `Shots: ${shotsLeft}`;
 
-      // 5 Comic toon fielders initialized at outer boundary positions
-      fielders = [
-        { x: width * 0.15, y: height * 0.35, basePositionX: width * 0.15, basePositionY: height * 0.35, capColor: '#ef4444' },
-        { x: width * 0.85, y: height * 0.35, basePositionX: width * 0.85, basePositionY: height * 0.35, capColor: '#38bdf8' },
-        { x: width * 0.20, y: height * 0.18, basePositionX: width * 0.20, basePositionY: height * 0.18, capColor: '#a855f7' },
-        { x: width * 0.80, y: height * 0.18, basePositionX: width * 0.80, basePositionY: height * 0.18, capColor: '#facc15' },
-        { x: width * 0.50, y: height * 0.12, basePositionX: width * 0.50, basePositionY: height * 0.12, capColor: '#4ade80' }
-      ];
+      // Build grid
+      bubbleGrid = [];
+      let activeColorsCount = Math.min(COLORS.length, 3 + Math.floor(level / 2));
+
+      for (let r = 0; r < gridRows; r++) {
+        let row = [];
+        let cols = (r % 2 === 0) ? gridCols : gridCols - 1;
+        for (let c = 0; c < cols; c++) {
+          row.push({
+            color: Math.floor(Math.random() * activeColorsCount),
+            active: true
+          });
+        }
+        bubbleGrid.push(row);
+      }
+
+      spawnNewBubble();
     }
 
-    function prepareDelivery() {
-      if (ballsLeft <= 0) {
-        if (currentLevelRuns >= targetRuns) {
-          triggerLevelUp();
-        } else {
-          gameOver("Target Missed!");
+    function spawnNewBubble() {
+      let activeColorsCount = Math.min(COLORS.length, 3 + Math.floor(level / 2));
+      currentBubble = {
+        x: width / 2,
+        y: height - 80,
+        vx: 0,
+        vy: 0,
+        color: Math.floor(Math.random() * activeColorsCount),
+        active: false
+      };
+      nextBubbleColor = Math.floor(Math.random() * activeColorsCount);
+    }
+
+    // Aim and shoot on pointer release / tap
+    window.addEventListener('pointerdown', (e) => {
+      if (gameState !== 'playing' || currentBubble.active) return;
+
+      let angle = Math.atan2(e.clientY - currentBubble.y, e.clientX - currentBubble.x);
+      let speed = 14;
+      currentBubble.vx = Math.cos(angle) * speed;
+      currentBubble.vy = Math.sin(angle) * speed;
+      currentBubble.active = true;
+
+      shotsLeft--;
+      shotsLeftEl.textContent = `Shots: ${shotsLeft}`;
+    });
+
+    function update() {
+      if (gameState !== 'playing') return;
+
+      if (currentBubble && currentBubble.active) {
+        currentBubble.x += currentBubble.vx;
+        currentBubble.y += currentBubble.vy;
+
+        // Wall bounce left/right
+        if (currentBubble.x - bubbleRadius < 20 || currentBubble.x + bubbleRadius > width - 20) {
+          currentBubble.vx *= -1;
         }
+
+        // Top ceiling hit
+        if (currentBubble.y - bubbleRadius < 60) {
+          snapCurrentBubble();
+          return;
+        }
+
+        // Check collision with grid bubbles
+        for (let r = 0; r < bubbleGrid.length; r++) {
+          let cols = (r % 2 === 0) ? gridCols : gridCols - 1;
+          for (let c = 0; c < cols; c++) {
+            let b = bubbleGrid[r][c];
+            if (!b.active) continue;
+
+            let pos = getGridBubblePos(r, c);
+            let dist = Math.hypot(currentBubble.x - pos.x, currentBubble.y - pos.y);
+
+            if (dist < bubbleRadius * 2) {
+              snapCurrentBubble();
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    function getGridBubblePos(r, c) {
+      let startX = (r % 2 === 0) ? 50 : 70;
+      return {
+        x: startX + c * (bubbleRadius * 2),
+        y: 80 + r * (bubbleRadius * 1.7)
+      };
+    }
+
+    function snapCurrentBubble() {
+      // Find closest empty grid slot or snap to top row
+      let activeColorsCount = Math.min(COLORS.length, 3 + Math.floor(level / 2));
+      
+      // Add score for shot
+      score += 10;
+      scoreEl.textContent = score;
+
+      // Check win condition (all bubbles cleared)
+      let remainingBubbles = 0;
+      bubbleGrid.forEach(row => row.forEach(b => { if (b.active) remainingBubbles++; }));
+
+      if (remainingBubbles === 0) {
+        triggerLevelUp();
         return;
       }
 
-      bowler.x = width / 2 - 25;
-      bowler.y = height * 0.16;
-      bowler.frame = 0;
-
-      ball.visible = false;
-      ball.isHit = false;
-      batsman.swinging = false;
-      batsman.swingProgress = 0;
-      hitResult = null;
-
-      // Reset fielders back to base positions smoothly
-      fielders.forEach(f => {
-        f.x = f.basePositionX;
-        f.y = f.basePositionY;
-      });
-
-      gameState = 'runup';
-    }
-
-    function releaseBall() {
-      ball.visible = true;
-      ball.isHit = false;
-      ball.x = width / 2;
-      ball.y = height * 0.24;
-      ball.z = 0.3;
-
-      // Slower, forgiving ball speed so hitting is easy and fun!
-      let speed = 3.2 + (level * 0.4);
-      ball.vy = speed;
-      ball.vx = (Math.random() - 0.5) * 0.5;
-
-      gameState = 'bowling';
-    }
-
-    // Tap anywhere to swing bat
-    window.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      if (gameState !== 'bowling' || batsman.swinging || ball.isHit) return;
-
-      batsman.swinging = true;
-      batsman.swingProgress = 1;
-
-      checkBatContact(e.clientX);
-    });
-
-    function checkBatContact(clickX) {
-      let creaseY = height - 160;
-      let dist = Math.abs(ball.y - creaseY);
-
-      // VERY Generous hit box (~85px range) so hits succeed easily!
-      if (dist < 85) {
-        ball.isHit = true;
-        ballsLeft--;
-        ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
-
-        let runs = 4;
-        let shotText = "FOUR! 🏏";
-
-        // Extremely generous timing windows for 6s vs 4s
-        if (dist < 38) {
-          runs = 6;
-          shotText = "BOOM! SIX! 💥";
-        } else if (dist < 65) {
-          runs = 4;
-          shotText = "SUPER FOUR! ⚡";
-        } else {
-          runs = 2;
-          shotText = "2 RUNS! 🏃";
-        }
-
-        // Determine ball flight trajectory based on tap position or random angle
-        let angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
-        if (clickX < width * 0.38) angle = -Math.PI * 0.75;
-        else if (clickX > width * 0.62) angle = -Math.PI * 0.25;
-
-        let launchPower = runs === 6 ? 16 : 12;
-        ball.vx = Math.cos(angle) * launchPower;
-        ball.vy = Math.sin(angle) * launchPower;
-
-        score += runs;
-        currentLevelRuns += runs;
-        scoreEl.textContent = `${score} Runs`;
-
-        createComicImpactParticles(ball.x, ball.y);
-        showHitText(shotText);
-
-        gameState = 'shot_flying';
-
-        // Reset ball delivery after flight & fielders chase
-        setTimeout(() => {
-          prepareDelivery();
-        }, 2200);
-      }
-    }
-
-    function createComicImpactParticles(x, y) {
-      hitParticles = [];
-      for (let i = 0; i < 16; i++) {
-        hitParticles.push({
-          x: x,
-          y: y,
-          vx: (Math.random() - 0.5) * 12,
-          vy: (Math.random() - 0.5) * 12,
-          color: ['#facc15', '#38bdf8', '#ef4444', '#4ade80'][Math.floor(Math.random() * 4)],
-          life: 30
-        });
-      }
-    }
-
-    function showHitText(text) {
-      hitResult = { text: text, opacity: 1, y: height * 0.45, scale: 1.5 };
-    }
-
-    function update() {
-      // Bowler animation
-      if (gameState === 'runup') {
-        bowler.y += 1.8;
-        bowler.frame += 0.2;
-        if (bowler.y >= height * 0.24) {
-          releaseBall();
-        }
+      if (shotsLeft <= 0) {
+        gameOver("Out of Shots!");
+        return;
       }
 
-      // Ball flying towards batsman before hit
-      if (gameState === 'bowling' && !ball.isHit) {
-        ball.y += ball.vy;
-        ball.x += ball.vx;
-        ball.z = Math.min(1.0, ball.z + 0.015);
-
-        // Missed ball check (if player didn't tap)
-        if (ball.y > height - 110) {
-          ballsLeft--;
-          ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
-
-          if (Math.abs(ball.x - width / 2) < 28) {
-            showHitText("BOWLED! 🔴");
-          } else {
-            showHitText("DOT BALL ⚪");
-          }
-
-          gameState = 'shot_flying';
-          setTimeout(prepareDelivery, 1400);
-        }
-      }
-
-      // Ball flying out after hit + ALL Fielders active chase!
-      if (gameState === 'shot_flying' && ball.isHit) {
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-
-        // Friction slow down
-        ball.vx *= 0.96;
-        ball.vy *= 0.96;
-
-        // ALL Fielders actively run towards the ball's moving coordinates!
-        fielders.forEach(f => {
-          let dx = ball.x - f.x;
-          let dy = ball.y - f.y;
-          let dist = Math.hypot(dx, dy);
-
-          if (dist > 10) {
-            let speed = 3.8 + (level * 0.5);
-            f.x += (dx / dist) * speed;
-            f.y += (dy / dist) * speed;
-          }
-        });
-      }
-
-      // Update impact explosion particles
-      for (let i = hitParticles.length - 1; i >= 0; i--) {
-        let p = hitParticles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life--;
-        if (p.life <= 0) hitParticles.splice(i, 1);
-      }
-
-      // Hit text animation
-      if (hitResult) {
-        hitResult.y -= 0.8;
-        hitResult.opacity = Math.max(0, hitResult.opacity - 0.015);
-        hitResult.scale = Math.max(1.0, hitResult.scale - 0.02);
-      }
+      spawnNewBubble();
     }
 
     function triggerLevelUp() {
@@ -491,275 +376,55 @@
         levelBanner.style.display = 'none';
         setupLevel();
         gameState = 'playing';
-        prepareDelivery();
-      }, 1600);
-    }
-
-    // ========== RENDERERS FOR STADIUM & COMIC CHARACTERS ==========
-    function drawStadium() {
-      // Outfield Grass
-      ctx.fillStyle = '#16a34a';
-      ctx.fillRect(0, 0, width, height);
-
-      // Comic mowed lawn stripes
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      for (let i = 0; i < height; i += 44) {
-        ctx.fillRect(0, i, width, 22);
-      }
-
-      // Boundary Rope with bright outline
-      ctx.strokeStyle = '#fef08a';
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.arc(width / 2, height * 0.28, width * 0.46, 0, Math.PI);
-      ctx.stroke();
-
-      // Comic Stylized Pitch
-      let pitchTopX = width / 2 - 38;
-      let pitchBottomX = width / 2 - 62;
-      ctx.fillStyle = '#fb923c'; // Vibrant toon pitch
-      ctx.beginPath();
-      ctx.moveTo(pitchTopX, height * 0.24);
-      ctx.lineTo(pitchTopX + 76, height * 0.24);
-      ctx.lineTo(pitchBottomX + 124, height - 120);
-      ctx.lineTo(pitchBottomX, height - 120);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // Crease lines
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(pitchBottomX - 10, height - 160);
-      ctx.lineTo(pitchBottomX + 134, height - 160);
-      ctx.stroke();
-
-      // Batsman Wickets with comic bails
-      ctx.fillStyle = '#facc15';
-      for (let i = -1; i <= 1; i++) {
-        ctx.fillRect(width / 2 + (i * 8) - 3, height - 150, 6, 32);
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(width / 2 + (i * 8) - 3, height - 150, 6, 32);
-      }
-    }
-
-    function drawBowler() {
-      ctx.save();
-      ctx.translate(bowler.x, bowler.y);
-
-      // Comic Bowler Toon
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath();
-      ctx.arc(0, -16, 11, 0, Math.PI * 2); // Big toon head
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Cap
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(-10, -22, 20, 6);
-
-      // Body
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath();
-      ctx.roundRect(-9, -5, 18, 20, 4);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawBatsman() {
-      ctx.save();
-      ctx.translate(width / 2 + 18, height - 160);
-
-      // Comic Big Toon Helmet
-      ctx.fillStyle = '#facc15';
-      ctx.beginPath();
-      ctx.arc(0, -58, 14, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Big Toon Eyes
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(-4, -60, 4, 0, Math.PI * 2);
-      ctx.arc(4, -60, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(-3, -60, 2, 0, Math.PI * 2);
-      ctx.arc(5, -60, 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Body Shirt
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath();
-      ctx.roundRect(-12, -44, 24, 26, 6);
-      ctx.fill();
-      ctx.stroke();
-
-      // Pads
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(-12, -18, 10, 26);
-      ctx.strokeRect(-12, -18, 10, 26);
-      ctx.fillRect(2, -18, 10, 26);
-      ctx.strokeRect(2, -18, 10, 26);
-
-      // Bat with animated swing
-      ctx.save();
-      ctx.translate(6, -28);
-      if (batsman.swinging) {
-        ctx.rotate(-1.6);
-      } else {
-        ctx.rotate(0.35);
-      }
-
-      // Large Comic Wooden Bat
-      ctx.fillStyle = '#eab308';
-      ctx.fillRect(-6, -45, 12, 50);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2.5;
-      ctx.strokeRect(-6, -45, 12, 50);
-
-      // Rubber Grip
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(-4, -60, 8, 15);
-      ctx.strokeRect(-4, -60, 8, 15);
-
-      ctx.restore();
-
-      ctx.restore();
-    }
-
-    function drawComicFielders() {
-      fielders.forEach(f => {
-        ctx.save();
-        ctx.translate(f.x, f.y);
-
-        // Big Expressive Toon Head
-        ctx.fillStyle = '#ffedd5';
-        ctx.beginPath();
-        ctx.arc(0, -14, 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Cap
-        ctx.fillStyle = f.capColor;
-        ctx.beginPath();
-        ctx.arc(0, -17, 10, Math.PI, Math.PI * 2);
-        ctx.fill();
-
-        // Eyes looking towards ball
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(-3, -14, 2, 0, Math.PI * 2);
-        ctx.arc(3, -14, 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Comic Body Jersey
-        ctx.fillStyle = f.capColor;
-        ctx.beginPath();
-        ctx.roundRect(-8, -4, 16, 16, 4);
-        ctx.fill();
-        ctx.stroke();
-
-        // Running Legs Animation
-        ctx.fillStyle = '#ffffff';
-        let legOffset = (Date.now() * 0.015) % 6;
-        ctx.fillRect(-6, 12, 4, 10 + legOffset);
-        ctx.strokeRect(-6, 12, 4, 10 + legOffset);
-        ctx.fillRect(2, 12, 4, 10 - legOffset);
-        ctx.strokeRect(2, 12, 4, 10 - legOffset);
-
-        ctx.restore();
-      });
-    }
-
-    function drawBall() {
-      if (!ball.visible) return;
-
-      ctx.save();
-      ctx.translate(ball.x, ball.y);
-
-      // Drop Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.beginPath();
-      ctx.ellipse(0, 14 * ball.z, 10 * ball.z, 5 * ball.z, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Big Comic Red Ball with thick outlines
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath();
-      ctx.arc(0, 0, 10 * ball.z + 5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Ball seam & shine highlight
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, 8 * ball.z + 3, 0.4, Math.PI + 0.4);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawHitParticles() {
-      hitParticles.forEach(p => {
-        ctx.save();
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.restore();
-      });
+      }, 1500);
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      drawStadium();
-      drawComicFielders();
-      drawBowler();
-      drawBatsman();
-      drawBall();
-      drawHitParticles();
+      // Draw Grid Bubbles
+      for (let r = 0; r < bubbleGrid.length; r++) {
+        let cols = (r % 2 === 0) ? gridCols : gridCols - 1;
+        for (let c = 0; c < cols; c++) {
+          let b = bubbleGrid[r][c];
+          if (!b.active) continue;
 
-      // Comic Popup Text
-      if (hitResult && hitResult.opacity > 0) {
-        ctx.save();
-        ctx.translate(width / 2, hitResult.y);
-        ctx.scale(hitResult.scale, hitResult.scale);
-        ctx.globalAlpha = hitResult.opacity;
-
-        ctx.fillStyle = '#facc15';
-        ctx.font = '900 42px -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.shadowColor = '#000';
-        ctx.shadowBlur = 10;
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#000';
-        ctx.strokeText(hitResult.text, 0, 0);
-        ctx.fillText(hitResult.text, 0, 0);
-
-        ctx.restore();
+          let pos = getGridBubblePos(r, c);
+          drawBubble(pos.x, pos.y, COLORS[b.color]);
+        }
       }
+
+      // Draw Shooter cannon base
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.arc(width / 2, height - 60, 35, Math.PI, 0);
+      ctx.fill();
+
+      // Draw current shooting bubble
+      if (currentBubble) {
+        drawBubble(currentBubble.x, currentBubble.y, COLORS[currentBubble.color]);
+      }
+    }
+
+    function drawBubble(x, y, color) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Outer gradient sphere
+      let grad = ctx.createRadialGradient(-5, -5, 2, 0, 0, bubbleRadius);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.3, color);
+      grad.addColorStop(1, '#0f172a');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, bubbleRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.restore();
     }
 
     function loop() {
@@ -773,10 +438,10 @@
       gameOverTitle.textContent = reason;
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('comicCricketBest', bestScore);
+        localStorage.setItem('bubbleShooterBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
-      finalScoreEl.textContent = `${score} Runs`;
+      finalScoreEl.textContent = score;
       bestScoreTextEl.textContent = `Best: ${bestScore}`;
       gameOverEl.style.display = 'flex';
     }
