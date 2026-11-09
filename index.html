@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Knife Hit Fruits - Level Up</title>
+  <title>Tower Climb</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
     }
 
     #ui {
@@ -61,28 +61,29 @@
       margin-top: 2px;
     }
 
-    #level-info {
-      text-align: right;
-    }
-
-    #level-badge {
-      font-size: 16px;
-      font-weight: 700;
+    #height-indicator {
+      font-size: 18px;
+      font-weight: 600;
       color: #38bdf8;
       background: rgba(30, 41, 59, 0.8);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 20px;
       border: 1px solid rgba(56, 189, 248, 0.3);
-      display: inline-block;
-      margin-bottom: 4px;
     }
 
-    #knives-left {
-      font-size: 13px;
+    #instruction {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 15px;
       opacity: 0.8;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    #game-over, #start-screen, #level-banner {
+    #game-over, #start-screen {
       position: absolute;
       inset: 0;
       background: rgba(15, 23, 42, 0.93);
@@ -94,7 +95,7 @@
       gap: 12px;
     }
 
-    #game-over, #level-banner {
+    #game-over {
       display: none;
     }
 
@@ -138,13 +139,6 @@
       padding: 0 30px;
       line-height: 1.5;
     }
-
-    #banner-text {
-      font-size: 36px;
-      font-weight: 800;
-      color: #4ade80;
-      text-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
-    }
   </style>
 </head>
 <body>
@@ -156,21 +150,15 @@
         <div id="score">0</div>
         <div id="best">Best: 0</div>
       </div>
-      <div id="level-info">
-        <div id="level-badge">Level 1</div>
-        <div id="knives-left">Knives: 6</div>
-      </div>
+      <div id="height-indicator">Height: 0m</div>
     </div>
+
+    <div id="instruction">Tap left or right side of screen to jump platforms!</div>
 
     <div id="start-screen">
-      <h1>Knife Hit Fruits</h1>
-      <p>Hit the rotating fruit log with knives!<br>Each level gets faster and harder with reverse spins!</p>
+      <h1>Tower Climb</h1>
+      <p>Jump higher and higher across platforms!<br>Don't fall down or miss your landing.</p>
       <button id="start-btn">Start Game</button>
-    </div>
-
-    <div id="level-banner">
-      <div id="banner-text">LEVEL 2</div>
-      <p style="opacity: 0.8; font-size: 16px;">Get Ready for Faster Spin!</p>
     </div>
 
     <div id="game-over">
@@ -194,11 +182,8 @@
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const levelBadge = document.getElementById('level-badge');
-    const knivesLeftEl = document.getElementById('knives-left');
+    const heightIndicator = document.getElementById('height-indicator');
     const gameOverEl = document.getElementById('game-over');
-    const levelBanner = document.getElementById('level-banner');
-    const bannerText = document.getElementById('banner-text');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
     const startScreen = document.getElementById('start-screen');
@@ -216,250 +201,156 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('knifeHitLevelBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('towerClimbBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
-    let level = 1;
-    let knivesTotal = 6;
-    let knivesLeft = 6;
-    let gameState = 'start'; // start, playing, leveling, gameover
-    let logAngle = 0;
-    let logSpeed = 0.02;
-    let stuckKnives = [];
-    let activeKnife = null;
-    let fruitType = 0; // 0: Watermelon, 1: Orange, 2: Kiwi, 3: Dragonfruit
+    let gameState = 'start';
+    let cameraY = 0;
+    let maxHeight = 0;
 
-    const log = {
-      x: () => width / 2,
-      y: () => height * 0.3,
-      radius: 85
+    let player = {
+      x: width / 2,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      radius: 16,
+      jumping: false
     };
 
-    function initLevel() {
-      stuckKnives = [];
-      // Pre-plant 1 to 3 knives in higher levels to make it significantly tougher!
-      let preStuckCount = Math.min(3, Math.floor((level - 1) / 2));
-      let lastAngle = 0;
-      for (let i = 0; i < preStuckCount; i++) {
-        let angle = lastAngle + 0.8 + Math.random() * 0.5;
-        stuckKnives.push({ angle: angle });
-        lastAngle = angle;
+    let platforms = [];
+
+    function initGame() {
+      score = 0;
+      maxHeight = 0;
+      scoreEl.textContent = '0';
+      heightIndicator.textContent = 'Height: 0m';
+      cameraY = 0;
+
+      player.x = width / 2;
+      player.y = height - 160;
+      player.vx = 0;
+      player.vy = -12;
+
+      platforms = [];
+      // Generate starting platforms
+      platforms.push({ x: width / 2 - 50, y: height - 100, width: 100, height: 16 });
+
+      let currentY = height - 180;
+      while (currentY > -2000) {
+        let pWidth = Math.max(70, 130 - (maxHeight * 0.05));
+        let pX = Math.random() * (width - pWidth);
+        platforms.push({ x: pX, y: currentY, width: pWidth, height: 16 });
+        currentY -= 75 + Math.random() * 35;
       }
 
-      knivesTotal = 5 + Math.min(6, level);
-      knivesLeft = knivesTotal;
-      knivesLeftEl.textContent = `Knives: ${knivesLeft}`;
-      levelBadge.textContent = `Level ${level}`;
-
-      // Progressive difficulty: Faster speeds and occasional unpredictable direction shifts
-      let baseSpeed = 0.022 + (level * 0.007);
-      let dir = (level % 2 === 0) ? -1 : 1;
-      logSpeed = baseSpeed * dir;
-      fruitType = (level - 1) % 4;
+      gameState = 'playing';
+      startScreen.style.display = 'none';
+      gameOverEl.style.display = 'none';
     }
 
-    function throwKnife() {
-      if (gameState !== 'playing' || activeKnife || knivesLeft <= 0) return;
+    // Touch controls: left side vs right side of screen
+    window.addEventListener('pointerdown', (e) => {
+      if (gameState !== 'playing') return;
+      if (e.clientX < width / 2) {
+        player.vx = -6; // Move left
+      } else {
+        player.vx = 6;  // Move right
+      }
+    });
 
-      knivesLeft--;
-      knivesLeftEl.textContent = `Knives: ${knivesLeft}`;
-
-      activeKnife = {
-        x: width / 2,
-        y: height * 0.78,
-        vy: -24
-      };
-    }
-
-    canvas.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      throwKnife();
+    window.addEventListener('pointerup', () => {
+      player.vx = 0;
     });
 
     function update() {
       if (gameState !== 'playing') return;
 
-      // Make higher levels feature erratic speed pulsations or sudden reverse swings!
-      let currentSpeed = logSpeed;
-      if (level >= 3) {
-        // Pulsating speed variation
-        currentSpeed += Math.sin(Date.now() * 0.003) * (level * 0.003);
+      // Physics
+      player.vy += 0.45; // Gravity
+      player.x += player.vx;
+      player.y += player.vy;
+
+      // Screen wrapping horizontal
+      if (player.x < 0) player.x = width;
+      if (player.x > width) player.x = 0;
+
+      // Platform collisions (only when falling down)
+      if (player.vy > 0) {
+        platforms.forEach(p => {
+          if (
+            player.x + player.radius > p.x &&
+            player.x - player.radius < p.x + p.width &&
+            player.y + player.radius >= p.y &&
+            player.y + player.radius <= p.y + p.height + 6
+          ) {
+            player.vy = -13.5; // Bounce / Jump up!
+          }
+        });
       }
-      logAngle += currentSpeed;
 
-      if (activeKnife) {
-        activeKnife.y += activeKnife.vy;
-
-        const lx = log.x();
-        const ly = log.y();
-        const dist = Math.hypot(activeKnife.x - lx, activeKnife.y - ly);
-
-        if (dist <= log.radius + 10) {
-          const hitAngle = Math.atan2(activeKnife.y - ly, activeKnife.x - lx) - logAngle;
-
-          // Check knife-to-knife collision (Stricter clearance angle on higher levels)
-          let clearance = Math.max(0.22, 0.32 - (level * 0.012));
-          let collided = false;
-          for (let k of stuckKnives) {
-            let diff = Math.abs(k.angle - hitAngle);
-            while (diff > Math.PI * 2) diff -= Math.PI * 2;
-            if (Math.min(diff, Math.PI * 2 - diff) < clearance) {
-              collided = true;
-              break;
-            }
-          }
-
-          if (collided) {
-            activeKnife = null;
-            setTimeout(gameOver, 300);
-            return;
-          }
-
-          // Successfully stuck!
-          stuckKnives.push({ angle: hitAngle });
-          score += 10 * level;
-          scoreEl.textContent = score;
-          activeKnife = null;
-
-          // Check if current stage/level is cleared
-          if (stuckKnives.length >= knivesTotal) {
-            triggerLevelUp();
-          } else if (knivesLeft <= 0) {
-            setTimeout(gameOver, 400);
-          }
-        }
+      // Camera follow upward
+      let targetCameraY = player.y - height * 0.45;
+      if (targetCameraY < cameraY) {
+        cameraY += (targetCameraY - cameraY) * 0.1;
       }
-    }
 
-    function triggerLevelUp() {
-      gameState = 'leveling';
-      score += 100 * level; // Level completion bonus!
-      scoreEl.textContent = score;
+      // Calculate score based on height climbed
+      let currentHeight = Math.max(0, Math.floor((height - 100 - player.y) / 10));
+      if (currentHeight > maxHeight) {
+        maxHeight = currentHeight;
+        score = maxHeight * 10;
+        scoreEl.textContent = score;
+        heightIndicator.textContent = `Height: ${maxHeight}m`;
+      }
 
-      level++;
-      bannerText.textContent = `LEVEL ${level} UNLOCKED!`;
-      levelBanner.style.display = 'flex';
+      // Generate new platforms above as player climbs
+      let highestPlatform = platforms[platforms.length - 1];
+      if (highestPlatform.y > cameraY - 200) {
+        let pWidth = Math.max(65, 120 - (maxHeight * 0.03));
+        let pX = Math.random() * (width - pWidth);
+        platforms.push({ x: pX, y: highestPlatform.y - (70 + Math.random() * 40), width: pWidth, height: 16 });
+      }
 
-      setTimeout(() => {
-        levelBanner.style.display = 'none';
-        initLevel();
-        gameState = 'playing';
-      }, 1400);
+      // Remove platforms far below screen
+      platforms = platforms.filter(p => p.y < cameraY + height + 100);
+
+      // Game over if player falls below screen view
+      if (player.y > cameraY + height + 50) {
+        gameOver();
+      }
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      const lx = log.x();
-      const ly = log.y();
-
-      // Draw Rotating Fruit Log with unique skins per level cycle
       ctx.save();
-      ctx.translate(lx, ly);
-      ctx.rotate(logAngle);
+      ctx.translate(0, -cameraY);
 
-      if (fruitType === 0) {
-        // Watermelon Style
+      // Draw platforms
+      platforms.forEach(p => {
+        ctx.fillStyle = '#38bdf8';
         ctx.beginPath();
-        ctx.arc(0, 0, log.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#16a34a';
+        ctx.roundRect(p.x, p.y, p.width, p.height, 8);
         ctx.fill();
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = '#15803d';
-        ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius - 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-      } else if (fruitType === 1) {
-        // Orange Style
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#f97316';
-        ctx.fill();
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = '#c2410c';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius - 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#fb923c';
-        ctx.fill();
-      } else if (fruitType === 2) {
-        // Kiwi Style
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#78350f';
-        ctx.fill();
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = '#451a03';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius - 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#84cc16';
-        ctx.fill();
-      } else {
-        // Dragonfruit Style
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#db2777';
-        ctx.fill();
-        ctx.lineWidth = 6;
-        ctx.strokeStyle = '#9d174d';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(0, 0, log.radius - 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#f43f5e';
-        ctx.fill();
-      }
-
-      // Center core details
-      ctx.beginPath();
-      ctx.arc(0, 0, 16, 0, Math.PI * 2);
-      ctx.fillStyle = '#fef08a';
-      ctx.fill();
-
-      // Draw stuck knives
-      stuckKnives.forEach(k => {
-        ctx.save();
-        ctx.rotate(k.angle);
-        ctx.translate(log.radius - 2, 0);
-        ctx.rotate(Math.PI / 2);
-
-        ctx.fillStyle = '#cbd5e1';
-        ctx.fillRect(-3, -32, 6, 32);
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(-4, 0, 8, 18);
-
-        ctx.restore();
+        // Highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.fillRect(p.x, p.y, p.width, 4);
       });
 
+      // Draw player character ball
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner shine
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath();
+      ctx.arc(player.x - 4, player.y - 4, 5, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
-
-      // Draw active flying knife
-      if (activeKnife) {
-        ctx.save();
-        ctx.translate(activeKnife.x, activeKnife.y);
-        ctx.fillStyle = '#f8fafc';
-        ctx.fillRect(-3, -26, 6, 32);
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(-4, 6, 8, 18);
-        ctx.restore();
-      }
-
-      // Draw standby knife at bottom
-      if (!activeKnife && gameState === 'playing') {
-        ctx.save();
-        ctx.translate(width / 2, height * 0.78);
-        ctx.fillStyle = '#f8fafc';
-        ctx.fillRect(-3, -26, 6, 32);
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(-4, 6, 8, 18);
-        ctx.restore();
-      }
     }
 
     function loop() {
@@ -468,22 +359,11 @@
       requestAnimationFrame(loop);
     }
 
-    function startGame() {
-      score = 0;
-      scoreEl.textContent = '0';
-      level = 1;
-      initLevel();
-      gameState = 'playing';
-      startScreen.style.display = 'none';
-      gameOverEl.style.display = 'none';
-      levelBanner.style.display = 'none';
-    }
-
     function gameOver() {
       gameState = 'gameover';
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('knifeHitLevelBest', bestScore);
+        localStorage.setItem('towerClimbBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
@@ -491,8 +371,8 @@
       gameOverEl.style.display = 'flex';
     }
 
-    startBtn.addEventListener('click', startGame);
-    restartBtn.addEventListener('click', startGame);
+    startBtn.addEventListener('click', initGame);
+    restartBtn.addEventListener('click', initGame);
 
     requestAnimationFrame(loop);
   </script>
