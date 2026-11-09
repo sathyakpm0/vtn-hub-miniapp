@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Fruit Slice</title>
+  <title>Penalty Shootout</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -33,7 +33,7 @@
 
     canvas {
       display: block;
-      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(to bottom, #0f172a 0%, #1e293b 60%, #166534 60%, #15803d 100%);
     }
 
     #ui {
@@ -61,22 +61,58 @@
       margin-top: 2px;
     }
 
-    #combo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #4ade80;
-      opacity: 0;
-      transition: opacity 0.2s;
+    #shots {
+      font-size: 16px;
+      opacity: 0.9;
+      text-align: right;
     }
 
-    #timer {
+    #message {
       position: absolute;
-      top: 70px;
+      top: 45%;
       left: 0;
       width: 100%;
       text-align: center;
-      font-size: 18px;
-      opacity: 0.85;
+      font-size: 28px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 15;
+      pointer-events: none;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    #power-bar-container {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      max-width: 280px;
+      height: 14px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      z-index: 10;
+      display: none;
+    }
+
+    #power-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #22c55e, #eab308, #ef4444);
+      border-radius: 20px;
+      transition: none;
+    }
+
+    #instruction {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 15px;
+      opacity: 0.8;
       z-index: 10;
       pointer-events: none;
     }
@@ -84,7 +120,7 @@
     #game-over, #start-screen {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.93);
+      background: rgba(15, 23, 42, 0.94);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -98,7 +134,7 @@
     }
 
     h1, h2 {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 700;
     }
 
@@ -148,14 +184,19 @@
         <div id="score">0</div>
         <div id="best">Best: 0</div>
       </div>
-      <div id="combo">Combo x2</div>
+      <div id="shots">Shot 1/5</div>
     </div>
 
-    <div id="timer">Time: 40</div>
+    <div id="message"></div>
+    <div id="instruction">Hold & drag to aim, release to shoot</div>
+
+    <div id="power-bar-container">
+      <div id="power-bar"></div>
+    </div>
 
     <div id="start-screen">
-      <h1>Fruit Slice</h1>
-      <p>Swipe to slice the fruits<br>Avoid the bombs!</p>
+      <h1>Penalty Shootout</h1>
+      <p>Drag to aim left/right and set power.<br>Beat the goalkeeper!</p>
       <button id="start-btn">Start Game</button>
     </div>
 
@@ -180,8 +221,11 @@
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const comboEl = document.getElementById('combo');
-    const timerEl = document.getElementById('timer');
+    const shotsEl = document.getElementById('shots');
+    const messageEl = document.getElementById('message');
+    const instructionEl = document.getElementById('instruction');
+    const powerBarContainer = document.getElementById('power-bar-container');
+    const powerBar = document.getElementById('power-bar');
     const gameOverEl = document.getElementById('game-over');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
@@ -199,443 +243,388 @@
     window.addEventListener('resize', resize);
     resize();
 
+    // Game state
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('fruitSliceBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('penaltyBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
-    let fruits = [];
-    let particles = [];
-    let slashPoints = [];
-    let gameState = 'start';
-    let timeLeft = 40;
-    let combo = 0;
-    let lastSliceTime = 0;
-    let spawnTimer = 0;
-    let gameTime = 0;
+    let shotNumber = 1;
+    let maxShots = 5;
+    let gameState = 'start'; // start | aiming | shooting | result | gameover
+    let ball = null;
+    let keeper = { x: 0, y: 0, targetX: 0, width: 70, height: 90, diving: false };
+    let aimX = 0;
+    let power = 0;
+    let powerDirection = 1;
+    let isHolding = false;
+    let resultTimer = 0;
 
-    const FRUIT_TYPES = [
-      { name: 'apple', points: 1 },
-      { name: 'orange', points: 1 },
-      { name: 'watermelon', points: 2 },
-      { name: 'banana', points: 1 },
-      { name: 'grape', points: 1 },
-      { name: 'bomb', points: 0, isBomb: true }
-    ];
+    // Goal dimensions
+    let goal = {};
 
-    // ========== MUCH BIGGER + Attractive Fruits ==========
-    function drawFruit(f) {
-      ctx.save();
-      ctx.translate(f.x, f.y);
-      ctx.rotate(f.rotation);
+    function setupGoal() {
+      const goalWidth = Math.min(width * 0.75, 340);
+      const goalHeight = 130;
+      goal = {
+        x: (width - goalWidth) / 2,
+        y: height * 0.22,
+        width: goalWidth,
+        height: goalHeight
+      };
+      keeper.x = width / 2;
+      keeper.y = goal.y + goal.height - 20;
+    }
 
-      if (f.isBomb) {
-        // Bomb - bigger
+    function resetBall() {
+      ball = {
+        x: width / 2,
+        y: height * 0.78,
+        radius: 16,
+        vx: 0,
+        vy: 0,
+        moving: false
+      };
+      aimX = width / 2;
+      power = 0;
+      powerDirection = 1;
+      keeper.diving = false;
+      keeper.targetX = width / 2;
+      isHolding = false;
+      powerBarContainer.style.display = 'none';
+      instructionEl.style.opacity = '0.8';
+      messageEl.style.opacity = '0';
+    }
+
+    // ========== Drawing ==========
+    function drawPitch() {
+      // Grass already in background
+
+      // Penalty area lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = 2;
+
+      // Goal box
+      ctx.strokeRect(goal.x - 30, goal.y + goal.height, goal.width + 60, 70);
+
+      // Penalty spot
+      ctx.beginPath();
+      ctx.arc(width / 2, height * 0.78, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fill();
+    }
+
+    function drawGoal() {
+      // Goal frame
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(goal.x, goal.y + goal.height);
+      ctx.lineTo(goal.x, goal.y);
+      ctx.lineTo(goal.x + goal.width, goal.y);
+      ctx.lineTo(goal.x + goal.width, goal.y + goal.height);
+      ctx.stroke();
+
+      // Net
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      for (let i = 1; i < 8; i++) {
+        const x = goal.x + (goal.width / 8) * i;
         ctx.beginPath();
-        ctx.arc(0, 0, 32, 0, Math.PI * 2);
-        ctx.fillStyle = '#0f172a';
-        ctx.fill();
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 4;
+        ctx.moveTo(x, goal.y);
+        ctx.lineTo(x, goal.y + goal.height);
         ctx.stroke();
-
-        // Shine
-        ctx.beginPath();
-        ctx.arc(-9, -9, 9, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.13)';
-        ctx.fill();
-
-        // Fuse
-        ctx.beginPath();
-        ctx.moveTo(0, -32);
-        ctx.quadraticCurveTo(12, -48, 8, -58);
-        ctx.strokeStyle = '#f87171';
-        ctx.lineWidth = 5;
-        ctx.stroke();
-
-        // Spark
-        ctx.beginPath();
-        ctx.arc(8, -58, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#fbbf24';
-        ctx.fill();
       }
-      else if (f.name === 'apple') {
-        // Apple - bigger
+      for (let i = 1; i < 5; i++) {
+        const y = goal.y + (goal.height / 5) * i;
         ctx.beginPath();
-        ctx.arc(0, 4, 30, 0, Math.PI * 2);
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-
-        // Darker side
-        ctx.beginPath();
-        ctx.arc(8, 6, 23, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.13)';
-        ctx.fill();
-
-        // Highlight
-        ctx.beginPath();
-        ctx.arc(-10, -6, 10, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.28)';
-        ctx.fill();
-
-        // Stem
-        ctx.beginPath();
-        ctx.moveTo(0, -26);
-        ctx.lineTo(0, -38);
-        ctx.strokeStyle = '#78350f';
-        ctx.lineWidth = 4.5;
+        ctx.moveTo(goal.x, y);
+        ctx.lineTo(goal.x + goal.width, y);
         ctx.stroke();
-
-        // Leaf
-        ctx.beginPath();
-        ctx.ellipse(12, -34, 13, 7, 0.55, 0, Math.PI * 2);
-        ctx.fillStyle = '#22c55e';
-        ctx.fill();
       }
-      else if (f.name === 'orange') {
-        ctx.beginPath();
-        ctx.arc(0, 0, 30, 0, Math.PI * 2);
-        ctx.fillStyle = '#f97316';
-        ctx.fill();
+    }
 
-        // Texture dots
-        ctx.fillStyle = 'rgba(255,255,255,0.2)';
-        for (let i = 0; i < 9; i++) {
-          const a = i * 0.7;
-          ctx.beginPath();
-          ctx.arc(Math.cos(a) * 13, Math.sin(a) * 13, 2.8, 0, Math.PI * 2);
-          ctx.fill();
+    function drawKeeper() {
+      const kx = keeper.x;
+      const ky = keeper.y;
+
+      // Body
+      ctx.fillStyle = '#1e40af';
+      ctx.beginPath();
+      ctx.roundRect(kx - 22, ky - 55, 44, 50, 8);
+      ctx.fill();
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(kx, ky - 68, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#fcd34d';
+      ctx.fill();
+
+      // Arms
+      ctx.strokeStyle = '#1e40af';
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+
+      if (keeper.diving) {
+        // Diving pose
+        const dir = keeper.targetX > width / 2 ? 1 : -1;
+        ctx.beginPath();
+        ctx.moveTo(kx - 15, ky - 40);
+        ctx.lineTo(kx - 40 * dir, ky - 25);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(kx + 15, ky - 40);
+        ctx.lineTo(kx + 35 * dir, ky - 15);
+        ctx.stroke();
+      } else {
+        // Ready pose
+        ctx.beginPath();
+        ctx.moveTo(kx - 18, ky - 40);
+        ctx.lineTo(kx - 35, ky - 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(kx + 18, ky - 40);
+        ctx.lineTo(kx + 35, ky - 20);
+        ctx.stroke();
+      }
+
+      // Gloves
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(kx - (keeper.diving ? 40 * (keeper.targetX > width/2 ? 1 : -1) : 35), 
+              ky - (keeper.diving ? 25 : 20), 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(kx + (keeper.diving ? 35 * (keeper.targetX > width/2 ? 1 : -1) : 35), 
+              ky - (keeper.diving ? 15 : 20), 9, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawBall() {
+      if (!ball) return;
+
+      // Shadow
+      ctx.beginPath();
+      ctx.ellipse(ball.x, ball.y + 12, ball.radius * 0.9, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fill();
+
+      // Ball
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fill();
+
+      // Ball pattern
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius * 0.7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(ball.x, ball.y - ball.radius);
+      ctx.lineTo(ball.x, ball.y + ball.radius);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(ball.x - ball.radius, ball.y);
+      ctx.lineTo(ball.x + ball.radius, ball.y);
+      ctx.stroke();
+    }
+
+    function drawAim() {
+      if (gameState !== 'aiming' && gameState !== 'shooting') return;
+
+      // Aim line
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(width / 2, height * 0.78);
+      ctx.lineTo(aimX, goal.y + goal.height * 0.6);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Aim target
+      ctx.beginPath();
+      ctx.arc(aimX, goal.y + goal.height * 0.55, 12, 0, Math.PI * 2);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    // ========== Game Logic ==========
+    function startAiming() {
+      gameState = 'aiming';
+      resetBall();
+      shotsEl.textContent = `Shot \( {shotNumber}/ \){maxShots}`;
+      powerBarContainer.style.display = 'block';
+    }
+
+    function shoot() {
+      if (gameState !== 'aiming') return;
+      gameState = 'shooting';
+      isHolding = false;
+      powerBarContainer.style.display = 'none';
+      instructionEl.style.opacity = '0';
+
+      // Calculate direction & power
+      const targetX = aimX;
+      const targetY = goal.y + goal.height * 0.5;
+      const dx = targetX - ball.x;
+      const dy = targetY - ball.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const speed = 9 + (power / 100) * 11;
+      ball.vx = (dx / dist) * speed;
+      ball.vy = (dy / dist) * speed;
+      ball.moving = true;
+
+      // Goalkeeper decides where to dive
+      setTimeout(() => {
+        const diveChance = 0.65; // 65% chance to dive correct side
+        const ballGoingLeft = targetX < width / 2;
+        const correctDive = Math.random() < diveChance;
+
+        if (correctDive) {
+          keeper.targetX = ballGoingLeft ? goal.x + 40 : goal.x + goal.width - 40;
+        } else {
+          keeper.targetX = ballGoingLeft ? goal.x + goal.width - 40 : goal.x + 40;
+        }
+        keeper.diving = true;
+      }, 80);
+    }
+
+    function checkGoal() {
+      if (!ball.moving) return;
+
+      // Move ball
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      ball.vy += 0.12; // slight gravity
+
+      // Move keeper toward target
+      if (keeper.diving) {
+        keeper.x += (keeper.targetX - keeper.x) * 0.14;
+      }
+
+      // Check if ball reached goal area
+      if (ball.y < goal.y + goal.height + 10) {
+        ball.moving = false;
+
+        // Did it go in?
+        const inGoalX = ball.x > goal.x + 8 && ball.x < goal.x + goal.width - 8;
+        const saved = Math.abs(ball.x - keeper.x) < 48 && ball.y > goal.y + 20;
+
+        if (inGoalX && !saved) {
+          // GOAL!
+          score++;
+          scoreEl.textContent = score;
+          showMessage('GOAL!', '#4ade80');
+        } else if (saved) {
+          showMessage('SAVED!', '#f87171');
+        } else {
+          showMessage('MISS!', '#f87171');
         }
 
-        // Highlight
-        ctx.beginPath();
-        ctx.arc(-10, -10, 10, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.25)';
-        ctx.fill();
+        gameState = 'result';
+        resultTimer = 1.3;
       }
-      else if (f.name === 'watermelon') {
-        // Outer green
-        ctx.beginPath();
-        ctx.arc(0, 0, 34, 0, Math.PI * 2);
-        ctx.fillStyle = '#16a34a';
-        ctx.fill();
+    }
 
-        // Dark stripes
-        ctx.strokeStyle = '#15803d';
-        ctx.lineWidth = 5;
-        for (let i = -3; i <= 3; i++) {
-          ctx.beginPath();
-          ctx.moveTo(i * 10, -33);
-          ctx.lineTo(i * 10, 33);
-          ctx.stroke();
-        }
+    function showMessage(text, color) {
+      messageEl.textContent = text;
+      messageEl.style.color = color;
+      messageEl.style.opacity = '1';
+    }
 
-        // Red inside
-        ctx.beginPath();
-        ctx.arc(0, 0, 25, 0, Math.PI * 2);
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-
-        // Seeds
-        ctx.fillStyle = '#1e293b';
-        [[-9, 3], [9, -4], [0, 12], [-6, -10], [7, 8]].forEach(([sx, sy]) => {
-          ctx.beginPath();
-          ctx.ellipse(sx, sy, 3.2, 5.5, 0.3, 0, Math.PI * 2);
-          ctx.fill();
-        });
+    function nextShot() {
+      shotNumber++;
+      if (shotNumber > maxShots) {
+        endGame();
+      } else {
+        startAiming();
       }
-      else if (f.name === 'banana') {
-        // Banana - bigger
-        ctx.beginPath();
-        ctx.moveTo(-28, 8);
-        ctx.quadraticCurveTo(-16, -26, 8, -22);
-        ctx.quadraticCurveTo(28, -16, 26, 10);
-        ctx.quadraticCurveTo(10, 18, -28, 8);
-        ctx.fillStyle = '#eab308';
-        ctx.fill();
+    }
 
-        // Brown ends
-        ctx.fillStyle = '#78350f';
-        ctx.beginPath();
-        ctx.arc(-27, 7, 5.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(25, 9, 4.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Lines
-        ctx.strokeStyle = 'rgba(120, 53, 15, 0.35)';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(-14, -3);
-        ctx.quadraticCurveTo(2, -11, 16, 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(-16, 5);
-        ctx.quadraticCurveTo(0, -2, 14, 8);
-        ctx.stroke();
+    function endGame() {
+      gameState = 'gameover';
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('penaltyBest', bestScore);
+        bestEl.textContent = `Best: ${bestScore}`;
       }
-      else if (f.name === 'grape') {
-        // Grape bunch - bigger
-        const positions = [
-          [0, -12], [-13, -3], [13, -3],
-          [-8, 10], [8, 10], [0, 20],
-          [-18, 8], [18, 8]
-        ];
-        positions.forEach(([px, py], i) => {
-          ctx.beginPath();
-          ctx.arc(px, py, 12, 0, Math.PI * 2);
-          ctx.fillStyle = i % 2 === 0 ? '#a855f7' : '#7e22ce';
-          ctx.fill();
-
-          // Highlight
-          ctx.beginPath();
-          ctx.arc(px - 4, py - 4, 4, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,255,255,0.25)';
-          ctx.fill();
-        });
-
-        // Stem
-        ctx.beginPath();
-        ctx.moveTo(0, -20);
-        ctx.lineTo(0, -34);
-        ctx.strokeStyle = '#4d7c0f';
-        ctx.lineWidth = 4;
-        ctx.stroke();
-      }
-
-      ctx.restore();
+      finalScoreEl.textContent = score + ' / 5';
+      bestScoreTextEl.textContent = `Best: ${bestScore}`;
+      gameOverEl.style.display = 'flex';
     }
 
     // ========== Input ==========
-    let isDrawing = false;
-    let lastX = 0, lastY = 0;
-
     function getPos(e) {
       if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
       return { x: e.clientX, y: e.clientY };
     }
 
-    function startDraw(e) {
+    function startHold(e) {
       e.preventDefault();
-      if (gameState !== 'playing') return;
-      isDrawing = true;
+      if (gameState !== 'aiming') return;
+      isHolding = true;
+    }
+
+    function moveHold(e) {
+      e.preventDefault();
+      if (!isHolding || gameState !== 'aiming') return;
       const pos = getPos(e);
-      lastX = pos.x;
-      lastY = pos.y;
-      slashPoints = [{ x: pos.x, y: pos.y, life: 8 }];
+
+      // Aim left-right based on horizontal position
+      const minX = goal.x + 20;
+      const maxX = goal.x + goal.width - 20;
+      aimX = Math.max(minX, Math.min(maxX, pos.x));
     }
 
-    function moveDraw(e) {
+    function endHold(e) {
       e.preventDefault();
-      if (!isDrawing || gameState !== 'playing') return;
-      const pos = getPos(e);
-      slashPoints.push({ x: pos.x, y: pos.y, life: 8 });
-      if (slashPoints.length > 12) slashPoints.shift();
-      checkSlice(lastX, lastY, pos.x, pos.y);
-      lastX = pos.x;
-      lastY = pos.y;
+      if (!isHolding || gameState !== 'aiming') return;
+      shoot();
     }
 
-    function endDraw(e) {
-      e.preventDefault();
-      isDrawing = false;
-      slashPoints = [];
-    }
+    canvas.addEventListener('mousedown', startHold);
+    canvas.addEventListener('mousemove', moveHold);
+    canvas.addEventListener('mouseup', endHold);
+    canvas.addEventListener('mouseleave', endHold);
 
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', moveDraw);
-    canvas.addEventListener('mouseup', endDraw);
-    canvas.addEventListener('mouseleave', endDraw);
-    canvas.addEventListener('touchstart', startDraw, { passive: false });
-    canvas.addEventListener('touchmove', moveDraw, { passive: false });
-    canvas.addEventListener('touchend', endDraw);
+    canvas.addEventListener('touchstart', startHold, { passive: false });
+    canvas.addEventListener('touchmove', moveHold, { passive: false });
+    canvas.addEventListener('touchend', endHold);
 
-    function checkSlice(x1, y1, x2, y2) {
-      for (let i = fruits.length - 1; i >= 0; i--) {
-        const f = fruits[i];
-        if (f.sliced) continue;
-        const dist = pointToSegmentDistance(f.x, f.y, x1, y1, x2, y2);
-        if (dist < 36) {           // bigger hit area
-          sliceFruit(f);
-        }
-      }
-    }
-
-    function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
-      const A = px - x1, B = py - y1, C = x2 - x1, D = y2 - y1;
-      const dot = A * C + B * D;
-      const lenSq = C * C + D * D;
-      let param = lenSq !== 0 ? dot / lenSq : -1;
-      let xx, yy;
-      if (param < 0) { xx = x1; yy = y1; }
-      else if (param > 1) { xx = x2; yy = y2; }
-      else { xx = x1 + param * C; yy = y1 + param * D; }
-      return Math.sqrt((px - xx) ** 2 + (py - yy) ** 2);
-    }
-
-    function sliceFruit(fruit) {
-      fruit.sliced = true;
-
-      if (fruit.isBomb) {
-        createExplosion(fruit.x, fruit.y, '#ef4444');
-        gameOver();
-        return;
-      }
-
-      score += fruit.points * (combo > 0 ? combo : 1);
-      scoreEl.textContent = score;
-
-      const now = Date.now();
-      if (now - lastSliceTime < 900) combo++;
-      else combo = 1;
-      lastSliceTime = now;
-
-      if (combo > 1) {
-        comboEl.textContent = `Combo x${combo}`;
-        comboEl.style.opacity = '1';
-      }
-
-      createParticles(fruit.x, fruit.y, fruit.color || '#f97316');
-      setTimeout(() => {
-        fruits = fruits.filter(f => f !== fruit);
-      }, 100);
-    }
-
-    function createParticles(x, y, color) {
-      for (let i = 0; i < 12; i++) {
-        particles.push({
-          x, y,
-          vx: (Math.random() - 0.5) * 9,
-          vy: (Math.random() - 0.5) * 9 - 2,
-          life: 32 + Math.random() * 20,
-          color,
-          size: 3.5 + Math.random() * 4.5
-        });
-      }
-    }
-
-    function createExplosion(x, y, color) {
-      for (let i = 0; i < 28; i++) {
-        particles.push({
-          x, y,
-          vx: (Math.random() - 0.5) * 15,
-          vy: (Math.random() - 0.5) * 15,
-          life: 42 + Math.random() * 20,
-          color,
-          size: 4.5 + Math.random() * 5.5
-        });
-      }
-    }
-
-    function spawnFruit() {
-      const isBomb = Math.random() < 0.12;
-      const type = isBomb ? FRUIT_TYPES[5] : FRUIT_TYPES[Math.floor(Math.random() * 5)];
-
-      const fromLeft = Math.random() > 0.5;
-      const x = fromLeft ? -60 : width + 60;
-      const y = height * 0.45 + Math.random() * (height * 0.32);
-
-      const speed = 4.4 + Math.random() * 2.2;
-      const angle = fromLeft ? (-0.55 - Math.random() * 0.45) : (Math.PI + 0.55 + Math.random() * 0.45);
-
-      fruits.push({
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 3.4,
-        name: type.name,
-        points: type.points,
-        isBomb: type.isBomb || false,
-        sliced: false,
-        rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.13,
-        color: type.name === 'apple' ? '#ef4444' :
-               type.name === 'orange' ? '#f97316' :
-               type.name === 'watermelon' ? '#22c55e' :
-               type.name === 'banana' ? '#eab308' :
-               type.name === 'grape' ? '#a855f7' : '#1e293b'
-      });
-    }
-
+    // ========== Loop ==========
     function update(dt) {
-      if (gameState !== 'playing') return;
-
-      gameTime += dt;
-      spawnTimer += dt;
-
-      const spawnInterval = Math.max(0.5, 1.05 - gameTime * 0.011);
-      if (spawnTimer > spawnInterval) {
-        spawnFruit();
-        if (Math.random() < 0.28) spawnFruit();
-        spawnTimer = 0;
+      if (gameState === 'aiming' && isHolding) {
+        // Power bar oscillates
+        power += powerDirection * 1.8;
+        if (power >= 100) { power = 100; powerDirection = -1; }
+        if (power <= 0) { power = 0; powerDirection = 1; }
+        powerBar.style.width = power + '%';
       }
 
-      for (let i = fruits.length - 1; i >= 0; i--) {
-        const f = fruits[i];
-        f.x += f.vx;
-        f.y += f.vy;
-        f.vy += 0.17;
-        f.rotation += f.rotSpeed;
+      if (gameState === 'shooting') {
+        checkGoal();
+      }
 
-        if (f.y > height + 90 || f.x < -110 || f.x > width + 110) {
-          fruits.splice(i, 1);
+      if (gameState === 'result') {
+        resultTimer -= dt;
+        if (resultTimer <= 0) {
+          messageEl.style.opacity = '0';
+          nextShot();
         }
       }
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.14;
-        p.life--;
-        if (p.life <= 0) particles.splice(i, 1);
-      }
-
-      for (let i = slashPoints.length - 1; i >= 0; i--) {
-        slashPoints[i].life--;
-        if (slashPoints[i].life <= 0) slashPoints.splice(i, 1);
-      }
-
-      if (Date.now() - lastSliceTime > 1000) {
-        combo = 0;
-        comboEl.style.opacity = '0';
-      }
-
-      timeLeft -= dt;
-      timerEl.textContent = `Time: ${Math.max(0, Math.ceil(timeLeft))}`;
-      if (timeLeft <= 0) gameOver();
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-
-      fruits.forEach(f => {
-        if (!f.sliced) drawFruit(f);
-      });
-
-      particles.forEach(p => {
-        ctx.globalAlpha = Math.max(0, p.life / 35);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-
-      if (slashPoints.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(slashPoints[0].x, slashPoints[0].y);
-        for (let i = 1; i < slashPoints.length; i++) {
-          ctx.lineTo(slashPoints[i].x, slashPoints[i].y);
-        }
-        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-        ctx.lineWidth = 4;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
-        ctx.lineWidth = 11;
-        ctx.stroke();
-      }
+      drawPitch();
+      drawGoal();
+      drawKeeper();
+      drawAim();
+      drawBall();
     }
 
     let lastTime = performance.now();
@@ -650,35 +639,18 @@
     function startGame() {
       score = 0;
       scoreEl.textContent = '0';
-      timeLeft = 40;
-      combo = 0;
-      fruits = [];
-      particles = [];
-      slashPoints = [];
-      spawnTimer = 0;
-      gameTime = 0;
-      gameState = 'playing';
+      shotNumber = 1;
+      setupGoal();
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
-      comboEl.style.opacity = '0';
-    }
-
-    function gameOver() {
-      gameState = 'gameover';
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem('fruitSliceBest', bestScore);
-        bestEl.textContent = `Best: ${bestScore}`;
-      }
-      finalScoreEl.textContent = score;
-      bestScoreTextEl.textContent = `Best: ${bestScore}`;
-      gameOverEl.style.display = 'flex';
+      startAiming();
     }
 
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', startGame);
 
+    setupGoal();
     requestAnimationFrame(loop);
   </script>
 </body>
-</html>
+  </html>
