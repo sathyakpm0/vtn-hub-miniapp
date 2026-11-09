@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Realistic Car Race - Timed Levels</title>
+  <title>Cricket Master - Timed Levels</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -77,7 +77,7 @@
       margin-bottom: 4px;
     }
 
-    #level-timer {
+    #balls-left {
       font-size: 15px;
       font-weight: 700;
       color: #f87171;
@@ -154,29 +154,29 @@
 
     <div id="ui">
       <div>
-        <div id="score">0</div>
+        <div id="score">0 Runs</div>
         <div id="best">Best: 0</div>
       </div>
       <div id="level-info">
         <div id="level-badge">Level 1</div>
-        <div id="level-timer">Time: 25s</div>
+        <div id="balls-left">Balls: 6</div>
       </div>
     </div>
 
     <div id="start-screen">
-      <h1>Realistic Car Race</h1>
-      <p>Tap left or right side to steer!<br>Evade realistic traffic cars and reach the goal before time runs out!</p>
-      <button id="start-btn">Start Game</button>
+      <h1>Cricket Master</h1>
+      <p>Tap left, center, or right to swing the bat!<br>Reach target runs before running out of balls. Spin & pace increase with levels!</p>
+      <button id="start-btn">Start Match</button>
     </div>
 
     <div id="level-banner">
       <div id="banner-text">LEVEL 2</div>
-      <p style="opacity: 0.8; font-size: 16px;">Traffic speeds up! Beat the timer!</p>
+      <p style="opacity: 0.8; font-size: 16px;">Target increased! Watch out for spin bowling!</p>
     </div>
 
     <div id="game-over">
       <h2 id="game-over-title">Game Over</h2>
-      <div id="final-score">0</div>
+      <div id="final-score">0 Runs</div>
       <div id="best-score-text">Best: 0</div>
       <button id="restart-btn">Play Again</button>
     </div>
@@ -196,7 +196,7 @@
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
     const levelBadge = document.getElementById('level-badge');
-    const levelTimerEl = document.getElementById('level-timer');
+    const ballsLeftEl = document.getElementById('balls-left');
     const gameOverEl = document.getElementById('game-over');
     const gameOverTitle = document.getElementById('game-over-title');
     const levelBanner = document.getElementById('level-banner');
@@ -218,124 +218,168 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('realisticCarBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('cricketBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
     let level = 1;
-    let timeLeft = 25;
-    let levelDistance = 0;
-    let targetDistance = 300;
-    let gameState = 'start';
-    let roadAnim = 0;
+    let ballsLeft = 6;
+    let targetRuns = 15;
+    let currentLevelRuns = 0;
+    let gameState = 'start'; // start, playing, bowling, shot, leveling, gameover
 
-    let player = {
+    let ball = {
       x: width / 2,
-      y: height - 150,
-      width: 52,
-      height: 105,
-      color: '#0284c7'
+      y: 120,
+      z: 0.2, // Scale simulation for 3D depth pitch
+      vx: 0,
+      vy: 0,
+      vz: 0.015,
+      bounced: false
     };
 
-    let obstacles = [];
-    let spawnTimer = 0;
-    let steering = 0;
+    let batsman = {
+      x: width / 2,
+      y: height - 160,
+      swinging: false,
+      shotType: 0 // -1 Left (Leg), 0 Straight, 1 Right (Off)
+    };
+
+    let hitShotResult = null; // { text: "SIX!", runs: 6, opacity: 1, y: height/2 }
 
     function initGame() {
       score = 0;
       level = 1;
-      scoreEl.textContent = '0';
+      scoreEl.textContent = '0 Runs';
       setupLevel();
       gameState = 'playing';
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
       levelBanner.style.display = 'none';
+      startNewDelivery();
     }
 
     function setupLevel() {
-      levelDistance = 0;
-      timeLeft = Math.max(15, 28 - (level * 2));
-      targetDistance = 250 + (level * 70);
+      currentLevelRuns = 0;
+      ballsLeft = 6;
+      targetRuns = 12 + (level * 6);
       levelBadge.textContent = `Level ${level}`;
-      obstacles = [];
-      player.x = width / 2;
+      ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
+    }
+
+    function startNewDelivery() {
+      if (ballsLeft <= 0) {
+        if (currentLevelRuns >= targetRuns) {
+          triggerLevelUp();
+        } else {
+          gameOver("Target Missed!");
+        }
+        return;
+      }
+
+      gameState = 'bowling';
+      ball.x = width / 2 + (Math.random() - 0.5) * 40;
+      ball.y = height * 0.28;
+      ball.z = 0.3;
+      ball.bounced = false;
+
+      // Speed & Spin variation per level
+      let speed = 4 + (level * 0.7);
+      let spin = (level >= 2) ? (Math.random() - 0.5) * (level * 0.8) : 0;
+
+      ball.vy = speed;
+      ball.vx = spin;
+      batsman.swinging = false;
+      hitShotResult = null;
     }
 
     window.addEventListener('pointerdown', (e) => {
-      if (gameState !== 'playing') return;
-      if (e.clientX < width / 2) {
-        steering = -1;
+      if (gameState !== 'bowling' || batsman.swinging) return;
+
+      batsman.swinging = true;
+      if (e.clientX < width * 0.35) {
+        batsman.shotType = -1; // Leg side
+      } else if (e.clientX > width * 0.65) {
+        batsman.shotType = 1;  // Off side
       } else {
-        steering = 1;
+        batsman.shotType = 0;  // Straight drive
       }
+
+      checkShotTiming();
     });
 
-    window.addEventListener('pointerup', () => {
-      steering = 0;
-    });
+    function checkShotTiming() {
+      let dist = Math.abs(ball.y - (batsman.y - 10));
 
-    setInterval(() => {
-      if (gameState === 'playing') {
-        timeLeft--;
-        levelTimerEl.textContent = `Time: ${timeLeft}s`;
-        if (timeLeft <= 0) {
-          gameOver("Time's Up!");
+      if (dist < 45) {
+        // Connected!
+        ballsLeft--;
+        ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
+
+        let runs = 4;
+        if (dist < 15) {
+          runs = 6;
+          showShotResult("SIX! 💥", 6);
+        } else if (dist < 30) {
+          runs = 4;
+          showShotResult("FOUR! 🏏", 4);
+        } else {
+          runs = 2;
+          showShotResult("2 Runs!", 2);
+        }
+
+        score += runs;
+        currentLevelRuns += runs;
+        scoreEl.textContent = `${score} Runs`;
+
+        if (currentLevelRuns >= targetRuns && ballsLeft === 0) {
+          setTimeout(triggerLevelUp, 1200);
+        } else {
+          setTimeout(startNewDelivery, 1300);
         }
       }
-    }, 1000);
+    }
+
+    function showShotResult(text, runs) {
+      hitShotResult = {
+        text: text,
+        runs: runs,
+        opacity: 1,
+        y: height * 0.45
+      };
+    }
 
     function update() {
-      if (gameState !== 'playing') return;
+      if (gameState === 'bowling') {
+        ball.y += ball.vy;
+        ball.x += ball.vx;
+        ball.z = Math.min(1.0, ball.z + 0.015);
 
-      let roadLeft = width / 2 - 145;
-      let roadRight = width / 2 + 145;
-
-      player.x += steering * (6.5 + level * 0.8);
-      if (player.x < roadLeft + 30) player.x = roadLeft + 30;
-      if (player.x > roadRight - 30) player.x = roadRight - 30;
-
-      let roadSpeed = 8 + (level * 2);
-      roadAnim = (roadAnim + roadSpeed) % 40;
-
-      levelDistance += roadSpeed * 0.1;
-      score = (level - 1) * 300 + Math.floor(levelDistance * 10);
-      scoreEl.textContent = score;
-
-      if (levelDistance >= targetDistance) {
-        triggerLevelUp();
-      }
-
-      spawnTimer++;
-      let spawnInterval = Math.max(30, 68 - (level * 7));
-      if (spawnTimer >= spawnInterval) {
-        spawnTimer = 0;
-        let lanes = [roadLeft + 48, width / 2, roadRight - 48];
-        let laneX = lanes[Math.floor(Math.random() * lanes.length)];
-        obstacles.push({
-          x: laneX,
-          y: -130,
-          width: 52,
-          height: 105,
-          speed: roadSpeed * 0.52 + Math.random() * 2,
-          color: ['#dc2626', '#16a34a', '#ca8a04', '#7c3aed', '#b91c1c', '#0284c7'][Math.floor(Math.random() * 6)]
-        });
-      }
-
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        let obs = obstacles[i];
-        obs.y += roadSpeed + obs.speed;
-
-        if (
-          player.x - player.width / 2 < obs.x + obs.width / 2 &&
-          player.x + player.width / 2 > obs.x - obs.width / 2 &&
-          player.y - player.height / 2 < obs.y + obs.height / 2 &&
-          player.y + player.height / 2 > obs.y - obs.height / 2
-        ) {
-          gameOver("Crash!");
+        // Ball bounce on pitch
+        if (ball.y > height * 0.52 && !ball.bounced) {
+          ball.bounced = true;
+          ball.vy *= 0.95; // Slight friction slowing
         }
 
-        if (obs.y > height + 130) {
-          obstacles.splice(i, 1);
+        // Missed ball / Wicket check
+        if (ball.y > height - 110) {
+          ballsLeft--;
+          ballsLeftEl.textContent = `Balls: ${ballsLeft}`;
+
+          // Hit stumps
+          if (Math.abs(ball.x - width / 2) < 26) {
+            showShotResult("WICKET! 🔴", 0);
+          } else {
+            showShotResult("Dot Ball ⚪", 0);
+          }
+
+          gameState = 'shot';
+          setTimeout(startNewDelivery, 1300);
         }
+      }
+
+      if (hitShotResult) {
+        hitShotResult.y -= 1.5;
+        hitShotResult.opacity = Math.max(0, hitShotResult.opacity - 0.015);
       }
     }
 
@@ -349,189 +393,123 @@
         levelBanner.style.display = 'none';
         setupLevel();
         gameState = 'playing';
+        startNewDelivery();
       }, 1500);
-    }
-
-    // Advanced realistic top-down car renderer
-    function drawDetailedSportsCar(x, y, w, h, bodyColor, isPlayer) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      const halfW = w / 2;
-      const halfH = h / 2;
-
-      // Realistic Ambient Drop Shadow
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-      ctx.beginPath();
-      ctx.roundRect(-halfW - 5, -halfH + 8, w + 10, h + 4, 18);
-      ctx.fill();
-
-      // Detailed Treaded Rubber Wheels
-      const tireW = 9;
-      const tireH = 22;
-      const tirePositions = [
-        [-halfW - 4, -halfH + 16], // Front Left
-        [halfW - 5, -halfH + 16],  // Front Right
-        [-halfW - 4, halfH - 36],  // Rear Left
-        [halfW - 5, halfH - 36]    // Rear Right
-      ];
-
-      tirePositions.forEach(([tx, ty]) => {
-        ctx.fillStyle = '#111827';
-        ctx.beginPath();
-        ctx.roundRect(tx, ty, tireW, tireH, 4);
-        ctx.fill();
-        // Alloy Rims Inner Line
-        ctx.fillStyle = '#9ca3af';
-        ctx.fillRect(tx + 3, ty + 4, 3, tireH - 8);
-      });
-
-      // Car Body Silhouette Path
-      ctx.beginPath();
-      ctx.moveTo(-halfW + 12, -halfH); // Nose center-left
-      ctx.quadraticCurveTo(0, -halfH - 5, halfW - 12, -halfH); // Aerodynamic front nose curve
-      ctx.quadraticCurveTo(halfW, -halfH + 15, halfW - 2, -halfH + 35); // Front fender
-      ctx.lineTo(halfW - 4, halfH - 35); // Side skirt
-      ctx.quadraticCurveTo(halfW + 2, halfH - 15, halfW - 8, halfH); // Rear quarter panel
-      ctx.lineTo(-halfW + 8, halfH); // Rear bumper
-      ctx.quadraticCurveTo(-halfW - 2, halfH - 15, -halfW + 4, halfH - 35); // Left skirt
-      ctx.lineTo(-halfW + 2, -halfH + 35);
-      ctx.quadraticCurveTo(-halfW, -halfH + 15, -halfW + 12, -halfH);
-      ctx.closePath();
-
-      // Main metallic body linear gradient
-      let bodyGrad = ctx.createLinearGradient(-halfW, 0, halfW, 0);
-      bodyGrad.addColorStop(0, '#090d16');
-      bodyGrad.addColorStop(0.25, bodyColor);
-      bodyGrad.addColorStop(0.75, bodyColor);
-      bodyGrad.addColorStop(1, '#090d16');
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Side Mirrors
-      ctx.fillStyle = bodyColor;
-      ctx.fillRect(-halfW - 7, -halfH + 34, 7, 10);
-      ctx.fillRect(halfW, -halfH + 34, 7, 10);
-
-      // Hood Vents / Lines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(-10, -halfH + 12);
-      ctx.lineTo(-6, -halfH + 34);
-      ctx.moveTo(10, -halfH + 12);
-      ctx.lineTo(6, -halfH + 34);
-      ctx.stroke();
-
-      // Curved Windshield Front
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.moveTo(-halfW + 10, -halfH + 35);
-      ctx.quadraticCurveTo(0, -halfH + 28, halfW - 10, -halfH + 35);
-      ctx.lineTo(halfW - 12, -halfH + 54);
-      ctx.lineTo(-halfW + 12, -halfH + 54);
-      ctx.closePath();
-      ctx.fill();
-
-      // Windshield Glass Highlight Reflection
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
-      ctx.beginPath();
-      ctx.moveTo(-halfW + 12, -halfH + 37);
-      ctx.lineTo(-4, -halfH + 32);
-      ctx.lineTo(-8, -halfH + 52);
-      ctx.lineTo(-halfW + 13, -halfH + 52);
-      ctx.closePath();
-      ctx.fill();
-
-      // Cabin Roof Pillar Contour
-      ctx.fillStyle = bodyColor;
-      ctx.beginPath();
-      ctx.roundRect(-halfW + 10, -halfH + 52, w - 20, 24, 4);
-      ctx.fill();
-
-      // Rear Glass
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.moveTo(-halfW + 12, -halfH + 76);
-      ctx.lineTo(halfW - 12, -halfH + 76);
-      ctx.lineTo(halfW - 10, -halfH + 90);
-      ctx.lineTo(-halfW + 10, -halfH + 90);
-      ctx.closePath();
-      ctx.fill();
-
-      // Headlights with dynamic glow beam
-      ctx.fillStyle = '#fef08a';
-      ctx.shadowColor = '#facc15';
-      ctx.shadowBlur = 12;
-      ctx.beginPath();
-      ctx.arc(-halfW + 12, -halfH + 4, 4, 0, Math.PI * 2);
-      ctx.arc(halfW - 12, -halfH + 4, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Tail Lights / Brake Glow
-      ctx.fillStyle = '#ef4444';
-      ctx.shadowColor = '#ef4444';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(-halfW + 6, halfH - 4, 12, 4);
-      ctx.fillRect(halfW - 18, halfH - 4, 12, 4);
-      ctx.shadowBlur = 0;
-
-      // Dual Exhaust Pipes
-      ctx.fillStyle = '#9ca3af';
-      ctx.fillRect(-8, halfH - 2, 4, 4);
-      ctx.fillRect(4, halfH - 2, 4, 4);
-
-      ctx.restore();
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      let roadLeft = width / 2 - 145;
-      let roadRight = width / 2 + 145;
-
-      // Realistic Grass Terrain
-      ctx.fillStyle = '#044e38';
+      // Stadium Outfield Grass
+      ctx.fillStyle = '#15803d';
       ctx.fillRect(0, 0, width, height);
 
-      // Asphalt Road Texture Gradient
-      let roadGrad = ctx.createLinearGradient(roadLeft, 0, roadRight, 0);
-      roadGrad.addColorStop(0, '#1e293b');
-      roadGrad.addColorStop(0.5, '#334155');
-      roadGrad.addColorStop(1, '#1e293b');
-      ctx.fillStyle = roadGrad;
-      ctx.fillRect(roadLeft, 0, roadRight - roadLeft, height);
+      // Curved Boundary Line
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(width / 2, height * 0.3, width * 0.46, 0, Math.PI);
+      ctx.stroke();
 
-      // Red/White Racing Kerb Shoulders
-      const kerbHeight = 20;
-      for (let y = -40 + (roadAnim % 40); y < height + 40; y += kerbHeight) {
-        ctx.fillStyle = Math.floor(y / kerbHeight) % 2 === 0 ? '#ef4444' : '#f8fafc';
-        ctx.fillRect(roadLeft - 8, y, 8, kerbHeight);
-        ctx.fillRect(roadRight, y, 8, kerbHeight);
+      // Cricket Pitch Center
+      let pitchTopX = width / 2 - 40;
+      let pitchBottomX = width / 2 - 65;
+      let pitchWTop = 80;
+      let pitchWBottom = 130;
+
+      ctx.fillStyle = '#d97706'; // Clay pitch color
+      ctx.beginPath();
+      ctx.moveTo(pitchTopX, height * 0.25);
+      ctx.lineTo(pitchTopX + pitchWTop, height * 0.25);
+      ctx.lineTo(pitchBottomX + pitchWBottom, height - 120);
+      ctx.lineTo(pitchBottomX, height - 120);
+      ctx.closePath();
+      ctx.fill();
+
+      // Popping Crease Line
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pitchBottomX - 10, height - 150);
+      ctx.lineTo(pitchBottomX + pitchWBottom + 10, height - 150);
+      ctx.stroke();
+
+      // Stumps (Wickets) at Batsman End
+      ctx.fillStyle = '#fef08a';
+      for (let i = -1; i <= 1; i++) {
+        ctx.fillRect(width / 2 + (i * 8) - 2, height - 145, 4, 30);
       }
 
-      // Highway Dashed Lanes
-      ctx.strokeStyle = '#f8fafc';
-      ctx.lineWidth = 5;
-      ctx.setLineDash([24, 24]);
-      ctx.lineDashOffset = -roadAnim;
+      // Stumps at Bowler End
+      for (let i = -1; i <= 1; i++) {
+        ctx.fillRect(width / 2 + (i * 5) - 1.5, height * 0.26, 3, 18);
+      }
+
+      // Draw Batsman
+      ctx.save();
+      ctx.translate(batsman.x - 20, batsman.y);
+
+      // Pads & Body
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(-10, -35, 12, 35); // Left Leg Pad
+      ctx.fillRect(4, -35, 12, 35);  // Right Leg Pad
+
+      // Shirt
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(-12, -65, 30, 30);
+
+      // Helmet
+      ctx.fillStyle = '#090d16';
       ctx.beginPath();
-      ctx.moveTo(width / 2, 0);
-      ctx.lineTo(width / 2, height);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.arc(3, -75, 10, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Draw Detailed Traffic Cars
-      obstacles.forEach(obs => {
-        drawDetailedSportsCar(obs.x, obs.y, obs.width, obs.height, obs.color, false);
-      });
+      // Cricket Bat
+      ctx.save();
+      ctx.translate(10, -30);
+      if (batsman.swinging) {
+        ctx.rotate(batsman.shotType * 0.6 - 0.8);
+      } else {
+        ctx.rotate(0.2);
+      }
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(-4, -40, 8, 45); // Wooden blade
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(-3, -52, 6, 12);  // Grip
+      ctx.restore();
 
-      // Draw Player Sports Car
-      drawDetailedSportsCar(player.x, player.y, player.width, player.height, player.color, true);
+      ctx.restore();
+
+      // Draw Ball (with depth scaling)
+      if (gameState === 'bowling') {
+        ctx.save();
+        ctx.translate(ball.x, ball.y);
+        ctx.fillStyle = '#dc2626'; // Red cricket seam ball
+        ctx.beginPath();
+        ctx.arc(0, 0, 8 * ball.z + 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Seam highlight
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, 7 * ball.z + 3, 0.4, Math.PI + 0.4);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Shot Result Popup Text
+      if (hitShotResult && hitShotResult.opacity > 0) {
+        ctx.save();
+        ctx.globalAlpha = hitShotResult.opacity;
+        ctx.fillStyle = hitShotResult.runs > 0 ? '#4ade80' : '#ef4444';
+        ctx.font = 'bold 36px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 10;
+        ctx.fillText(hitShotResult.text, width / 2, hitShotResult.y);
+        ctx.restore();
+      }
     }
 
     function loop() {
@@ -542,13 +520,13 @@
 
     function gameOver(reason) {
       gameState = 'gameover';
-      gameOverTitle.textContent = reason === "Time's Up!" ? "Time's Up!" : "Car Crashed!";
+      gameOverTitle.textContent = reason;
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('realisticCarBest', bestScore);
+        localStorage.setItem('cricketBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
-      finalScoreEl.textContent = score;
+      finalScoreEl.textContent = `${score} Runs`;
       bestScoreTextEl.textContent = `Best: ${bestScore}`;
       gameOverEl.style.display = 'flex';
     }
