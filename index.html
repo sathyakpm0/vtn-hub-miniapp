@@ -1,1785 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VTN HUB</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Stack Tower</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
     body {
+      background: #0f172a;
+      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #FFF8E7;
-      color: #333;
-      padding-bottom: 80px;
-      min-height: 100vh;
-    }
-    .header {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
       color: white;
-      padding: 15px;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      font-size: 18px;
-      font-weight: 700;
+      height: 100vh;
+      width: 100vw;
     }
-    .card {
-      background: white;
-      margin: 12px 14px;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-    .balance-card {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px;
-      border-radius: 18px;
-      padding: 20px;
-      color: white;
-      text-align: center;
-      box-shadow: 0 6px 18px rgba(200,16,46,0.25);
-    }
-    .balance-card .amount {
-      font-size: 32px;
-      font-weight: 800;
-      color: #ffd700;
-      margin: 8px 0 14px;
-    }
-    .gold-btn {
-      background: linear-gradient(90deg, #ffd700, #ffb700);
-      color: #5c3d00;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 0 14px 14px;
-    }
-    .btn {
-      border-radius: 16px;
-      padding: 16px 10px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: white;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    }
-    .btn .icon { font-size: 22px; margin-bottom: 5px; display: block; }
-    .list-item {
-      background: white;
-      margin: 0 14px 10px;
-      border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 2px solid #c8102e;
-    }
-    .list-item .icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; color: white;
-    }
-    .list-item .info { flex: 1; }
-    .list-item .info h4 { font-size: 14px; }
-    .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
-    .start-btn {
-      background: #c8102e; color: white; border: none;
-      padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-    }
-    .banner {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px; border-radius: 16px; padding: 16px; color: white;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .ad-banner {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      margin: 14px; border-radius: 14px; padding: 14px; color: white;
-      text-align: center; border: 1px solid #ffd700;
-    }
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; background: white;
-      display: flex; justify-content: space-around; padding: 10px 0;
-      box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 200;
-    }
-    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; }
-    .nav-item.active { color: #c8102e; font-weight: 700; }
-    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .section-title {
-      margin: 16px 14px 10px; font-size: 15px; font-weight: 700; color: #c8102e;
-    }
-    .form-group { margin-bottom: 12px; }
-    .form-group label {
-      display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid #ddd;
-      border-radius: 10px; font-size: 14px;
-    }
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
 
-    /* Games */
-    .ttt-board {
-      display: grid; grid-template-columns: repeat(3, 85px); gap: 10px;
-      justify-content: center; margin: 20px 0;
-    }
-    .ttt-cell {
-      width: 85px; height: 85px; background: linear-gradient(145deg, #fff, #ffe8e8);
-      border: 3px solid #c8102e; border-radius: 16px; font-size: 36px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(200,16,46,0.15);
-    }
-    .spin-wrap { text-align: center; padding: 10px; }
-    .spin-pointer { font-size: 28px; color: #c8102e; margin-bottom: -15px; z-index: 2; position: relative; }
-    .spin-wheel {
-      width: 240px; height: 240px; border-radius: 50%; margin: 0 auto;
-      background: conic-gradient(
-        #c8102e 0deg 45deg, #ffd700 45deg 90deg, #4CAF50 90deg 135deg,
-        #2196F3 135deg 180deg, #9C27B0 180deg 225deg, #FF9800 225deg 270deg,
-        #E91E63 270deg 315deg, #00BCD4 315deg 360deg
-      );
-      border: 8px solid #5c3d00; box-shadow: 0 0 0 6px #ffd700, 0 8px 25px rgba(0,0,0,0.3);
-      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    #game-container {
       position: relative;
-    }
-    .spin-center {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 50px; height: 50px; background: #fff; border-radius: 50%;
-      border: 4px solid #c8102e; z-index: 5;
-    }
-    .quiz-option {
-      background: white; border: 2px solid #c8102e; border-radius: 12px;
-      padding: 14px; margin: 8px 14px; text-align: center; font-weight: 600; cursor: pointer;
-    }
-    .diff-btn {
-      padding: 8px 16px; border-radius: 20px; border: 2px solid #c8102e;
-      background: white; margin: 4px; font-weight: 600; cursor: pointer;
-    }
-    .diff-btn.active { background: #c8102e; color: white; }
-
-    .game-area {
-      background: #1a1a2e;
-      border-radius: 16px;
-      padding: 20px;
-      margin: 14px;
-      color: white;
-      text-align: center;
-      min-height: 280px;
-      position: relative;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
-    .score-box {
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 12px;
+
+    canvas {
+      display: block;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
     }
-    .game-btn {
-      background: #c8102e;
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 30px;
+
+    #ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #score {
+      font-size: 42px;
       font-weight: 700;
-      margin-top: 12px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    #best {
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    #instruction {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      opacity: 0.8;
+      z-index: 10;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    #game-over {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      gap: 12px;
+    }
+
+    #game-over h2 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    #final-score {
+      font-size: 48px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    #best-score-text {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-bottom: 24px;
+    }
+
+    button {
+      background: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 14px 36px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .perfect {
+      position: absolute;
+      color: #4ade80;
+      font-weight: 700;
+      font-size: 22px;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 15;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-40px); }
     }
   </style>
 </head>
 <body>
+  <div id="game-container">
+    <canvas id="game"></canvas>
 
-  <div id="main-app">
-
-    <!-- HOME -->
-    <div id="home" class="page active">
-      <div class="header">👑 VTN Hub Bot</div>
-      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
-        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
-        <div>
-          <div style="font-weight:700;" id="username">User</div>
-          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
-        </div>
-        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
-      </div>
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Your Balance</div>
-        <div class="amount" id="balance">0 Coins</div>
-        <button class="gold-btn" onclick="showPage('wallet')">Wallet</button>
-        <button class="gold-btn" style="margin-left:8px;background:linear-gradient(90deg,#fff,#f0f0f0);color:#333;" onclick="showPage('task-history')">Task History</button>
-      </div>
-      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
-        <div style="font-size:12px;opacity:0.8;">Sponsored</div>
-        <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
-        <div style="font-size:12px;">Reach thousands of users</div>
-      </div>
-      <div class="section-title">Quick Actions</div>
-      <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
-          <span class="icon">✅</span>Claim up to 100
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
-          <span class="icon">🎯</span>Earn Tasks
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
-          <span class="icon">📢</span>Promote
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
-          <span class="icon">🎮</span>Fun Zone
-        </div>
-      </div>
-      <div class="banner">
-        <div>
-          <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
-          <div style="font-size:12px;opacity:0.9;">Level 1: 5% | Level 2: 2%</div>
-        </div>
-        <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
-      </div>
+    <div id="ui">
+      <div id="score">0</div>
+      <div id="best">Best: 0</div>
     </div>
 
-    <!-- EARN -->
-    <div id="earn" class="page">
-      <div class="header">Earn Money</div>
-      <div class="section-title">Official Task</div>
-      <div class="list-item" id="official-task" onclick="doOfficialTask()">
-        <div class="icon" style="background:#c8102e;">⭐</div>
-        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins • Required</p></div>
-        <button class="start-btn">Join</button>
-      </div>
-      <div class="section-title">Earn Tasks</div>
-      <div id="earn-tasks-list">
-        <div class="list-item" onclick="openCategory('other')">
-          <div class="icon" style="background:#c8102e;">📋</div>
-          <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div><button class="start-btn" onclick="alert('Coming soon')">Start</button></div>
-        <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installs</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>Product views</p></div><button class="start-btn">Open</button></div>
-      </div>
+    <div id="instruction">Tap to drop the block</div>
+
+    <div id="game-over">
+      <h2>Game Over</h2>
+      <div id="final-score">0</div>
+      <div id="best-score-text">Best: 0</div>
+      <button id="restart-btn">Play Again</button>
     </div>
-
-    <div id="category-tasks" class="page">
-      <div class="header" id="category-title">Tasks</div>
-      <div id="category-list"><div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">← Back</button></div>
-    </div>
-
-    <!-- PROMOTE -->
-    <div id="promote" class="page">
-      <div class="header">Promote Services</div>
-
-      <div class="section-title">Promotion Services</div>
-      <div class="list-item" onclick="openPromoteForm('channel')">
-        <div class="icon" style="background:#c8102e;">📢</div>
-        <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('watch')">
-        <div class="icon" style="background:#E91E63;">▶️</div>
-        <div class="info"><h4>Promote Watch / Video</h4><p>Get real watches on your video</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('bot')">
-        <div class="icon" style="background:#9C27B0;">🤖</div>
-        <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('views')">
-        <div class="icon" style="background:#3F51B5;">👀</div>
-        <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('install')">
-        <div class="icon" style="background:#4CAF50;">📱</div>
-        <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('test')">
-        <div class="icon" style="background:#FF9800;">🧪</div>
-        <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('traffic')">
-        <div class="icon" style="background:#00BCD4;">🌐</div>
-        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('affiliate')">
-        <div class="icon" style="background:#673AB7;">🔗</div>
-        <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
-      <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="openPromoteForm('monetize')">
-        <div class="icon" style="background:#2196F3;">💰</div>
-        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
-        <button class="start-btn">Apply</button>
-      </div>
-
-      <div class="section-title">Banner Ads</div>
-      <div class="list-item" onclick="openPromoteForm('banner')">
-        <div class="icon" style="background:#FF5722;">📣</div>
-        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
-      <div class="section-title">Cross Promotion</div>
-      <div class="list-item" onclick="startCrossPromo()">
-        <div class="icon" style="background:#009688;">🔄</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
-        <button class="start-btn">Start</button>
-      </div>
-    </div>
-
-    <!-- PROMOTE FORM -->
-    <div id="promote-form" class="page">
-      <div class="header" id="promote-form-title">Place Order</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Your Link / Channel / Bot</label>
-          <input type="text" id="promo-link" placeholder="https://t.me/... or website">
-        </div>
-        <div class="form-group">
-          <label>Quantity / Days</label>
-          <input type="number" id="promo-qty" value="100" min="1">
-        </div>
-        <div class="form-group">
-          <label>Notes (optional)</label>
-          <textarea id="promo-notes" rows="2" placeholder="Any special request..."></textarea>
-        </div>
-        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins (Users get 50%)</div>
-        <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Back</button>
-      </div>
-    </div>
-
-    <!-- FUN -->
-    <div id="fun" class="page">
-      <div class="header">Fun Zone</div>
-      <div class="section-title">Chat</div>
-      <div class="list-item" onclick="enterWithAd('chat')">
-        <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter • Earn coins</p></div>
-        <button class="start-btn">Enter</button>
-      </div>
-      <div class="section-title">Games (Watch Ad to Play)</div>
-      <div class="grid">
-        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
-        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
-        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
-        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
-        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
-        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
-      </div>
-    </div>
-
-    <!-- TIC TAC TOE -->
-    <div id="game-ttt" class="page">
-      <div class="header">Tic Tac Toe</div>
-      <div class="card" style="text-align:center;">
-        <div style="margin-bottom:12px;">
-          <button class="diff-btn active" id="diff-easy" onclick="setDiff('easy')">Easy (1)</button>
-          <button class="diff-btn" id="diff-medium" onclick="setDiff('medium')">Medium (2)</button>
-          <button class="diff-btn" id="diff-hard" onclick="setDiff('hard')">Hard (3)</button>
-        </div>
-        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;color:#c8102e;">Your turn (X)</div>
-        <div class="ttt-board" id="ttt-board"></div>
-        <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Watch Ad & Claim</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- SPIN -->
-    <div id="game-spin" class="page">
-      <div class="header">Spin & Win</div>
-      <div class="card spin-wrap">
-        <div class="spin-pointer">▼</div>
-        <div style="position:relative;display:inline-block;">
-          <div class="spin-wheel" id="spin-wheel"></div>
-        </div>
-        <div id="spin-result" style="margin:16px 0;font-weight:800;font-size:20px;color:#c8102e;min-height:28px;"></div>
-        <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
-        <button class="gold-btn" id="spin-claim" style="display:none;margin-top:10px;" onclick="claimSpin()">Watch Ad & Collect</button>
-        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- QUIZ -->
-    <div id="game-quiz" class="page">
-      <div class="header">Quiz</div>
-      <div class="card">
-        <div id="quiz-question" style="font-weight:700;font-size:16px;margin-bottom:16px;text-align:center;"></div>
-        <div id="quiz-options"></div>
-        <div id="quiz-result" style="text-align:center;margin-top:14px;font-weight:700;"></div>
-        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- DART -->
-    <div id="game-dart" class="page">
-      <div class="header">🎯 Dart Game</div>
-      <div class="game-area" id="dart-area">
-        <div class="score-box">Score: <span id="dart-score">0</span></div>
-        <div style="font-size:60px;margin:20px 0;" id="dart-target">🎯</div>
-        <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
-        <button class="game-btn" id="dart-btn" onclick="playDart()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="dart-claim" style="display:none;" onclick="claimGame('dart')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- FRUIT -->
-    <div id="game-fruit" class="page">
-      <div class="header">🍎 Fruit Slice</div>
-      <div class="game-area" id="fruit-area">
-        <div class="score-box">Score: <span id="fruit-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;" id="fruit-display">🍎</div>
-        <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
-        <button class="game-btn" id="fruit-btn" onclick="playFruit()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="fruit-claim" style="display:none;" onclick="claimGame('fruit')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- SHOOT -->
-    <div id="game-shoot" class="page">
-      <div class="header">🔫 Shoot</div>
-      <div class="game-area" id="shoot-area">
-        <div class="score-box">Hits: <span id="shoot-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;" id="shoot-target">🎯</div>
-        <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
-        <button class="game-btn" id="shoot-btn" onclick="playShoot()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="shoot-claim" style="display:none;" onclick="claimGame('shoot')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- TOWER -->
-    <div id="game-tower" class="page">
-      <div class="header">🗼 Tower Stack</div>
-      <div class="game-area" id="tower-area">
-        <div class="score-box">Height: <span id="tower-score">0</span></div>
-        <div style="font-size:40px;margin:20px 0;" id="tower-display">⬜</div>
-        <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
-        <button class="game-btn" id="tower-btn" onclick="playTower()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="tower-claim" style="display:none;" onclick="claimGame('tower')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- SUDOKU -->
-    <div id="game-sudoku" class="page">
-      <div class="header">🔢 Sudoku (Easy)</div>
-      <div class="card" style="text-align:center;">
-        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:2px;justify-content:center;margin:15px 0;"></div>
-        <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
-        <button class="gold-btn" onclick="checkSudoku()">Check</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- WALLET -->
-    <div id="wallet" class="page">
-      <div class="header">Wallet</div>
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Current Balance</div>
-        <div class="amount" id="wallet-balance">0 Coins</div>
-      </div>
-      <div class="section-title">Withdrawal</div>
-      <div class="list-item" onclick="openWithdraw('upi')">
-        <div class="icon" style="background:#FF9800;">🇮🇳</div>
-        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div class="list-item" onclick="openWithdraw('usdt')">
-        <div class="icon" style="background:#26A17B;">₮</div>
-        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
-    </div>
-
-    <!-- TASK HISTORY (only task related) -->
-    <div id="task-history" class="page">
-      <div class="header">Task History</div>
-      <div id="task-history-list"><div class="card" style="text-align:center;color:#888;margin:14px;">No task history yet</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
-    </div>
-
-    <!-- WITHDRAW FORM -->
-    <div id="withdraw-form" class="page">
-      <div class="header">Withdraw</div>
-      <div class="card">
-        <div class="form-group">
-          <label id="withdraw-label">UPI ID / Wallet Address</label>
-          <input type="text" id="withdraw-address" placeholder="Enter details">
-        </div>
-        <div class="form-group">
-          <label>Amount (Coins)</label>
-          <input type="number" id="withdraw-amount" value="500" min="100">
-        </div>
-        <div style="font-size:13px;color:#888;margin-bottom:12px;">Minimum: 500 Coins</div>
-        <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="profile" class="page">
-      <div class="header">My Profile</div>
-      <div class="card" style="text-align:center;">
-        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
-        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
-        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
-        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
-      </div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
-    </div>
-
-    <!-- REFER -->
-    <div id="refer" class="page">
-      <div class="header">Refer & Earn</div>
-      <div class="banner">
-        <div><div style="font-weight:700;">Invite Friends</div><div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div></div>
-        <div style="font-size:28px;">🎁</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-size:13px;color:#777;">Your Referral Code</div>
-        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
-        <button class="gold-btn" onclick="copyCode()">Copy Code</button>
-      </div>
-    </div>
-
-    <!-- ADMIN -->
-    <div id="admin" class="page">
-      <div class="header">👑 Admin Panel</div>
-
-      <div class="section-title">Service Prices (Coins)</div>
-      <div class="card">
-        <div class="form-row">
-          <div class="form-group"><label>Channel Promote</label><input type="number" id="price-channel" value="200"></div>
-          <div class="form-group"><label>Bot Promote</label><input type="number" id="price-bot" value="150"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Views & Likes</label><input type="number" id="price-views" value="50"></div>
-          <div class="form-group"><label>App Installs</label><input type="number" id="price-install" value="300"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Website Traffic</label><input type="number" id="price-traffic" value="80"></div>
-          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
-          <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Watch / Video</label><input type="number" id="price-watch" value="30"></div>
-          <div class="form-group"><label></label></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
-      </div>
-
-      <div class="section-title">Ad Settings</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Ad Links (one per line – random pick)</label>
-          <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Wait Seconds</label><input type="number" id="ad-wait" value="15"></div>
-          <div class="form-group"><label>Coins Reward</label><input type="number" id="ad-reward" value="5"></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
-      </div>
-
-      <div class="section-title">User Tools</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Telegram User ID</label>
-          <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
-        </div>
-        <div class="form-group">
-          <label>Coins Amount</label>
-          <input type="number" id="admin-coins" value="100">
-        </div>
-        <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
-        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">− Remove Coins</button>
-        <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
-        <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
-        <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
-        <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
-      </div>
-
-      <div class="section-title">Add New Task</div>
-      <div class="card">
-        <div class="form-group"><label>Task Title *</label><input type="text" id="task-title" placeholder="e.g. Join My Channel"></div>
-        <div class="form-group"><label>Reward (Coins) *</label><input type="number" id="task-reward" value="10"></div>
-        <div class="form-group">
-          <label>Category *</label>
-          <select id="task-category">
-            <option value="join">Join Channel / Group</option>
-            <option value="bot">Join Bot</option>
-            <option value="watch">Watch Video / Ads</option>
-            <option value="views">Views & Likes</option>
-            <option value="install">Install App</option>
-            <option value="website">Visit Website</option>
-            <option value="affiliate">Affiliate</option>
-            <option value="products">View Products</option>
-            <option value="other">Other / General</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Link</label><input type="text" id="task-link" placeholder="https://t.me/..."></div>
-        <div class="form-row">
-          <div class="form-group"><label>Wait Seconds</label><input type="number" id="task-wait" value="0"></div>
-          <div class="form-group"><label>Max Users (0=Unlimited)</label><input type="number" id="task-max-users" value="0"></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
-      </div>
-
-      <div class="section-title">Current Tasks</div>
-      <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Back</button></div>
-    </div>
-
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
-    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
-    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
-    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
-    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    let sb = null;
-    try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
-
-    const tg = window.Telegram.WebApp;
-    try {
+    // ========== Telegram Mini App ==========
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
       tg.ready();
       tg.expand();
-      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-      tg.setHeaderColor('#c8102e');
-      tg.setBackgroundColor('#FFF8E7');
-    } catch(e) {}
+      tg.setHeaderColor('#0f172a');
+      tg.setBackgroundColor('#0f172a');
+    }
 
-    const user = tg.initDataUnsafe?.user || null;
-    const userId = user ? String(user.id) : 'guest';
+    // ========== Canvas Setup ==========
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const instructionEl = document.getElementById('instruction');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const bestScoreTextEl = document.getElementById('best-score-text');
+    const restartBtn = document.getElementById('restart-btn');
 
-    const balanceKey = 'vtn_b_' + userId;
-    const checkinKey = 'vtn_c_' + userId;
-    const officialKey = 'vtn_o_' + userId;
-    const firstDayKey = 'vtn_f_' + userId;
-    const completedKey = 'vtn_completed_' + userId;
-    const blockedKey = 'vtn_blocked_users';
-    const ordersKey = 'vtn_orders';
-    const historyKey = 'vtn_history_' + userId;
+    let width, height;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-    let balance = Number(localStorage.getItem(balanceKey)) || 0;
-    let lastCheckIn = localStorage.getItem(checkinKey) || '';
-    let officialDone = localStorage.getItem(officialKey) === '1';
-    let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
-    let currentTasks = [];
-    let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
-    let currentCategory = 'other';
-    let blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]');
-    let currentPromoType = '';
-    let currentWithdrawType = '';
+    // ========== Game Variables ==========
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('stackTowerBest') || '0');
+    bestEl.textContent = `Best: ${bestScore}`;
 
-    let adSettings = {
-      links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
-      wait: 15,
-      reward: 5
-    };
-    try {
-      const saved = localStorage.getItem('vtn_ad_settings');
-      if (saved) adSettings = JSON.parse(saved);
-    } catch(e) {}
+    let blocks = [];
+    let currentBlock = null;
+    let gameState = 'playing'; // playing | gameover
+    let speed = 2.2;
+    let direction = 1;
+    let cameraY = 0;
 
-    let prices = {
-      channel: 200, bot: 150, views: 50, install: 300,
-      traffic: 80, banner: 100, affiliate: 40, test: 60, watch: 30
-    };
-    try {
-      const saved = localStorage.getItem('vtn_prices');
-      if (saved) {
-        const p = JSON.parse(saved);
-        prices = { ...prices, ...p };
-      }
-    } catch(e) {}
-
-    // Games state
-    let tttBoard = ['','','','','','','','',''];
-    let tttTurn = 'X';
-    let tttOver = false;
-    let tttDiff = 'easy';
-    let tttPrize = 0;
-    let spinPrize = 0;
-    let gamePrize = 0;
-    let gameType = '';
-
-    const quizData = [
-      {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
-      {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
-      {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
-      {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
-      {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+    const BLOCK_HEIGHT = 28;
+    const COLORS = [
+      '#38bdf8', '#818cf8', '#c084fc', '#f472b6',
+      '#fb7185', '#fb923c', '#facc15', '#4ade80'
     ];
-    let quizIndex = 0;
 
-    // Check if blocked
-    if (user && blockedUsers.includes(String(user.id))) {
-      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
-    }
+    // ========== Init ==========
+    function init() {
+      score = 0;
+      scoreEl.textContent = '0';
+      blocks = [];
+      cameraY = 0;
+      gameState = 'playing';
+      gameOverEl.style.display = 'none';
+      instructionEl.style.opacity = '1';
+      speed = 2.2;
 
-    function updateUI() {
-      document.getElementById('balance').innerText = balance + ' Coins';
-      document.getElementById('wallet-balance').innerText = balance + ' Coins';
-      localStorage.setItem(balanceKey, balance);
-    }
-
-    function setupUser() {
-      if (user) {
-        document.getElementById('username').innerText = user.first_name || 'User';
-        document.getElementById('userid').innerText = 'ID: ' + user.id;
-        document.getElementById('profile-name').innerText = user.first_name || 'User';
-        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
-        document.getElementById('ref-code').innerText = 'VTN' + user.id;
-        if (Number(user.id) === 8150531247) {
-          document.getElementById('admin-btn').style.display = 'flex';
-        }
-      }
-      if (officialDone) {
-        const el = document.getElementById('official-task');
-        if (el) el.style.display = 'none';
-      }
-      updateUI();
-    }
-
-    async function loadUser() {
-      if (!sb || !user) return;
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
-        if (data) {
-          balance = data.balance || 0;
-          officialDone = !!data.official_done;
-          localStorage.setItem(balanceKey, balance);
-          if (officialDone) {
-            localStorage.setItem(officialKey, '1');
-            const el = document.getElementById('official-task');
-            if (el) el.style.display = 'none';
-          }
-          updateUI();
-        } else {
-          await sb.from('users').insert([{
-            telegram_id: user.id, first_name: user.first_name||'', username: user.username||'',
-            balance, is_vip:false, daily_tasks:0, official_done: officialDone
-          }]);
-        }
-      } catch(e) {}
-    }
-
-    async function saveBalance(amount, type, desc) {
-      if (!sb || !user) return;
-      try {
-        await sb.from('users').update({ balance }).eq('telegram_id', user.id);
-        await sb.from('transactions').insert([{ telegram_id: user.id, amount, type, description: desc }]);
-      } catch(e) {}
-    }
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0, 'task-history':0 };
-      if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
-      if (id === 'task-history') loadTaskHistory();
-    }
-
-    function addCoins(amount, title) {
-      balance += amount;
-      updateUI();
-      saveBalance(amount, 'task', title);
-      alert(title + ' Successful! +' + amount + ' Coins');
-    }
-
-    function dailyCheckIn() {
-      const today = new Date().toDateString();
-      if (lastCheckIn === today) { alert('Already claimed today!'); return; }
-      if (!confirm('Watch a short ad to claim?')) return;
-      let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
-      if (isFirstDay) { localStorage.setItem(firstDayKey,'1'); isFirstDay=false; alert('🎉 First Day Bonus! +'+reward); }
-      else alert('Daily Check-in! +'+reward);
-      balance += reward; lastCheckIn = today;
-      localStorage.setItem(checkinKey, today); updateUI();
-      saveBalance(reward, 'checkin', 'Daily Check-in');
-      saveToHistory('Daily Check-in', reward, 'task');
-    }
-
-    function doOfficialTask() {
-      if (officialDone) { alert('Already completed'); return; }
-      if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
-      window.open('https://t.me/vtnhub', '_blank');
-      balance += 50; officialDone = true;
-      localStorage.setItem(officialKey, '1');
-      document.getElementById('official-task').style.display = 'none';
-      updateUI(); saveBalance(50, 'official', 'Official Task');
-      saveToHistory('Official Task', 50, 'task');
-      if (sb && user) sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
-      alert('Official Task Completed! +50 Coins');
-    }
-
-    function copyCode() {
-      const code = document.getElementById('ref-code').innerText;
-      if (navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Copied: '+code));
-      else alert(code);
-    }
-
-    function getRandomAd() {
-      const links = adSettings.links || [];
-      if (!links.length) return 'https://t.me/Vtnhub0';
-      return links[Math.floor(Math.random() * links.length)];
-    }
-
-    function enterWithAd(type, gameName) {
-      if (!confirm('Watch ad to enter ' + (type==='chat'?'Chat':gameName) + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
-
-      window.open(getRandomAd(), '_blank');
-      const waitSec = adSettings.wait || 15;
-      alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
-
-      setTimeout(function() {
-        balance += adSettings.reward;
-        updateUI();
-        saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
-        saveToHistory('Watched Ad (' + (gameName || type) + ')', adSettings.reward, 'task');
-
-        if (type === 'chat') {
-          alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
-        } else if (gameName === 'TicTacToe') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startTTT();
-        } else if (gameName === 'Spin') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          spinPrize = 0;
-          document.getElementById('spin-result').innerText = '';
-          document.getElementById('spin-claim').style.display = 'none';
-          document.getElementById('spin-btn').disabled = false;
-          showPage('game-spin');
-        } else if (gameName === 'Quiz') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startQuiz();
-        } else if (gameName === 'Dart') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startDart();
-        } else if (gameName === 'Fruit') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startFruit();
-        } else if (gameName === 'Shoot') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startShoot();
-        } else if (gameName === 'Tower') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startTower();
-        } else if (gameName === 'Sudoku') {
-          alert('✅ +' + adSettings.reward + ' Coins');
-          startSudoku();
-        } else {
-          alert('✅ +' + adSettings.reward + ' Coins\n\n' + gameName + ' coming soon!');
-        }
-      }, waitSec * 1000);
-    }
-
-    // ========== PROMOTE ==========
-    function openPromoteForm(type) {
-      currentPromoType = type;
-      const titles = {
-        channel: 'Promote Channel / Group',
-        bot: 'Promote Bot',
-        views: 'Buy Views & Likes',
-        install: 'Buy App Installs',
-        test: 'Test App / Web',
-        traffic: 'Website Traffic',
-        affiliate: 'Affiliate / Product',
-        monetize: 'Monetize Channel / Group',
-        banner: 'Place Banner Ad',
-        watch: 'Promote Watch / Video'
-      };
-      document.getElementById('promote-form-title').innerText = titles[type] || 'Place Order';
-      document.getElementById('promo-link').value = '';
-      document.getElementById('promo-qty').value = type === 'banner' ? 1 : 100;
-      document.getElementById('promo-notes').value = '';
-      updatePromoCost();
-      showPage('promote-form');
-    }
-
-    function updatePromoCost() {
-      const qty = Number(document.getElementById('promo-qty').value) || 1;
-      let cost = 0;
-      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-      else if (currentPromoType === 'watch') cost = prices.watch * Math.ceil(qty/50);
-      else if (currentPromoType === 'monetize') cost = 0;
-      document.getElementById('promo-cost').innerText = 'Cost: ' + cost + ' Coins (Users get 50%)';
-    }
-
-    document.getElementById('promo-qty')?.addEventListener('input', updatePromoCost);
-
-    function submitPromoteOrder() {
-      const link = document.getElementById('promo-link').value.trim();
-      const qty = Number(document.getElementById('promo-qty').value) || 1;
-      const notes = document.getElementById('promo-notes').value.trim();
-      if (!link && currentPromoType !== 'monetize') {
-        alert('Please enter your link');
-        return;
-      }
-
-      let cost = 0;
-      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-      else if (currentPromoType === 'watch') cost = prices.watch * Math.ceil(qty/50);
-
-      if (cost > 0 && balance < cost) {
-        alert('Not enough coins! Need ' + cost + ' coins.');
-        return;
-      }
-
-      // Deduct full amount from promoter
-      if (cost > 0) {
-        balance -= cost;
-        updateUI();
-        saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
-        saveToHistory('Promotion: ' + currentPromoType, -cost, 'promo');
-      }
-
-      // 50% of cost goes to users
-      const userBudget = Math.floor(cost * 0.5);
-      let perUserReward = Math.max(1, Math.floor(userBudget / Math.max(qty, 1)));
-
-      const taskTitle = {
-        channel: 'Join Channel: ' + link,
-        bot: 'Start Bot: ' + link,
-        views: 'View / Like: ' + link,
-        install: 'Install App: ' + link,
-        traffic: 'Visit Website: ' + link,
-        affiliate: 'Open Affiliate: ' + link,
-        test: 'Test App: ' + link,
-        banner: 'Banner Ad: ' + link,
-        watch: 'Watch Video: ' + link,
-        monetize: 'Monetize Request'
-      }[currentPromoType] || 'Promotion Task';
-
-      const category = {
-        channel: 'join',
-        bot: 'bot',
-        views: 'views',
-        install: 'install',
-        traffic: 'website',
-        affiliate: 'affiliate',
-        watch: 'watch',
-        test: 'other',
-        banner: 'other',
-        monetize: 'other'
-      }[currentPromoType] || 'other';
-
-      const newTask = {
-        id: 'order_' + Date.now(),
-        title: taskTitle,
-        reward: perUserReward,
-        category: category,
-        link: link,
-        wait_seconds: currentPromoType === 'watch' ? 15 : 10,
-        is_active: true,
-        from_order: true
-      };
-
-      // Save to local orders
-      let orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-      orders.unshift(newTask);
-      if (orders.length > 50) orders.length = 50;
-      localStorage.setItem(ordersKey, JSON.stringify(orders));
-
-      // Also try to save to Supabase tasks table
-      if (sb) {
-        sb.from('tasks').insert([{
-          title: newTask.title,
-          reward: newTask.reward,
-          category: newTask.category,
-          link: newTask.link,
-          wait_seconds: newTask.wait_seconds,
-          is_active: true
-        }]).then(()=>{}).catch(()=>{});
-      }
-
-      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\nUsers get ~' + perUserReward + ' coins each (50% share)\n\nTask is now available in Earn page.');
-      showPage('promote');
-    }
-
-    function startCrossPromo() {
-      const today = new Date().toDateString();
-      const key = 'vtn_cross_' + userId + '_' + today;
-      let count = Number(localStorage.getItem(key) || 0);
-      if (count >= 3) {
-        alert('You already used 3 free cross promotions today.');
-        return;
-      }
-      const link = prompt('Enter your Channel / Bot / Post link:');
-      if (!link) return;
-      count++;
-      localStorage.setItem(key, count);
-      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
-    }
-
-    // ========== GAMES ==========
-    function setDiff(d) {
-      tttDiff = d;
-      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('diff-' + d).classList.add('active');
-    }
-    function startTTT() {
-      tttBoard = ['','','','','','','','',''];
-      tttTurn = 'X'; tttOver = false; tttPrize = 0;
-      document.getElementById('ttt-claim').style.display = 'none';
-      showPage('game-ttt');
-      renderTTT();
-    }
-    function renderTTT() {
-      const board = document.getElementById('ttt-board');
-      board.innerHTML = '';
-      tttBoard.forEach((cell, i) => {
-        const div = document.createElement('div');
-        div.className = 'ttt-cell';
-        div.innerText = cell;
-        div.style.color = cell === 'X' ? '#c8102e' : '#2196F3';
-        div.onclick = () => playTTT(i);
-        board.appendChild(div);
+      // Base block
+      const baseWidth = Math.min(width * 0.55, 220);
+      blocks.push({
+        x: (width - baseWidth) / 2,
+        y: height - 120,
+        width: baseWidth,
+        color: COLORS[0]
       });
-      document.getElementById('ttt-status').innerText = tttOver ? (tttPrize > 0 ? 'You Won!' : 'Game Over') : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer...');
+
+      spawnBlock();
     }
-    function playTTT(i) {
-      if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
-      tttBoard[i] = 'X';
-      if (checkWin('X')) {
-        tttOver = true;
-        tttPrize = tttDiff === 'easy' ? 1 : (tttDiff === 'medium' ? 2 : 3);
-        renderTTT();
-        document.getElementById('ttt-claim').style.display = 'inline-block';
-        document.getElementById('ttt-claim').innerText = 'Watch Ad & Claim ' + tttPrize + ' Coins';
+
+    function spawnBlock() {
+      const last = blocks[blocks.length - 1];
+      const newWidth = last.width;
+      currentBlock = {
+        x: direction > 0 ? -newWidth : width,
+        y: last.y - BLOCK_HEIGHT - 8,
+        width: newWidth,
+        color: COLORS[blocks.length % COLORS.length],
+        moving: true
+      };
+    }
+
+    // ========== Game Loop ==========
+    function update() {
+      if (gameState !== 'playing' || !currentBlock) return;
+
+      // Move current block
+      currentBlock.x += speed * direction;
+
+      // Bounce
+      if (currentBlock.x + currentBlock.width > width + 40) direction = -1;
+      if (currentBlock.x < -40) direction = 1;
+
+      // Camera follow (smooth)
+      const targetCamera = Math.max(0, (height - 180) - currentBlock.y);
+      cameraY += (targetCamera - cameraY) * 0.08;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw all placed blocks
+      blocks.forEach(block => {
+        drawBlock(block.x, block.y + cameraY, block.width, BLOCK_HEIGHT, block.color);
+      });
+
+      // Draw current moving block
+      if (currentBlock) {
+        drawBlock(currentBlock.x, currentBlock.y + cameraY, currentBlock.width, BLOCK_HEIGHT, currentBlock.color);
+      }
+    }
+
+    function drawBlock(x, y, w, h, color) {
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(x + 4, y + 6, w, h);
+
+      // Main block
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, 6);
+      ctx.fill();
+
+      // Top highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x, y, w, 6);
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // ========== Drop Logic ==========
+    function dropBlock() {
+      if (gameState !== 'playing' || !currentBlock || !currentBlock.moving) return;
+
+      currentBlock.moving = false;
+      instructionEl.style.opacity = '0';
+
+      const last = blocks[blocks.length - 1];
+
+      // Calculate overlap
+      const left = Math.max(currentBlock.x, last.x);
+      const right = Math.min(currentBlock.x + currentBlock.width, last.x + last.width);
+      const overlap = right - left;
+
+      if (overlap <= 0) {
+        // Completely missed
+        gameOver();
         return;
       }
-      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
-      tttTurn = 'O'; renderTTT();
-      setTimeout(computerMove, 400);
-    }
-    function computerMove() {
-      let move;
-      if (tttDiff === 'hard') {
-        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
-        move = findBestMove('O') || findBestMove('X') || (tttBoard[4]===''?4:null) || empty[Math.floor(Math.random()*empty.length)];
-      } else if (tttDiff === 'medium') {
-        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
-        move = findBestMove('O') || empty[Math.floor(Math.random()*empty.length)];
+
+      // Perfect check (within 6px)
+      const isPerfect = Math.abs(currentBlock.x - last.x) < 6 && 
+                       Math.abs((currentBlock.x + currentBlock.width) - (last.x + last.width)) < 6;
+
+      if (isPerfect) {
+        // Perfect placement
+        currentBlock.x = last.x;
+        currentBlock.width = last.width;
+        showPerfect();
+        score += 2; // bonus
       } else {
-        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
-        move = empty[Math.floor(Math.random()*empty.length)];
+        // Cut the block
+        currentBlock.x = left;
+        currentBlock.width = overlap;
+        score += 1;
       }
-      if (move === undefined || move === null) return;
-      tttBoard[move] = 'O';
-      if (checkWin('O')) { tttOver=true; renderTTT(); alert('Computer Wins!'); return; }
-      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
-      tttTurn = 'X'; renderTTT();
-    }
-    function findBestMove(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (const [a,b,c] of lines) {
-        const line = [tttBoard[a],tttBoard[b],tttBoard[c]];
-        if (line.filter(x=>x===p).length===2 && line.includes('')) {
-          if (tttBoard[a]==='') return a;
-          if (tttBoard[b]==='') return b;
-          if (tttBoard[c]==='') return c;
-        }
-      }
-      return null;
-    }
-    function checkWin(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return lines.some(([a,b,c]) => tttBoard[a]===p && tttBoard[b]===p && tttBoard[c]===p);
-    }
-    function claimTTT() {
-      if (tttPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
+
+      scoreEl.textContent = score;
+      blocks.push({ ...currentBlock });
+
+      // Increase speed slightly
+      speed = Math.min(speed + 0.08, 4.5);
+
+      // Next block
       setTimeout(() => {
-        balance += tttPrize;
-        updateUI();
-        saveBalance(tttPrize, 'game', 'TicTacToe Win');
-        saveToHistory('Tic Tac Toe Win', tttPrize, 'game');
-        alert('✅ Claimed +' + tttPrize + ' Coins!');
-        tttPrize = 0;
-        document.getElementById('ttt-claim').style.display = 'none';
-      }, (adSettings.wait||10)*1000);
+        if (gameState === 'playing') spawnBlock();
+      }, 180);
     }
 
-    // SPIN
-    function doSpin() {
-      const btn = document.getElementById('spin-btn');
-      btn.disabled = true;
-      document.getElementById('spin-claim').style.display = 'none';
-      document.getElementById('spin-result').innerText = '';
-      const r = Math.random() * 100;
-      let prize;
-      if (r < 40) prize = 1;
-      else if (r < 70) prize = 2;
-      else if (r < 82) prize = 0;
-      else if (r < 90) prize = 3;
-      else if (r < 96) prize = 5;
-      else if (r < 99) prize = 10;
-      else prize = 25;
-      const deg = 1800 + Math.floor(Math.random()*360);
-      document.getElementById('spin-wheel').style.transform = 'rotate(' + deg + 'deg)';
-      setTimeout(() => {
-        spinPrize = prize;
-        if (prize === 0) {
-          document.getElementById('spin-result').innerText = 'Try Again!';
-        } else {
-          document.getElementById('spin-result').innerText = 'You got ' + prize + ' Coins!';
-          document.getElementById('spin-claim').style.display = 'inline-block';
-          document.getElementById('spin-claim').innerText = 'Watch Ad & Collect ' + prize + ' Coins';
-        }
-        btn.disabled = false;
-      }, 4200);
-    }
-    function claimSpin() {
-      if (spinPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(() => {
-        balance += spinPrize;
-        updateUI();
-        saveBalance(spinPrize, 'game', 'Spin Win');
-        saveToHistory('Spin & Win', spinPrize, 'game');
-        alert('✅ Collected +' + spinPrize + ' Coins!');
-        spinPrize = 0;
-        document.getElementById('spin-claim').style.display = 'none';
-        document.getElementById('spin-result').innerText = '';
-      }, (adSettings.wait||10)*1000);
+    function showPerfect() {
+      const el = document.createElement('div');
+      el.className = 'perfect';
+      el.textContent = 'PERFECT!';
+      el.style.left = (width / 2 - 40) + 'px';
+      el.style.top = (height / 2 - 40) + 'px';
+      document.getElementById('game-container').appendChild(el);
+      setTimeout(() => el.remove(), 800);
     }
 
-    // QUIZ
-    function startQuiz() {
-      quizIndex = Math.floor(Math.random() * quizData.length);
-      const q = quizData[quizIndex];
-      document.getElementById('quiz-question').innerText = q.q;
-      document.getElementById('quiz-result').innerText = '';
-      const opts = document.getElementById('quiz-options');
-      opts.innerHTML = '';
-      q.opts.forEach((o, i) => {
-        const div = document.createElement('div');
-        div.className = 'quiz-option';
-        div.innerText = o;
-        div.onclick = () => answerQuiz(i);
-        opts.appendChild(div);
-      });
-      showPage('game-quiz');
+    function gameOver() {
+      gameState = 'gameover';
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('stackTowerBest', bestScore);
+        bestEl.textContent = `Best: ${bestScore}`;
+      }
+      finalScoreEl.textContent = score;
+      bestScoreTextEl.textContent = `Best: ${bestScore}`;
+      gameOverEl.style.display = 'flex';
     }
-    function answerQuiz(i) {
-      const q = quizData[quizIndex];
-      // disable further clicks
-      document.querySelectorAll('.quiz-option').forEach(el => el.onclick = null);
-      if (i === q.ans) {
-        document.getElementById('quiz-result').innerText = '✅ Correct! +3 Coins';
-        balance += 3; updateUI();
-        saveBalance(3, 'game', 'Quiz Correct');
-        saveToHistory('Quiz Win', 3, 'game');
-      } else {
-        document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
+
+    // ========== Controls ==========
+    function handleInput(e) {
+      e.preventDefault();
+      if (gameState === 'playing') {
+        dropBlock();
       }
     }
 
-    // DART
-    let dartScore = 0, dartTimer = null, dartRunning = false;
-    function startDart() {
-      if (dartTimer) clearInterval(dartTimer);
-      dartScore = 0; dartRunning = false;
-      document.getElementById('dart-score').innerText = '0';
-      document.getElementById('dart-claim').style.display = 'none';
-      document.getElementById('dart-btn').innerText = 'Start';
-      document.getElementById('dart-target').onclick = null;
-      showPage('game-dart');
-    }
-    function playDart() {
-      if (dartRunning) return;
-      if (dartTimer) clearInterval(dartTimer);
-      dartRunning = true;
-      dartScore = 0;
-      document.getElementById('dart-score').innerText = '0';
-      document.getElementById('dart-btn').innerText = 'Playing...';
-      document.getElementById('dart-claim').style.display = 'none';
-      let timeLeft = 10;
-      const target = document.getElementById('dart-target');
-      target.onclick = () => {
-        if (!dartRunning) return;
-        dartScore++;
-        document.getElementById('dart-score').innerText = dartScore;
-        target.style.transform = 'scale(1.3)';
-        setTimeout(() => target.style.transform = 'scale(1)', 100);
-      };
-      dartTimer = setInterval(() => {
-        timeLeft--;
-        if (timeLeft <= 0) {
-          clearInterval(dartTimer);
-          dartRunning = false;
-          document.getElementById('dart-btn').innerText = 'Finished';
-          target.onclick = null;
-          gamePrize = Math.min(Math.floor(dartScore / 3), 8);
-          if (gamePrize > 0) {
-            document.getElementById('dart-claim').style.display = 'inline-block';
-            document.getElementById('dart-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          } else alert('Score too low. Try again!');
-        }
-      }, 1000);
-    }
+    canvas.addEventListener('mousedown', handleInput);
+    canvas.addEventListener('touchstart', handleInput, { passive: false });
+    restartBtn.addEventListener('click', init);
 
-    // FRUIT
-    let fruitScore = 0, fruitRunning = false, fruitTimeout = null;
-    function startFruit() {
-      if (fruitTimeout) clearTimeout(fruitTimeout);
-      fruitScore = 0; fruitRunning = false;
-      document.getElementById('fruit-score').innerText = '0';
-      document.getElementById('fruit-claim').style.display = 'none';
-      document.getElementById('fruit-btn').innerText = 'Start';
-      document.getElementById('fruit-display').onclick = null;
-      showPage('game-fruit');
-    }
-    function playFruit() {
-      if (fruitRunning) return;
-      if (fruitTimeout) clearTimeout(fruitTimeout);
-      fruitRunning = true;
-      fruitScore = 0;
-      document.getElementById('fruit-score').innerText = '0';
-      document.getElementById('fruit-btn').innerText = 'Playing...';
-      document.getElementById('fruit-claim').style.display = 'none';
-      const fruits = ['🍎','🍌','🍇','🍊','🍓','🍉'];
-      let count = 0;
-      function nextFruit() {
-        if (count >= 12) {
-          fruitRunning = false;
-          document.getElementById('fruit-btn').innerText = 'Finished';
-          document.getElementById('fruit-display').onclick = null;
-          gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
-          if (gamePrize > 0) {
-            document.getElementById('fruit-claim').style.display = 'inline-block';
-            document.getElementById('fruit-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          } else {
-            alert('Score too low. Try again!');
-          }
-          return;
-        }
-        const disp = document.getElementById('fruit-display');
-        disp.innerText = fruits[Math.floor(Math.random()*fruits.length)];
-        disp.onclick = () => {
-          if (!fruitRunning) return;
-          fruitScore++;
-          document.getElementById('fruit-score').innerText = fruitScore;
-          disp.onclick = null;
-        };
-        count++;
-        fruitTimeout = setTimeout(nextFruit, 900);
-      }
-      nextFruit();
-    }
-
-    // SHOOT
-    let shootScore = 0, shootRunning = false, shootTimeout = null;
-    function startShoot() {
-      if (shootTimeout) clearTimeout(shootTimeout);
-      shootScore = 0; shootRunning = false;
-      document.getElementById('shoot-score').innerText = '0';
-      document.getElementById('shoot-claim').style.display = 'none';
-      document.getElementById('shoot-btn').innerText = 'Start';
-      document.getElementById('shoot-target').onclick = null;
-      showPage('game-shoot');
-    }
-    function playShoot() {
-      if (shootRunning) return;
-      if (shootTimeout) clearTimeout(shootTimeout);
-      shootRunning = true;
-      shootScore = 0;
-      document.getElementById('shoot-score').innerText = '0';
-      document.getElementById('shoot-btn').innerText = 'Playing...';
-      document.getElementById('shoot-claim').style.display = 'none';
-      let left = 12;
-      const target = document.getElementById('shoot-target');
-      function showTarget() {
-        if (left <= 0) {
-          shootRunning = false;
-          document.getElementById('shoot-btn').innerText = 'Finished';
-          target.onclick = null;
-          gamePrize = Math.min(Math.floor(shootScore / 2), 7);
-          if (gamePrize > 0) {
-            document.getElementById('shoot-claim').style.display = 'inline-block';
-            document.getElementById('shoot-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          } else {
-            alert('Score too low. Try again!');
-          }
-          return;
-        }
-        target.style.opacity = '1';
-        target.onclick = () => {
-          if (!shootRunning) return;
-          shootScore++;
-          document.getElementById('shoot-score').innerText = shootScore;
-          target.style.opacity = '0.3';
-          target.onclick = null;
-        };
-        left--;
-        shootTimeout = setTimeout(showTarget, 800);
-      }
-      showTarget();
-    }
-
-    // TOWER
-    let towerScore = 0, towerRunning = false;
-    function startTower() {
-      towerScore = 0; towerRunning = false;
-      document.getElementById('tower-score').innerText = '0';
-      document.getElementById('tower-display').innerText = '⬜';
-      document.getElementById('tower-claim').style.display = 'none';
-      document.getElementById('tower-btn').innerText = 'Start';
-      document.getElementById('tower-btn').onclick = playTower;
-      showPage('game-tower');
-    }
-    function playTower() {
-      if (towerRunning) return;
-      towerRunning = true;
-      towerScore = 0;
-      document.getElementById('tower-score').innerText = '0';
-      document.getElementById('tower-display').innerText = '⬜';
-      document.getElementById('tower-btn').innerText = 'Drop Block';
-      document.getElementById('tower-claim').style.display = 'none';
-      document.getElementById('tower-btn').onclick = () => {
-        if (!towerRunning) return;
-        towerScore++;
-        document.getElementById('tower-score').innerText = towerScore;
-        document.getElementById('tower-display').innerText += '⬜';
-        if (towerScore >= 10) {
-          towerRunning = false;
-          document.getElementById('tower-btn').innerText = 'Finished';
-          document.getElementById('tower-btn').onclick = playTower;
-          gamePrize = Math.min(towerScore, 8);
-          document.getElementById('tower-claim').style.display = 'inline-block';
-          document.getElementById('tower-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-        }
-      };
-    }
-
-    // SUDOKU (simple 4x4 for mobile)
-    let sudokuSolution = [];
-    function startSudoku() {
-      const puzzle = [
-        [1,0,0,4],
-        [0,0,1,0],
-        [0,4,0,0],
-        [4,0,0,2]
-      ];
-      sudokuSolution = [
-        [1,2,3,4],
-        [3,4,1,2],
-        [2,3,4,1],
-        [4,1,2,3]
-      ];
-      const board = document.getElementById('sudoku-board');
-      board.innerHTML = '';
-      board.style.gridTemplateColumns = 'repeat(4, 50px)';
-      for (let r=0; r<4; r++) {
-        for (let c=0; c<4; c++) {
-          const inp = document.createElement('input');
-          inp.type = 'number';
-          inp.min = 1; inp.max = 4;
-          inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;';
-          if (puzzle[r][c] !== 0) {
-            inp.value = puzzle[r][c];
-            inp.disabled = true;
-            inp.style.background = '#ffe8e8';
-          }
-          inp.dataset.r = r;
-          inp.dataset.c = c;
-          board.appendChild(inp);
-        }
-      }
-      document.getElementById('sudoku-msg').innerText = '';
-      showPage('game-sudoku');
-    }
-    function checkSudoku() {
-      const inputs = document.querySelectorAll('#sudoku-board input');
-      let correct = true;
-      inputs.forEach(inp => {
-        const r = Number(inp.dataset.r);
-        const c = Number(inp.dataset.c);
-        const val = Number(inp.value);
-        if (val !== sudokuSolution[r][c]) correct = false;
-      });
-      if (correct) {
-        document.getElementById('sudoku-msg').innerText = '✅ Correct! +5 Coins';
-        balance += 5; updateUI();
-        saveBalance(5, 'game', 'Sudoku Win');
-        saveToHistory('Sudoku Win', 5, 'game');
-      } else {
-        document.getElementById('sudoku-msg').innerText = '❌ Not correct yet';
-      }
-    }
-
-    function claimGame(type) {
-      if (gamePrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(() => {
-        balance += gamePrize;
-        updateUI();
-        saveBalance(gamePrize, 'game', type + ' Win');
-        saveToHistory(type.charAt(0).toUpperCase() + type.slice(1) + ' Game', gamePrize, 'game');
-        alert('✅ Claimed +' + gamePrize + ' Coins!');
-        gamePrize = 0;
-        const claimBtn = document.getElementById(type + '-claim');
-        if (claimBtn) claimBtn.style.display = 'none';
-      }, (adSettings.wait||10)*1000);
-    }
-
-    // ========== WALLET WITHDRAW ==========
-    function openWithdraw(type) {
-      currentWithdrawType = type;
-      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank Account' : 'USDT Address (TRC20/BEP20)';
-      document.getElementById('withdraw-address').value = '';
-      document.getElementById('withdraw-amount').value = 500;
-      showPage('withdraw-form');
-    }
-    function submitWithdraw() {
-      const address = document.getElementById('withdraw-address').value.trim();
-      const amount = Number(document.getElementById('withdraw-amount').value) || 0;
-      if (!address) { alert('Enter address / UPI'); return; }
-      if (amount < 500) { alert('Minimum withdrawal is 500 Coins'); return; }
-      if (balance < amount) { alert('Not enough balance'); return; }
-      balance -= amount;
-      updateUI();
-      saveBalance(-amount, 'withdraw', 'Withdrawal request');
-      saveToHistory('Withdrawal Request', -amount, 'withdraw');
-      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
-      showPage('wallet');
-    }
-
-    // ========== HISTORY ==========
-    function saveToHistory(title, amount, type) {
-      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
-      history.unshift({ title, amount, type: type || 'task', time: new Date().toLocaleString() });
-      if (history.length > 50) history.length = 50;
-      localStorage.setItem(historyKey, JSON.stringify(history));
-    }
-
-    // Only task related history
-    function loadTaskHistory() {
-      const container = document.getElementById('task-history-list');
-      if (!container) return;
-      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
-      // Show only task / checkin / official / ad related (exclude pure game & withdraw if you want only tasks)
-      // User asked for Task History → show task type items mainly
-      const taskItems = history.filter(item => item.type === 'task' || item.type === 'checkin' || item.type === 'official' || !item.type);
-      if (!taskItems.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No task history yet</div>';
-        return;
-      }
-      let html = '';
-      taskItems.forEach(item => {
-        const color = item.amount > 0 ? '#c8102e' : '#666';
-        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:'+color+';">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
-      });
-      container.innerHTML = html;
-    }
-
-    // ========== ADMIN ==========
-    function savePriceSettings() {
-      prices.channel = Number(document.getElementById('price-channel').value) || 200;
-      prices.bot = Number(document.getElementById('price-bot').value) || 150;
-      prices.views = Number(document.getElementById('price-views').value) || 50;
-      prices.install = Number(document.getElementById('price-install').value) || 300;
-      prices.traffic = Number(document.getElementById('price-traffic').value) || 80;
-      prices.banner = Number(document.getElementById('price-banner').value) || 100;
-      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
-      prices.test = Number(document.getElementById('price-test').value) || 60;
-      prices.watch = Number(document.getElementById('price-watch').value) || 30;
-      localStorage.setItem('vtn_prices', JSON.stringify(prices));
-      alert('✅ Prices saved!');
-    }
-    function loadPriceSettings() {
-      document.getElementById('price-channel').value = prices.channel;
-      document.getElementById('price-bot').value = prices.bot;
-      document.getElementById('price-views').value = prices.views;
-      document.getElementById('price-install').value = prices.install;
-      document.getElementById('price-traffic').value = prices.traffic;
-      document.getElementById('price-banner').value = prices.banner;
-      document.getElementById('price-affiliate').value = prices.affiliate;
-      document.getElementById('price-test').value = prices.test;
-      document.getElementById('price-watch').value = prices.watch || 30;
-    }
-
-    function saveAdSettings() {
-      const raw = document.getElementById('ad-links').value.trim();
-      const links = raw.split('\n').map(l => l.trim()).filter(l => l);
-      adSettings.links = links.length ? links : adSettings.links;
-      adSettings.wait = Number(document.getElementById('ad-wait').value) || 15;
-      adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
-      localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('✅ Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
-    }
-    function loadAdSettings() {
-      document.getElementById('ad-links').value = (adSettings.links || []).join('\n');
-      document.getElementById('ad-wait').value = adSettings.wait || 15;
-      document.getElementById('ad-reward').value = adSettings.reward || 5;
-    }
-
-    function openCategory(cat) {
-      currentCategory = cat;
-      document.getElementById('category-title').innerText = ({
-        join:'Join Channel / Group', bot:'Join Bot', watch:'Watch & Earn', views:'Views & Earn',
-        install:'Install App', website:'Visit Website', affiliate:'Affiliate', products:'View Products', other:'Earn Tasks'
-      })[cat] || 'Tasks';
-      showPage('category-tasks');
-      loadCategoryTasks(cat);
-    }
-
-    async function loadCategoryTasks(cat) {
-      const container = document.getElementById('category-list');
-      if (!container) return;
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
-
-      let allTasks = [];
-      try {
-        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-        allTasks = orders.filter(t => t.category === cat || (cat === 'other' && !t.category));
-      } catch(e) {}
-
-      if (sb) {
-        try {
-          let query = sb.from('tasks').select('*').eq('is_active', true).order('id', {ascending:false});
-          if (cat === 'other') query = query.or('category.eq.other,category.is.null');
-          else query = query.eq('category', cat);
-          const { data } = await query;
-          if (data) allTasks = allTasks.concat(data);
-        } catch(e) {}
-      }
-
-      if (!allTasks.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
-        return;
-      }
-
-      currentTasks = allTasks;
-      let html = '';
-      allTasks.forEach((task, index) => {
-        if (task.category !== 'watch' && completedTasks.includes(task.id)) return;
-        const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
-        html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>';
-      });
-      container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
-    }
-
-    function doTaskByIndex(index) {
-      const task = currentTasks[index];
-      if (!task) return;
-      if (task.link) window.open(task.link, '_blank');
-      const waitSec = Number(task.wait_seconds) || 0;
-      if (waitSec > 0) {
-        alert('Please wait ' + waitSec + ' seconds...');
-        setTimeout(() => finishTask(task), waitSec * 1000);
-      } else setTimeout(() => finishTask(task), 1500);
-    }
-
-    function finishTask(task) {
-      if (!confirm('Did you complete the task?\n\n"' + (task.title||'Task') + '"')) {
-        alert('No coins added.'); return;
-      }
-      const reward = task.reward || 0;
-      if (task.category !== 'watch' && !completedTasks.includes(task.id)) {
-        completedTasks.push(task.id);
-        localStorage.setItem(completedKey, JSON.stringify(completedTasks));
-      }
-      saveToHistory(task.title||'Task', reward, 'task');
-      addCoins(reward, task.title||'Task');
-      loadCategoryTasks(currentCategory);
-    }
-
-    // ADMIN functions
-    async function adminAddCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
-        const newBalance = (data.balance||0) + coins;
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{ telegram_id: tid, amount: coins, type:'admin', description:'Admin added coins' }]);
-        result.innerHTML = '<span style="color:green;">✅ Added '+coins+'. New: '+newBalance+'</span>';
-      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
-    }
-
-    async function adminRemoveCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
-        const newBalance = Math.max(0, (data.balance||0) - coins);
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{ telegram_id: tid, amount: -coins, type:'admin', description:'Admin removed coins' }]);
-        result.innerHTML = '<span style="color:orange;">− Removed '+coins+'. New: '+newBalance+'</span>';
-      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
-    }
-
-    async function adminCheckBalance() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
-        result.innerHTML = 'User: '+(data.first_name||tid)+'<br>Balance: <b>'+(data.balance||0)+'</b>';
-      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
-    }
-
-    async function adminViewHistory() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id',{ascending:false}).limit(10);
-        if (!data || !data.length) { result.innerHTML = 'No transactions'; return; }
-        let html = '<b>Last 10:</b><br>';
-        data.forEach(t => html += (t.description||t.type)+': '+t.amount+'<br>');
-        result.innerHTML = html;
-      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
-    }
-
-    function adminBlockUser() {
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      if (!confirm('Block user ' + tid + '?')) return;
-      if (!blockedUsers.includes(tid)) {
-        blockedUsers.push(tid);
-        localStorage.setItem(blockedKey, JSON.stringify(blockedUsers));
-      }
-      result.innerHTML = '<span style="color:red;">User ' + tid + ' blocked</span>';
-      alert('User blocked');
-    }
-
-    async function addNewTask() {
-      if (!sb) return alert('Supabase not connected');
-      const title = document.getElementById('task-title').value.trim();
-      const reward = Number(document.getElementById('task-reward').value)||0;
-      const category = document.getElementById('task-category').value;
-      const link = document.getElementById('task-link').value.trim();
-      const waitSeconds = Number(document.getElementById('task-wait').value)||0;
-      const maxUsers = Number(document.getElementById('task-max-users').value)||0;
-      if (!title) return alert('Enter title');
-      try {
-        const { error } = await sb.from('tasks').insert([{
-          title, reward, category, link, wait_seconds: waitSeconds, max_users: maxUsers, is_active: true
-        }]);
-        if (error) { alert('Error: '+error.message); return; }
-        alert('✅ Task Added!');
-        document.getElementById('task-title').value = '';
-        document.getElementById('task-reward').value = '10';
-        document.getElementById('task-link').value = '';
-        loadAdminTasks();
-      } catch(e) { alert('Failed'); }
-    }
-
-    async function loadAdminTasks() {
-      if (!sb) return;
-      const container = document.getElementById('admin-tasks-list');
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;">Loading...</div>';
-      try {
-        const { data } = await sb.from('tasks').select('*').order('id',{ascending:false});
-        if (!data || !data.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks</div>'; return; }
-        let html = '';
-        data.forEach(task => {
-          const btnText = task.is_active ? 'Off' : 'On';
-          const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
-          const statusDot = task.is_active ? '🟢' : '🔴';
-          html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'')+'</h4><p>+'+(task.reward||0)+' • '+(task.category||'')+' • '+statusDot+'</p></div><button class="start-btn" style="background:'+btnColor+'" onclick="toggleTask('+task.id+','+(!task.is_active)+')">'+btnText+'</button><button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask('+task.id+')">Del</button></div>';
-        });
-        container.innerHTML = html;
-      } catch(e) { container.innerHTML = '<div class="card">Failed</div>'; }
-    }
-
-    async function toggleTask(id, newStatus) {
-      try {
-        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
-        alert(newStatus ? 'Enabled' : 'Disabled');
-        loadAdminTasks();
-      } catch(e) { alert('Failed'); }
-    }
-
-    async function deleteTask(id) {
-      if (!confirm('Delete?')) return;
-      try {
-        await sb.from('tasks').delete().eq('id', id);
-        alert('Deleted');
-        loadAdminTasks();
-      } catch(e) { alert('Failed'); }
-    }
-
-    setupUser();
-    loadUser();
+    // Start
+    init();
+    loop();
   </script>
 </body>
 </html>
