@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Tower Climb</title>
+  <title>Tower Climb - Level Progression</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -61,29 +61,28 @@
       margin-top: 2px;
     }
 
-    #height-indicator {
-      font-size: 18px;
-      font-weight: 600;
+    #level-info {
+      text-align: right;
+    }
+
+    #level-badge {
+      font-size: 16px;
+      font-weight: 700;
       color: #38bdf8;
       background: rgba(30, 41, 59, 0.8);
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 20px;
       border: 1px solid rgba(56, 189, 248, 0.3);
+      display: inline-block;
+      margin-bottom: 4px;
     }
 
-    #instruction {
-      position: absolute;
-      bottom: 40px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 15px;
+    #height-indicator {
+      font-size: 13px;
       opacity: 0.8;
-      z-index: 10;
-      pointer-events: none;
     }
 
-    #game-over, #start-screen {
+    #game-over, #start-screen, #level-banner {
       position: absolute;
       inset: 0;
       background: rgba(15, 23, 42, 0.93);
@@ -95,7 +94,7 @@
       gap: 12px;
     }
 
-    #game-over {
+    #game-over, #level-banner {
       display: none;
     }
 
@@ -139,6 +138,13 @@
       padding: 0 30px;
       line-height: 1.5;
     }
+
+    #banner-text {
+      font-size: 36px;
+      font-weight: 800;
+      color: #4ade80;
+      text-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -150,15 +156,21 @@
         <div id="score">0</div>
         <div id="best">Best: 0</div>
       </div>
-      <div id="height-indicator">Height: 0m</div>
+      <div id="level-info">
+        <div id="level-badge">Level 1</div>
+        <div id="height-indicator">Height: 0m</div>
+      </div>
     </div>
-
-    <div id="instruction">Tap left or right side of screen to jump platforms!</div>
 
     <div id="start-screen">
       <h1>Tower Climb</h1>
-      <p>Jump higher and higher across platforms!<br>Don't fall down or miss your landing.</p>
+      <p>Tap left or right side of screen to jump!<br>Climb higher to beat levels. Platforms shrink and move!</p>
       <button id="start-btn">Start Game</button>
+    </div>
+
+    <div id="level-banner">
+      <div id="banner-text">LEVEL 2</div>
+      <p style="opacity: 0.8; font-size: 16px;">Platforms are getting smaller & moving!</p>
     </div>
 
     <div id="game-over">
@@ -182,8 +194,11 @@
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
+    const levelBadge = document.getElementById('level-badge');
     const heightIndicator = document.getElementById('height-indicator');
     const gameOverEl = document.getElementById('game-over');
+    const levelBanner = document.getElementById('level-banner');
+    const bannerText = document.getElementById('banner-text');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
     const startScreen = document.getElementById('start-screen');
@@ -201,10 +216,11 @@
     resize();
 
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('towerClimbBest') || '0');
+    let bestScore = parseInt(localStorage.getItem('towerClimbLevelBest') || '0');
     bestEl.textContent = `Best: ${bestScore}`;
 
-    let gameState = 'start';
+    let level = 1;
+    let gameState = 'start'; // start, playing, leveling, gameover
     let cameraY = 0;
     let maxHeight = 0;
 
@@ -213,8 +229,7 @@
       y: 0,
       vx: 0,
       vy: 0,
-      radius: 16,
-      jumping: false
+      radius: 16
     };
 
     let platforms = [];
@@ -222,7 +237,9 @@
     function initGame() {
       score = 0;
       maxHeight = 0;
+      level = 1;
       scoreEl.textContent = '0';
+      levelBadge.textContent = `Level ${level}`;
       heightIndicator.textContent = 'Height: 0m';
       cameraY = 0;
 
@@ -231,30 +248,45 @@
       player.vx = 0;
       player.vy = -12;
 
-      platforms = [];
-      // Generate starting platforms
-      platforms.push({ x: width / 2 - 50, y: height - 100, width: 100, height: 16 });
-
-      let currentY = height - 180;
-      while (currentY > -2000) {
-        let pWidth = Math.max(70, 130 - (maxHeight * 0.05));
-        let pX = Math.random() * (width - pWidth);
-        platforms.push({ x: pX, y: currentY, width: pWidth, height: 16 });
-        currentY -= 75 + Math.random() * 35;
-      }
+      generatePlatforms();
 
       gameState = 'playing';
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
+      levelBanner.style.display = 'none';
     }
 
-    // Touch controls: left side vs right side of screen
+    function generatePlatforms() {
+      platforms = [];
+      // Starting safe platform
+      platforms.push({ x: width / 2 - 60, y: height - 100, width: 120, height: 16, moving: false, dir: 1 });
+
+      let currentY = height - 180;
+      while (currentY > -3000) {
+        // Higher levels reduce platform size and increase moving platforms frequency
+        let pWidth = Math.max(45, 120 - (level * 8) - Math.floor(maxHeight * 0.02));
+        let pX = Math.random() * (width - pWidth);
+        
+        let isMoving = level >= 2 && Math.random() < (0.2 + level * 0.08);
+        platforms.push({
+          x: pX,
+          y: currentY,
+          width: pWidth,
+          height: 16,
+          moving: isMoving,
+          dir: Math.random() > 0.5 ? 1 : -1
+        });
+        currentY -= 70 + Math.random() * 30;
+      }
+    }
+
+    // Touch controls: left or right side of screen
     window.addEventListener('pointerdown', (e) => {
       if (gameState !== 'playing') return;
       if (e.clientX < width / 2) {
-        player.vx = -6; // Move left
+        player.vx = -6.5;
       } else {
-        player.vx = 6;  // Move right
+        player.vx = 6.5;
       }
     });
 
@@ -265,16 +297,26 @@
     function update() {
       if (gameState !== 'playing') return;
 
-      // Physics
-      player.vy += 0.45; // Gravity
+      // Gravity and movement physics
+      player.vy += 0.46;
       player.x += player.vx;
       player.y += player.vy;
 
-      // Screen wrapping horizontal
+      // Screen wrapping
       if (player.x < 0) player.x = width;
       if (player.x > width) player.x = 0;
 
-      // Platform collisions (only when falling down)
+      // Move dynamic platforms if level >= 2
+      platforms.forEach(p => {
+        if (p.moving) {
+          p.x += p.dir * (1.5 + level * 0.4);
+          if (p.x <= 0 || p.x + p.width >= width) {
+            p.dir *= -1;
+          }
+        }
+      });
+
+      // Platform collision checks
       if (player.vy > 0) {
         platforms.forEach(p => {
           if (
@@ -283,41 +325,68 @@
             player.y + player.radius >= p.y &&
             player.y + player.radius <= p.y + p.height + 6
           ) {
-            player.vy = -13.5; // Bounce / Jump up!
+            player.vy = -14; // Jump up
           }
         });
       }
 
-      // Camera follow upward
+      // Camera follow
       let targetCameraY = player.y - height * 0.45;
       if (targetCameraY < cameraY) {
         cameraY += (targetCameraY - cameraY) * 0.1;
       }
 
-      // Calculate score based on height climbed
+      // Track height and score
       let currentHeight = Math.max(0, Math.floor((height - 100 - player.y) / 10));
       if (currentHeight > maxHeight) {
         maxHeight = currentHeight;
-        score = maxHeight * 10;
+        score = maxHeight * 10 * level;
         scoreEl.textContent = score;
         heightIndicator.textContent = `Height: ${maxHeight}m`;
+
+        // Level Up check every 50m climbed
+        let targetLevel = Math.floor(maxHeight / 50) + 1;
+        if (targetLevel > level) {
+          triggerLevelUp(targetLevel);
+        }
       }
 
-      // Generate new platforms above as player climbs
+      // Generate platforms ahead
       let highestPlatform = platforms[platforms.length - 1];
       if (highestPlatform.y > cameraY - 200) {
-        let pWidth = Math.max(65, 120 - (maxHeight * 0.03));
+        let pWidth = Math.max(45, 120 - (level * 8));
         let pX = Math.random() * (width - pWidth);
-        platforms.push({ x: pX, y: highestPlatform.y - (70 + Math.random() * 40), width: pWidth, height: 16 });
+        let isMoving = level >= 2 && Math.random() < (0.25 + level * 0.08);
+        platforms.push({
+          x: pX,
+          y: highestPlatform.y - (65 + Math.random() * 30),
+          width: pWidth,
+          height: 16,
+          moving: isMoving,
+          dir: Math.random() > 0.5 ? 1 : -1
+        });
       }
 
-      // Remove platforms far below screen
+      // Cleanup out of bounds platforms
       platforms = platforms.filter(p => p.y < cameraY + height + 100);
 
-      // Game over if player falls below screen view
+      // Fall below screen = Game Over
       if (player.y > cameraY + height + 50) {
         gameOver();
       }
+    }
+
+    function triggerLevelUp(newLevel) {
+      gameState = 'leveling';
+      level = newLevel;
+      levelBadge.textContent = `Level ${level}`;
+      bannerText.textContent = `LEVEL ${level} UNLOCKED!`;
+      levelBanner.style.display = 'flex';
+
+      setTimeout(() => {
+        levelBanner.style.display = 'none';
+        gameState = 'playing';
+      }, 1400);
     }
 
     function draw() {
@@ -328,23 +397,21 @@
 
       // Draw platforms
       platforms.forEach(p => {
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = p.moving ? '#f59e0b' : '#38bdf8'; // Moving platforms are amber
         ctx.beginPath();
         ctx.roundRect(p.x, p.y, p.width, p.height, 8);
         ctx.fill();
 
-        // Highlight
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
         ctx.fillRect(p.x, p.y, p.width, 4);
       });
 
-      // Draw player character ball
+      // Draw player
       ctx.fillStyle = '#f43f5e';
       ctx.beginPath();
       ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Inner shine
       ctx.fillStyle = 'rgba(255,255,255,0.4)';
       ctx.beginPath();
       ctx.arc(player.x - 4, player.y - 4, 5, 0, Math.PI * 2);
@@ -363,7 +430,7 @@
       gameState = 'gameover';
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('towerClimbBest', bestScore);
+        localStorage.setItem('towerClimbLevelBest', bestScore);
         bestEl.textContent = `Best: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
