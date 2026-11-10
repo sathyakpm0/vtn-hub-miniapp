@@ -1,2367 +1,1150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VTN HUB</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Master Fruit Blade</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #FFF8E7;
-      color: #333;
-      padding-bottom: 80px;
-      min-height: 100vh;
-    }
-    .header {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      font-size: 18px;
-      font-weight: 700;
-    }
-    .card {
-      background: white;
-      margin: 12px 14px;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-    }
-    .balance-card {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px;
-      border-radius: 18px;
-      padding: 20px;
-      color: white;
-      text-align: center;
-      box-shadow: 0 6px 18px rgba(200,16,46,0.25);
-    }
-    .balance-card .amount {
-      font-size: 32px;
-      font-weight: 800;
-      color: #ffd700;
-      margin: 8px 0 14px;
-    }
-    .gold-btn {
-      background: linear-gradient(90deg, #ffd700, #ffb700);
-      color: #5c3d00;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 0 14px 14px;
-    }
-    .btn {
-      border-radius: 16px;
-      padding: 16px 10px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: white;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      cursor: pointer;
-    }
-    .btn .icon { font-size: 22px; margin-bottom: 5px; display: block; }
-    .list-item {
-      background: white;
-      margin: 0 14px 10px;
-      border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 2px solid #c8102e;
-    }
-    .list-item .icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; color: white; flex-shrink: 0;
-    }
-    .list-item .info { flex: 1; min-width: 0; }
-    .list-item .info h4 { font-size: 14px; }
-    .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
-    .start-btn {
-      background: #c8102e; color: white; border: none;
-      padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-      cursor: pointer; flex-shrink: 0;
-    }
-    .banner {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px; border-radius: 16px; padding: 16px; color: white;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .ad-banner {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      margin: 14px; border-radius: 14px; padding: 14px; color: white;
-      text-align: center; border: 1px solid #ffd700;
-      cursor: pointer;
-    }
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; background: white;
-      display: flex; justify-content: space-around; padding: 10px 0;
-      box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 200;
-    }
-    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; cursor: pointer; }
-    .nav-item.active { color: #c8102e; font-weight: 700; }
-    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .section-title {
-      margin: 16px 14px 10px; font-size: 15px; font-weight: 700; color: #c8102e;
-    }
-    .form-group { margin-bottom: 12px; }
-    .form-group label {
-      display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid #ddd;
-      border-radius: 10px; font-size: 14px;
-    }
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
-
-    /* Games */
-    .ttt-board {
-      display: grid; grid-template-columns: repeat(3, 85px); gap: 10px;
-      justify-content: center; margin: 20px 0;
-    }
-    .ttt-cell {
-      width: 85px; height: 85px; background: linear-gradient(145deg, #fff, #ffe8e8);
-      border: 3px solid #c8102e; border-radius: 16px; font-size: 36px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(200,16,46,0.15);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
     }
-    .spin-wrap { text-align: center; padding: 10px; }
-    .spin-pointer { font-size: 28px; color: #c8102e; margin-bottom: -15px; z-index: 2; position: relative; }
-    .spin-wheel {
-      width: 240px; height: 240px; border-radius: 50%; margin: 0 auto;
-      background: conic-gradient(
-        #c8102e 0deg 45deg, #ffd700 45deg 90deg, #4CAF50 90deg 135deg,
-        #2196F3 135deg 180deg, #9C27B0 180deg 225deg, #FF9800 225deg 270deg,
-        #E91E63 270deg 315deg, #00BCD4 315deg 360deg
-      );
-      border: 8px solid #5c3d00; box-shadow: 0 0 0 6px #ffd700, 0 8px 25px rgba(0,0,0,0.3);
-      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-      position: relative;
-    }
-    .spin-center {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 50px; height: 50px; background: #fff; border-radius: 50%;
-      border: 4px solid #c8102e; z-index: 5;
-    }
-    .quiz-option {
-      background: white; border: 2px solid #c8102e; border-radius: 12px;
-      padding: 14px; margin: 8px 14px; text-align: center; font-weight: 600; cursor: pointer;
-    }
-    .diff-btn {
-      padding: 8px 16px; border-radius: 20px; border: 2px solid #c8102e;
-      background: white; margin: 4px; font-weight: 600; cursor: pointer;
-    }
-    .diff-btn.active { background: #c8102e; color: white; }
 
-    .game-area {
-      background: #1a1a2e;
-      border-radius: 16px;
-      padding: 20px;
-      margin: 14px;
-      color: white;
-      text-align: center;
-      min-height: 280px;
+    body {
+      background: #110d0a;
+      overflow: hidden;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #fff;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #game-container {
       position: relative;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
-    .score-box {
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 12px;
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
-    .game-btn {
-      background: #c8102e;
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 30px;
+
+    /* HUD overlay */
+    #ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 20px;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #score {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #facc15;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.8), 0 0 20px rgba(250, 204, 21, 0.4);
+    }
+
+    #best {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.85;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    #timer-container {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #timer-label {
+      font-size: 11px;
       font-weight: 700;
-      margin-top: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    #timer {
+      font-size: 32px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: #38bdf8;
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.6), 0 2px 6px rgba(0,0,0,0.9);
+      transition: color 0.3s;
+    }
+
+    #timer.warning {
+      color: #ef4444 !important;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); filter: drop-shadow(0 0 4px #ef4444); }
+      to { transform: scale(1.1); filter: drop-shadow(0 0 14px #ef4444); }
+    }
+
+    #combo-box {
+      font-size: 26px;
+      font-weight: 900;
+      font-style: italic;
+      color: #4ade80;
+      text-shadow: 0 0 15px rgba(74, 222, 128, 0.8), 0 2px 6px rgba(0,0,0,0.8);
+      opacity: 0;
+      transform: scale(0.8) rotate(-5deg);
+      transition: opacity 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #combo-box.show {
+      opacity: 1;
+      transform: scale(1.15) rotate(-5deg);
+    }
+
+    /* Modals & Screens */
+    .screen-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(30, 20, 15, 0.92) 0%, rgba(10, 8, 6, 0.97) 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      gap: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    #start-screen {
+      display: flex;
+    }
+
+    h1 {
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fef08a 0%, #f97316 50%, #dc2626 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.9));
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    h2 {
+      font-size: 38px;
+      font-weight: 900;
+      color: #f87171;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .instructions {
+      font-size: 15px;
+      color: #d1d5db;
+      text-align: center;
+      line-height: 1.6;
+      max-width: 320px;
+      margin: 10px 0;
+    }
+
+    .stat-card {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 36px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    #final-score {
+      font-size: 54px;
+      font-weight: 900;
+      color: #facc15;
+      text-shadow: 0 0 25px rgba(250, 204, 21, 0.6);
+    }
+
+    #best-score-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+      border: none;
+      padding: 16px 48px;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 50px;
       cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
     }
   </style>
 </head>
 <body>
+  <div id="game-container">
+    <canvas id="game"></canvas>
 
-  <div id="main-app">
-
-    <!-- HOME -->
-    <div id="home" class="page active">
-      <div class="header">ðŸ‘‘ VTN Hub Bot</div>
-      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
-        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">ðŸ¤–</div>
-        <div>
-          <div style="font-weight:700;" id="username">User</div>
-          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
-        </div>
-        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
+    <div id="ui">
+      <div class="score-box">
+        <div id="score">0</div>
+        <div id="best">Best: 0</div>
       </div>
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Your Balance</div>
-        <div class="amount" id="balance">0 Coins</div>
-        <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
-      </div>
-      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
-        <div style="font-size:12px;opacity:0.8;">Sponsored</div>
-        <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
-        <div style="font-size:12px;">Reach thousands of users</div>
-      </div>
-      <div class="section-title">Quick Actions</div>
-      <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
-          <span class="icon">âœ…</span>Claim up to 100
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
-          <span class="icon">ðŸŽ¯</span>Earn Tasks
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
-          <span class="icon">ðŸ“¢</span>Promote
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
-          <span class="icon">ðŸŽ®</span>Fun Zone
-        </div>
-      </div>
-      <div class="banner">
-        <div>
-          <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
-          <div style="font-size:12px;opacity:0.9;">Level 1: 5% | Level 2: 2%</div>
-        </div>
-        <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
-      </div>
+      <div id="combo-box">Combo x3</div>
     </div>
 
-    <!-- EARN -->
-    <div id="earn" class="page">
-      <div class="header">Earn Money</div>
-      <div class="section-title">Official Task</div>
-      <div class="list-item" id="official-task" onclick="doOfficialTask()">
-        <div class="icon" style="background:#c8102e;">â­</div>
-        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins â€¢ Required</p></div>
-        <button class="start-btn">Join</button>
-      </div>
-      <div class="section-title">Earn Tasks</div>
-      <div id="earn-tasks-list">
-        <div class="list-item" onclick="openCategory('other')">
-          <div class="icon" style="background:#c8102e;">ðŸ“‹</div>
-          <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item">
-          <div class="icon" style="background:#FF9800;">âš¡</div>
-          <div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div>
-          <button class="start-btn" onclick="event.stopPropagation(); alert('Coming soon')">Start</button>
-        </div>
-        <div class="list-item" onclick="openCategory('watch')">
-          <div class="icon" style="background:#E91E63;">â–¶ï¸</div>
-          <div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('views')">
-          <div class="icon" style="background:#9C27B0;">ðŸ‘€</div>
-          <div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('join')">
-          <div class="icon" style="background:#3F51B5;">ðŸ“¢</div>
-          <div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('bot')">
-          <div class="icon" style="background:#00BCD4;">ðŸ¤–</div>
-          <div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('install')">
-          <div class="icon" style="background:#4CAF50;">ðŸ“±</div>
-          <div class="info"><h4>Install App</h4><p>App installs</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('website')">
-          <div class="icon" style="background:#FF5722;">ðŸŒ</div>
-          <div class="info"><h4>Visit Website</h4><p>Website visits</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('affiliate')">
-          <div class="icon" style="background:#795548;">ðŸ”—</div>
-          <div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-        <div class="list-item" onclick="openCategory('products')">
-          <div class="icon" style="background:#E91E63;">ðŸ›’</div>
-          <div class="info"><h4>View Products</h4><p>Product views</p></div>
-          <button class="start-btn">Open</button>
-        </div>
-      </div>
+    <div id="timer-container">
+      <div id="timer-label">Time Remaining</div>
+      <div id="timer">03:00</div>
     </div>
 
-    <div id="category-tasks" class="page">
-      <div class="header" id="category-title">Tasks</div>
-      <div id="category-list"><div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">â† Back</button></div>
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen-overlay">
+      <div class="badge">Arcade 3-Min Trial</div>
+      <h1>Ninja Blade</h1>
+      <p class="instructions">
+        Swipe your blade across flying fruits.<br>
+        Slice multiple in one stroke for <b>Combos</b>!<br>
+        ⚠️ <b>Avoid Bombs</b> or lose 10 seconds!
+      </p>
+      <button id="start-btn" class="btn">Play Round</button>
     </div>
 
-    <!-- PROMOTE -->
-    <div id="promote" class="page">
-      <div class="header">Promote Services</div>
-
-      <div class="section-title">Promotion Services</div>
-      <div class="list-item" onclick="openPromoteForm('channel')">
-        <div class="icon" style="background:#c8102e;">ðŸ“¢</div>
-        <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
-        <button class="start-btn">Buy</button>
+    <!-- Game Over Screen -->
+    <div id="game-over" class="screen-overlay">
+      <h2>Time's Up!</h2>
+      <div class="stat-card">
+        <div id="final-score">0</div>
+        <div id="best-score-text">Best: 0</div>
       </div>
-      <div class="list-item" onclick="openPromoteForm('bot')">
-        <div class="icon" style="background:#9C27B0;">ðŸ¤–</div>
-        <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('views')">
-        <div class="icon" style="background:#3F51B5;">ðŸ‘€</div>
-        <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('install')">
-        <div class="icon" style="background:#4CAF50;">ðŸ“±</div>
-        <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('test')">
-        <div class="icon" style="background:#FF9800;">ðŸ§ª</div>
-        <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('traffic')">
-        <div class="icon" style="background:#00BCD4;">ðŸŒ</div>
-        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-      <div class="list-item" onclick="openPromoteForm('affiliate')">
-        <div class="icon" style="background:#673AB7;">ðŸ”—</div>
-        <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
-      <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="openPromoteForm('monetize')">
-        <div class="icon" style="background:#2196F3;">ðŸ’°</div>
-        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
-        <button class="start-btn">Apply</button>
-      </div>
-
-      <div class="section-title">Banner Ads</div>
-      <div class="list-item" onclick="openPromoteForm('banner')">
-        <div class="icon" style="background:#FF5722;">ðŸ“£</div>
-        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
-      <div class="section-title">Cross Promotion</div>
-      <div class="list-item" onclick="startCrossPromo()">
-        <div class="icon" style="background:#009688;">ðŸ”„</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day â€¢ Auto delete</p></div>
-        <button class="start-btn">Start</button>
-      </div>
+      <button id="restart-btn" class="btn">Play Again</button>
     </div>
-
-    <!-- PROMOTE FORM -->
-    <div id="promote-form" class="page">
-      <div class="header" id="promote-form-title">Place Order</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Your Link / Channel / Bot</label>
-          <input type="text" id="promo-link" placeholder="https://t.me/... or website">
-        </div>
-        <div class="form-group">
-          <label>Quantity / Days</label>
-          <input type="number" id="promo-qty" value="100" min="1">
-        </div>
-        <div class="form-group">
-          <label>Notes (optional)</label>
-          <textarea id="promo-notes" rows="2" placeholder="Any special request..."></textarea>
-        </div>
-        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins</div>
-        <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- FUN -->
-    <div id="fun" class="page">
-      <div class="header">Fun Zone</div>
-      <div class="section-title">Chat</div>
-      <div class="list-item" onclick="enterWithAd('chat')">
-        <div class="icon" style="background:#009688;">ðŸ’¬</div>
-        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter â€¢ Earn coins</p></div>
-        <button class="start-btn">Enter</button>
-      </div>
-      <div class="section-title">Games (Watch Ad to Play)</div>
-      <div class="grid">
-        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">ðŸŽ¯</span>Dart</div>
-        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">ðŸŽ</span>Fruit</div>
-        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">ðŸ”«</span>Shoot</div>
-        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">ðŸ—¼</span>Tower</div>
-        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">ðŸŽ¡</span>Spin</div>
-        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">â“</span>Quiz</div>
-        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">âŒ</span>Tic Tac Toe</div>
-        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">ðŸ”¢</span>Sudoku</div>
-        <div class="btn" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);" onclick="enterWithAd('game','Race')"><span class="icon">ðŸŽï¸</span>Race</div>
-      </div>
-    </div>
-
-    <!-- TIC TAC TOE -->
-    <div id="game-ttt" class="page">
-      <div class="header">Tic Tac Toe</div>
-      <div class="card" style="text-align:center;">
-        <div style="margin-bottom:12px;">
-          <button class="diff-btn active" id="diff-easy" onclick="setDiff('easy')">Easy (1)</button>
-          <button class="diff-btn" id="diff-medium" onclick="setDiff('medium')">Medium (2)</button>
-          <button class="diff-btn" id="diff-hard" onclick="setDiff('hard')">Hard (3)</button>
-        </div>
-        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;color:#c8102e;">Your turn (X)</div>
-        <div class="ttt-board" id="ttt-board"></div>
-        <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Watch Ad & Claim</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- SPIN -->
-    <div id="game-spin" class="page">
-      <div class="header">Spin & Win</div>
-      <div class="card spin-wrap">
-        <div class="spin-pointer">â–¼</div>
-        <div style="position:relative;display:inline-block;">
-          <div class="spin-wheel" id="spin-wheel"></div>
-        </div>
-        <div id="spin-result" style="margin:16px 0;font-weight:800;font-size:20px;color:#c8102e;min-height:28px;"></div>
-        <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
-        <button class="gold-btn" id="spin-claim" style="display:none;margin-top:10px;" onclick="claimSpin()">Watch Ad & Collect</button>
-        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- QUIZ -->
-    <div id="game-quiz" class="page">
-      <div class="header">Quiz</div>
-      <div class="card">
-        <div id="quiz-question" style="font-weight:700;font-size:16px;margin-bottom:16px;text-align:center;"></div>
-        <div id="quiz-options"></div>
-        <div id="quiz-result" style="text-align:center;margin-top:14px;font-weight:700;"></div>
-        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- DART -->
-    <div id="game-dart" class="page">
-      <div class="header">ðŸŽ¯ Dart Game</div>
-      <div class="game-area" id="dart-area">
-        <div class="score-box">Score: <span id="dart-score">0</span></div>
-        <div style="font-size:60px;margin:20px 0;cursor:pointer;" id="dart-target">ðŸŽ¯</div>
-        <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
-        <button class="game-btn" id="dart-btn" onclick="playDart()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="dart-claim" style="display:none;" onclick="claimGame('dart')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- FRUIT -->
-    <div id="game-fruit" class="page">
-      <div class="header">ðŸŽ Fruit Slice</div>
-      <div class="game-area" id="fruit-area">
-        <div class="score-box">Score: <span id="fruit-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="fruit-display">ðŸŽ</div>
-        <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
-        <button class="game-btn" id="fruit-btn" onclick="playFruit()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="fruit-claim" style="display:none;" onclick="claimGame('fruit')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- SHOOT -->
-    <div id="game-shoot" class="page">
-      <div class="header">ðŸ”« Shoot</div>
-      <div class="game-area" id="shoot-area">
-        <div class="score-box">Hits: <span id="shoot-score">0</span></div>
-        <div style="font-size:50px;margin:30px 0;cursor:pointer;" id="shoot-target">ðŸŽ¯</div>
-        <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
-        <button class="game-btn" id="shoot-btn" onclick="playShoot()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="shoot-claim" style="display:none;" onclick="claimGame('shoot')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- TOWER -->
-    <div id="game-tower" class="page">
-      <div class="header">ðŸ—¼ Tower Stack</div>
-      <div class="game-area" id="tower-area">
-        <div class="score-box">Height: <span id="tower-score">0</span></div>
-        <div style="font-size:40px;margin:20px 0;" id="tower-display">â¬œ</div>
-        <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
-        <button class="game-btn" id="tower-btn" onclick="playTower()">Start</button>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <button class="gold-btn" id="tower-claim" style="display:none;" onclick="claimGame('tower')">Watch Ad & Claim</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- SUDOKU -->
-    <div id="game-sudoku" class="page">
-      <div class="header">ðŸ”¢ Sudoku (Easy 4Ã—4)</div>
-      <div class="card" style="text-align:center;">
-        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:2px;justify-content:center;margin:15px 0;"></div>
-        <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
-        <button class="gold-btn" onclick="checkSudoku()">Check</button>
-        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">â† Back</button>
-      </div>
-    </div>
-
-    
-    <!-- RACE GAME -->
-    <div id="game-race" class="page">
-      <div class="header">ðŸŽï¸ Overdrive Race</div>
-      <div style="position:relative;margin:0;padding:0;">
-        <canvas id="raceCanvas" style="width:100%;height:70vh;background:#020617;display:block;"></canvas>
-        <div id="raceHUD" style="position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;pointer-events:none;">
-          <div style="background:rgba(0,0,0,0.7);color:#fff;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
-            Score: <span id="rScore">0</span>
-          </div>
-          <div style="background:rgba(0,0,0,0.7);color:#ffd700;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
-            <span id="rSpeed">0</span> km/h
-          </div>
-          <div style="background:rgba(0,0,0,0.7);color:#38bdf8;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700;">
-            Nitro: <span id="rNitro">35</span>%
-          </div>
-        </div>
-        <div style="display:flex;justify-content:center;gap:10px;padding:12px;background:#111;">
-          <button id="rLeft" class="start-btn" style="width:70px;height:48px;font-size:20px;background:#333;">â—€</button>
-          <button id="rBrake" class="start-btn" style="height:48px;background:#c8102e;">BRAKE</button>
-          <button id="rNitroBtn" class="start-btn" style="height:48px;background:#0ea5e9;">âš¡ BOOST</button>
-          <button id="rRight" class="start-btn" style="width:70px;height:48px;font-size:20px;background:#333;">â–¶</button>
-        </div>
-        <div style="text-align:center;padding:8px;">
-          <button class="gold-btn" id="race-start-btn" onclick="startRaceGame()">START RACE</button>
-          <button class="start-btn" style="background:#666;margin-left:8px;" onclick="showPage('fun')">â† Back</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- WALLET -->
-    <div id="wallet" class="page">
-      <div class="header">Wallet & History</div>
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Current Balance</div>
-        <div class="amount" id="wallet-balance">0 Coins</div>
-      </div>
-      <div class="section-title">Task History</div>
-      <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
-      <div class="section-title">Withdrawal</div>
-      <div class="list-item" onclick="openWithdraw('upi')">
-        <div class="icon" style="background:#FF9800;">ðŸ‡®ðŸ‡³</div>
-        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div class="list-item" onclick="openWithdraw('usdt')">
-        <div class="icon" style="background:#26A17B;">â‚®</div>
-        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
-        <button class="start-btn">Withdraw</button>
-      </div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">â† Back</button></div>
-    </div>
-
-    <!-- WITHDRAW FORM -->
-    <div id="withdraw-form" class="page">
-      <div class="header">Withdraw</div>
-      <div class="card">
-        <div class="form-group">
-          <label id="withdraw-label">UPI ID / Wallet Address</label>
-          <input type="text" id="withdraw-address" placeholder="Enter details">
-        </div>
-        <div class="form-group">
-          <label>Amount (Coins)</label>
-          <input type="number" id="withdraw-amount" value="500" min="100">
-        </div>
-        <div style="font-size:13px;color:#888;margin-bottom:12px;">Minimum: 500 Coins</div>
-        <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">â† Back</button>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="profile" class="page">
-      <div class="header">My Profile</div>
-      <div class="card" style="text-align:center;">
-        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">ðŸ¤–</div>
-        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
-        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
-        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
-      </div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')">
-        <div class="icon" style="background:#009688;">ðŸ’¬</div>
-        <div class="info"><h4>Contact Support @Vtnhub0</h4></div>
-        <div>â€º</div>
-      </div>
-      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();">
-        <div class="icon" style="background:#c8102e;">ðŸ‘‘</div>
-        <div class="info"><h4>Admin Panel</h4></div>
-        <div>â€º</div>
-      </div>
-    </div>
-
-    <!-- REFER -->
-    <div id="refer" class="page">
-      <div class="header">Refer & Earn</div>
-      <div class="banner">
-        <div><div style="font-weight:700;">Invite Friends</div><div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div></div>
-        <div style="font-size:28px;">ðŸŽ</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div style="font-size:13px;color:#777;">Your Referral Code</div>
-        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
-        <button class="gold-btn" onclick="copyCode()">Copy Code</button>
-      </div>
-    </div>
-
-    <!-- ADMIN -->
-    <div id="admin" class="page">
-      <div class="header">ðŸ‘‘ Admin Panel</div>
-
-      <div class="section-title">Service Prices (Coins)</div>
-      <div class="card">
-        <div class="form-row">
-          <div class="form-group"><label>Channel Promote</label><input type="number" id="price-channel" value="200"></div>
-          <div class="form-group"><label>Bot Promote</label><input type="number" id="price-bot" value="150"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Views & Likes</label><input type="number" id="price-views" value="50"></div>
-          <div class="form-group"><label>App Installs</label><input type="number" id="price-install" value="300"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Website Traffic</label><input type="number" id="price-traffic" value="80"></div>
-          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
-          <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
-      </div>
-
-      <div class="section-title">Ad Settings</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Ad Links (one per line â€“ random pick)</label>
-          <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Wait Seconds</label><input type="number" id="ad-wait" value="15"></div>
-          <div class="form-group"><label>Coins Reward</label><input type="number" id="ad-reward" value="5"></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
-      </div>
-
-      <div class="section-title">User Tools</div>
-      <div class="card">
-        <div class="form-group">
-          <label>Telegram User ID</label>
-          <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
-        </div>
-        <div class="form-group">
-          <label>Coins Amount</label>
-          <input type="number" id="admin-coins" value="100">
-        </div>
-        <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
-        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">âˆ’ Remove Coins</button>
-        <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
-        <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
-        <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
-        <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
-      </div>
-
-      <div class="section-title">Add New Task</div>
-      <div class="card">
-        <div class="form-group"><label>Task Title *</label><input type="text" id="task-title" placeholder="e.g. Join My Channel"></div>
-        <div class="form-group"><label>Reward (Coins) *</label><input type="number" id="task-reward" value="10"></div>
-        <div class="form-group">
-          <label>Category *</label>
-          <select id="task-category">
-            <option value="join">Join Channel / Group</option>
-            <option value="bot">Join Bot</option>
-            <option value="watch">Watch Video / Ads</option>
-            <option value="views">Views & Likes</option>
-            <option value="install">Install App</option>
-            <option value="website">Visit Website</option>
-            <option value="affiliate">Affiliate</option>
-            <option value="products">View Products</option>
-            <option value="other">Other / General</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Link</label><input type="text" id="task-link" placeholder="https://t.me/..."></div>
-        <div class="form-row">
-          <div class="form-group"><label>Wait Seconds</label><input type="number" id="task-wait" value="0"></div>
-          <div class="form-group"><label>Max Users (0=Unlimited)</label><input type="number" id="task-max-users" value="0"></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
-      </div>
-
-      <div class="section-title">Current Tasks</div>
-      <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">â† Back</button></div>
-    </div>
-
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home')"><span class="icon">ðŸ </span>Home</div>
-    <div class="nav-item" onclick="showPage('earn')"><span class="icon">ðŸ’°</span>Earn</div>
-    <div class="nav-item" onclick="showPage('promote')"><span class="icon">ðŸ“¢</span>Promote</div>
-    <div class="nav-item" onclick="showPage('fun')"><span class="icon">ðŸŽ®</span>Fun</div>
-    <div class="nav-item" onclick="showPage('profile')"><span class="icon">ðŸ‘¤</span>Profile</div>
   </div>
 
   <script>
-    // ========== CONFIG ==========
-    // IMPORTANT: Replace with your real Supabase project URL and anon/public key (JWT starting with eyJ...)
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-
-    let sb = null;
-    try {
-      if (window.supabase && window.supabase.createClient) {
-        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-    } catch (e) {
-      console.warn('Supabase init failed', e);
-    }
-
-    // Telegram WebApp
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    // --- Telegram WebApp Integration & Haptics ---
+    const tg = window.Telegram?.WebApp;
     if (tg) {
-      try {
-        tg.ready();
-        tg.expand();
-        if (typeof tg.disableVerticalSwipes === 'function') {
-          tg.disableVerticalSwipes();
-        }
-        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#c8102e');
-        if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#FFF8E7');
-      } catch (e) {
-        console.warn('Telegram WebApp init warning', e);
-      }
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor('#110d0a');
+      tg.setBackgroundColor('#110d0a');
     }
 
-    const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-    const userId = user ? String(user.id) : 'guest';
+    function triggerHaptic(type = 'medium') {
+      try {
+        if (tg?.HapticFeedback) {
+          if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
+          else if (type === 'light') tg.HapticFeedback.impactOccurred('light');
+          else tg.HapticFeedback.impactOccurred('medium');
+        } else if (navigator.vibrate) {
+          navigator.vibrate(type === 'heavy' ? 45 : 18);
+        }
+      } catch (e) {}
+    }
 
-    // Local storage keys
-    const balanceKey   = 'vtn_b_' + userId;
-    const checkinKey   = 'vtn_c_' + userId;
-    const officialKey  = 'vtn_o_' + userId;
-    const firstDayKey  = 'vtn_f_' + userId;
-    const completedKey = 'vtn_completed_' + userId;
-    const blockedKey   = 'vtn_blocked_users';
-    const ordersKey    = 'vtn_orders';
-    const historyKey   = 'vtn_history_' + userId;
+    // --- Synthesized Web Audio Engine (Ultra-crisp & ZERO assets needed) ---
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playSwoosh() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
 
-    // State
-    let balance        = Number(localStorage.getItem(balanceKey)) || 0;
-    let lastCheckIn    = localStorage.getItem(checkinKey) || '';
-    let officialDone   = localStorage.getItem(officialKey) === '1';
-    let isFirstDay     = localStorage.getItem(firstDayKey) !== '1';
-    let currentTasks   = [];
-    let completedTasks = [];
-    try { completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]'); } catch(e) { completedTasks = []; }
-    let currentCategory = 'other';
-    let blockedUsers   = [];
-    try { blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]'); } catch(e) { blockedUsers = []; }
-    let currentPromoType = '';
-    let currentWithdrawType = '';
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
 
-    // Ad settings
-    let adSettings = {
-      links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
-      wait: 15,
-      reward: 5
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+      },
+      playSlice(comboLevel = 1) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Splat/Squish noise buffer
+        const bufferSize = this.ctx.sampleRate * 0.14;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1400 + comboLevel * 200, now);
+        filter.Q.setValueAtTime(3, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+
+        // Blade chime note
+        const osc = this.ctx.createOscillator();
+        const oscGain = this.ctx.createGain();
+        osc.type = 'triangle';
+        const baseFreq = 520 + (comboLevel * 120);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.1);
+
+        oscGain.gain.setValueAtTime(0.18, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+        osc.connect(oscGain);
+        oscGain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      },
+      playBomb() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(28, now + 0.5);
+
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.55);
+      }
     };
-    try {
-      const saved = localStorage.getItem('vtn_ad_settings');
-      if (saved) adSettings = Object.assign(adSettings, JSON.parse(saved));
-    } catch(e) {}
 
-    // Prices
-    let prices = {
-      channel: 200, bot: 150, views: 50, install: 300,
-      traffic: 80, banner: 100, affiliate: 40, test: 60
-    };
-    try {
-      const saved = localStorage.getItem('vtn_prices');
-      if (saved) prices = Object.assign(prices, JSON.parse(saved));
-    } catch(e) {}
+    // --- Setup & Canvas ---
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const comboEl = document.getElementById('combo-box');
+    const timerEl = document.getElementById('timer');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const bestScoreTextEl = document.getElementById('best-score-text');
+    const startScreen = document.getElementById('start-screen');
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
 
-    // Games state
-    let tttBoard = ['','','','','','','','',''];
-    let tttTurn  = 'X';
-    let tttOver  = false;
-    let tttDiff  = 'easy';
-    let tttPrize = 0;
-    let spinPrize = 0;
-    let gamePrize = 0;
+    let width, height;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-    // Dart / Fruit / Shoot / Tower timers
-    let dartTimer = null;
-    let dartRunning = false;
-    let dartScore = 0;
-    let fruitRunning = false;
-    let fruitScore = 0;
-    let fruitTimeout = null;
-    let shootRunning = false;
-    let shootScore = 0;
-    let towerRunning = false;
-    let towerScore = 0;
+    // --- Game Variables ---
+    const ROUND_TIME = 180; // 3 minutes = 180 seconds
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('ninjaBladeBest') || '0');
+    bestEl.textContent = `Best: ${bestScore}`;
 
-    const quizData = [
-      {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
-      {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
-      {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
-      {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
-      {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+    let fruits = [];
+    let fruitHalves = [];
+    let splatters = [];
+    let particles = [];
+    let floatTexts = [];
+    let bladePath = [];
+    let gameState = 'start';
+    let timeLeft = ROUND_TIME;
+    let combo = 0;
+    let lastSliceTime = 0;
+    let spawnTimer = 0;
+    let gameTime = 0;
+    let screenShake = 0;
+    let flashScreenAlpha = 0;
+
+    // --- Fruit Definitions ---
+    const FRUIT_PRESETS = [
+      { name: 'watermelon', radius: 46, points: 1, skinColor: '#22c55e', fleshColor: '#ef4444', seedColor: '#1e293b' },
+      { name: 'orange', radius: 40, points: 1, skinColor: '#f97316', fleshColor: '#fb923c', seedColor: '#fed7aa' },
+      { name: 'apple', radius: 38, points: 1, skinColor: '#dc2626', fleshColor: '#fef08a', seedColor: '#78350f' },
+      { name: 'banana', radius: 36, points: 2, skinColor: '#eab308', fleshColor: '#fef9c3', seedColor: '#ca8a04' },
+      { name: 'coconut', radius: 42, points: 2, skinColor: '#78350f', fleshColor: '#f8fafc', seedColor: '#451a03' },
+      { name: 'dragonfruit', radius: 44, points: 3, skinColor: '#db2777', fleshColor: '#fdf2f8', seedColor: '#18181b' },
+      { name: 'bomb', radius: 38, points: 0, isBomb: true }
     ];
-    let quizIndex = 0;
-    let sudokuSolution = [];
 
-    // Blocked user check
-    if (user && blockedUsers.includes(String(user.id))) {
-      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
-      // Stop further execution
-      throw new Error('User blocked');
-    }
-
-    // ========== CORE UI ==========
-    function updateUI() {
-      const balEl = document.getElementById('balance');
-      const walEl = document.getElementById('wallet-balance');
-      if (balEl) balEl.innerText = balance + ' Coins';
-      if (walEl) walEl.innerText = balance + ' Coins';
-      localStorage.setItem(balanceKey, String(balance));
-    }
-
-    function setupUser() {
-      if (user) {
-        const name = user.first_name || 'User';
-        const idStr = 'ID: ' + user.id;
-        const setText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
-        setText('username', name);
-        setText('userid', idStr);
-        setText('profile-name', name);
-        setText('profile-id', idStr);
-        setText('ref-code', 'VTN' + user.id);
-
-        // Admin access (change this ID to your own Telegram ID)
-        if (Number(user.id) === 8150531247) {
-          const adminBtn = document.getElementById('admin-btn');
-          if (adminBtn) adminBtn.style.display = 'flex';
-        }
-      }
-      if (officialDone) {
-        const el = document.getElementById('official-task');
-        if (el) el.style.display = 'none';
-      }
-      updateUI();
-      loadHistory();
-    }
-
-    async function loadUser() {
-      if (!sb || !user) return;
-      try {
-        const { data, error } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
-        if (error) throw error;
-        if (data) {
-          balance = Number(data.balance) || 0;
-          officialDone = !!data.official_done;
-          localStorage.setItem(balanceKey, String(balance));
-          if (officialDone) {
-            localStorage.setItem(officialKey, '1');
-            const el = document.getElementById('official-task');
-            if (el) el.style.display = 'none';
-          }
-          updateUI();
-        } else {
-          await sb.from('users').insert([{
-            telegram_id: user.id,
-            first_name: user.first_name || '',
-            username: user.username || '',
-            balance: balance,
-            is_vip: false,
-            daily_tasks: 0,
-            official_done: officialDone
-          }]);
-        }
-      } catch (e) {
-        console.warn('loadUser failed', e);
-      }
-    }
-
-    async function saveBalance(amount, type, desc) {
-      if (!sb || !user) return;
-      try {
-        await sb.from('users').update({ balance: balance }).eq('telegram_id', user.id);
-        await sb.from('transactions').insert([{
-          telegram_id: user.id,
-          amount: amount,
-          type: type,
-          description: desc
-        }]);
-      } catch (e) {
-        console.warn('saveBalance failed', e);
-      }
-    }
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const page = document.getElementById(id);
-      if (page) page.classList.add('active');
-
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = {
-        home: 0, earn: 1, promote: 2, fun: 3, profile: 4,
-        wallet: 0, refer: 4, admin: 4,
-        'category-tasks': 1,
-        'game-ttt': 3, 'game-spin': 3, 'game-quiz': 3, 'game-race': 3,
-        'game-dart': 3, 'game-fruit': 3, 'game-shoot': 3,
-        'game-tower': 3, 'game-sudoku': 3,
-        'promote-form': 2, 'withdraw-form': 0
-      };
-      if (map[id] !== undefined) {
-        const navs = document.querySelectorAll('.nav-item');
-        if (navs[map[id]]) navs[map[id]].classList.add('active');
-      }
-      if (id === 'wallet') loadHistory();
-    }
-
-    function addCoins(amount, title) {
-      balance += amount;
-      updateUI();
-      saveBalance(amount, 'task', title);
-      alert(title + ' Successful! +' + amount + ' Coins');
-    }
-
-    // ========== DAILY & OFFICIAL ==========
-    function dailyCheckIn() {
-      const today = new Date().toDateString();
-      if (lastCheckIn === today) {
-        alert('Already claimed today!');
-        return;
-      }
-      if (!confirm('Watch a short ad to claim?')) return;
-
-      let reward;
-      if (isFirstDay) {
-        reward = Math.floor(Math.random() * 70) + 30; // 30-99
-        localStorage.setItem(firstDayKey, '1');
-        isFirstDay = false;
-        alert('ðŸŽ‰ First Day Bonus! +' + reward);
-      } else {
-        reward = Math.floor(Math.random() * 13) + 3; // 3-15
-        alert('Daily Check-in! +' + reward);
+    // --- Background Wooden Texture Simulation ---
+    function drawBackground() {
+      // Dojo wood slats
+      const slatHeight = 70;
+      const numSlats = Math.ceil(height / slatHeight);
+      for (let i = 0; i < numSlats; i++) {
+        ctx.fillStyle = i % 2 === 0 ? '#1e140d' : '#19100a';
+        ctx.fillRect(0, i * slatHeight, width, slatHeight);
+        ctx.strokeStyle = '#0d0805';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(0, i * slatHeight, width, slatHeight);
       }
 
-      balance += reward;
-      lastCheckIn = today;
-      localStorage.setItem(checkinKey, today);
-      updateUI();
-      saveBalance(reward, 'checkin', 'Daily Check-in');
-      saveToHistory('Daily Check-in', reward);
-    }
-
-    function doOfficialTask() {
-      if (officialDone) {
-        alert('Already completed');
-        return;
-      }
-      if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
-
-      window.open('https://t.me/vtnhub', '_blank');
-      // Optionally open second link after a short delay
-      setTimeout(function() {
-        window.open('https://t.me/vtnhub1', '_blank');
-      }, 800);
-
-      balance += 50;
-      officialDone = true;
-      localStorage.setItem(officialKey, '1');
-      const el = document.getElementById('official-task');
-      if (el) el.style.display = 'none';
-      updateUI();
-      saveBalance(50, 'official', 'Official Task');
-      saveToHistory('Official Task', 50);
-
-      if (sb && user) {
-        sb.from('users').update({ official_done: true }).eq('telegram_id', user.id).then(function(){}).catch(function(){});
-      }
-      alert('Official Task Completed! +50 Coins');
-    }
-
-    function copyCode() {
-      const el = document.getElementById('ref-code');
-      const code = el ? el.innerText : '';
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(function() {
-          alert('Copied: ' + code);
-        }).catch(function() {
-          alert(code);
-        });
-      } else {
-        alert(code);
-      }
-    }
-
-    // ========== ADS ==========
-    function getRandomAd() {
-      const links = adSettings.links || [];
-      if (!links.length) return 'https://t.me/Vtnhub0';
-      return links[Math.floor(Math.random() * links.length)];
-    }
-
-    function enterWithAd(type, gameName) {
-      const label = (type === 'chat') ? 'Chat' : (gameName || 'Game');
-      if (!confirm('Watch ad to enter ' + label + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
-
-      window.open(getRandomAd(), '_blank');
-      const waitSec = adSettings.wait || 15;
-      alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
-
-      setTimeout(function() {
-        balance += adSettings.reward;
-        updateUI();
-        saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
-        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
-
-        if (type === 'chat') {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
-        } else if (gameName === 'TicTacToe') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startTTT();
-        } else if (gameName === 'Spin') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          spinPrize = 0;
-          const res = document.getElementById('spin-result');
-          const claim = document.getElementById('spin-claim');
-          if (res) res.innerText = '';
-          if (claim) claim.style.display = 'none';
-          showPage('game-spin');
-        } else if (gameName === 'Quiz') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startQuiz();
-        } else if (gameName === 'Dart') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startDart();
-        } else if (gameName === 'Fruit') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startFruit();
-        } else if (gameName === 'Shoot') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startShoot();
-        } else if (gameName === 'Tower') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startTower();
-        } else if (gameName === 'Sudoku') {
-          alert('âœ… +' + adSettings.reward + ' Coins');
-          startSudoku();
-        } else if (gameName === 'Race') {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\nOpening Overdrive Racer...');
-          // Open the racing game
-          showPage('game-race');
-        } else {
-          alert('âœ… +' + adSettings.reward + ' Coins\n\n' + (gameName || '') + ' coming soon!');
-        }
-      }, waitSec * 1000);
-    }
-
-    // ========== PROMOTE ==========
-    function openPromoteForm(type) {
-      currentPromoType = type;
-      const titles = {
-        channel: 'Promote Channel / Group',
-        bot: 'Promote Bot',
-        views: 'Buy Views & Likes',
-        install: 'Buy App Installs',
-        test: 'Test App / Web',
-        traffic: 'Website Traffic',
-        affiliate: 'Affiliate / Product',
-        monetize: 'Monetize Channel / Group',
-        banner: 'Place Banner Ad'
-      };
-      const titleEl = document.getElementById('promote-form-title');
-      if (titleEl) titleEl.innerText = titles[type] || 'Place Order';
-
-      const linkEl = document.getElementById('promo-link');
-      const qtyEl  = document.getElementById('promo-qty');
-      const notesEl = document.getElementById('promo-notes');
-      if (linkEl) linkEl.value = '';
-      if (qtyEl) qtyEl.value = (type === 'banner') ? 1 : 100;
-      if (notesEl) notesEl.value = '';
-      updatePromoCost();
-      showPage('promote-form');
-    }
-
-    function updatePromoCost() {
-      const qtyEl = document.getElementById('promo-qty');
-      const costEl = document.getElementById('promo-cost');
-      if (!qtyEl || !costEl) return;
-
-      const qty = Number(qtyEl.value) || 1;
-      let cost = 0;
-      if (currentPromoType === 'channel')   cost = prices.channel * Math.ceil(qty / 100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty / 100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty / 100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty / 50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty / 100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty / 50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-      else if (currentPromoType === 'monetize') cost = 0;
-
-      costEl.innerText = 'Cost: ' + cost + ' Coins';
-    }
-
-    // Attach listener after DOM is ready
-    (function() {
-      const qtyEl = document.getElementById('promo-qty');
-      if (qtyEl) qtyEl.addEventListener('input', updatePromoCost);
-    })();
-
-    function submitPromoteOrder() {
-      const linkEl = document.getElementById('promo-link');
-      const qtyEl  = document.getElementById('promo-qty');
-      const notesEl = document.getElementById('promo-notes');
-
-      const link  = linkEl ? linkEl.value.trim() : '';
-      const qty   = qtyEl ? (Number(qtyEl.value) || 1) : 1;
-      const notes = notesEl ? notesEl.value.trim() : '';
-
-      if (!link && currentPromoType !== 'monetize') {
-        alert('Please enter your link');
-        return;
-      }
-
-      let cost = 0;
-      if (currentPromoType === 'channel')   cost = prices.channel * Math.ceil(qty / 100);
-      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty / 100);
-      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty / 100);
-      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty / 50);
-      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty / 100);
-      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty / 50);
-      else if (currentPromoType === 'banner') cost = prices.banner * qty;
-      else if (currentPromoType === 'test') cost = prices.test;
-
-      if (cost > 0 && balance < cost) {
-        alert('Not enough coins! Need ' + cost + ' coins.');
-        return;
-      }
-
-      if (cost > 0) {
-        balance -= cost;
-        updateUI();
-        saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
-        saveToHistory('Promotion: ' + currentPromoType, -cost);
-      }
-
-      const taskTitleMap = {
-        channel: 'Join Channel: ' + link,
-        bot: 'Start Bot: ' + link,
-        views: 'View / Like: ' + link,
-        install: 'Install App: ' + link,
-        traffic: 'Visit Website: ' + link,
-        affiliate: 'Open Affiliate: ' + link,
-        test: 'Test App: ' + link,
-        banner: 'Banner Ad: ' + link,
-        monetize: 'Monetize Request'
-      };
-      const taskTitle = taskTitleMap[currentPromoType] || 'Promotion Task';
-
-      const rewardMap = {
-        channel: 15, bot: 20, views: 5, install: 40,
-        traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
-      };
-
-      const categoryMap = {
-        channel: 'join',
-        bot: 'bot',
-        views: 'views',
-        install: 'install',
-        traffic: 'website',
-        affiliate: 'affiliate'
-      };
-
-      const newTask = {
-        id: 'order_' + Date.now(),
-        title: taskTitle,
-        reward: rewardMap[currentPromoType] || 10,
-        category: categoryMap[currentPromoType] || 'other',
-        link: link,
-        wait_seconds: 10,
-        is_active: true,
-        from_order: true
-      };
-
-      // Save to local orders
-      let orders = [];
-      try { orders = JSON.parse(localStorage.getItem(ordersKey) || '[]'); } catch(e) { orders = []; }
-      orders.unshift(newTask);
-      if (orders.length > 50) orders.length = 50;
-      localStorage.setItem(ordersKey, JSON.stringify(orders));
-
-      // Try Supabase
-      if (sb) {
-        sb.from('tasks').insert([{
-          title: newTask.title,
-          reward: newTask.reward,
-          category: newTask.category,
-          link: newTask.link,
-          wait_seconds: 10,
-          is_active: true
-        }]).then(function(){}).catch(function(){});
-      }
-
-      alert('âœ… Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
-      showPage('promote');
-    }
-
-    function startCrossPromo() {
-      const today = new Date().toDateString();
-      const key = 'vtn_cross_' + userId + '_' + today;
-      let count = Number(localStorage.getItem(key) || 0);
-      if (count >= 3) {
-        alert('You already used 3 free cross promotions today.');
-        return;
-      }
-      const link = prompt('Enter your Channel / Bot / Post link:');
-      if (!link) return;
-      count++;
-      localStorage.setItem(key, String(count));
-      alert('âœ… Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
-    }
-
-    // ========== GAMES ==========
-    function setDiff(d) {
-      tttDiff = d;
-      document.querySelectorAll('.diff-btn').forEach(function(b) { b.classList.remove('active'); });
-      const btn = document.getElementById('diff-' + d);
-      if (btn) btn.classList.add('active');
-    }
-
-    function startTTT() {
-      tttBoard = ['','','','','','','','',''];
-      tttTurn = 'X';
-      tttOver = false;
-      tttPrize = 0;
-      const claim = document.getElementById('ttt-claim');
-      if (claim) claim.style.display = 'none';
-      showPage('game-ttt');
-      renderTTT();
-    }
-
-    function renderTTT() {
-      const board = document.getElementById('ttt-board');
-      if (!board) return;
-      board.innerHTML = '';
-      tttBoard.forEach(function(cell, i) {
-        const div = document.createElement('div');
-        div.className = 'ttt-cell';
-        div.innerText = cell;
-        div.style.color = (cell === 'X') ? '#c8102e' : '#2196F3';
-        div.onclick = function() { playTTT(i); };
-        board.appendChild(div);
-      });
-      const status = document.getElementById('ttt-status');
-      if (status) {
-        status.innerText = tttOver
-          ? (tttPrize > 0 ? 'You Won!' : 'Game Over')
-          : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer...');
-      }
-    }
-
-    function playTTT(i) {
-      if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
-      tttBoard[i] = 'X';
-      if (checkWin('X')) {
-        tttOver = true;
-        tttPrize = (tttDiff === 'easy') ? 1 : (tttDiff === 'medium' ? 2 : 3);
-        renderTTT();
-        const claim = document.getElementById('ttt-claim');
-        if (claim) {
-          claim.style.display = 'inline-block';
-          claim.innerText = 'Watch Ad & Claim ' + tttPrize + ' Coins';
-        }
-        return;
-      }
-      if (tttBoard.every(function(c) { return c; })) {
-        tttOver = true;
-        renderTTT();
-        alert('Draw!');
-        return;
-      }
-      tttTurn = 'O';
-      renderTTT();
-      setTimeout(computerMove, 400);
-    }
-
-    function computerMove() {
-      let move = null;
-      const empty = tttBoard.map(function(c, i) { return c === '' ? i : null; }).filter(function(x) { return x !== null; });
-
-      if (tttDiff === 'hard') {
-        move = findBestMove('O') || findBestMove('X') || (tttBoard[4] === '' ? 4 : null) || empty[Math.floor(Math.random() * empty.length)];
-      } else if (tttDiff === 'medium') {
-        move = findBestMove('O') || empty[Math.floor(Math.random() * empty.length)];
-      } else {
-        move = empty[Math.floor(Math.random() * empty.length)];
-      }
-
-      if (move === undefined || move === null) return;
-      tttBoard[move] = 'O';
-      if (checkWin('O')) {
-        tttOver = true;
-        renderTTT();
-        alert('Computer Wins!');
-        return;
-      }
-      if (tttBoard.every(function(c) { return c; })) {
-        tttOver = true;
-        renderTTT();
-        alert('Draw!');
-        return;
-      }
-      tttTurn = 'X';
-      renderTTT();
-    }
-
-    function findBestMove(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (let i = 0; i < lines.length; i++) {
-        const a = lines[i][0], b = lines[i][1], c = lines[i][2];
-        const line = [tttBoard[a], tttBoard[b], tttBoard[c]];
-        if (line.filter(function(x) { return x === p; }).length === 2 && line.indexOf('') !== -1) {
-          if (tttBoard[a] === '') return a;
-          if (tttBoard[b] === '') return b;
-          if (tttBoard[c] === '') return c;
-        }
-      }
-      return null;
-    }
-
-    function checkWin(p) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return lines.some(function(line) {
-        return tttBoard[line[0]] === p && tttBoard[line[1]] === p && tttBoard[line[2]] === p;
-      });
-    }
-
-    function claimTTT() {
-      if (tttPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += tttPrize;
-        updateUI();
-        saveBalance(tttPrize, 'game', 'TicTacToe Win');
-        saveToHistory('Tic Tac Toe Win', tttPrize);
-        alert('âœ… Claimed +' + tttPrize + ' Coins!');
-        tttPrize = 0;
-        const claim = document.getElementById('ttt-claim');
-        if (claim) claim.style.display = 'none';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // SPIN
-    function doSpin() {
-      const btn = document.getElementById('spin-btn');
-      const claim = document.getElementById('spin-claim');
-      const result = document.getElementById('spin-result');
-      const wheel = document.getElementById('spin-wheel');
-      if (!btn || !wheel) return;
-
-      btn.disabled = true;
-      if (claim) claim.style.display = 'none';
-
-      const r = Math.random() * 100;
-      let prize;
-      if (r < 40) prize = 1;
-      else if (r < 70) prize = 2;
-      else if (r < 82) prize = 0;
-      else if (r < 90) prize = 3;
-      else if (r < 96) prize = 5;
-      else if (r < 99) prize = 10;
-      else prize = 25;
-
-      const deg = 1800 + Math.floor(Math.random() * 360);
-      wheel.style.transform = 'rotate(' + deg + 'deg)';
-
-      setTimeout(function() {
-        spinPrize = prize;
-        if (result) {
-          if (prize === 0) {
-            result.innerText = 'Try Again!';
-          } else {
-            result.innerText = 'You got ' + prize + ' Coins!';
-            if (claim) {
-              claim.style.display = 'inline-block';
-              claim.innerText = 'Watch Ad & Collect ' + prize + ' Coins';
-            }
-          }
-        }
-        btn.disabled = false;
-      }, 4200);
-    }
-
-    function claimSpin() {
-      if (spinPrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += spinPrize;
-        updateUI();
-        saveBalance(spinPrize, 'game', 'Spin Win');
-        saveToHistory('Spin & Win', spinPrize);
-        alert('âœ… Collected +' + spinPrize + ' Coins!');
-        spinPrize = 0;
-        const claim = document.getElementById('spin-claim');
-        const result = document.getElementById('spin-result');
-        if (claim) claim.style.display = 'none';
-        if (result) result.innerText = '';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // QUIZ
-    function startQuiz() {
-      quizIndex = Math.floor(Math.random() * quizData.length);
-      const q = quizData[quizIndex];
-      const qEl = document.getElementById('quiz-question');
-      const rEl = document.getElementById('quiz-result');
-      const opts = document.getElementById('quiz-options');
-      if (qEl) qEl.innerText = q.q;
-      if (rEl) rEl.innerText = '';
-      if (!opts) return;
-      opts.innerHTML = '';
-      q.opts.forEach(function(o, i) {
-        const div = document.createElement('div');
-        div.className = 'quiz-option';
-        div.innerText = o;
-        div.onclick = function() { answerQuiz(i); };
-        opts.appendChild(div);
-      });
-      showPage('game-quiz');
-    }
-
-    function answerQuiz(i) {
-      const q = quizData[quizIndex];
-      const rEl = document.getElementById('quiz-result');
-      if (!rEl) return;
-      if (i === q.ans) {
-        rEl.innerText = 'âœ… Correct! +3 Coins';
-        balance += 3;
-        updateUI();
-        saveBalance(3, 'game', 'Quiz Correct');
-        saveToHistory('Quiz Win', 3);
-      } else {
-        rEl.innerText = 'âŒ Wrong! Answer: ' + q.opts[q.ans];
-      }
-    }
-
-    // DART
-    function startDart() {
-      dartScore = 0;
-      dartRunning = false;
-      if (dartTimer) { clearInterval(dartTimer); dartTimer = null; }
-      const scoreEl = document.getElementById('dart-score');
-      const claim = document.getElementById('dart-claim');
-      const btn = document.getElementById('dart-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-dart');
-    }
-
-    function playDart() {
-      if (dartRunning) return;
-      dartRunning = true;
-      dartScore = 0;
-      const scoreEl = document.getElementById('dart-score');
-      const btn = document.getElementById('dart-btn');
-      const target = document.getElementById('dart-target');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      let timeLeft = 10;
-      if (target) {
-        target.onclick = function() {
-          if (!dartRunning) return;
-          dartScore++;
-          if (scoreEl) scoreEl.innerText = dartScore;
-          target.style.transform = 'scale(1.3)';
-          setTimeout(function() { target.style.transform = 'scale(1)'; }, 100);
-        };
-      }
-
-      dartTimer = setInterval(function() {
-        timeLeft--;
-        if (timeLeft <= 0) {
-          clearInterval(dartTimer);
-          dartTimer = null;
-          dartRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(dartScore / 3), 8);
-          const claim = document.getElementById('dart-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          } else {
-            alert('Score too low. Try again!');
-          }
-        }
-      }, 1000);
-    }
-
-    // FRUIT
-    function startFruit() {
-      fruitScore = 0;
-      fruitRunning = false;
-      if (fruitTimeout) { clearTimeout(fruitTimeout); fruitTimeout = null; }
-      const scoreEl = document.getElementById('fruit-score');
-      const claim = document.getElementById('fruit-claim');
-      const btn = document.getElementById('fruit-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-fruit');
-    }
-
-    function playFruit() {
-      if (fruitRunning) return;
-      fruitRunning = true;
-      fruitScore = 0;
-      const scoreEl = document.getElementById('fruit-score');
-      const btn = document.getElementById('fruit-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      const fruits = ['ðŸŽ','ðŸŒ','ðŸ‡','ðŸŠ','ðŸ“','ðŸ‰'];
-      let count = 0;
-
-      function nextFruit() {
-        if (count >= 12) {
-          fruitRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
-          const claim = document.getElementById('fruit-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          }
-          return;
-        }
-        const disp = document.getElementById('fruit-display');
-        if (disp) {
-          disp.innerText = fruits[Math.floor(Math.random() * fruits.length)];
-          disp.onclick = function() {
-            if (!fruitRunning) return;
-            fruitScore++;
-            if (scoreEl) scoreEl.innerText = fruitScore;
-            disp.onclick = null;
-          };
-        }
-        count++;
-        fruitTimeout = setTimeout(nextFruit, 900);
-      }
-      nextFruit();
-    }
-
-    // SHOOT
-    function startShoot() {
-      shootScore = 0;
-      shootRunning = false;
-      const scoreEl = document.getElementById('shoot-score');
-      const claim = document.getElementById('shoot-claim');
-      const btn = document.getElementById('shoot-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (claim) claim.style.display = 'none';
-      if (btn) btn.innerText = 'Start';
-      showPage('game-shoot');
-    }
-
-    function playShoot() {
-      if (shootRunning) return;
-      shootRunning = true;
-      shootScore = 0;
-      const scoreEl = document.getElementById('shoot-score');
-      const btn = document.getElementById('shoot-btn');
-      const target = document.getElementById('shoot-target');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) btn.innerText = 'Playing...';
-
-      let left = 12;
-      function showTarget() {
-        if (left <= 0) {
-          shootRunning = false;
-          if (btn) btn.innerText = 'Finished';
-          gamePrize = Math.min(Math.floor(shootScore / 2), 7);
-          const claim = document.getElementById('shoot-claim');
-          if (gamePrize > 0 && claim) {
-            claim.style.display = 'inline-block';
-            claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-          }
-          return;
-        }
-        if (target) {
-          target.style.opacity = '1';
-          target.onclick = function() {
-            if (!shootRunning) return;
-            shootScore++;
-            if (scoreEl) scoreEl.innerText = shootScore;
-            target.style.opacity = '0.3';
-            target.onclick = null;
-          };
-        }
-        left--;
-        setTimeout(showTarget, 800);
-      }
-      showTarget();
-    }
-
-    // TOWER
-    function startTower() {
-      towerScore = 0;
-      towerRunning = false;
-      const scoreEl = document.getElementById('tower-score');
-      const disp = document.getElementById('tower-display');
-      const claim = document.getElementById('tower-claim');
-      const btn = document.getElementById('tower-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (disp) disp.innerText = 'â¬œ';
-      if (claim) claim.style.display = 'none';
-      if (btn) {
-        btn.innerText = 'Start';
-        btn.onclick = playTower;
-      }
-      showPage('game-tower');
-    }
-
-    function playTower() {
-      if (towerRunning) return;
-      towerRunning = true;
-      towerScore = 0;
-      const scoreEl = document.getElementById('tower-score');
-      const disp = document.getElementById('tower-display');
-      const btn = document.getElementById('tower-btn');
-      if (scoreEl) scoreEl.innerText = '0';
-      if (btn) {
-        btn.innerText = 'Drop Block';
-        btn.onclick = function() {
-          if (!towerRunning) return;
-          towerScore++;
-          if (scoreEl) scoreEl.innerText = towerScore;
-          if (disp) disp.innerText += 'â¬œ';
-          if (towerScore >= 10) {
-            towerRunning = false;
-            btn.innerText = 'Finished';
-            gamePrize = Math.min(towerScore, 8);
-            const claim = document.getElementById('tower-claim');
-            if (claim) {
-              claim.style.display = 'inline-block';
-              claim.innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
-            }
-          }
-        };
-      }
-    }
-
-    // SUDOKU (simple 4x4 for mobile)
-    function startSudoku() {
-      const puzzle = [
-        [1,0,0,4],
-        [0,0,1,0],
-        [0,4,0,0],
-        [4,0,0,2]
-      ];
-      sudokuSolution = [
-        [1,2,3,4],
-        [3,4,1,2],
-        [2,3,4,1],
-        [4,1,2,3]
-      ];
-      const board = document.getElementById('sudoku-board');
-      if (!board) return;
-      board.innerHTML = '';
-      board.style.gridTemplateColumns = 'repeat(4, 50px)';
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          const inp = document.createElement('input');
-          inp.type = 'number';
-          inp.min = 1;
-          inp.max = 4;
-          inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;';
-          if (puzzle[r][c] !== 0) {
-            inp.value = puzzle[r][c];
-            inp.disabled = true;
-            inp.style.background = '#ffe8e8';
-          }
-          inp.dataset.r = r;
-          inp.dataset.c = c;
-          board.appendChild(inp);
-        }
-      }
-      const msg = document.getElementById('sudoku-msg');
-      if (msg) msg.innerText = '';
-      showPage('game-sudoku');
-    }
-
-    function checkSudoku() {
-      const inputs = document.querySelectorAll('#sudoku-board input');
-      let correct = true;
-      inputs.forEach(function(inp) {
-        const r = Number(inp.dataset.r);
-        const c = Number(inp.dataset.c);
-        const val = Number(inp.value);
-        if (val !== sudokuSolution[r][c]) correct = false;
-      });
-      const msg = document.getElementById('sudoku-msg');
-      if (correct) {
-        if (msg) msg.innerText = 'âœ… Correct! +5 Coins';
-        balance += 5;
-        updateUI();
-        saveBalance(5, 'game', 'Sudoku Win');
-        saveToHistory('Sudoku Win', 5);
-      } else {
-        if (msg) msg.innerText = 'âŒ Not correct yet';
-      }
-    }
-
-    function claimGame(type) {
-      if (gamePrize <= 0) return;
-      window.open(getRandomAd(), '_blank');
-      setTimeout(function() {
-        balance += gamePrize;
-        updateUI();
-        saveBalance(gamePrize, 'game', type + ' Win');
-        saveToHistory(type + ' Game', gamePrize);
-        alert('âœ… Claimed +' + gamePrize + ' Coins!');
-        gamePrize = 0;
-        const claim = document.getElementById(type + '-claim');
-        if (claim) claim.style.display = 'none';
-      }, (adSettings.wait || 10) * 1000);
-    }
-
-    // ========== WALLET ==========
-    function openWithdraw(type) {
-      currentWithdrawType = type;
-      const label = document.getElementById('withdraw-label');
-      const addr = document.getElementById('withdraw-address');
-      const amt = document.getElementById('withdraw-amount');
-      if (label) label.innerText = (type === 'upi') ? 'UPI ID / Bank Account' : 'USDT Address (TRC20/BEP20)';
-      if (addr) addr.value = '';
-      if (amt) amt.value = 500;
-      showPage('withdraw-form');
-    }
-
-    function submitWithdraw() {
-      const addrEl = document.getElementById('withdraw-address');
-      const amtEl  = document.getElementById('withdraw-amount');
-      const address = addrEl ? addrEl.value.trim() : '';
-      const amount  = amtEl ? (Number(amtEl.value) || 0) : 0;
-
-      if (!address) { alert('Enter address / UPI'); return; }
-      if (amount < 500) { alert('Minimum withdrawal is 500 Coins'); return; }
-      if (balance < amount) { alert('Not enough balance'); return; }
-
-      balance -= amount;
-      updateUI();
-      saveBalance(-amount, 'withdraw', 'Withdrawal request');
-      saveToHistory('Withdrawal Request', -amount);
-      alert('âœ… Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
-      showPage('wallet');
-    }
-
-    // ========== ADMIN ==========
-    function savePriceSettings() {
-      prices.channel   = Number(document.getElementById('price-channel').value) || 200;
-      prices.bot       = Number(document.getElementById('price-bot').value) || 150;
-      prices.views     = Number(document.getElementById('price-views').value) || 50;
-      prices.install   = Number(document.getElementById('price-install').value) || 300;
-      prices.traffic   = Number(document.getElementById('price-traffic').value) || 80;
-      prices.banner    = Number(document.getElementById('price-banner').value) || 100;
-      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
-      prices.test      = Number(document.getElementById('price-test').value) || 60;
-      localStorage.setItem('vtn_prices', JSON.stringify(prices));
-      alert('âœ… Prices saved!');
-    }
-
-    function loadPriceSettings() {
-      const setVal = function(id, val) {
-        const el = document.getElementById(id);
-        if (el) el.value = val;
-      };
-      setVal('price-channel', prices.channel);
-      setVal('price-bot', prices.bot);
-      setVal('price-views', prices.views);
-      setVal('price-install', prices.install);
-      setVal('price-traffic', prices.traffic);
-      setVal('price-banner', prices.banner);
-      setVal('price-affiliate', prices.affiliate);
-      setVal('price-test', prices.test);
-    }
-
-    function saveAdSettings() {
-      const raw = document.getElementById('ad-links').value.trim();
-      const links = raw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l; });
-      adSettings.links  = links.length ? links : adSettings.links;
-      adSettings.wait   = Number(document.getElementById('ad-wait').value) || 15;
-      adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
-      localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
-      alert('âœ… Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
-    }
-
-    function loadAdSettings() {
-      const linksEl = document.getElementById('ad-links');
-      const waitEl  = document.getElementById('ad-wait');
-      const rewardEl = document.getElementById('ad-reward');
-      if (linksEl) linksEl.value = (adSettings.links || []).join('\n');
-      if (waitEl) waitEl.value = adSettings.wait || 15;
-      if (rewardEl) rewardEl.value = adSettings.reward || 5;
-    }
-
-    // ========== TASKS ==========
-    function openCategory(cat) {
-      currentCategory = cat;
-      const titles = {
-        join: 'Join Channel / Group',
-        bot: 'Join Bot',
-        watch: 'Watch & Earn',
-        views: 'Views & Earn',
-        install: 'Install App',
-        website: 'Visit Website',
-        affiliate: 'Affiliate',
-        products: 'View Products',
-        other: 'Earn Tasks'
-      };
-      const titleEl = document.getElementById('category-title');
-      if (titleEl) titleEl.innerText = titles[cat] || 'Tasks';
-      showPage('category-tasks');
-      loadCategoryTasks(cat);
-    }
-
-    async function loadCategoryTasks(cat) {
-      const container = document.getElementById('category-list');
-      if (!container) return;
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
-
-      let allTasks = [];
-      try {
-        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-        allTasks = orders.filter(function(t) {
-          return t.category === cat || (cat === 'other' && !t.category);
-        });
-      } catch(e) {}
-
-      if (sb) {
-        try {
-          let query = sb.from('tasks').select('*').eq('is_active', true).order('id', { ascending: false });
-          if (cat === 'other') {
-            query = query.or('category.eq.other,category.is.null');
-          } else {
-            query = query.eq('category', cat);
-          }
-          const { data } = await query;
-          if (data && data.length) allTasks = allTasks.concat(data);
-        } catch(e) {
-          console.warn('loadCategoryTasks supabase', e);
-        }
-      }
-
-      if (!allTasks.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
-        return;
-      }
-
-      currentTasks = allTasks;
-      let html = '';
-      allTasks.forEach(function(task, index) {
-        if (task.category !== 'watch' && completedTasks.indexOf(task.id) !== -1) return;
-        const waitInfo = (task.wait_seconds > 0) ? (' â€¢ Wait ' + task.wait_seconds + 's') : '';
-        html += '<div class="list-item">' +
-          '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
-          '<div class="info"><h4>' + (task.title || 'Task') + '</h4>' +
-          '<p>+' + (task.reward || 0) + ' Coins' + waitInfo + '</p></div>' +
-          '<button class="start-btn" onclick="doTaskByIndex(' + index + ')">Start</button></div>';
-      });
-      container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
-    }
-
-    function doTaskByIndex(index) {
-      const task = currentTasks[index];
-      if (!task) return;
-      if (task.link) window.open(task.link, '_blank');
-      const waitSec = Number(task.wait_seconds) || 0;
-      if (waitSec > 0) {
-        alert('Please wait ' + waitSec + ' seconds...');
-        setTimeout(function() { finishTask(task); }, waitSec * 1000);
-      } else {
-        setTimeout(function() { finishTask(task); }, 1500);
-      }
-    }
-
-    function finishTask(task) {
-      if (!confirm('Did you complete the task?\n\n"' + (task.title || 'Task') + '"')) {
-        alert('No coins added.');
-        return;
-      }
-      const reward = task.reward || 0;
-      if (task.category !== 'watch' && completedTasks.indexOf(task.id) === -1) {
-        completedTasks.push(task.id);
-        localStorage.setItem(completedKey, JSON.stringify(completedTasks));
-      }
-      saveToHistory(task.title || 'Task', reward);
-      addCoins(reward, task.title || 'Task');
-      loadCategoryTasks(currentCategory);
-    }
-
-    function saveToHistory(title, amount) {
-      let history = [];
-      try { history = JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch(e) { history = []; }
-      history.unshift({ title: title, amount: amount, time: new Date().toLocaleString() });
-      if (history.length > 30) history.length = 30;
-      localStorage.setItem(historyKey, JSON.stringify(history));
-    }
-
-    function loadHistory() {
-      const container = document.getElementById('history-list');
-      if (!container) return;
-      let history = [];
-      try { history = JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch(e) { history = []; }
-      if (!history.length) {
-        container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>';
-        return;
-      }
-      let html = '';
-      history.forEach(function(item) {
-        html += '<div class="list-item">' +
-          '<div class="icon" style="background:#4CAF50;">âœ…</div>' +
-          '<div class="info"><h4>' + item.title + '</h4><p>' + item.time + '</p></div>' +
-          '<div style="font-weight:700;color:#c8102e;">' + (item.amount > 0 ? '+' : '') + item.amount + '</div></div>';
-      });
-      container.innerHTML = html;
-    }
-
-    // ========== ADMIN FUNCTIONS ==========
-    async function adminAddCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        const newBalance = (data.balance || 0) + coins;
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{
-          telegram_id: tid, amount: coins, type: 'admin', description: 'Admin added coins'
-        }]);
-        if (result) result.innerHTML = '<span style="color:green;">âœ… Added ' + coins + '. New: ' + newBalance + '</span>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminRemoveCoins() {
-      if (!sb) return alert('Supabase not connected');
-      const tid = document.getElementById('admin-userid').value.trim();
-      const coins = Number(document.getElementById('admin-coins').value) || 0;
-      const result = document.getElementById('admin-result');
-      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        const newBalance = Math.max(0, (data.balance || 0) - coins);
-        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
-        await sb.from('transactions').insert([{
-          telegram_id: tid, amount: -coins, type: 'admin', description: 'Admin removed coins'
-        }]);
-        if (result) result.innerHTML = '<span style="color:orange;">âˆ’ Removed ' + coins + '. New: ' + newBalance + '</span>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminCheckBalance() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
-        if (!data) {
-          if (result) result.innerHTML = '<span style="color:red;">User not found</span>';
-          return;
-        }
-        if (result) result.innerHTML = 'User: ' + (data.first_name || tid) + '<br>Balance: <b>' + (data.balance || 0) + '</b>';
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    async function adminViewHistory() {
-      if (!sb) return;
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      try {
-        const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id', { ascending: false }).limit(10);
-        if (!data || !data.length) {
-          if (result) result.innerHTML = 'No transactions';
-          return;
-        }
-        let html = '<b>Last 10:</b><br>';
-        data.forEach(function(t) {
-          html += (t.description || t.type) + ': ' + t.amount + '<br>';
-        });
-        if (result) result.innerHTML = html;
-      } catch (e) {
-        if (result) result.innerHTML = '<span style="color:red;">Failed</span>';
-      }
-    }
-
-    function adminBlockUser() {
-      const tid = document.getElementById('admin-userid').value.trim();
-      const result = document.getElementById('admin-result');
-      if (!tid) return alert('Enter User ID');
-      if (!confirm('Block user ' + tid + '?')) return;
-      if (blockedUsers.indexOf(tid) === -1) {
-        blockedUsers.push(tid);
-        localStorage.setItem(blockedKey, JSON.stringify(blockedUsers));
-      }
-      if (result) result.innerHTML = '<span style="color:red;">User ' + tid + ' blocked</span>';
-      alert('User blocked');
-    }
-
-    async function addNewTask() {
-      if (!sb) return alert('Supabase not connected');
-      const title = document.getElementById('task-title').value.trim();
-      const reward = Number(document.getElementById('task-reward').value) || 0;
-      const category = document.getElementById('task-category').value;
-      const link = document.getElementById('task-link').value.trim();
-      const waitSeconds = Number(document.getElementById('task-wait').value) || 0;
-      const maxUsers = Number(document.getElementById('task-max-users').value) || 0;
-      if (!title) return alert('Enter title');
-      try {
-        const { error } = await sb.from('tasks').insert([{
-          title: title,
-          reward: reward,
-          category: category,
-          link: link,
-          wait_seconds: waitSeconds,
-          max_users: maxUsers,
-          is_active: true
-        }]);
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
-        alert('âœ… Task Added!');
-        document.getElementById('task-title').value = '';
-        document.getElementById('task-reward').value = '10';
-        document.getElementById('task-link').value = '';
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    async function loadAdminTasks() {
-      if (!sb) return;
-      const container = document.getElementById('admin-tasks-list');
-      if (!container) return;
-      container.innerHTML = '<div class="card" style="text-align:center;color:#888;">Loading...</div>';
-      try {
-        const { data } = await sb.from('tasks').select('*').order('id', { ascending: false });
-        if (!data || !data.length) {
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks</div>';
-          return;
-        }
-        let html = '';
-        data.forEach(function(task) {
-          const btnText = task.is_active ? 'Off' : 'On';
-          const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
-          const statusDot = task.is_active ? 'ðŸŸ¢' : 'ðŸ”´';
-          html += '<div class="list-item">' +
-            '<div class="icon" style="background:#c8102e;">ðŸ“‹</div>' +
-            '<div class="info"><h4>' + (task.title || '') + '</h4>' +
-            '<p>+' + (task.reward || 0) + ' â€¢ ' + (task.category || '') + ' â€¢ ' + statusDot + '</p></div>' +
-            '<button class="start-btn" style="background:' + btnColor + '" onclick="toggleTask(' + task.id + ',' + (!task.is_active) + ')">' + btnText + '</button>' +
-            '<button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask(' + task.id + ')">Del</button></div>';
-        });
-        container.innerHTML = html;
-      } catch (e) {
-        container.innerHTML = '<div class="card">Failed</div>';
-      }
-    }
-
-    async function toggleTask(id, newStatus) {
-      try {
-        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
-        alert(newStatus ? 'Enabled' : 'Disabled');
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    async function deleteTask(id) {
-      if (!confirm('Delete?')) return;
-      try {
-        await sb.from('tasks').delete().eq('id', id);
-        alert('Deleted');
-        loadAdminTasks();
-      } catch (e) {
-        alert('Failed');
-      }
-    }
-
-    // ========== INIT ==========
-    
-    // ========== CAR RACE GAME ==========
-    let raceRunning = false;
-    let raceAnimId = null;
-
-    function startRaceGame() {
-      const canvas = document.getElementById('raceCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const W = canvas.parentElement.clientWidth || window.innerWidth;
-      const H = Math.floor(window.innerHeight * 0.70);
-      canvas.width = W;
-      canvas.height = H;
-
-      let playerX = W / 2;
-      let score = 0;
-      let speed = 120;
-      let nitro = 35;
-      let roadOff = 0;
-      let cars = [];
-      let keys = { left: false, right: false, brake: false, nitro: false };
-      let last = performance.now();
-      let spawnT = 0;
-      raceRunning = true;
-
-      const btn = document.getElementById('race-start-btn');
-      if (btn) btn.style.display = 'none';
-
-      function spawnCar() {
-        const lanes = [W * 0.28, W * 0.5, W * 0.72];
-        cars.push({
-          x: lanes[Math.floor(Math.random() * 3)],
-          y: -90,
-          w: 46, h: 88,
-          color: ['#16a34a','#ca8a04','#e11d48','#7c3aed','#0284c7'][Math.floor(Math.random()*5)],
-          spd: 0.35 + Math.random() * 0.4
-        });
-      }
-
-      // Controls
-      const leftBtn = document.getElementById('rLeft');
-      const rightBtn = document.getElementById('rRight');
-      const brakeBtn = document.getElementById('rBrake');
-      const nitroBtn = document.getElementById('rNitroBtn');
-
-      function bind(btn, key) {
-        if (!btn) return;
-        btn.onpointerdown = (e) => { e.preventDefault(); keys[key] = true; };
-        btn.onpointerup = () => keys[key] = false;
-        btn.onpointerleave = () => keys[key] = false;
-      }
-      bind(leftBtn, 'left');
-      bind(rightBtn, 'right');
-      bind(brakeBtn, 'brake');
-      bind(nitroBtn, 'nitro');
-
-      function onKeyDown(e) {
-        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
-        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-        if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.brake = true;
-        if (e.code === 'Space') { e.preventDefault(); keys.nitro = true; }
-      }
-      function onKeyUp(e) {
-        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
-        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-        if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.brake = false;
-        if (e.code === 'Space') keys.nitro = false;
-      }
-      window.addEventListener('keydown', onKeyDown);
-      window.addEventListener('keyup', onKeyUp);
-
-      function endRace(crashed) {
-        raceRunning = false;
-        if (raceAnimId) cancelAnimationFrame(raceAnimId);
-        window.removeEventListener('keydown', onKeyDown);
-        window.removeEventListener('keyup', onKeyUp);
-        const prize = Math.min(Math.floor(score / 80), 15);
-        if (btn) btn.style.display = 'inline-block';
-        if (crashed) {
-          alert('CRASHED!\\nScore: ' + score + (prize > 0 ? '\\n+' + prize + ' Coins' : ''));
-        } else {
-          alert('Race Finished!\\nScore: ' + score + (prize > 0 ? '\\n+' + prize + ' Coins' : ''));
-        }
-        if (prize > 0) {
-          balance += prize;
-          updateUI();
-          saveToHistory('Race Game', prize);
-          if (typeof saveBalance === 'function') saveBalance(prize, 'game', 'Race');
-        }
-      }
-
-      function loop(now) {
-        if (!raceRunning) return;
-        const dt = Math.min((now - last) / 1000, 0.05);
-        last = now;
-
-        // Speed & nitro
-        if (keys.nitro && nitro > 0) {
-          speed = Math.min(280, speed + 90 * dt);
-          nitro = Math.max(0, nitro - 28 * dt);
-        } else if (keys.brake) {
-          speed = Math.max(50, speed - 70 * dt);
-        } else {
-          speed = Math.min(175, speed + 12 * dt);
-        }
-        if (!keys.nitro) nitro = Math.min(100, nitro + 5 * dt);
-
-        // Steering
-        if (keys.left) playerX -= 240 * dt * (speed / 140);
-        if (keys.right) playerX += 240 * dt * (speed / 140);
-        playerX = Math.max(W * 0.20, Math.min(W * 0.80, playerX));
-
-        roadOff = (roadOff + speed * 0.45) % 60;
-        score += Math.floor(speed * dt * 0.9);
-
-        // Spawn traffic
-        spawnT += dt;
-        if (spawnT > Math.max(0.65, 1.5 - score / 6000)) {
-          spawnT = 0;
-          spawnCar();
-        }
-
-        // Move cars + collision
-        for (let i = cars.length - 1; i >= 0; i--) {
-          const c = cars[i];
-          c.y += (speed * (1 - c.spd)) * 0.38;
-          if (Math.abs(c.x - playerX) < 42 && Math.abs(c.y - (H - 140)) < 70) {
-            endRace(true);
-            return;
-          }
-          if (c.y > H + 100) cars.splice(i, 1);
-        }
-
-        // Draw background
-        ctx.fillStyle = '#064e3b';
-        ctx.fillRect(0, 0, W, H);
-
-        // Road
-        const roadW = Math.min(300, W * 0.58);
-        const roadL = (W - roadW) / 2;
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(roadL, 0, roadW, H);
-
-        // Kerbs
-        for (let y = -60 + (roadOff % 40); y < H; y += 40) {
-          ctx.fillStyle = (Math.floor(y / 40) % 2 === 0) ? '#ef4444' : '#f8fafc';
-          ctx.fillRect(roadL - 9, y, 9, 20);
-          ctx.fillRect(roadL + roadW, y, 9, 20);
-        }
-
-        // Center dashed line
-        ctx.strokeStyle = '#fef08a';
-        ctx.lineWidth = 4;
-        ctx.setLineDash([22, 20]);
-        ctx.lineDashOffset = -roadOff;
+      // Vignette effect
+      const grad = ctx.createRadialGradient(width / 2, height / 2, width * 0.25, width / 2, height / 2, width * 0.85);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(1, 'rgba(0,0,0,0.7)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Splatters on the board
+      splatters.forEach(s => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, s.alpha);
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rotation);
+        ctx.fillStyle = s.color;
         ctx.beginPath();
-        ctx.moveTo(W / 2, 0);
-        ctx.lineTo(W / 2, H);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.ellipse(0, 0, s.rx, s.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Traffic cars
-        cars.forEach(c => {
-          ctx.fillStyle = c.color;
+        // Little satellite droplets
+        s.drops.forEach(d => {
           ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(c.x - c.w/2, c.y, c.w, c.h, 8);
-          else ctx.rect(c.x - c.w/2, c.y, c.w, c.h);
+          ctx.arc(d.dx, d.dy, d.r, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = '#0f172a';
-          ctx.fillRect(c.x - 13, c.y + 12, 26, 13);
         });
-
-        // Player car
-        ctx.fillStyle = '#0284c7';
-        ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(playerX - 25, H - 145, 50, 95, 10);
-        else ctx.rect(playerX - 25, H - 145, 50, 95);
-        ctx.fill();
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(playerX - 15, H - 130, 30, 16);
-        // Headlights
-        ctx.fillStyle = '#fef08a';
-        ctx.beginPath();
-        ctx.arc(playerX - 13, H - 143, 4, 0, Math.PI * 2);
-        ctx.arc(playerX + 13, H - 143, 4, 0, Math.PI * 2);
-        ctx.fill();
-
-        // HUD
-        const sEl = document.getElementById('rScore');
-        const spEl = document.getElementById('rSpeed');
-        const nEl = document.getElementById('rNitro');
-        if (sEl) sEl.textContent = score;
-        if (spEl) spEl.textContent = Math.round(speed);
-        if (nEl) nEl.textContent = Math.round(nitro);
-
-        raceAnimId = requestAnimationFrame(loop);
-      }
-      raceAnimId = requestAnimationFrame(loop);
+        ctx.restore();
+      });
+      ctx.globalAlpha = 1;
     }
 
+    // --- Draw Complete Whole Fruit ---
+    function drawFruit(f) {
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      ctx.rotate(f.rotation);
 
-    setupUser();
-    loadUser();
+      if (f.isBomb) {
+        // Bomb Body
+        const bombGrad = ctx.createRadialGradient(-8, -8, 4, 0, 0, f.radius);
+        bombGrad.addColorStop(0, '#475569');
+        bombGrad.addColorStop(1, '#090d16');
+        ctx.fillStyle = bombGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#1e293b';
+        ctx.stroke();
+
+        // Bomb Cap
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(-8, -f.radius - 6, 16, 7);
+
+        // Fuse with burn spark
+        ctx.beginPath();
+        ctx.moveTo(0, -f.radius - 6);
+        ctx.quadraticCurveTo(14, -f.radius - 22, 12, -f.radius - 32);
+        ctx.strokeStyle = '#ea580c';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Animated Fuse Spark
+        const sparkTime = performance.now() * 0.015;
+        const sparkSize = 6 + Math.sin(sparkTime) * 3;
+        ctx.beginPath();
+        ctx.arc(12, -f.radius - 32, sparkSize, 0, Math.PI * 2);
+        ctx.fillStyle = '#fde047';
+        ctx.shadowColor = '#f97316';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Warning skull/symbol
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('☠', 0, 2);
+
+      } else {
+        // Realistic Whole Fruits with dynamic shading
+        const rad = f.radius;
+
+        // Outer skin
+        ctx.beginPath();
+        ctx.arc(0, 0, rad, 0, Math.PI * 2);
+        const skinGrad = ctx.createRadialGradient(-rad * 0.35, -rad * 0.35, rad * 0.1, 0, 0, rad);
+        skinGrad.addColorStop(0, '#ffffff35');
+        skinGrad.addColorStop(0.3, f.skinColor);
+        skinGrad.addColorStop(1, '#00000040');
+        ctx.fillStyle = skinGrad;
+        ctx.fill();
+
+        if (f.name === 'watermelon') {
+          // Dark wavy stripes
+          ctx.strokeStyle = '#14532d';
+          ctx.lineWidth = 6;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * 14, -rad + 3);
+            ctx.quadraticCurveTo(i * 18 + 6, 0, i * 14, rad - 3);
+            ctx.stroke();
+          }
+        } else if (f.name === 'apple') {
+          // Stem & green leaf
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(-2.5, -rad - 10, 5, 12);
+          ctx.beginPath();
+          ctx.ellipse(8, -rad - 8, 10, 5, 0.4, 0, Math.PI * 2);
+          ctx.fillStyle = '#4ade80';
+          ctx.fill();
+        } else if (f.name === 'orange') {
+          // Dimple pores
+          ctx.fillStyle = 'rgba(255,255,255,0.25)';
+          for (let a = 0; a < 8; a++) {
+            const ang = a * 0.78;
+            ctx.beginPath();
+            ctx.arc(Math.cos(ang) * (rad * 0.5), Math.sin(ang) * (rad * 0.5), 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Realistic Gloss Reflection
+        ctx.beginPath();
+        ctx.ellipse(-rad * 0.35, -rad * 0.35, rad * 0.3, rad * 0.18, -0.6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    // --- Draw Splitted Fruit Half (Inner Cross-section) ---
+    function drawFruitHalf(h) {
+      ctx.save();
+      ctx.translate(h.x, h.y);
+      ctx.rotate(h.rotation);
+
+      const r = h.radius;
+      // Sliced face is a semi-circle along horizontal axis
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI, false);
+      ctx.closePath();
+      ctx.fillStyle = h.skinColor;
+      ctx.fill();
+
+      // Inner Rind / Flesh
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.88, 0, Math.PI, false);
+      ctx.closePath();
+      ctx.fillStyle = h.fleshColor;
+      ctx.fill();
+
+      // Interior Details per fruit type
+      if (h.name === 'watermelon') {
+        ctx.fillStyle = '#1e293b';
+        [[-r * 0.45, 10], [0, 16], [r * 0.45, 10], [-r * 0.22, 22], [r * 0.22, 22]].forEach(([sx, sy]) => {
+          ctx.beginPath();
+          ctx.ellipse(sx, sy, 2.5, 4.5, 0.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      } else if (h.name === 'orange') {
+        // Orange Citrus Segments
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 1.5;
+        for (let a = 1; a < 6; a++) {
+          const ang = (Math.PI / 6) * a;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(ang) * (r * 0.85), Math.sin(ang) * (r * 0.85));
+          ctx.stroke();
+        }
+      } else if (h.name === 'apple') {
+        // Apple Core & Pip
+        ctx.fillStyle = '#ca8a04';
+        ctx.beginPath();
+        ctx.ellipse(0, 8, 8, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#451a03';
+        ctx.beginPath();
+        ctx.arc(2, 8, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (h.name === 'dragonfruit') {
+        // Black speck seeds
+        ctx.fillStyle = '#09090b';
+        for (let i = 0; i < 9; i++) {
+          const sx = (Math.random() - 0.5) * (r * 1.3);
+          const sy = 4 + Math.random() * (r * 0.65);
+          ctx.fillRect(sx, sy, 2, 2);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    // --- Floating Text Popups (+1, +3, Combo!) ---
+    function addFloatText(text, x, y, color = '#facc15', size = 28) {
+      floatTexts.push({ text, x, y, color, size, alpha: 1, vy: -2.5 });
+    }
+
+    // --- Splatter Generation ---
+    function createSplatter(x, y, color) {
+      const drops = [];
+      const numDrops = 6 + Math.floor(Math.random() * 8);
+      for (let i = 0; i < numDrops; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 18 + Math.random() * 55;
+        drops.push({
+          dx: Math.cos(angle) * dist,
+          dy: Math.sin(angle) * dist,
+          r: 2.5 + Math.random() * 4.5
+        });
+      }
+
+      splatters.push({
+        x, y,
+        rx: 26 + Math.random() * 22,
+        ry: 18 + Math.random() * 16,
+        rotation: Math.random() * Math.PI * 2,
+        color: color + '55', // translucent
+        drops,
+        alpha: 0.95
+      });
+
+      if (splatters.length > 25) splatters.shift();
+    }
+
+    // --- Realistic Slicing Physics ---
+    function sliceFruit(f, bladeAngle) {
+      if (f.sliced) return;
+      f.sliced = true;
+
+      if (f.isBomb) {
+        AudioEngine.playBomb();
+        triggerHaptic('heavy');
+        screenShake = 24;
+        flashScreenAlpha = 0.85;
+
+        // Penalty for bomb in 3-minute arcade
+        timeLeft = Math.max(0, timeLeft - 10);
+        addFloatText("-10 SEC!", f.x, f.y, '#ef4444', 36);
+
+        // Huge bomb particle cloud
+        for (let i = 0; i < 45; i++) {
+          particles.push({
+            x: f.x, y: f.y,
+            vx: (Math.random() - 0.5) * 18,
+            vy: (Math.random() - 0.5) * 18,
+            radius: 3 + Math.random() * 8,
+            color: ['#f97316', '#ef4444', '#fbbf24', '#475569'][Math.floor(Math.random() * 4)],
+            alpha: 1,
+            gravity: 0.35
+          });
+        }
+        fruits = fruits.filter(item => item !== f);
+        return;
+      }
+
+      // Combo Tracking
+      const now = Date.now();
+      if (now - lastSliceTime < 420) {
+        combo++;
+      } else {
+        combo = 1;
+      }
+      lastSliceTime = now;
+
+      const earnedPoints = f.points * (combo > 1 ? combo : 1);
+      score += earnedPoints;
+      scoreEl.textContent = score;
+
+      AudioEngine.playSlice(combo);
+      triggerHaptic(combo > 2 ? 'heavy' : 'light');
+
+      // Floating score visual
+      if (combo > 1) {
+        addFloatText(`+${earnedPoints} (Combo x${combo})`, f.x, f.y - 10, '#4ade80', 30);
+        comboEl.textContent = `Combo x${combo}!`;
+        comboEl.classList.add('show');
+      } else {
+        addFloatText(`+${earnedPoints}`, f.x, f.y - 10, '#fef08a', 24);
+      }
+
+      // Dojo wall stain & spray
+      createSplatter(f.x, f.y, f.fleshColor);
+
+      // Squirting juice drops
+      for (let i = 0; i < 22; i++) {
+        const spd = 4 + Math.random() * 12;
+        const ang = Math.random() * Math.PI * 2;
+        particles.push({
+          x: f.x, y: f.y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          radius: 2 + Math.random() * 4,
+          color: Math.random() > 0.4 ? f.fleshColor : f.skinColor,
+          alpha: 1,
+          gravity: 0.4
+        });
+      }
+
+      // True Split Halves (Left & Right halves pushed apart perpendicularly)
+      const perpAngle = bladeAngle + Math.PI / 2;
+      const pushSpeed = 4.5 + Math.random() * 2.5;
+
+      fruitHalves.push({
+        x: f.x,
+        y: f.y,
+        vx: f.vx + Math.cos(perpAngle) * pushSpeed,
+        vy: f.vy + Math.sin(perpAngle) * pushSpeed - 1.5,
+        rotation: bladeAngle,
+        rotSpeed: -0.1 - Math.random() * 0.15,
+        radius: f.radius,
+        name: f.name,
+        skinColor: f.skinColor,
+        fleshColor: f.fleshColor,
+        seedColor: f.seedColor,
+        alpha: 1
+      });
+
+      fruitHalves.push({
+        x: f.x,
+        y: f.y,
+        vx: f.vx - Math.cos(perpAngle) * pushSpeed,
+        vy: f.vy - Math.sin(perpAngle) * pushSpeed - 1.5,
+        rotation: bladeAngle + Math.PI,
+        rotSpeed: 0.1 + Math.random() * 0.15,
+        radius: f.radius,
+        name: f.name,
+        skinColor: f.skinColor,
+        fleshColor: f.fleshColor,
+        seedColor: f.seedColor,
+        alpha: 1
+      });
+
+      fruits = fruits.filter(item => item !== f);
+    }
+
+    // --- Fruit Spawning System (Waves & Arcs from bottom) ---
+    function spawnWave() {
+      const isMulti = Math.random() < 0.65;
+      const waveSize = isMulti ? 2 + Math.floor(Math.random() * 3) : 1;
+
+      for (let i = 0; i < waveSize; i++) {
+        setTimeout(() => {
+          if (gameState !== 'playing') return;
+          const isBomb = Math.random() < 0.18;
+          const template = isBomb 
+            ? FRUIT_PRESETS.find(p => p.isBomb) 
+            : FRUIT_PRESETS[Math.floor(Math.random() * (FRUIT_PRESETS.length - 1))];
+
+          const startX = width * 0.15 + Math.random() * (width * 0.7);
+          const startY = height + 40;
+
+          // Parabolic throw aiming toward center
+          const targetX = width * 0.25 + Math.random() * (width * 0.5);
+          const launchVx = (targetX - startX) * 0.022;
+          const launchVy = -(13.5 + Math.random() * 4.5); // arc height
+
+          fruits.push({
+            ...template,
+            x: startX,
+            y: startY,
+            vx: launchVx,
+            vy: launchVy,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.08,
+            sliced: false
+          });
+        }, i * 160);
+      }
+    }
+
+    // --- Touch / Mouse Blade Input ---
+    let isMouseDown = false;
+    let prevPoint = null;
+
+    function handlePointerDown(e) {
+      AudioEngine.init();
+      isMouseDown = true;
+      const p = getEventPos(e);
+      prevPoint = p;
+      bladePath = [{ x: p.x, y: p.y, time: performance.now() }];
+    }
+
+    function handlePointerMove(e) {
+      if (!isMouseDown || gameState !== 'playing') return;
+      const p = getEventPos(e);
+      const now = performance.now();
+
+      bladePath.push({ x: p.x, y: p.y, time: now });
+      if (bladePath.length > 18) bladePath.shift();
+
+      if (prevPoint) {
+        const dx = p.x - prevPoint.x;
+        const dy = p.y - prevPoint.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 15) {
+          AudioEngine.playSwoosh();
+          const bladeAngle = Math.atan2(dy, dx);
+
+          // Check intersection with all active fruits
+          for (let i = fruits.length - 1; i >= 0; i--) {
+            const f = fruits[i];
+            const d = pointToSegmentDistance(f.x, f.y, prevPoint.x, prevPoint.y, p.x, p.y);
+            if (d < f.radius + 10) {
+              sliceFruit(f, bladeAngle);
+            }
+          }
+        }
+      }
+      prevPoint = p;
+    }
+
+    function handlePointerUp() {
+      isMouseDown = false;
+      prevPoint = null;
+    }
+
+    function getEventPos(e) {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+
+    canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
+    window.addEventListener('touchend', handlePointerUp);
+
+    function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+      const l2 = (x2 - x1) ** 2 + (y2 - y1) ** 2;
+      if (l2 === 0) return Math.hypot(px - x1, py - y1);
+      let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
+    }
+
+    // --- Blade Trail Render ---
+    function drawBladeTrail() {
+      const now = performance.now();
+      bladePath = bladePath.filter(pt => now - pt.time < 160);
+
+      if (bladePath.length < 2) return;
+
+      // Outer Glow
+      ctx.beginPath();
+      ctx.moveTo(bladePath[0].x, bladePath[0].y);
+      for (let i = 1; i < bladePath.length; i++) {
+        ctx.lineTo(bladePath[i].x, bladePath[i].y);
+      }
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // Sharp Silver Core
+      ctx.beginPath();
+      ctx.moveTo(bladePath[0].x, bladePath[0].y);
+      for (let i = 1; i < bladePath.length; i++) {
+        ctx.lineTo(bladePath[i].x, bladePath[i].y);
+      }
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+
+    // --- Main Game Update Loop ---
+    function update(dt) {
+      if (gameState !== 'playing') return;
+
+      gameTime += dt;
+      spawnTimer += dt;
+
+      // Dynamic spawn cadence that scales nicely across 3 minutes
+      const currentInterval = Math.max(0.9, 2.2 - (gameTime / ROUND_TIME) * 1.1);
+      if (spawnTimer >= currentInterval) {
+        spawnWave();
+        spawnTimer = 0;
+      }
+
+      // Update whole fruits
+      for (let i = fruits.length - 1; i >= 0; i--) {
+        const f = fruits[i];
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vy += 0.38; // gravity
+        f.rotation += f.rotSpeed;
+
+        if (f.y > height + 80 && f.vy > 0) {
+          fruits.splice(i, 1);
+        }
+      }
+
+      // Update falling fruit halves
+      for (let i = fruitHalves.length - 1; i >= 0; i--) {
+        const h = fruitHalves[i];
+        h.x += h.vx;
+        h.y += h.vy;
+        h.vy += 0.48; // heavier gravity
+        h.rotation += h.rotSpeed;
+
+        if (h.y > height + 90) {
+          fruitHalves.splice(i, 1);
+        }
+      }
+
+      // Update juice spray particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.alpha -= 0.02;
+        if (p.alpha <= 0 || p.y > height) {
+          particles.splice(i, 1);
+        }
+      }
+
+      // Update floating score texts
+      for (let i = floatTexts.length - 1; i >= 0; i--) {
+        const ft = floatTexts[i];
+        ft.y += ft.vy;
+        ft.alpha -= 0.025;
+        if (ft.alpha <= 0) {
+          floatTexts.splice(i, 1);
+        }
+      }
+
+      // Fade board splatters gently over time
+      splatters.forEach(s => {
+        s.alpha -= 0.0003;
+      });
+      splatters = splatters.filter(s => s.alpha > 0.05);
+
+      // Reset combo visual if idle
+      if (Date.now() - lastSliceTime > 650) {
+        combo = 0;
+        comboEl.classList.remove('show');
+      }
+
+      // Screen shake decay
+      if (screenShake > 0) screenShake *= 0.88;
+      if (flashScreenAlpha > 0) flashScreenAlpha -= dt * 2.5;
+
+      // 3-Minute Countdown
+      timeLeft -= dt;
+      if (timeLeft < 0) timeLeft = 0;
+
+      // Format Timer (MM:SS)
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = Math.floor(timeLeft % 60);
+      timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      if (timeLeft <= 30) {
+        timerEl.classList.add('warning');
+      } else {
+        timerEl.classList.remove('warning');
+      }
+
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }
+
+    // --- Render Loop ---
+    function render() {
+      ctx.save();
+
+      // Screen shake translation
+      if (screenShake > 0.5) {
+        ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+      }
+
+      drawBackground();
+
+      // Sliced Halves (behind whole fruits)
+      fruitHalves.forEach(h => drawFruitHalf(h));
+
+      // Whole Flying Fruits
+      fruits.forEach(f => drawFruit(f));
+
+      // Juice Particles
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Floating Texts
+      floatTexts.forEach(ft => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, ft.alpha);
+        ctx.fillStyle = ft.color;
+        ctx.font = `bold ${ft.size}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 8;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      });
+
+      // Blade Stroke Trail
+      drawBladeTrail();
+
+      // Bomb flash effect
+      if (flashScreenAlpha > 0.02) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${flashScreenAlpha})`;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      ctx.restore();
+    }
+
+    // --- Game Clock Cycle ---
+    let lastStamp = performance.now();
+    function tick(now) {
+      const dt = Math.min((now - lastStamp) / 1000, 0.05);
+      lastStamp = now;
+      update(dt);
+      render();
+      requestAnimationFrame(tick);
+    }
+
+    // --- Start & End Lifecycle ---
+    function startGame() {
+      AudioEngine.init();
+      score = 0;
+      timeLeft = ROUND_TIME; // 180 seconds = 3 mins
+      combo = 0;
+      gameTime = 0;
+      spawnTimer = 0;
+      fruits = [];
+      fruitHalves = [];
+      particles = [];
+      splatters = [];
+      floatTexts = [];
+      bladePath = [];
+      screenShake = 0;
+      flashScreenAlpha = 0;
+
+      scoreEl.textContent = '0';
+      timerEl.textContent = '03:00';
+      timerEl.classList.remove('warning');
+
+      startScreen.style.display = 'none';
+      gameOverEl.style.display = 'none';
+      gameState = 'playing';
+    }
+
+    function endGame() {
+      gameState = 'gameover';
+      triggerHaptic('heavy');
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('ninjaBladeBest', bestScore);
+        bestEl.textContent = `Best: ${bestScore}`;
+      }
+
+      finalScoreEl.textContent = score;
+      bestScoreTextEl.textContent = `Highscore: ${bestScore}`;
+      gameOverEl.style.display = 'flex';
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+
+    requestAnimationFrame(tick);
   </script>
 </body>
-</html>
+  </html>
