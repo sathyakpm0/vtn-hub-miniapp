@@ -49,20 +49,27 @@
       top: 0;
       left: 0;
       width: 100%;
-      padding: env(safe-area-inset-top, 20px) 20px 0;
+      padding: env(safe-area-inset-top, 16px) 16px 0;
       z-index: 10;
       pointer-events: none;
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hud-top-row {
+      display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      width: 100%;
     }
 
     .hud-card {
-      background: rgba(14, 18, 38, 0.65);
+      background: rgba(14, 18, 38, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(0, 247, 255, 0.25);
-      padding: 8px 16px;
+      padding: 8px 14px;
       border-radius: 14px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 247, 255, 0.15);
     }
@@ -74,7 +81,7 @@
 
     #score {
       font-family: 'Orbitron', monospace;
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       color: #fff;
       letter-spacing: 1px;
@@ -84,7 +91,7 @@
 
     #combo-badge {
       font-family: 'Orbitron', monospace;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: #ff007b;
       letter-spacing: 1px;
@@ -101,7 +108,7 @@
 
     #level-badge {
       font-family: 'Orbitron', monospace;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: #ffe600;
       text-shadow: 0 0 10px #ffe600;
@@ -115,8 +122,47 @@
       font-weight: 800;
       color: #00f7ff;
       text-shadow: 0 0 10px #00f7ff;
-      margin-top: 3px;
+      margin-top: 2px;
       text-align: right;
+    }
+
+    /* Altitude Progress Bar */
+    #progress-wrapper {
+      width: 100%;
+      background: rgba(10, 15, 30, 0.65);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: 20px;
+      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    #progress-bar-track {
+      flex: 1;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00f7ff, #39ff14);
+      box-shadow: 0 0 10px #39ff14;
+      transition: width 0.15s ease-out;
+    }
+
+    #altitude-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: #39ff14;
+      white-space: nowrap;
+      text-shadow: 0 0 8px #39ff14;
     }
 
     /* High Tech Glassmorphic Modals */
@@ -145,7 +191,7 @@
     }
 
     h1 {
-      font-size: 38px;
+      font-size: 36px;
       background: linear-gradient(135deg, #00f7ff 0%, #ff007b 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -154,9 +200,9 @@
 
     .sub-glow {
       color: #94a3b8;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      margin-bottom: 30px;
+      margin-bottom: 26px;
       line-height: 1.5;
     }
 
@@ -189,7 +235,7 @@
       top: 35%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.7);
-      background: rgba(10, 15, 30, 0.9);
+      background: rgba(10, 15, 30, 0.95);
       border: 2px solid #39ff14;
       box-shadow: 0 0 35px #39ff14, inset 0 0 15px rgba(57, 255, 20, 0.3);
       padding: 18px 36px;
@@ -208,16 +254,15 @@
 
     #banner-text {
       font-family: 'Orbitron', monospace;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: #39ff14;
       text-shadow: 0 0 15px #39ff14;
     }
 
-    /* Score in game over modal */
     #final-score {
       font-family: 'Orbitron', monospace;
-      font-size: 54px;
+      font-size: 52px;
       font-weight: 900;
       color: #ff007b;
       text-shadow: 0 0 25px rgba(255, 0, 123, 0.8);
@@ -231,26 +276,36 @@
 
     <!-- UI Overlay -->
     <div id="ui">
-      <div class="hud-card" id="score-wrapper">
-        <div id="score">0</div>
-        <div id="combo-badge">COMBO x2</div>
+      <div class="hud-top-row">
+        <div class="hud-card" id="score-wrapper">
+          <div id="score">0</div>
+          <div id="combo-badge">COMBO x2</div>
+        </div>
+        <div class="hud-card">
+          <div id="level-badge">LVL 1</div>
+          <div id="level-timer">28.0s</div>
+        </div>
       </div>
-      <div class="hud-card">
-        <div id="level-badge">LVL 1</div>
-        <div id="level-timer">20.0s</div>
+
+      <!-- Ascent Progress Bar -->
+      <div id="progress-wrapper">
+        <div id="progress-bar-track">
+          <div id="progress-bar-fill"></div>
+        </div>
+        <div id="altitude-text">0m / 80m</div>
       </div>
     </div>
 
     <!-- Level Cleared Banner -->
     <div id="level-banner">
-      <div id="banner-text">HYPER DRIVE!</div>
+      <div id="banner-text">LEVEL 2 REACHED</div>
       <div style="font-size: 14px; color: #a3e635; margin-top: 4px; font-weight: 700;">+SPEED & COMPRESSION</div>
     </div>
 
     <!-- Start Overlay -->
     <div id="start-screen" class="screen-overlay">
       <h1>Cyber Climb</h1>
-      <p class="sub-glow">Tap Left & Right to thrust.<br>Ascend before the core overload timer expires!</p>
+      <p class="sub-glow">Tap Left & Right to steer your thrust.<br>Climb to the summit before core collapse!</p>
       <button id="start-btn" class="cyber-btn">IGNITION</button>
     </div>
 
@@ -258,7 +313,7 @@
     <div id="game-over" class="screen-overlay" style="display: none;">
       <h2 id="game-over-title" style="color: #ff3366; text-shadow: 0 0 20px #ff3366;">SYSTEM FAILURE</h2>
       <div id="final-score">0</div>
-      <p id="best-score-text" style="font-size: 17px; margin-bottom: 24px; color: #94a3b8; font-weight: 700;">TOP RECORD: 0</p>
+      <p id="best-score-text" style="font-size: 16px; margin-bottom: 24px; color: #94a3b8; font-weight: 700;">TOP RECORD: 0</p>
       <button id="restart-btn" class="cyber-btn">REBOOT</button>
     </div>
   </div>
@@ -282,7 +337,7 @@
     }
 
     /* ========================================================
-       SYNTHESIZED RETRO AUDIO (WEB AUDIO API)
+       SYNTHESIZED AUDIO
        ======================================================== */
     const AudioEngine = {
       ctx: null,
@@ -355,6 +410,8 @@
     const comboBadge = document.getElementById('combo-badge');
     const levelBadge = document.getElementById('level-badge');
     const levelTimerEl = document.getElementById('level-timer');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const altitudeText = document.getElementById('altitude-text');
     const gameOverEl = document.getElementById('game-over');
     const gameOverTitle = document.getElementById('game-over-title');
     const levelBanner = document.getElementById('level-banner');
@@ -370,7 +427,7 @@
     let dpr = 1;
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x for smooth 60/120fps on mobile
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = width * dpr;
@@ -411,18 +468,20 @@
     }
 
     /* ========================================================
-       GAME STATE
+       GAME STATE & LEVEL CONFIG
        ======================================================== */
     let score = 0;
     let combo = 0;
     let lastBounceTime = 0;
     let bestScore = parseInt(localStorage.getItem('cyberClimb_best') || '0');
     let level = 1;
-    let timeLeft = 20;
-    let targetHeightMeters = 20;
+    let timeLeft = 28;
+    let targetHeightMeters = 80;
     let currentHeightMeters = 0;
+    let maxClimbedMeters = 0;
     let gameState = 'start';
     let cameraY = 0;
+    const PIXELS_PER_METER = 22;
 
     const player = {
       x: 0,
@@ -431,14 +490,13 @@
       vy: 0,
       radius: 15,
       scaleX: 1,
-      scaleY: 1,
-      hue: 190
+      scaleY: 1
     };
 
     let platforms = [];
     let stars = [];
 
-    // Background Cyber Grid / Starfield
+    // Background Stars
     for (let i = 0; i < 60; i++) {
       stars.push({
         x: Math.random() * window.innerWidth,
@@ -465,16 +523,22 @@
 
     function setupLevel() {
       currentHeightMeters = 0;
-      timeLeft = Math.max(10, 20 - (level * 1.5));
-      targetHeightMeters = 15 + (level * 6);
+      maxClimbedMeters = 0;
+
+      // Realistic balanced climb height per level (takes ~20-30s of intense jumping)
+      targetHeightMeters = 80 + ((level - 1) * 30);
+      timeLeft = 26 + Math.min(12, level * 2);
+
       levelBadge.textContent = `LVL ${level}`;
       levelTimerEl.textContent = `${timeLeft.toFixed(1)}s`;
+      altitudeText.textContent = `0m / ${targetHeightMeters}m`;
+      progressBarFill.style.width = '0%';
       cameraY = 0;
 
       player.x = width / 2;
       player.y = height - 180;
       player.vx = 0;
-      player.vy = -13;
+      player.vy = -13.5;
       player.scaleX = 1;
       player.scaleY = 1;
 
@@ -483,7 +547,7 @@
 
     function generatePlatforms() {
       platforms = [];
-      // Starting landing platform
+      // Ground launch platform
       platforms.push({
         x: width / 2 - 70,
         y: height - 120,
@@ -492,17 +556,19 @@
         type: 'start',
         color: '#00f7ff',
         moving: false,
-        dir: 1
+        dir: 1,
+        speed: 0
       });
 
       let currentY = height - 200;
-      const topBound = -5000;
+      // Generate past the summit goal line
+      const topBound = height - 120 - (targetHeightMeters * PIXELS_PER_METER) - 600;
 
       while (currentY > topBound) {
-        const pWidth = Math.max(45, 120 - (level * 9) - Math.random() * 15);
+        const pWidth = Math.max(50, 120 - (level * 7) - Math.random() * 15);
         const pX = Math.random() * (width - pWidth);
-        const isMoving = level >= 2 && Math.random() < Math.min(0.75, 0.2 + level * 0.1);
-        const isBoost = Math.random() < 0.12;
+        const isMoving = level >= 2 && Math.random() < Math.min(0.65, 0.15 + level * 0.1);
+        const isBoost = Math.random() < 0.13;
 
         let color = '#00f7ff';
         if (isMoving) color = '#ffe600';
@@ -517,10 +583,11 @@
           color: color,
           moving: isMoving,
           dir: Math.random() > 0.5 ? 1 : -1,
-          speed: (1.8 + level * 0.45)
+          speed: (1.5 + level * 0.35)
         });
 
-        currentY -= (70 + Math.random() * 22);
+        // Platform gap spacing
+        currentY -= (72 + Math.random() * 24);
       }
     }
 
@@ -554,7 +621,7 @@
         return;
       }
       levelTimerEl.textContent = `${timeLeft.toFixed(1)}s`;
-      if (timeLeft <= 4) {
+      if (timeLeft <= 5) {
         levelTimerEl.style.color = '#ff0055';
         levelTimerEl.style.textShadow = '0 0 15px #ff0055';
       } else {
@@ -562,15 +629,15 @@
         levelTimerEl.style.textShadow = '0 0 10px #00f7ff';
       }
 
-      // Lateral player physics with inertia
+      // Lateral player physics
       if (touchDir !== 0) {
         player.vx += touchDir * 28 * dt;
         player.vx = Math.max(-9, Math.min(9, player.vx));
       } else {
-        player.vx *= 0.88; // Quick air friction
+        player.vx *= 0.88;
       }
 
-      // Vertical gravity & squash stretch normalization
+      // Gravity & squash/stretch restore
       player.vy += 26 * dt;
       player.x += player.vx;
       player.y += player.vy;
@@ -582,7 +649,7 @@
       if (player.x < -10) player.x = width + 10;
       if (player.x > width + 10) player.x = -10;
 
-      // Move platforms
+      // Move dynamic platforms
       for (let p of platforms) {
         if (p.moving) {
           p.x += p.dir * p.speed;
@@ -591,7 +658,7 @@
         }
       }
 
-      // Collision Check (only when falling downwards)
+      // Collision Check (only when falling)
       if (player.vy > 0) {
         for (let p of platforms) {
           if (
@@ -600,55 +667,69 @@
             player.y + player.radius >= p.y &&
             player.y + player.radius <= p.y + p.height + 12
           ) {
-            // Calculate Combo
+            // Overdrive combo timing
             const now = performance.now();
-            if (now - lastBounceTime < 900) {
+            if (now - lastBounceTime < 950) {
               combo = Math.min(combo + 1, 8);
               comboBadge.style.display = 'block';
               comboBadge.textContent = `OVERDRIVE x${combo + 1}`;
+              // Small time bonus for high momentum combos
+              if (combo >= 3) {
+                timeLeft = Math.min(timeLeft + 0.8, 35);
+              }
             } else {
               combo = 0;
               comboBadge.style.display = 'none';
             }
             lastBounceTime = now;
 
-            // Bounce power
             const isBoost = p.type === 'boost';
             player.vy = isBoost ? -19.5 : -14.2;
 
-            // Squash & stretch physics response
+            if (isBoost) {
+              timeLeft = Math.min(timeLeft + 2.0, 35); // Boost platform awards extra time
+              spawnFloatText(player.x, p.y - 30, "+2.0s TIME!", "#39ff14");
+            }
+
+            // Squash & stretch physics
             player.scaleX = 1.45;
             player.scaleY = 0.55;
 
-            // Visual Juice & Haptics
+            // Visual juice
             screenShake = isBoost ? 9 : 4.5;
             triggerHaptic('impact', isBoost ? 'heavy' : 'medium');
             AudioEngine.playJump(isBoost ? 1.4 : 1.0 + (combo * 0.08));
 
             createExplosion(player.x, p.y, p.color, isBoost ? 24 : 12, isBoost ? 1.8 : 1);
-            spawnFloatText(player.x, p.y - 10, isBoost ? "HYPERBOOST!" : (combo > 1 ? `+${(combo+1)*10}` : "+10"), p.color);
+            spawnFloatText(player.x, p.y - 10, isBoost ? "HYPERBOOST!" : (combo > 1 ? `+${(combo+1)*12}` : "+10"), p.color);
             break;
           }
         }
       }
 
-      // Camera Smooth Follow & Shake
-      const targetCamY = player.y - height * 0.42;
+      // Smooth Camera tracking
+      const targetCamY = player.y - height * 0.45;
       if (targetCamY < cameraY) {
         cameraY += (targetCamY - cameraY) * 0.16;
       }
 
-      // Height Calculation
-      currentHeightMeters = Math.max(0, Math.floor((height - 120 - player.y) / 16));
-      score = Math.max(score, (level - 1) * 350 + currentHeightMeters * 12 + combo * 25);
+      // Height Calculation & Progress Bar update
+      currentHeightMeters = Math.max(0, Math.floor((height - 120 - player.y) / PIXELS_PER_METER));
+      maxClimbedMeters = Math.max(maxClimbedMeters, currentHeightMeters);
+
+      const progressPct = Math.min(100, Math.floor((maxClimbedMeters / targetHeightMeters) * 100));
+      progressBarFill.style.width = `${progressPct}%`;
+      altitudeText.textContent = `${maxClimbedMeters}m / ${targetHeightMeters}m`;
+
+      score = Math.max(score, (level - 1) * 800 + maxClimbedMeters * 15 + combo * 30);
       scoreEl.textContent = score;
 
-      // Check Level Victory
-      if (currentHeightMeters >= targetHeightMeters) {
+      // Victory Condition: Reached the Summit!
+      if (maxClimbedMeters >= targetHeightMeters) {
         triggerLevelUp();
       }
 
-      // Death condition (Fall below camera viewport)
+      // Game Over: Fall below screen
       if (player.y > cameraY + height + 60) {
         gameOver("SIGNAL LOST");
       }
@@ -661,7 +742,7 @@
       triggerHaptic('notification', 'success');
       bannerText.textContent = `LEVEL ${level} REACHED`;
       levelBanner.classList.add('show');
-      createExplosion(width / 2, height / 2 + cameraY, '#39ff14', 40, 2.5);
+      createExplosion(width / 2, height / 2 + cameraY, '#39ff14', 45, 2.8);
 
       setTimeout(() => {
         levelBanner.classList.remove('show');
@@ -676,14 +757,13 @@
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // Camera translation with Screen Shake
       ctx.save();
       let shakeX = (Math.random() - 0.5) * screenShake;
       let shakeY = (Math.random() - 0.5) * screenShake;
       screenShake *= 0.9;
       ctx.translate(shakeX, -cameraY + shakeY);
 
-      // Render Dynamic Background Stars (Parallax)
+      // Background Stars (Parallax)
       for (let s of stars) {
         let drawY = (s.y + cameraY * (1 - s.speed)) % height;
         if (drawY < 0) drawY += height;
@@ -693,16 +773,34 @@
         ctx.fill();
       }
 
-      // Render Platforms with Glow
+      // Summit Goal Line
+      const summitY = height - 120 - (targetHeightMeters * PIXELS_PER_METER);
+      if (summitY < cameraY + height + 100 && summitY > cameraY - 100) {
+        ctx.save();
+        ctx.strokeStyle = '#39ff14';
+        ctx.shadowColor = '#39ff14';
+        ctx.shadowBlur = 18;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([12, 8]);
+        ctx.beginPath();
+        ctx.moveTo(0, summitY);
+        ctx.lineTo(width, summitY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#39ff14';
+        ctx.font = "bold 13px 'Orbitron', monospace";
+        ctx.fillText("▲ SUMMIT EXTRACTION POINT ▲", width / 2 - 110, summitY - 12);
+        ctx.restore();
+      }
+
+      // Platforms with Neon Glow
       for (let p of platforms) {
-        // Skip platforms offscreen
         if (p.y > cameraY + height + 50 || p.y < cameraY - 50) continue;
 
         ctx.save();
         ctx.shadowColor = p.color;
         ctx.shadowBlur = 12;
 
-        // Platform Main Slab
         ctx.fillStyle = '#0a1024';
         ctx.strokeStyle = p.color;
         ctx.lineWidth = 2;
@@ -712,7 +810,6 @@
         ctx.fill();
         ctx.stroke();
 
-        // Neon Top Strip
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.roundRect(p.x + 2, p.y + 1, p.width - 4, 3, 2);
@@ -721,7 +818,7 @@
         ctx.restore();
       }
 
-      // Render Particles
+      // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const pt = particles[i];
         pt.x += pt.vx;
@@ -754,24 +851,22 @@
         ctx.save();
         ctx.globalAlpha = ft.alpha;
         ctx.fillStyle = ft.color;
-        ctx.font = "bold 14px 'Orbitron', monospace";
+        ctx.font = "bold 13px 'Orbitron', monospace";
         ctx.shadowColor = ft.color;
         ctx.shadowBlur = 8;
-        ctx.fillText(ft.text, ft.x - 15, ft.y);
+        ctx.fillText(ft.text, ft.x - 20, ft.y);
         ctx.restore();
       }
 
-      // Render Cyber Orb Player with Squash & Stretch
+      // Cyber Orb Player
       ctx.save();
       ctx.translate(player.x, player.y);
       ctx.scale(player.scaleX, player.scaleY);
 
-      // Core Outer Glow
       const glowColor = combo > 2 ? '#ff007b' : '#00f7ff';
       ctx.shadowColor = glowColor;
       ctx.shadowBlur = 20;
 
-      // Cyber Orb Gradient
       const grad = ctx.createRadialGradient(-3, -3, 2, 0, 0, player.radius);
       grad.addColorStop(0, '#ffffff');
       grad.addColorStop(0.3, glowColor);
@@ -782,7 +877,6 @@
       ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Core Outer Cyber Ring
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 1.8;
       ctx.beginPath();
@@ -790,7 +884,7 @@
       ctx.stroke();
 
       ctx.restore();
-      ctx.restore(); // Undo camera translation
+      ctx.restore();
     }
 
     /* ========================================================
@@ -826,4 +920,4 @@
     requestAnimationFrame(engineLoop);
   </script>
 </body>
-        </html>
+  </html>
