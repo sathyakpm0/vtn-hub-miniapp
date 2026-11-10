@@ -56,6 +56,7 @@
       border-radius: 30px;
       font-weight: 700;
       font-size: 14px;
+      cursor: pointer;
     }
     .grid {
       display: grid;
@@ -72,6 +73,7 @@
       color: white;
       border: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      cursor: pointer;
     }
     .btn .icon { font-size: 22px; margin-bottom: 5px; display: block; }
     .list-item {
@@ -96,6 +98,7 @@
     .start-btn {
       background: #c8102e; color: white; border: none;
       padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer;
     }
     .banner {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
@@ -106,13 +109,14 @@
       background: linear-gradient(135deg, #1a1a2e, #16213e);
       margin: 14px; border-radius: 14px; padding: 14px; color: white;
       text-align: center; border: 1px solid #ffd700;
+      cursor: pointer;
     }
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; background: white;
       display: flex; justify-content: space-around; padding: 10px 0;
       box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 200;
     }
-    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; }
+    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; cursor: pointer; }
     .nav-item.active { color: #c8102e; font-weight: 700; }
     .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
     .page { display: none; }
@@ -170,7 +174,6 @@
     }
     .diff-btn.active { background: #c8102e; color: white; }
 
-    /* Simple game styles */
     .game-area {
       background: #1a1a2e;
       border-radius: 16px;
@@ -196,6 +199,7 @@
       border-radius: 30px;
       font-weight: 700;
       margin-top: 12px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -205,8 +209,8 @@
 
     <!-- HOME -->
     <div id="home" class="page active">
-      <div class="header">👑 VTN Hub Bot</div>
-      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
+      <div class="header">👑 VTN HUB Bot</div>
+      <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="showPage('profile')">
         <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
         <div>
           <div style="font-weight:700;" id="username">User</div>
@@ -300,6 +304,11 @@
       <div class="list-item" onclick="openPromoteForm('views')">
         <div class="icon" style="background:#3F51B5;">👀</div>
         <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('watch')">
+        <div class="icon" style="background:#E91E63;">▶️</div>
+        <div class="info"><h4>Promote Video / Watch</h4><p>Get video views & watch time</p></div>
         <button class="start-btn">Buy</button>
       </div>
       <div class="list-item" onclick="openPromoteForm('install')">
@@ -509,17 +518,36 @@
         <div style="font-size:13px;opacity:0.9;">Current Balance</div>
         <div class="amount" id="wallet-balance">0 Coins</div>
       </div>
-      <div class="section-title">Task History</div>
-      <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
+
+      <!-- History Selection: 2 Dedicated Options -->
+      <div class="section-title">History Records</div>
+      <div style="display:flex; gap:10px; margin: 0 14px 14px;">
+        <button id="btn-wallet-task" class="btn" style="flex:1; background: linear-gradient(135deg, #c8102e, #9b0c24); display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;" onclick="openWalletHistory('task')">
+          <span style="font-size:16px;">📋</span> Task History
+        </button>
+        <button id="btn-wallet-coins" class="btn" style="flex:1; background: linear-gradient(135deg, #3F51B5, #1A237E); display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;" onclick="openWalletHistory('coins')">
+          <span style="font-size:16px;">💳</span> Withdraw & Coins
+        </button>
+      </div>
+
+      <!-- History Container (Opens when Task History or Withdraw & Coins is clicked) -->
+      <div id="history-container" style="display:none; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin: 0 14px 10px;">
+          <div id="history-view-title" style="font-size:14px; font-weight:700; color:#c8102e;">📋 Task History</div>
+          <button style="border:none; background:#ffe8e8; color:#c8102e; font-weight:700; border-radius:12px; padding:4px 12px; font-size:12px; cursor:pointer;" onclick="closeWalletHistory()">✖ Close</button>
+        </div>
+        <div id="history-list"></div>
+      </div>
+
       <div class="section-title">Withdrawal</div>
       <div class="list-item" onclick="openWithdraw('upi')">
         <div class="icon" style="background:#FF9800;">🇮🇳</div>
-        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
+        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR (Min: 500 Coins)</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
       <div class="list-item" onclick="openWithdraw('usdt')">
         <div class="icon" style="background:#26A17B;">₮</div>
-        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
+        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20 (Min: 500 Coins)</p></div>
         <button class="start-btn">Withdraw</button>
       </div>
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
@@ -582,14 +610,17 @@
         </div>
         <div class="form-row">
           <div class="form-group"><label>Views & Likes</label><input type="number" id="price-views" value="50"></div>
+          <div class="form-group"><label>Watch Video / Ads</label><input type="number" id="price-watch" value="70"></div>
+        </div>
+        <div class="form-row">
           <div class="form-group"><label>App Installs</label><input type="number" id="price-install" value="300"></div>
-        </div>
-        <div class="form-row">
           <div class="form-group"><label>Website Traffic</label><input type="number" id="price-traffic" value="80"></div>
-          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
         </div>
         <div class="form-row">
+          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
           <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
+        </div>
+        <div class="form-row">
           <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
         </div>
         <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
@@ -715,7 +746,7 @@
     } catch(e) {}
 
     let prices = {
-      channel: 200, bot: 150, views: 50, install: 300,
+      channel: 200, bot: 150, views: 50, watch: 70, install: 300,
       traffic: 80, banner: 100, affiliate: 40, test: 60
     };
     try {
@@ -829,6 +860,7 @@
       balance += reward; lastCheckIn = today;
       localStorage.setItem(checkinKey, today); updateUI();
       saveBalance(reward, 'checkin', 'Daily Check-in');
+      saveToHistory('Daily Check-in Bonus', reward, 'checkin');
     }
 
     function doOfficialTask() {
@@ -839,14 +871,18 @@
       localStorage.setItem(officialKey, '1');
       document.getElementById('official-task').style.display = 'none';
       updateUI(); saveBalance(50, 'official', 'Official Task');
+      saveToHistory('Official Channel & Group', 50, 'official');
       if (sb && user) sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
       alert('Official Task Completed! +50 Coins');
     }
 
     function copyCode() {
       const code = document.getElementById('ref-code').innerText;
-      if (navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Copied: '+code));
-      else alert(code);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => alert('Copied: ' + code)).catch(() => alert(code));
+      } else {
+        alert(code);
+      }
     }
 
     function getRandomAd() {
@@ -866,7 +902,7 @@
         balance += adSettings.reward;
         updateUI();
         saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
-        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
+        saveToHistory('Watched Ad (' + type + ')', adSettings.reward, 'ad');
 
         if (type === 'chat') {
           alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
@@ -910,6 +946,7 @@
         channel: 'Promote Channel / Group',
         bot: 'Promote Bot',
         views: 'Buy Views & Likes',
+        watch: 'Promote Video / Watch Time',
         install: 'Buy App Installs',
         test: 'Test App / Web',
         traffic: 'Website Traffic',
@@ -931,6 +968,7 @@
       if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
       else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
       else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'watch') cost = (prices.watch || 70) * Math.ceil(qty/100);
       else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
       else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
       else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
@@ -955,6 +993,7 @@
       if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
       else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
       else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'watch') cost = (prices.watch || 70) * Math.ceil(qty/100);
       else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
       else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
       else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
@@ -970,6 +1009,7 @@
         balance -= cost;
         updateUI();
         saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
+        saveToHistory('Promote: ' + currentPromoType, -cost, 'promo');
       }
 
       // Create task for Earn page
@@ -977,6 +1017,7 @@
         channel: 'Join Channel: ' + link,
         bot: 'Start Bot: ' + link,
         views: 'View / Like: ' + link,
+        watch: 'Watch Video / Ad: ' + link,
         install: 'Install App: ' + link,
         traffic: 'Visit Website: ' + link,
         affiliate: 'Open Affiliate: ' + link,
@@ -986,7 +1027,7 @@
       }[currentPromoType] || 'Promotion Task';
 
       const rewardMap = {
-        channel: 15, bot: 20, views: 5, install: 40,
+        channel: 15, bot: 20, views: 5, watch: 12, install: 40,
         traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
       };
 
@@ -997,29 +1038,30 @@
         category: currentPromoType === 'channel' ? 'join' :
                   currentPromoType === 'bot' ? 'bot' :
                   currentPromoType === 'views' ? 'views' :
+                  currentPromoType === 'watch' ? 'watch' :
                   currentPromoType === 'install' ? 'install' :
                   currentPromoType === 'traffic' ? 'website' :
                   currentPromoType === 'affiliate' ? 'affiliate' : 'other',
         link: link,
-        wait_seconds: 10,
+        wait_seconds: currentPromoType === 'watch' ? 20 : 10,
         is_active: true,
         from_order: true
       };
 
-      // Save to local orders (so it shows in Earn)
+      // Save to local orders
       let orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
       orders.unshift(newTask);
       if (orders.length > 50) orders.length = 50;
       localStorage.setItem(ordersKey, JSON.stringify(orders));
 
-      // Also try to save to Supabase tasks table
+      // Also save to Supabase tasks table
       if (sb) {
         sb.from('tasks').insert([{
           title: newTask.title,
           reward: newTask.reward,
           category: newTask.category,
           link: newTask.link,
-          wait_seconds: 10,
+          wait_seconds: newTask.wait_seconds,
           is_active: true
         }]).then(()=>{}).catch(()=>{});
       }
@@ -1125,7 +1167,7 @@
         balance += tttPrize;
         updateUI();
         saveBalance(tttPrize, 'game', 'TicTacToe Win');
-        saveToHistory('Tic Tac Toe Win', tttPrize);
+        saveToHistory('Tic Tac Toe Win', tttPrize, 'game');
         alert('✅ Claimed +' + tttPrize + ' Coins!');
         tttPrize = 0;
         document.getElementById('ttt-claim').style.display = 'none';
@@ -1167,7 +1209,7 @@
         balance += spinPrize;
         updateUI();
         saveBalance(spinPrize, 'game', 'Spin Win');
-        saveToHistory('Spin & Win', spinPrize);
+        saveToHistory('Spin & Win', spinPrize, 'game');
         alert('✅ Collected +' + spinPrize + ' Coins!');
         spinPrize = 0;
         document.getElementById('spin-claim').style.display = 'none';
@@ -1198,7 +1240,7 @@
         document.getElementById('quiz-result').innerText = '✅ Correct! +3 Coins';
         balance += 3; updateUI();
         saveBalance(3, 'game', 'Quiz Correct');
-        saveToHistory('Quiz Win', 3);
+        saveToHistory('Quiz Win', 3, 'game');
       } else {
         document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
       }
@@ -1358,10 +1400,9 @@
       };
     }
 
-    // SUDOKU (simple 4x4 for mobile)
+    // SUDOKU
     let sudokuSolution = [];
     function startSudoku() {
-      // Simple 4x4 puzzle for mobile friendliness
       const puzzle = [
         [1,0,0,4],
         [0,0,1,0],
@@ -1409,7 +1450,7 @@
         document.getElementById('sudoku-msg').innerText = '✅ Correct! +5 Coins';
         balance += 5; updateUI();
         saveBalance(5, 'game', 'Sudoku Win');
-        saveToHistory('Sudoku Win', 5);
+        saveToHistory('Sudoku Win', 5, 'game');
       } else {
         document.getElementById('sudoku-msg').innerText = '❌ Not correct yet';
       }
@@ -1422,7 +1463,7 @@
         balance += gamePrize;
         updateUI();
         saveBalance(gamePrize, 'game', type + ' Win');
-        saveToHistory(type + ' Game', gamePrize);
+        saveToHistory(type + ' Game', gamePrize, 'game');
         alert('✅ Claimed +' + gamePrize + ' Coins!');
         gamePrize = 0;
         document.getElementById(type + '-claim').style.display = 'none';
@@ -1437,7 +1478,8 @@
       document.getElementById('withdraw-amount').value = 500;
       showPage('withdraw-form');
     }
-    function submitWithdraw() {
+
+    async function submitWithdraw() {
       const address = document.getElementById('withdraw-address').value.trim();
       const amount = Number(document.getElementById('withdraw-amount').value) || 0;
       if (!address) { alert('Enter address / UPI'); return; }
@@ -1445,10 +1487,27 @@
       if (balance < amount) { alert('Not enough balance'); return; }
       balance -= amount;
       updateUI();
-      saveBalance(-amount, 'withdraw', 'Withdrawal request');
-      saveToHistory('Withdrawal Request', -amount);
-      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
+      
+      const pType = (currentWithdrawType || 'UPI').toUpperCase();
+      saveBalance(-amount, 'withdraw', 'Withdrawal (' + pType + ') to ' + address);
+      saveToHistory('Withdrawal (' + pType + ')', -amount, 'withdraw', 'To: ' + address + ' • Status: Pending ⏳');
+
+      // Record to Supabase withdrawals table
+      if (sb && user) {
+        try {
+          await sb.from('withdrawals').insert([{
+            telegram_id: user.id,
+            amount: amount,
+            payout_type: currentWithdrawType,
+            address: address,
+            status: 'pending'
+          }]);
+        } catch(e) {}
+      }
+
+      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\nTo: ' + address + '\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
       showPage('wallet');
+      openWalletHistory('coins');
     }
 
     // ========== ADMIN ==========
@@ -1456,6 +1515,7 @@
       prices.channel = Number(document.getElementById('price-channel').value) || 200;
       prices.bot = Number(document.getElementById('price-bot').value) || 150;
       prices.views = Number(document.getElementById('price-views').value) || 50;
+      prices.watch = Number(document.getElementById('price-watch').value) || 70;
       prices.install = Number(document.getElementById('price-install').value) || 300;
       prices.traffic = Number(document.getElementById('price-traffic').value) || 80;
       prices.banner = Number(document.getElementById('price-banner').value) || 100;
@@ -1468,6 +1528,7 @@
       document.getElementById('price-channel').value = prices.channel;
       document.getElementById('price-bot').value = prices.bot;
       document.getElementById('price-views').value = prices.views;
+      if (document.getElementById('price-watch')) document.getElementById('price-watch').value = prices.watch || 70;
       document.getElementById('price-install').value = prices.install;
       document.getElementById('price-traffic').value = prices.traffic;
       document.getElementById('price-banner').value = prices.banner;
@@ -1505,11 +1566,14 @@
       if (!container) return;
       container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
 
-      // Load from local orders first
       let allTasks = [];
+      const seenIds = new Set();
+
       try {
         const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
-        allTasks = orders.filter(t => t.category === cat || (cat === 'other' && !t.category));
+        orders.filter(t => t.category === cat || (cat === 'other' && !t.category)).forEach(t => {
+          if (!seenIds.has(t.id)) { seenIds.add(t.id); allTasks.push(t); }
+        });
       } catch(e) {}
 
       if (sb) {
@@ -1518,7 +1582,11 @@
           if (cat === 'other') query = query.or('category.eq.other,category.is.null');
           else query = query.eq('category', cat);
           const { data } = await query;
-          if (data) allTasks = allTasks.concat(data);
+          if (data) {
+            data.forEach(t => {
+              if (!seenIds.has(t.id)) { seenIds.add(t.id); allTasks.push(t); }
+            });
+          }
         } catch(e) {}
       }
 
@@ -1557,28 +1625,84 @@
         completedTasks.push(task.id);
         localStorage.setItem(completedKey, JSON.stringify(completedTasks));
       }
-      saveToHistory(task.title||'Task', reward);
+      saveToHistory(task.title||'Task', reward, 'task', (task.category ? task.category.toUpperCase() : 'TASK'));
       addCoins(reward, task.title||'Task');
       loadCategoryTasks(currentCategory);
     }
 
-    function saveToHistory(title, amount) {
+    function saveToHistory(title, amount, type = 'task', details = '') {
       const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
-      history.unshift({ title, amount, time: new Date().toLocaleString() });
-      if (history.length > 30) history.length = 30;
+      history.unshift({
+        title,
+        amount,
+        type,
+        details,
+        time: new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short' }) + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      });
+      if (history.length > 50) history.length = 50;
       localStorage.setItem('vtn_history_'+userId, JSON.stringify(history));
     }
 
-    function loadHistory() {
-      const container = document.getElementById('history-list');
-      if (!container) return;
+    let activeWalletTab = null;
+
+    function openWalletHistory(type) {
+      const container = document.getElementById('history-container');
+      const title = document.getElementById('history-view-title');
+      const list = document.getElementById('history-list');
+      if (!container || !list) return;
+
+      if (activeWalletTab === type && container.style.display === 'block') {
+        closeWalletHistory();
+        return;
+      }
+
+      activeWalletTab = type;
+      container.style.display = 'block';
       const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
-      if (!history.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>'; return; }
-      let html = '';
-      history.forEach(item => {
-        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
-      });
-      container.innerHTML = html;
+
+      if (type === 'task') {
+        title.innerHTML = '📋 Task History';
+        const tasks = history.filter(item => item.type === 'task' || item.type === 'ad' || item.type === 'official' || !item.type);
+        if (!tasks.length) {
+          list.innerHTML = '<div class="card" style="text-align:center;color:#888;">No completed tasks yet</div>';
+          return;
+        }
+        let html = '';
+        tasks.forEach(item => {
+          html += '<div class="list-item" style="border-left:4px solid #4CAF50;"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+(item.title||'Task')+'</h4><p>'+(item.time||'')+(item.details ? ' • '+item.details : '')+'</p></div><div style="font-weight:700;color:#2E7D32;">+'+(item.amount||0)+'</div></div>';
+        });
+        list.innerHTML = html;
+      } else {
+        title.innerHTML = '💳 Withdrawals & Coins Activity';
+        const coinsActivity = history.filter(item => item.type === 'withdraw' || item.type === 'admin' || item.type === 'checkin' || item.type === 'promo' || item.type === 'game');
+        if (!coinsActivity.length) {
+          list.innerHTML = '<div class="card" style="text-align:center;color:#888;">No withdrawals or coin transactions yet</div>';
+          return;
+        }
+        let html = '';
+        coinsActivity.forEach(item => {
+          const isPos = Number(item.amount) > 0;
+          const isWithdraw = item.type === 'withdraw';
+          const icon = isWithdraw ? '💸' : (item.type === 'checkin' ? '🎁' : (item.type === 'game' ? '🎮' : (isPos ? '💰' : '📢')));
+          const bg = isWithdraw ? '#FF9800' : (isPos ? '#2196F3' : '#c8102e');
+          const color = isWithdraw ? '#E65100' : (isPos ? '#1565C0' : '#c8102e');
+          const detailHtml = item.details ? '<p style="color:#666;font-size:11px;margin-top:2px;">'+item.details+'</p>' : '';
+          html += '<div class="list-item" style="border-left:4px solid '+bg+';"><div class="icon" style="background:'+bg+';">'+icon+'</div><div class="info"><h4>'+(item.title||'Transaction')+'</h4><p>'+(item.time||'')+'</p>'+detailHtml+'</div><div style="font-weight:700;color:'+color+';">'+(isPos ? '+' : '')+(item.amount||0)+'</div></div>';
+        });
+        list.innerHTML = html;
+      }
+    }
+
+    function closeWalletHistory() {
+      const container = document.getElementById('history-container');
+      if (container) container.style.display = 'none';
+      activeWalletTab = null;
+    }
+
+    function loadHistory() {
+      if (activeWalletTab) {
+        openWalletHistory(activeWalletTab);
+      }
     }
 
     // ADMIN functions
