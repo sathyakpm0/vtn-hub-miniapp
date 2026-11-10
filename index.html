@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Knife Hit Fruits - Level Up</title>
+  <title>Knife Hit Fruits - Reverse Edition</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -17,7 +17,7 @@
     }
 
     body {
-      background: #090d16;
+      background: #070a13;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       color: white;
@@ -58,7 +58,7 @@
     }
 
     #score {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: 900;
       line-height: 1;
       background: linear-gradient(180deg, #ffffff 40%, #94a3b8 100%);
@@ -75,16 +75,31 @@
       letter-spacing: 0.6px;
     }
 
+    .level-info-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
     #level-badge {
       font-size: 14px;
       font-weight: 800;
       color: #38bdf8;
       background: rgba(15, 23, 42, 0.75);
-      padding: 8px 18px;
+      padding: 6px 16px;
       border-radius: 999px;
       border: 1px solid rgba(56, 189, 248, 0.35);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), 0 0 12px rgba(56, 189, 248, 0.2);
-      letter-spacing: 0.5px;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+
+    #weapon-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #facc15;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
     }
 
     #knife-magazine {
@@ -99,24 +114,22 @@
     }
 
     .knife-icon {
-      width: 12px;
-      height: 28px;
-      background: linear-gradient(180deg, #f8fafc 40%, #94a3b8 100%);
-      clip-path: polygon(50% 0%, 100% 20%, 80% 70%, 80% 100%, 20% 100%, 20% 70%, 0% 20%);
-      filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
-      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+      width: 14px;
+      height: 30px;
+      border-radius: 2px;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
     }
 
     .knife-icon.used {
-      opacity: 0.15;
-      transform: scale(0.7) translateY(4px);
-      filter: none;
+      opacity: 0.12 !important;
+      transform: scale(0.65) translateY(4px);
+      filter: none !important;
     }
 
     #game-over, #start-screen, #level-banner {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(9, 13, 22, 0.98) 100%);
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.90) 0%, rgba(7, 10, 19, 0.98) 100%);
       backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
@@ -133,10 +146,10 @@
     }
 
     h1 {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 900;
       letter-spacing: -1px;
-      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #f43f5e 100%);
+      background: linear-gradient(135deg, #38bdf8 0%, #a855f7 50%, #f43f5e 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -159,7 +172,6 @@
       font-size: 15px;
       color: #94a3b8;
       margin-bottom: 12px;
-      letter-spacing: 0.5px;
     }
 
     .btn {
@@ -172,7 +184,7 @@
       border-radius: 999px;
       cursor: pointer;
       pointer-events: auto;
-      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45), inset 0 1px 1px rgba(255,255,255,0.4);
       transition: transform 0.12s ease, filter 0.12s ease;
     }
 
@@ -185,14 +197,29 @@
       font-size: 15px;
       color: #94a3b8;
       line-height: 1.6;
-      max-width: 290px;
+      max-width: 300px;
     }
 
     #banner-text {
-      font-size: 40px;
+      font-size: 38px;
       font-weight: 900;
       color: #4ade80;
       text-shadow: 0 0 25px rgba(74, 222, 128, 0.5);
+    }
+
+    #banner-weapon {
+      font-size: 18px;
+      font-weight: 800;
+      color: #facc15;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
+    }
+
+    #banner-sub {
+      color: #94a3b8;
+      font-size: 15px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -205,20 +232,28 @@
         <div id="score">0</div>
         <div id="best">BEST: 0</div>
       </div>
-      <div id="level-badge">STAGE 1</div>
+      <div class="level-info-box">
+        <div id="level-badge">STAGE 1</div>
+        <div id="weapon-name">IRON DAGGER</div>
+      </div>
     </div>
 
     <div id="knife-magazine"></div>
 
     <div id="start-screen">
       <h1>KNIFE HIT</h1>
-      <p class="instructions">Tap to launch blades into the rotating fruit.<br><span style="color:#f87171; font-weight:700;">Never hit another blade!</span></p>
+      <p class="instructions">
+        Hit rotating fruits with sharp blades.<br>
+        <span style="color:#f87171; font-weight:700;">WARNING:</span> The target <span style="color:#38bdf8; font-weight:700;">REVERSES</span> direction when hit!<br>
+        Unlock heavier & wider blades every stage.
+      </p>
       <button class="btn" id="start-btn">PLAY NOW</button>
     </div>
 
     <div id="level-banner">
       <div id="banner-text">STAGE 2</div>
-      <p style="color:#94a3b8; font-size: 16px; font-weight:600;">Faster Spin & Unstable Turns!</p>
+      <div id="banner-weapon">UNLOCKED: CRIMSON KUKRI</div>
+      <p id="banner-sub">Target speeds up and reverses on every impact!</p>
     </div>
 
     <div id="game-over">
@@ -236,8 +271,8 @@
       tg.ready();
       tg.expand();
       tg.disableVerticalSwipes?.();
-      tg.setHeaderColor?.('#090d16');
-      tg.setBackgroundColor?.('#090d16');
+      tg.setHeaderColor?.('#070a13');
+      tg.setBackgroundColor?.('#070a13');
     }
 
     function haptic(type = 'light') {
@@ -251,7 +286,7 @@
       } catch (e) {}
     }
 
-    // ========== Procedural Sound Engine (Web Audio API) ==========
+    // ========== Procedural Audio Engine (Web Audio API) ==========
     class SoundEngine {
       constructor() {
         this.ctx = null;
@@ -265,13 +300,13 @@
           this.ctx.resume();
         }
       }
-      playThrow() {
+      playThrow(pitch = 520) {
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(540, now);
+        osc.frequency.setValueAtTime(pitch, now);
         osc.frequency.exponentialRampToValueAtTime(140, now + 0.12);
         gain.gain.setValueAtTime(0.08, now);
         gain.gain.linearRampToValueAtTime(0, now + 0.12);
@@ -280,23 +315,22 @@
         osc.start(now);
         osc.stop(now + 0.12);
       }
-      playThud() {
+      playThud(isHeavy = false) {
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        // Low impact punch
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.exponentialRampToValueAtTime(35, now + 0.15);
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.frequency.setValueAtTime(isHeavy ? 140 : 190, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.16);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.15);
+        osc.stop(now + 0.16);
 
-        // Juicy squelch noise burst
+        // Splat noise
         const bufferSize = this.ctx.sampleRate * 0.08;
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -305,9 +339,9 @@
         noise.buffer = buffer;
         const filter = this.ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(700, now);
+        filter.frequency.setValueAtTime(750, now);
         const nGain = this.ctx.createGain();
-        nGain.gain.setValueAtTime(0.2, now);
+        nGain.gain.setValueAtTime(0.25, now);
         nGain.gain.linearRampToValueAtTime(0, now + 0.08);
         noise.connect(filter);
         filter.connect(nGain);
@@ -317,38 +351,102 @@
       playClink() {
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        [1600, 2400, 3200].forEach((freq) => {
+        [1500, 2200, 3100].forEach((freq) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.18, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.3);
+          osc.stop(now + 0.32);
         });
       }
       playShatter() {
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        [329.63, 440, 554.37, 659.25].forEach((freq, idx) => {
+        [329.63, 440, 554.37, 659.25, 880].forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+          osc.frequency.setValueAtTime(freq, now + idx * 0.05);
           gain.gain.setValueAtTime(0, now);
-          gain.gain.setValueAtTime(0.25, now + idx * 0.06);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.4);
+          gain.gain.setValueAtTime(0.25, now + idx * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.4);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-          osc.start(now + idx * 0.06);
-          osc.stop(now + idx * 0.06 + 0.45);
+          osc.start(now + idx * 0.05);
+          osc.stop(now + idx * 0.05 + 0.45);
         });
       }
     }
     const audio = new SoundEngine();
+
+    // ========== Weapon Profiles by Level ==========
+    const KNIFE_TYPES = [
+      {
+        id: 0,
+        name: 'Iron Dagger',
+        length: 74,
+        width: 5,
+        clearance: 0.28,
+        throwSpeed: -32,
+        pitch: 520,
+        accentColor: '#38bdf8',
+        iconGrad: 'linear-gradient(180deg, #f8fafc 40%, #94a3b8 100%)'
+      },
+      {
+        id: 1,
+        name: 'Crimson Kukri',
+        length: 78,
+        width: 7,
+        clearance: 0.33,
+        throwSpeed: -34,
+        pitch: 460,
+        accentColor: '#ef4444',
+        iconGrad: 'linear-gradient(180deg, #ef4444 30%, #7f1d1d 100%)'
+      },
+      {
+        id: 2,
+        name: 'Shadow Kunai',
+        length: 72,
+        width: 4.5,
+        clearance: 0.26,
+        throwSpeed: -38,
+        pitch: 620,
+        accentColor: '#a855f7',
+        iconGrad: 'linear-gradient(180deg, #334155 30%, #0f172a 100%)'
+      },
+      {
+        id: 3,
+        name: 'Royal Broadsword',
+        length: 82,
+        width: 8,
+        clearance: 0.36,
+        throwSpeed: -31,
+        pitch: 420,
+        accentColor: '#facc15',
+        iconGrad: 'linear-gradient(180deg, #fde047 30%, #ca8a04 100%)'
+      },
+      {
+        id: 4,
+        name: 'Cyber Plasma',
+        length: 80,
+        width: 6,
+        clearance: 0.31,
+        throwSpeed: -39,
+        pitch: 740,
+        accentColor: '#06b6d4',
+        iconGrad: 'linear-gradient(180deg, #22d3ee 30%, #0891b2 100%)'
+      }
+    ];
+
+    function getKnifeForLevel(lvl) {
+      const idx = Math.min(KNIFE_TYPES.length - 1, lvl - 1);
+      return KNIFE_TYPES[idx];
+    }
 
     // ========== Canvas Setup ==========
     const canvas = document.getElementById('game');
@@ -356,10 +454,12 @@
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
     const levelBadge = document.getElementById('level-badge');
+    const weaponNameEl = document.getElementById('weapon-name');
     const magazineEl = document.getElementById('knife-magazine');
     const gameOverEl = document.getElementById('game-over');
     const levelBanner = document.getElementById('level-banner');
     const bannerText = document.getElementById('banner-text');
+    const bannerWeapon = document.getElementById('banner-weapon');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
     const startScreen = document.getElementById('start-screen');
@@ -381,17 +481,21 @@
 
     // ========== Game State ==========
     let score = 0;
-    let bestScore = parseInt(localStorage.getItem('knifeHitBest_v2') || '0');
+    let bestScore = parseInt(localStorage.getItem('knifeHitBest_v3') || '0');
     bestEl.textContent = `BEST: ${bestScore}`;
 
     let level = 1;
+    let currentKnife = getKnifeForLevel(1);
     let knivesTotal = 6;
     let knivesLeft = 6;
     let gameState = 'start';
+
+    // Target Spin & Reverse Mechanics
     let logAngle = 0;
-    let logBaseSpeed = 0.024;
-    let logSpeedModifier = 1;
-    let speedShiftTimer = 0;
+    let logCurrentSpeed = 0.024;
+    let targetBaseSpeed = 0.024;
+    let reverseCooldown = 0;
+    let brakeTimer = 0;
 
     let stuckKnives = [];
     let activeKnife = null;
@@ -400,7 +504,7 @@
     let particles = [];
     let floatingTexts = [];
 
-    // Screen and target motion dynamics
+    // Motion physics
     let screenShake = 0;
     let targetRecoilY = 0;
     let standbyKnifeYOffset = 0;
@@ -417,6 +521,8 @@
       for (let i = 0; i < knivesTotal; i++) {
         const div = document.createElement('div');
         div.className = 'knife-icon' + (i >= knivesLeft ? ' used' : '');
+        div.style.background = currentKnife.iconGrad;
+        div.style.filter = `drop-shadow(0 0 5px ${currentKnife.accentColor})`;
         magazineEl.appendChild(div);
       }
     }
@@ -427,13 +533,18 @@
       deflectedKnife = null;
       fruitShatterPieces = [];
 
-      // Pre-planted knives to ramp up challenge
+      currentKnife = getKnifeForLevel(level);
+      weaponNameEl.textContent = currentKnife.name;
+      weaponNameEl.style.color = currentKnife.accentColor;
+
+      // Escalating pre-stuck knives
       const preCount = Math.min(4, Math.floor((level - 1) / 2));
       let currentAngle = Math.random() * Math.PI * 2;
       for (let i = 0; i < preCount; i++) {
         currentAngle += 0.85 + Math.random() * 0.7;
         stuckKnives.push({
           angle: currentAngle,
+          knife: currentKnife,
           wobble: 0,
           wobbleSpeed: 0
         });
@@ -444,17 +555,19 @@
       levelBadge.textContent = `STAGE ${level}`;
       updateMagazineUI();
 
-      // Progressive speed dynamics
-      const dir = level % 2 === 0 ? -1 : 1;
-      logBaseSpeed = (0.022 + Math.min(0.045, level * 0.005)) * dir;
-      speedShiftTimer = 0;
+      // Increased speed + randomized initial rotation direction
+      const dir = Math.random() > 0.5 ? 1 : -1;
+      targetBaseSpeed = (0.024 + Math.min(0.048, level * 0.006)) * dir;
+      logCurrentSpeed = targetBaseSpeed;
+      reverseCooldown = 0;
+      brakeTimer = 0;
     }
 
     // ========== Knife Throwing ==========
     function throwKnife() {
       if (gameState !== 'playing' || activeKnife || knivesLeft <= 0) return;
 
-      audio.playThrow();
+      audio.playThrow(currentKnife.pitch);
       haptic('light');
 
       knivesLeft--;
@@ -463,10 +576,10 @@
       activeKnife = {
         x: width / 2,
         y: height * 0.80,
-        vy: -32
+        vy: currentKnife.throwSpeed,
+        knife: currentKnife
       };
 
-      // Animate next standby knife loading in
       standbyKnifeYOffset = 30;
     }
 
@@ -477,76 +590,190 @@
       throwKnife();
     });
 
-    // ========== Procedural Graphics: Realistic Knife Drawing ==========
-    function drawKnifeMesh(ctx, length = 76, widthScale = 1) {
+    // ========== Dynamic Knife Renderers by Weapon Type ==========
+    function drawKnife(ctx, knifeProfile, isStandby = false) {
       ctx.save();
-      const hw = 5 * widthScale;
+      const hw = knifeProfile.width;
+      const len = knifeProfile.length;
+      const id = knifeProfile.id;
 
-      // Drop Shadow for 3D depth
       ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
       ctx.shadowBlur = 8;
       ctx.shadowOffsetY = 4;
 
-      // 1. Blade Body (Steel Gradient)
-      const bladeGrad = ctx.createLinearGradient(-hw, -length, hw, 0);
-      bladeGrad.addColorStop(0, '#ffffff');
-      bladeGrad.addColorStop(0.3, '#e2e8f0');
-      bladeGrad.addColorStop(0.7, '#94a3b8');
-      bladeGrad.addColorStop(1, '#64748b');
+      if (id === 0) {
+        // ========== 1. IRON COMBAT DAGGER ==========
+        const bladeGrad = ctx.createLinearGradient(-hw, -len, hw, 0);
+        bladeGrad.addColorStop(0, '#ffffff');
+        bladeGrad.addColorStop(0.3, '#e2e8f0');
+        bladeGrad.addColorStop(1, '#64748b');
 
-      ctx.beginPath();
-      ctx.moveTo(0, -length); // Razor sharp tip
-      ctx.lineTo(hw, -length + 18);
-      ctx.lineTo(hw * 0.85, 0);
-      ctx.lineTo(-hw * 0.85, 0);
-      ctx.lineTo(-hw, -length + 18);
-      ctx.closePath();
-      ctx.fillStyle = bladeGrad;
-      ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(0, -len);
+        ctx.lineTo(hw, -len + 16);
+        ctx.lineTo(hw * 0.8, 0);
+        ctx.lineTo(-hw * 0.8, 0);
+        ctx.lineTo(-hw, -len + 16);
+        ctx.closePath();
+        ctx.fillStyle = bladeGrad;
+        ctx.fill();
 
-      // Clear shadow for crisp inner bevel
-      ctx.shadowColor = 'transparent';
+        ctx.shadowColor = 'transparent';
+        ctx.beginPath();
+        ctx.moveTo(0, -len + 4);
+        ctx.lineTo(0, -2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
 
-      // 2. Blade Bevel Spine (Light Glint)
-      ctx.beginPath();
-      ctx.moveTo(0, -length + 4);
-      ctx.lineTo(0, -2);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+        // Brass Guard & Handle
+        ctx.fillStyle = '#eab308';
+        ctx.fillRect(-hw * 1.5, 0, hw * 3, 5);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(-hw * 0.7, 5, hw * 1.4, 22);
 
-      // 3. Brass / Gold Guard
-      const guardGrad = ctx.createLinearGradient(-hw * 1.6, 0, hw * 1.6, 4);
-      guardGrad.addColorStop(0, '#fef08a');
-      guardGrad.addColorStop(0.5, '#eab308');
-      guardGrad.addColorStop(1, '#a16207');
-      ctx.fillStyle = guardGrad;
-      ctx.beginPath();
-      ctx.roundRect(-hw * 1.6, 0, hw * 3.2, 5, 2);
-      ctx.fill();
+      } else if (id === 1) {
+        // ========== 2. CRIMSON KUKRI (CURVED CHOPPER) ==========
+        const kukriGrad = ctx.createLinearGradient(-hw, -len, hw, 0);
+        kukriGrad.addColorStop(0, '#fca5a5');
+        kukriGrad.addColorStop(0.5, '#ef4444');
+        kukriGrad.addColorStop(1, '#7f1d1d');
 
-      // 4. Textured Ebony Handle
-      const handleGrad = ctx.createLinearGradient(-hw * 0.7, 5, hw * 0.7, 5);
-      handleGrad.addColorStop(0, '#334155');
-      handleGrad.addColorStop(0.5, '#0f172a');
-      handleGrad.addColorStop(1, '#1e293b');
-      ctx.fillStyle = handleGrad;
-      ctx.beginPath();
-      ctx.roundRect(-hw * 0.7, 5, hw * 1.4, 24, 2);
-      ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(0, -len);
+        ctx.quadraticCurveTo(hw * 2.2, -len * 0.55, hw * 0.8, 0);
+        ctx.lineTo(-hw * 0.8, 0);
+        ctx.quadraticCurveTo(-hw * 0.4, -len * 0.6, 0, -len);
+        ctx.closePath();
+        ctx.fillStyle = kukriGrad;
+        ctx.fill();
 
-      // Rivets
-      ctx.fillStyle = '#e2e8f0';
-      ctx.beginPath();
-      ctx.arc(0, 11, 1.2, 0, Math.PI * 2);
-      ctx.arc(0, 21, 1.2, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.fillStyle = '#1c1917';
+        ctx.fillRect(-hw * 1.4, 0, hw * 2.8, 4);
+        ctx.fillStyle = '#451a03';
+        ctx.roundRect(-hw * 0.8, 4, hw * 1.6, 24, 3);
+        ctx.fill();
 
-      // 5. Pommel (Counterweight cap)
-      ctx.fillStyle = guardGrad;
-      ctx.beginPath();
-      ctx.arc(0, 30, hw * 0.9, 0, Math.PI * 2);
-      ctx.fill();
+        // Ruby Pommel
+        ctx.beginPath();
+        ctx.arc(0, 29, hw * 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+
+      } else if (id === 2) {
+        // ========== 3. SHADOW KUNAI ==========
+        const kunaiGrad = ctx.createLinearGradient(-hw, -len, hw, 0);
+        kunaiGrad.addColorStop(0, '#94a3b8');
+        kunaiGrad.addColorStop(0.5, '#334155');
+        kunaiGrad.addColorStop(1, '#0f172a');
+
+        ctx.beginPath();
+        ctx.moveTo(0, -len);
+        ctx.lineTo(hw * 1.6, -len * 0.5);
+        ctx.lineTo(hw * 0.5, 0);
+        ctx.lineTo(-hw * 0.5, 0);
+        ctx.lineTo(-hw * 1.6, -len * 0.5);
+        ctx.closePath();
+        ctx.fillStyle = kunaiGrad;
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        // Cloth wrapped handle
+        ctx.fillStyle = '#a855f7';
+        ctx.fillRect(-hw * 0.6, 0, hw * 1.2, 20);
+
+        // Ring Pommel
+        ctx.beginPath();
+        ctx.arc(0, 26, 7, 0, Math.PI * 2);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#94a3b8';
+        ctx.stroke();
+
+      } else if (id === 3) {
+        // ========== 4. ROYAL GOLDEN BROADSWORD ==========
+        const goldGrad = ctx.createLinearGradient(-hw, -len, hw, 0);
+        goldGrad.addColorStop(0, '#fef08a');
+        goldGrad.addColorStop(0.4, '#eab308');
+        goldGrad.addColorStop(1, '#854d0e');
+
+        ctx.beginPath();
+        ctx.moveTo(0, -len);
+        ctx.lineTo(hw * 1.2, -len + 20);
+        ctx.lineTo(hw, 0);
+        ctx.lineTo(-hw, 0);
+        ctx.lineTo(-hw * 1.2, -len + 20);
+        ctx.closePath();
+        ctx.fillStyle = goldGrad;
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        // Center Fuller Groove with Sapphire
+        ctx.beginPath();
+        ctx.moveTo(0, -len + 15);
+        ctx.lineTo(0, -8);
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#0284c7';
+        ctx.stroke();
+
+        // Winged Gold Guard
+        ctx.fillStyle = '#ca8a04';
+        ctx.beginPath();
+        ctx.moveTo(-hw * 2.2, 3);
+        ctx.lineTo(hw * 2.2, 3);
+        ctx.lineTo(0, -3);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#1e1b4b';
+        ctx.roundRect(-hw * 0.7, 3, hw * 1.4, 25, 2);
+        ctx.fill();
+
+        // Sapphire Pommel
+        ctx.beginPath();
+        ctx.arc(0, 30, hw, 0, Math.PI * 2);
+        ctx.fillStyle = '#38bdf8';
+        ctx.fill();
+
+      } else {
+        // ========== 5. CYBER PLASMA KATANA ==========
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 14;
+
+        // Plasma Beam Edge
+        ctx.beginPath();
+        ctx.moveTo(0, -len);
+        ctx.lineTo(hw, -len + 14);
+        ctx.lineTo(hw * 0.6, 0);
+        ctx.lineTo(-hw * 0.6, 0);
+        ctx.lineTo(-hw, -len + 14);
+        ctx.closePath();
+        ctx.fillStyle = '#22d3ee';
+        ctx.fill();
+
+        // White hot interior core
+        ctx.beginPath();
+        ctx.moveTo(0, -len + 4);
+        ctx.lineTo(hw * 0.4, -len + 14);
+        ctx.lineTo(0, -2);
+        ctx.lineTo(-hw * 0.4, -len + 14);
+        ctx.closePath();
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        // Carbon Fiber Hilt
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(-hw * 1.4, 0, hw * 2.8, 4);
+        ctx.fillStyle = '#1e293b';
+        ctx.roundRect(-hw * 0.7, 4, hw * 1.4, 26, 2);
+        ctx.fill();
+
+        // Neon power bands
+        ctx.fillStyle = '#06b6d4';
+        ctx.fillRect(-hw * 0.7, 10, hw * 1.4, 2);
+        ctx.fillRect(-hw * 0.7, 18, hw * 1.4, 2);
+      }
 
       ctx.restore();
     }
@@ -554,19 +781,15 @@
     // ========== Procedural Graphics: Photorealistic Fruit Logs ==========
     function drawFruitLog(ctx, typeIndex, radius) {
       const type = typeIndex % 4;
-
-      // 3D Rim Bevel Spherical Gradient
       const grad3D = ctx.createRadialGradient(-radius * 0.35, -radius * 0.35, 10, 0, 0, radius);
 
       if (type === 0) {
-        // ========== 1. WATERMELON ==========
-        // Dark rind
+        // WATERMELON
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#14532d';
         ctx.fill();
 
-        // Rind zebra stripes
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 5;
         for (let a = 0; a < Math.PI * 2; a += 0.38) {
@@ -575,13 +798,11 @@
           ctx.stroke();
         }
 
-        // Inner white/pale rind
         ctx.beginPath();
         ctx.arc(0, 0, radius - 8, 0, Math.PI * 2);
         ctx.fillStyle = '#ecfccb';
         ctx.fill();
 
-        // Ruby pulp
         grad3D.addColorStop(0, '#f87171');
         grad3D.addColorStop(0.85, '#ef4444');
         grad3D.addColorStop(1, '#b91c1c');
@@ -590,7 +811,6 @@
         ctx.fillStyle = grad3D;
         ctx.fill();
 
-        // Concentric Black Seeds
         ctx.fillStyle = '#0f172a';
         for (let i = 0; i < 12; i++) {
           const a = (i / 12) * Math.PI * 2;
@@ -601,25 +821,21 @@
         }
 
       } else if (type === 1) {
-        // ========== 2. BLOOD ORANGE ==========
-        // Orange Zest
+        // BLOOD ORANGE
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#ea580c';
         ctx.fill();
 
-        // White Pith
         ctx.beginPath();
         ctx.arc(0, 0, radius - 6, 0, Math.PI * 2);
         ctx.fillStyle = '#ffedd5';
         ctx.fill();
 
-        // 8 Translucent Segments
         const segCount = 8;
         for (let i = 0; i < segCount; i++) {
           const startA = (i / segCount) * Math.PI * 2 + 0.05;
           const endA = ((i + 1) / segCount) * Math.PI * 2 - 0.05;
-
           const sGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, radius - 12);
           sGrad.addColorStop(0, '#f97316');
           sGrad.addColorStop(1, '#dc2626');
@@ -632,21 +848,13 @@
           ctx.fill();
         }
 
-        // Center pith core
-        ctx.beginPath();
-        ctx.arc(0, 0, 7, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffedd5';
-        ctx.fill();
-
       } else if (type === 2) {
-        // ========== 3. KIWI ==========
-        // Fuzzy Brown Skin
+        // KIWI
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#78350f';
         ctx.fill();
 
-        // Lime Pulp
         grad3D.addColorStop(0, '#bef264');
         grad3D.addColorStop(0.7, '#84cc16');
         grad3D.addColorStop(1, '#4d7c0f');
@@ -655,13 +863,11 @@
         ctx.fillStyle = grad3D;
         ctx.fill();
 
-        // Creamy Core
         ctx.beginPath();
         ctx.arc(0, 0, radius * 0.28, 0, Math.PI * 2);
         ctx.fillStyle = '#f7fee7';
         ctx.fill();
 
-        // Seed Ring & Sunburst Rays
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.lineWidth = 1.5;
         for (let a = 0; a < Math.PI * 2; a += 0.25) {
@@ -670,7 +876,6 @@
           ctx.lineTo(Math.cos(a) * radius * 0.62, Math.sin(a) * radius * 0.62);
           ctx.stroke();
 
-          // Tiny black seeds
           ctx.fillStyle = '#1c1917';
           ctx.beginPath();
           ctx.arc(Math.cos(a + 0.1) * radius * 0.45, Math.sin(a + 0.1) * radius * 0.45, 2, 0, Math.PI * 2);
@@ -678,23 +883,12 @@
         }
 
       } else {
-        // ========== 4. DRAGONFRUIT (PITAYA) ==========
-        // Jagged Hot Pink Skin
+        // DRAGONFRUIT
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#db2777';
         ctx.fill();
 
-        // Green scale accents
-        ctx.fillStyle = '#84cc16';
-        for (let i = 0; i < 8; i++) {
-          const a = (i / 8) * Math.PI * 2;
-          ctx.beginPath();
-          ctx.ellipse(Math.cos(a) * radius, Math.sin(a) * radius, 6, 12, a + Math.PI / 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // White speck pulp
         grad3D.addColorStop(0, '#ffffff');
         grad3D.addColorStop(0.85, '#f1f5f9');
         grad3D.addColorStop(1, '#cbd5e1');
@@ -703,7 +897,6 @@
         ctx.fillStyle = grad3D;
         ctx.fill();
 
-        // Multitude of small seeds
         ctx.fillStyle = '#0f172a';
         for (let i = 0; i < 36; i++) {
           const dist = 14 + (i * 2.1) % (radius - 20);
@@ -714,14 +907,13 @@
         }
       }
 
-      // Specular surface sheen
       ctx.beginPath();
       ctx.arc(-radius * 0.35, -radius * 0.35, radius * 0.35, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
       ctx.fill();
     }
 
-    // ========== Fruit Shatter Chunks on Level Complete ==========
+    // ========== Shatter Chunks on Level Complete ==========
     function createFruitShatter(x, y, radius, typeIndex) {
       const pieceCount = 8;
       for (let i = 0; i < pieceCount; i++) {
@@ -745,11 +937,11 @@
         });
       }
 
-      // Scatter attached knives flying outward
       stuckKnives.forEach(k => {
         const outAngle = logAngle + k.angle;
         fruitShatterPieces.push({
           isKnife: true,
+          knife: k.knife,
           x: x + Math.cos(outAngle) * radius,
           y: y + Math.sin(outAngle) * radius,
           vx: Math.cos(outAngle) * 8,
@@ -762,13 +954,13 @@
       stuckKnives = [];
     }
 
-    // ========== Splashes, Sparks, & Particles ==========
+    // ========== Particles & Juice Spatters ==========
     function spawnJuiceBurst(x, y, typeIndex) {
       const colors = [
-        ['#ef4444', '#f87171', '#b91c1c'], // Watermelon
-        ['#f97316', '#fb923c', '#ea580c'], // Orange
-        ['#84cc16', '#bef264', '#4d7c0f'], // Kiwi
-        ['#db2777', '#f43f5e', '#cbd5e1']  // Dragonfruit
+        ['#ef4444', '#f87171', '#b91c1c'],
+        ['#f97316', '#fb923c', '#ea580c'],
+        ['#84cc16', '#bef264', '#4d7c0f'],
+        ['#db2777', '#f43f5e', '#cbd5e1']
       ][typeIndex % 4];
 
       for (let i = 0; i < 22; i++) {
@@ -787,15 +979,15 @@
     }
 
     function spawnDeflectionSparks(x, y) {
-      for (let i = 0; i < 28; i++) {
-        const speed = 4 + Math.random() * 10;
+      for (let i = 0; i < 30; i++) {
+        const speed = 4 + Math.random() * 11;
         const a = Math.random() * Math.PI * 2;
         particles.push({
           x, y,
           vx: Math.cos(a) * speed,
           vy: Math.sin(a) * speed,
-          color: ['#ffffff', '#fef08a', '#38bdf8', '#fbbf24'][Math.floor(Math.random() * 4)],
-          size: 2 + Math.random() * 3,
+          color: ['#ffffff', '#fef08a', '#38bdf8', '#ef4444'][Math.floor(Math.random() * 4)],
+          size: 2 + Math.random() * 3.5,
           alpha: 1,
           decay: 0.035
         });
@@ -804,29 +996,24 @@
 
     // ========== Main Update Cycle ==========
     function update(dt) {
-      // Standby knife reload animation
       if (standbyKnifeYOffset > 0) {
         standbyKnifeYOffset = Math.max(0, standbyKnifeYOffset - dt * 140);
       }
 
-      // Log Recoil Recovery
       targetRecoilY *= 0.85;
       if (Math.abs(targetRecoilY) < 0.2) targetRecoilY = 0;
 
-      // Screen Shake Decay
       screenShake *= 0.88;
       if (screenShake < 0.2) screenShake = 0;
 
-      // Update Stuck Knives Vibration
       stuckKnives.forEach(k => {
         if (Math.abs(k.wobble) > 0.001 || Math.abs(k.wobbleSpeed) > 0.001) {
-          k.wobbleSpeed += -k.wobble * 48 * dt; // spring force
-          k.wobbleSpeed *= 0.85; // damping
+          k.wobbleSpeed += -k.wobble * 48 * dt;
+          k.wobbleSpeed *= 0.85;
           k.wobble += k.wobbleSpeed;
         }
       });
 
-      // Update Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -836,7 +1023,6 @@
         if (p.alpha <= 0) particles.splice(i, 1);
       }
 
-      // Update Floating Texts
       for (let i = floatingTexts.length - 1; i >= 0; i--) {
         const ft = floatingTexts[i];
         ft.y += ft.vy;
@@ -844,7 +1030,6 @@
         if (ft.alpha <= 0) floatingTexts.splice(i, 1);
       }
 
-      // Update Fruit Shatter Pieces
       for (let i = fruitShatterPieces.length - 1; i >= 0; i--) {
         const piece = fruitShatterPieces[i];
         piece.x += piece.vx;
@@ -857,7 +1042,6 @@
         }
       }
 
-      // Update Deflected Knife
       if (deflectedKnife) {
         deflectedKnife.x += deflectedKnife.vx;
         deflectedKnife.y += deflectedKnife.vy;
@@ -868,14 +1052,25 @@
 
       if (gameState !== 'playing') return;
 
-      // Target erratic speed & reversal dynamics
-      speedShiftTimer += dt;
-      if (level >= 2 && speedShiftTimer > 2.2) {
-        logSpeedModifier = Math.sin(Date.now() * 0.003) * 1.5;
+      // Unpredictable Erratic Speed Waves & Sudden Reversals
+      if (level >= 3) {
+        brakeTimer += dt;
+        if (brakeTimer > 3.2) {
+          // Momentary pause or whip
+          logCurrentSpeed = targetBaseSpeed * 0.15;
+          if (brakeTimer > 3.6) {
+            targetBaseSpeed = -targetBaseSpeed; // Spontaneous direction flip!
+            logCurrentSpeed = targetBaseSpeed;
+            brakeTimer = 0;
+          }
+        } else {
+          logCurrentSpeed = targetBaseSpeed * (1 + Math.sin(Date.now() * 0.0035) * 0.45);
+        }
       } else {
-        logSpeedModifier = 1;
+        logCurrentSpeed = targetBaseSpeed;
       }
-      logAngle += logBaseSpeed * logSpeedModifier;
+
+      logAngle += logCurrentSpeed;
 
       // Active Knife Fly Physics
       if (activeKnife) {
@@ -885,12 +1080,9 @@
         const ly = TARGET.y();
         const dist = Math.hypot(activeKnife.x - lx, activeKnife.y - ly);
 
-        // Check Target Penetration
         if (dist <= TARGET.radius + 12) {
           const hitAngle = Math.atan2(activeKnife.y - ly, activeKnife.x - lx) - logAngle;
-
-          // Knife-to-Knife Collision Precision (in radians)
-          const clearance = Math.max(0.18, 0.28 - level * 0.008);
+          const clearance = activeKnife.knife.clearance;
           let collidedKnife = null;
 
           for (let k of stuckKnives) {
@@ -903,10 +1095,9 @@
           }
 
           if (collidedKnife) {
-            // Deflection / Failure!
             audio.playClink();
             haptic('error');
-            screenShake = 16;
+            screenShake = 18;
             spawnDeflectionSparks(activeKnife.x, activeKnife.y);
 
             deflectedKnife = {
@@ -915,7 +1106,8 @@
               vx: (Math.random() - 0.5) * 8 - 4,
               vy: 7,
               rotation: 0,
-              vRot: 0.25
+              vRot: 0.25,
+              knife: activeKnife.knife
             };
 
             activeKnife = null;
@@ -923,17 +1115,25 @@
             return;
           }
 
-          // Successful Hit!
-          audio.playThud();
+          // SUCCESSFUL EMBEDDING
+          audio.playThud(level >= 3);
           haptic('medium');
-          screenShake = 4.5;
-          targetRecoilY = -7;
+          screenShake = 5.5;
+          targetRecoilY = -9;
+
+          // ==========================================
+          // KNIFE HIT REVERSE MECHANISM
+          // ==========================================
+          // Invert target rotation direction upon knife hit
+          targetBaseSpeed = -targetBaseSpeed * (1 + (Math.random() * 0.1 - 0.05));
+          logCurrentSpeed = targetBaseSpeed;
 
           spawnJuiceBurst(activeKnife.x, activeKnife.y, level - 1);
 
           stuckKnives.push({
             angle: hitAngle,
-            wobble: 0.16,
+            knife: activeKnife.knife,
+            wobble: 0.22,
             wobbleSpeed: 0
           });
 
@@ -942,17 +1142,16 @@
           scoreEl.textContent = score;
 
           floatingTexts.push({
-            x: activeKnife.x + 20,
+            x: activeKnife.x + 24,
             y: activeKnife.y,
             text: `+${earned}`,
-            color: '#38bdf8',
+            color: activeKnife.knife.accentColor,
             alpha: 1,
             vy: -2
           });
 
           activeKnife = null;
 
-          // Check Stage Victory
           if (stuckKnives.length >= knivesTotal) {
             triggerLevelUp();
           } else if (knivesLeft <= 0) {
@@ -966,67 +1165,67 @@
       gameState = 'leveling';
       audio.playShatter();
       haptic('success');
-      screenShake = 14;
+      screenShake = 16;
 
       createFruitShatter(TARGET.x(), TARGET.y(), TARGET.radius, level - 1);
 
       level++;
-      score += 100 * (level - 1);
+      score += 150 * (level - 1);
       scoreEl.textContent = score;
 
+      const nextWeapon = getKnifeForLevel(level);
       bannerText.textContent = `STAGE ${level}`;
+      bannerWeapon.textContent = `UNLOCKED: ${nextWeapon.name}`;
+      bannerWeapon.style.color = nextWeapon.accentColor;
       levelBanner.style.display = 'flex';
 
       setTimeout(() => {
         levelBanner.style.display = 'none';
         initLevel();
         gameState = 'playing';
-      }, 1300);
+      }, 1400);
     }
 
     // ========== Render Cycle ==========
     function render() {
       ctx.save();
 
-      // Screen Shake
       if (screenShake > 0) {
         ctx.translate((Math.random() - 0.5) * screenShake * 2, (Math.random() - 0.5) * screenShake * 2);
       }
 
-      // Background Radial Atmosphere
+      // Background
       const bgGrad = ctx.createRadialGradient(width / 2, height * 0.45, 50, width / 2, height * 0.5, width * 0.85);
-      bgGrad.addColorStop(0, '#1e293b');
-      bgGrad.addColorStop(0.65, '#0f172a');
-      bgGrad.addColorStop(1, '#090d16');
+      bgGrad.addColorStop(0, '#1a2234');
+      bgGrad.addColorStop(0.65, '#0c1220');
+      bgGrad.addColorStop(1, '#070a13');
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
       const lx = TARGET.x();
       const ly = TARGET.y();
 
-      // Draw Rotating Fruit Log (if alive)
+      // Draw Rotating Fruit
       if (gameState !== 'leveling') {
         ctx.save();
         ctx.translate(lx, ly);
         ctx.rotate(logAngle);
 
-        // Fruit Core
         drawFruitLog(ctx, level - 1, TARGET.radius);
 
-        // Stuck Knives with Realistic Wobble
         stuckKnives.forEach(k => {
           ctx.save();
           ctx.rotate(k.angle + k.wobble);
           ctx.translate(0, TARGET.radius - 8);
           ctx.rotate(Math.PI);
-          drawKnifeMesh(ctx, 72, 0.95);
+          drawKnife(ctx, k.knife);
           ctx.restore();
         });
 
         ctx.restore();
       }
 
-      // Draw Exploding Shatter Pieces (Level Clear)
+      // Draw Shattered Chunks
       fruitShatterPieces.forEach(p => {
         ctx.save();
         ctx.translate(p.x, p.y);
@@ -1034,7 +1233,7 @@
         ctx.globalAlpha = Math.max(0, p.alpha);
 
         if (p.isKnife) {
-          drawKnifeMesh(ctx, 72, 0.95);
+          drawKnife(ctx, p.knife);
         } else {
           ctx.beginPath();
           ctx.moveTo(0, 0);
@@ -1047,28 +1246,28 @@
       });
       ctx.globalAlpha = 1;
 
-      // Draw Airborne Active Knife
+      // Draw Active Flying Knife
       if (activeKnife) {
         ctx.save();
         ctx.translate(activeKnife.x, activeKnife.y);
-        drawKnifeMesh(ctx, 76, 1);
+        drawKnife(ctx, activeKnife.knife);
         ctx.restore();
       }
 
-      // Draw Deflected Spinning Knife (Game Over Impact)
+      // Draw Deflected Knife
       if (deflectedKnife) {
         ctx.save();
         ctx.translate(deflectedKnife.x, deflectedKnife.y);
         ctx.rotate(deflectedKnife.rotation);
-        drawKnifeMesh(ctx, 76, 1);
+        drawKnife(ctx, deflectedKnife.knife);
         ctx.restore();
       }
 
-      // Draw Standby Knife at Launcher (Springs up)
+      // Draw Launcher Standby Knife
       if (!activeKnife && gameState === 'playing' && knivesLeft > 0) {
         ctx.save();
         ctx.translate(width / 2, height * 0.80 + standbyKnifeYOffset);
-        drawKnifeMesh(ctx, 76, 1);
+        drawKnife(ctx, currentKnife, true);
         ctx.restore();
       }
 
@@ -1082,7 +1281,7 @@
       });
       ctx.globalAlpha = 1;
 
-      // Draw Floating Score Numbers
+      // Draw Floating Scores
       floatingTexts.forEach(ft => {
         ctx.font = '900 24px system-ui';
         ctx.fillStyle = ft.color;
@@ -1123,7 +1322,7 @@
       gameState = 'gameover';
       if (score > bestScore) {
         bestScore = score;
-        localStorage.setItem('knifeHitBest_v2', bestScore);
+        localStorage.setItem('knifeHitBest_v3', bestScore);
         bestEl.textContent = `BEST: ${bestScore}`;
       }
       finalScoreEl.textContent = score;
