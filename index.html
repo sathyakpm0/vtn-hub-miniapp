@@ -1,1348 +1,1717 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Toon Cricket 3-Overs Telegram Mini App</title>
-  <!-- Telegram WebApp Script -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VTN HUB</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Comic / Bubbly Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Bungee&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #FFF8E7;
+      color: #333;
+      padding-bottom: 80px;
+      min-height: 100vh;
     }
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #022c22;
-      font-family: 'Fredoka', system-ui, -apple-system, sans-serif;
-      color: #ffffff;
-      touch-action: manipulation;
+    .header {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      font-size: 18px;
+      font-weight: 700;
     }
-    #app-container {
-      position: relative;
-      width: 100%;
-      height: 100dvh;
-      max-width: 440px;
-      margin: 0 auto;
-      background: #0f172a;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    .card {
+      background: white;
+      margin: 12px 14px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
     }
-    /* Top HUD */
-    #hud {
-      flex: 0 0 auto;
-      background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
-      padding: 10px 14px 8px;
-      border-bottom: 1px solid rgba(16, 185, 129, 0.3);
-      z-index: 10;
+    .balance-card {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      margin: 14px;
+      border-radius: 18px;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(200,16,46,0.25);
     }
-    .hud-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .score-container {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-    .score-runs {
-      font-family: 'Bungee', Impact, sans-serif;
+    .balance-card .amount {
       font-size: 32px;
-      color: #facc15;
-      line-height: 1;
-    }
-    .score-wickets {
-      font-size: 15px;
-      font-weight: 700;
-      color: #94a3b8;
-    }
-    .score-overs {
-      font-size: 12px;
-      font-weight: 700;
-      color: #64748b;
-      margin-left: 2px;
-    }
-    .hud-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .wicket-sockets {
-      display: flex;
-      gap: 5px;
-    }
-    .wicket-pill {
-      width: 14px;
-      height: 26px;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
       font-weight: 800;
-      transition: all 0.2s ease;
+      color: #ffd700;
+      margin: 8px 0 14px;
     }
-    .wicket-live {
-      background: #d97706;
-      border: 1px solid #fbbf24;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-    }
-    .wicket-out {
-      background: rgba(153, 27, 27, 0.8);
-      border: 1px solid #ef4444;
-      color: #ef4444;
-    }
-    .icon-btn {
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid #334155;
-      color: #94a3b8;
-      border-radius: 8px;
-      padding: 6px 8px;
-      cursor: pointer;
+    .gold-btn {
+      background: linear-gradient(90deg, #ffd700, #ffb700);
+      color: #5c3d00;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
       font-size: 14px;
     }
-    /* Active Characters Bar */
-    .players-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid #1e293b;
-      padding: 3px 8px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-    }
-    .player-bat { color: #38bdf8; }
-    .player-bowl { color: #fde047; }
-    .hud-bottom-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .over-balls-wrap {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .over-label {
-      font-size: 10px;
-      font-weight: 800;
-      color: #34d399;
-      text-transform: uppercase;
-    }
-    .ball-dots {
-      display: flex;
-      gap: 4px;
-    }
-    .ball-badge {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #1e293b;
-      border: 1px solid #334155;
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .ball-badge.six { background: #facc15; color: #020617; border-color: #fef08a; }
-    .ball-badge.four { background: #38bdf8; color: #020617; border-color: #bae6fd; }
-    .ball-badge.wicket { background: #dc2626; color: #ffffff; border-color: #fca5a5; }
-    .ball-badge.single { background: #22c55e; color: #020617; border-color: #86efac; }
-    .ball-badge.dot { background: #475569; color: #cbd5e1; }
-    .ball-type-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #fde047;
-      max-width: 140px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    /* Pitch Canvas */
-    #canvas-container {
-      position: relative;
-      flex: 1 1 auto;
-      width: 100%;
-      background: #14532d;
-      overflow: hidden;
-    }
-    #game-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: pointer;
-    }
-    /* Only Button at Bottom */
-    #controls {
-      flex: 0 0 auto;
-      padding: 14px 16px 24px;
-      background: linear-gradient(0deg, #020617 0%, #0f172a 100%);
-      border-top: 1px solid #1e293b;
-      z-index: 10;
-    }
-    #hit-button {
-      width: 100%;
-      padding: 18px 20px;
-      border-radius: 18px;
-      font-family: 'Bungee', Impact, sans-serif;
-      font-size: 24px;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      cursor: pointer;
-      outline: none;
-      transition: transform 0.08s ease, filter 0.15s ease;
-      box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+      padding: 0 14px 14px;
     }
-    #hit-button.ready {
-      background: linear-gradient(90deg, #facc15 0%, #fbbf24 50%, #f59e0b 100%);
-      color: #020617;
-      border: 3px solid #fef08a;
-      animation: pulseBtn 1.2s infinite alternate ease-in-out;
-    }
-    #hit-button.waiting {
-      background: #16a34a;
-      color: #ffffff;
-      border: 3px solid #4ade80;
-    }
-    #hit-button.swung {
-      background: #1e293b;
-      color: #64748b;
-      border: 2px solid #334155;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-    #hit-button:active:not(.swung) {
-      transform: scale(0.96);
-    }
-    @keyframes pulseBtn {
-      from { transform: scale(1); filter: brightness(1); }
-      to { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 10px 30px rgba(250, 204, 21, 0.6); }
-    }
-    .hint-subtext {
+    .btn {
+      border-radius: 16px;
+      padding: 16px 10px;
       text-align: center;
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 8px;
+      font-size: 13px;
       font-weight: 600;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
-    /* Modals */
-    .modal-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.88);
-      backdrop-filter: blur(4px);
-      z-index: 50;
+    .btn .icon { font-size: 22px; margin-bottom: 5px; display: block; }
+    .list-item {
+      background: white;
+      margin: 0 14px 10px;
+      border-radius: 14px;
+      padding: 14px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 24px;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid #c8102e;
+    }
+    .list-item .icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: white;
+    }
+    .list-item .info { flex: 1; }
+    .list-item .info h4 { font-size: 14px; }
+    .list-item .info p { font-size: 12px; color: #888; margin-top: 2px; }
+    .start-btn {
+      background: #c8102e; color: white; border: none;
+      padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    }
+    .banner {
+      background: linear-gradient(135deg, #c8102e, #9b0c24);
+      margin: 14px; border-radius: 16px; padding: 16px; color: white;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ad-banner {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      margin: 14px; border-radius: 14px; padding: 14px; color: white;
+      text-align: center; border: 1px solid #ffd700;
+    }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: white;
+      display: flex; justify-content: space-around; padding: 10px 0;
+      box-shadow: 0 -3px 15px rgba(0,0,0,0.08); z-index: 200;
+    }
+    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; }
+    .nav-item.active { color: #c8102e; font-weight: 700; }
+    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .section-title {
+      margin: 16px 14px 10px; font-size: 15px; font-weight: 700; color: #c8102e;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #ddd;
+      border-radius: 10px; font-size: 14px;
+    }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+
+    /* Games */
+    .ttt-board {
+      display: grid; grid-template-columns: repeat(3, 85px); gap: 10px;
+      justify-content: center; margin: 20px 0;
+    }
+    .ttt-cell {
+      width: 85px; height: 85px; background: linear-gradient(145deg, #fff, #ffe8e8);
+      border: 3px solid #c8102e; border-radius: 16px; font-size: 36px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(200,16,46,0.15);
+    }
+    .spin-wrap { text-align: center; padding: 10px; }
+    .spin-pointer { font-size: 28px; color: #c8102e; margin-bottom: -15px; z-index: 2; position: relative; }
+    .spin-wheel {
+      width: 240px; height: 240px; border-radius: 50%; margin: 0 auto;
+      background: conic-gradient(
+        #c8102e 0deg 45deg, #ffd700 45deg 90deg, #4CAF50 90deg 135deg,
+        #2196F3 135deg 180deg, #9C27B0 180deg 225deg, #FF9800 225deg 270deg,
+        #E91E63 270deg 315deg, #00BCD4 315deg 360deg
+      );
+      border: 8px solid #5c3d00; box-shadow: 0 0 0 6px #ffd700, 0 8px 25px rgba(0,0,0,0.3);
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+      position: relative;
+    }
+    .spin-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 50px; height: 50px; background: #fff; border-radius: 50%;
+      border: 4px solid #c8102e; z-index: 5;
+    }
+    .quiz-option {
+      background: white; border: 2px solid #c8102e; border-radius: 12px;
+      padding: 14px; margin: 8px 14px; text-align: center; font-weight: 600; cursor: pointer;
+    }
+    .diff-btn {
+      padding: 8px 16px; border-radius: 20px; border: 2px solid #c8102e;
+      background: white; margin: 4px; font-weight: 600; cursor: pointer;
+    }
+    .diff-btn.active { background: #c8102e; color: white; }
+
+    /* Simple game styles */
+    .game-area {
+      background: #1a1a2e;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 14px;
+      color: white;
       text-align: center;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
     }
-    .modal-overlay.hidden { display: none; }
-    .modal-card {
-      width: 100%;
-      max-width: 350px;
-      background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-      border: 2px solid #f59e0b;
-      border-radius: 24px;
-      padding: 24px 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes popIn {
-      from { transform: scale(0.92); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .title-badge {
-      display: inline-block;
-      font-size: 11px;
+    .score-box {
+      font-size: 22px;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #6ee7b7;
-      background: rgba(6, 78, 59, 0.8);
-      border: 1px solid #10b981;
-      padding: 4px 12px;
-      border-radius: 20px;
+      color: #ffd700;
       margin-bottom: 12px;
     }
-    .title-h1 {
-      font-family: 'Bungee', Impact, sans-serif;
-      font-size: 38px;
-      color: #facc15;
-      text-shadow: 0 4px 10px rgba(0,0,0,0.8);
-      margin-bottom: 6px;
-      line-height: 1.1;
+    .game-btn {
+      background: #c8102e;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-weight: 700;
+      margin-top: 12px;
     }
-    .title-sub {
-      font-size: 13px;
-      color: #a7f3d0;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    .rules-box {
-      background: rgba(2, 6, 23, 0.7);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 16px;
-      padding: 14px;
-      text-align: left;
-      font-size: 12px;
-      color: #e2e8f0;
-      margin-bottom: 20px;
-    }
-    .rules-box h3 {
-      font-size: 11px;
-      font-weight: 800;
-      color: #facc15;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .rules-box li {
-      list-style: none;
-      margin-bottom: 6px;
-      display: flex;
-      gap: 6px;
-    }
-    .rules-box li span.num {
-      color: #34d399;
-      font-weight: 800;
-    }
-    .action-btn {
-      width: 100%;
-      padding: 16px;
-      border-radius: 16px;
-      font-family: 'Bungee', Impact, sans-serif;
-      font-size: 20px;
-      background: linear-gradient(90deg, #facc15, #f59e0b);
-      color: #020617;
-      border: 2px solid #fef08a;
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: transform 0.1s ease;
-    }
-    .action-btn:active { transform: scale(0.97); }
-    /* Game Over Scorecard */
-    .scorecard-grid {
-      display: flex;
-      justify-content: space-around;
-      background: rgba(2, 6, 23, 0.85);
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      padding: 14px 8px;
-      margin: 16px 0;
-    }
-    .scorecard-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .scorecard-label {
-      font-size: 10px;
-      font-weight: 800;
-      color: #94a3b8;
-      text-transform: uppercase;
-    }
-    .scorecard-val {
-      font-family: 'Bungee', Impact, sans-serif;
-      font-size: 28px;
-      line-height: 1.1;
-      margin-top: 4px;
-    }
-    .val-yellow { color: #facc15; }
-    .val-red { color: #ef4444; }
-    .val-white { font-family: 'Fredoka', sans-serif; font-size: 22px; font-weight: 800; color: #f8fafc; }
-    .stats-footer {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #cbd5e1;
-      margin-bottom: 20px;
-      padding: 0 4px;
-    }
-    .stats-footer strong { color: #facc15; }
   </style>
 </head>
 <body>
 
-<div id="app-container">
-  <!-- TOP SCOREBOARD HUD -->
-  <div id="hud">
-    <div class="hud-top-row">
-      <div class="score-container">
-        <span class="score-runs" id="hud-runs">0</span>
-        <span class="score-wickets">/ <span id="hud-wickets">0</span></span>
-        <span class="score-overs">(<span id="hud-overs">0.0</span> / 3.0 Ov)</span>
-      </div>
-      <div class="hud-right">
-        <div class="wicket-sockets" id="wicket-sockets">
-          <div class="wicket-pill wicket-live" id="w-sock-0"></div>
-          <div class="wicket-pill wicket-live" id="w-sock-1"></div>
-          <div class="wicket-pill wicket-live" id="w-sock-2"></div>
+  <div id="main-app">
+
+    <!-- HOME -->
+    <div id="home" class="page active">
+      <div class="header">👑 VTN Hub Bot</div>
+      <div class="card" style="display:flex; align-items:center; gap:12px;" onclick="showPage('profile')">
+        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
+        <div>
+          <div style="font-weight:700;" id="username">User</div>
+          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
         </div>
-        <button class="icon-btn" id="btn-sound" title="Toggle Sound">🔊</button>
+        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">VIP</div>
       </div>
-    </div>
-    <!-- Active Players Bar -->
-    <div class="players-bar">
-      <div class="player-bat" id="hud-batsman-name">🏏 Chintu Blaster (#18)</div>
-      <div class="player-bowl" id="hud-bowler-name">⚾ Speedy Bunty</div>
-    </div>
-    <div class="hud-bottom-row">
-      <div class="over-balls-wrap">
-        <span class="over-label" id="hud-over-idx">Ov 1:</span>
-        <div class="ball-dots" id="hud-ball-dots">
-          <div class="ball-badge"></div>
-          <div class="ball-badge"></div>
-          <div class="ball-badge"></div>
-          <div class="ball-badge"></div>
-          <div class="ball-badge"></div>
-          <div class="ball-badge"></div>
-        </div>
+      <div class="balance-card">
+        <div style="font-size:13px;opacity:0.9;">Your Balance</div>
+        <div class="amount" id="balance">0 Coins</div>
+        <button class="gold-btn" onclick="showPage('wallet')">Wallet & History</button>
       </div>
-      <div class="ball-type-title" id="hud-ball-name">Straight Seamer</div>
-    </div>
-  </div>
-
-  <!-- 2.5D CARTOON CRICKET PITCH CANVAS -->
-  <div id="canvas-container">
-    <canvas id="game-canvas"></canvas>
-  </div>
-
-  <!-- ONLY HIT BUTTON -->
-  <div id="controls">
-    <button id="hit-button" class="waiting" aria-label="Hit Ball">
-      <span>🏏</span>
-      <span id="hit-button-text">GET READY...</span>
-    </button>
-    <div class="hint-subtext">Tap anywhere or press Space/Enter to swing · 3 Overs (18 Balls)</div>
-  </div>
-
-  <!-- TITLE SCREEN OVERLAY -->
-  <div id="modal-title" class="modal-overlay">
-    <div class="modal-card">
-      <div class="title-badge">Telegram Mini App</div>
-      <div style="font-size: 64px; line-height: 1; margin-bottom: 6px;">🏏</div>
-      <h1 class="title-h1">TOON CRICKET</h1>
-      <p class="title-sub">Funny Characters · 3 Overs · 3 Wickets Knockout!</p>
-
-      <div class="rules-box">
-        <h3>⚡ How To Play (1 Button Only!)</h3>
-        <ul>
-          <li><span class="num">1.</span> Bowler delivers the ball down the pitch.</li>
-          <li><span class="num">2.</span> Watch ball bounce and enter the green strike zone!</li>
-          <li><span class="num">3.</span> Tap the big <strong style="color: #facc15;">HIT</strong> button to smash runs!</li>
-          <li><span class="num">4.</span> Fielders run after ball! Miss = Bowled (3 Wickets out).</li>
-        </ul>
+      <div class="ad-banner" onclick="alert('Banner Ad\nContact @Vtnhub0')">
+        <div style="font-size:12px;opacity:0.8;">Sponsored</div>
+        <div style="font-weight:700;margin:4px 0;">Place Your Ad Here</div>
+        <div style="font-size:12px;">Reach thousands of users</div>
       </div>
-
-      <button id="btn-start-game" class="action-btn">
-        <span>🏏</span> START MATCH!
-      </button>
-    </div>
-  </div>
-
-  <!-- GAME OVER / MATCH COMPLETE OVERLAY -->
-  <div id="modal-gameover" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div id="go-icon" style="font-size: 52px; margin-bottom: 6px;">💥</div>
-      <h2 id="go-title" style="font-family: 'Bungee', Impact, sans-serif; font-size: 24px; color: #facc15; margin-bottom: 4px;">ALL OUT!</h2>
-      <div id="go-perf-title" style="font-size: 14px; font-weight: 800; color: #34d399;">DUCK SUPREME! 🦆</div>
-      <div id="go-perf-sub" style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">Stumps cried for mercy!</div>
-
-      <div class="scorecard-grid">
-        <div class="scorecard-item">
-          <span class="scorecard-label">Runs</span>
-          <span class="scorecard-val val-yellow" id="go-runs">0</span>
+      <div class="section-title">Quick Actions</div>
+      <div class="grid">
+        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
+          <span class="icon">✅</span>Claim up to 100
         </div>
-        <div class="scorecard-item">
-          <span class="scorecard-label">Wickets</span>
-          <span class="scorecard-val val-red" id="go-wickets">3 / 3</span>
+        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
+          <span class="icon">🎯</span>Earn Tasks
         </div>
-        <div class="scorecard-item">
-          <span class="scorecard-label">Overs</span>
-          <span class="scorecard-val val-white" id="go-overs">0.3</span>
+        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
+          <span class="icon">📢</span>Promote
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
+          <span class="icon">🎮</span>Fun Zone
         </div>
       </div>
+      <div class="banner">
+        <div>
+          <div style="font-weight:700;font-size:15px;">Earn More, Refer Friends</div>
+          <div style="font-size:12px;opacity:0.9;">Level 1: 5% | Level 2: 2%</div>
+        </div>
+        <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
+      </div>
+    </div>
 
-      <div class="stats-footer">
-        <span>🚀 Sixes: <strong id="go-sixes">0</strong></span>
-        <span>⚡ Fours: <strong id="go-fours">0</strong></span>
-        <span>👑 High Score: <strong id="go-best">0</strong></span>
+    <!-- EARN -->
+    <div id="earn" class="page">
+      <div class="header">Earn Money</div>
+      <div class="section-title">Official Task</div>
+      <div class="list-item" id="official-task" onclick="doOfficialTask()">
+        <div class="icon" style="background:#c8102e;">⭐</div>
+        <div class="info"><h4>Join Official Channel & Group</h4><p>+50 Coins • Required</p></div>
+        <button class="start-btn">Join</button>
+      </div>
+      <div class="section-title">Earn Tasks</div>
+      <div id="earn-tasks-list">
+        <div class="list-item" onclick="openCategory('other')">
+          <div class="icon" style="background:#c8102e;">📋</div>
+          <div class="info"><h4>Earn Tasks</h4><p>General tasks</p></div>
+          <button class="start-btn">Open</button>
+        </div>
+        <div class="list-item"><div class="icon" style="background:#FF9800;">⚡</div><div class="info"><h4>Auto Earn</h4><p>Coming soon</p></div><button class="start-btn" onclick="alert('Coming soon')">Start</button></div>
+        <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch videos / ads</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Earn</h4><p>Views & Likes</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join tasks</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Join Bot</h4><p>Bot tasks</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installs</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate</h4><p>Affiliate links</p></div><button class="start-btn">Open</button></div>
+        <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#E91E63;">🛒</div><div class="info"><h4>View Products</h4><p>Product views</p></div><button class="start-btn">Open</button></div>
+      </div>
+    </div>
+
+    <div id="category-tasks" class="page">
+      <div class="header" id="category-title">Tasks</div>
+      <div id="category-list"><div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">← Back</button></div>
+    </div>
+
+    <!-- PROMOTE -->
+    <div id="promote" class="page">
+      <div class="header">Promote Services</div>
+
+      <div class="section-title">Promotion Services</div>
+      <div class="list-item" onclick="openPromoteForm('channel')">
+        <div class="icon" style="background:#c8102e;">📢</div>
+        <div class="info"><h4>Promote Channel / Group</h4><p>Premium (7 days) or Standard</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('bot')">
+        <div class="icon" style="background:#9C27B0;">🤖</div>
+        <div class="info"><h4>Promote Bot</h4><p>Get new users</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('views')">
+        <div class="icon" style="background:#3F51B5;">👀</div>
+        <div class="info"><h4>Buy Views & Likes</h4><p>YouTube / Instagram / Telegram</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('install')">
+        <div class="icon" style="background:#4CAF50;">📱</div>
+        <div class="info"><h4>Buy App Installs</h4><p>Real installs</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('test')">
+        <div class="icon" style="background:#FF9800;">🧪</div>
+        <div class="info"><h4>Test App / Web</h4><p>Test & review</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('traffic')">
+        <div class="icon" style="background:#00BCD4;">🌐</div>
+        <div class="info"><h4>Website Traffic</h4><p>Visitors to your site</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+      <div class="list-item" onclick="openPromoteForm('affiliate')">
+        <div class="icon" style="background:#673AB7;">🔗</div>
+        <div class="info"><h4>Affiliate / Product</h4><p>Promote affiliate links</p></div>
+        <button class="start-btn">Buy</button>
       </div>
 
-      <button id="btn-restart-game" class="action-btn">
-        <span>🔄</span> START NEW GAME!
-      </button>
+      <div class="section-title">Monetization</div>
+      <div class="list-item" onclick="openPromoteForm('monetize')">
+        <div class="icon" style="background:#2196F3;">💰</div>
+        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads</p></div>
+        <button class="start-btn">Apply</button>
+      </div>
+
+      <div class="section-title">Banner Ads</div>
+      <div class="list-item" onclick="openPromoteForm('banner')">
+        <div class="icon" style="background:#FF5722;">📣</div>
+        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner</p></div>
+        <button class="start-btn">Buy</button>
+      </div>
+
+      <div class="section-title">Cross Promotion</div>
+      <div class="list-item" onclick="startCrossPromo()">
+        <div class="icon" style="background:#009688;">🔄</div>
+        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete</p></div>
+        <button class="start-btn">Start</button>
+      </div>
     </div>
+
+    <!-- PROMOTE FORM -->
+    <div id="promote-form" class="page">
+      <div class="header" id="promote-form-title">Place Order</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Your Link / Channel / Bot</label>
+          <input type="text" id="promo-link" placeholder="https://t.me/... or website">
+        </div>
+        <div class="form-group">
+          <label>Quantity / Days</label>
+          <input type="number" id="promo-qty" value="100" min="1">
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="promo-notes" rows="2" placeholder="Any special request..."></textarea>
+        </div>
+        <div style="font-size:14px;margin:12px 0;color:#c8102e;font-weight:700;" id="promo-cost">Cost: 0 Coins</div>
+        <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Submit Order</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Back</button>
+      </div>
+    </div>
+
+    <!-- FUN -->
+    <div id="fun" class="page">
+      <div class="header">Fun Zone</div>
+      <div class="section-title">Chat</div>
+      <div class="list-item" onclick="enterWithAd('chat')">
+        <div class="icon" style="background:#009688;">💬</div>
+        <div class="info"><h4>Community Chat</h4><p>Watch ad to enter • Earn coins</p></div>
+        <button class="start-btn">Enter</button>
+      </div>
+      <div class="section-title">Games (Watch Ad to Play)</div>
+      <div class="grid">
+        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterWithAd('game','Dart')"><span class="icon">🎯</span>Dart</div>
+        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterWithAd('game','Fruit')"><span class="icon">🍎</span>Fruit</div>
+        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterWithAd('game','Shoot')"><span class="icon">🔫</span>Shoot</div>
+        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterWithAd('game','Tower')"><span class="icon">🗼</span>Tower</div>
+        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterWithAd('game','Spin')"><span class="icon">🎡</span>Spin</div>
+        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterWithAd('game','Quiz')"><span class="icon">❓</span>Quiz</div>
+        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterWithAd('game','TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
+        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterWithAd('game','Sudoku')"><span class="icon">🔢</span>Sudoku</div>
+      </div>
+    </div>
+
+    <!-- TIC TAC TOE -->
+    <div id="game-ttt" class="page">
+      <div class="header">Tic Tac Toe</div>
+      <div class="card" style="text-align:center;">
+        <div style="margin-bottom:12px;">
+          <button class="diff-btn active" id="diff-easy" onclick="setDiff('easy')">Easy (1)</button>
+          <button class="diff-btn" id="diff-medium" onclick="setDiff('medium')">Medium (2)</button>
+          <button class="diff-btn" id="diff-hard" onclick="setDiff('hard')">Hard (3)</button>
+        </div>
+        <div id="ttt-status" style="font-weight:700;margin-bottom:10px;color:#c8102e;">Your turn (X)</div>
+        <div class="ttt-board" id="ttt-board"></div>
+        <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Watch Ad & Claim</button>
+        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- SPIN -->
+    <div id="game-spin" class="page">
+      <div class="header">Spin & Win</div>
+      <div class="card spin-wrap">
+        <div class="spin-pointer">▼</div>
+        <div style="position:relative;display:inline-block;">
+          <div class="spin-wheel" id="spin-wheel"></div>
+        </div>
+        <div id="spin-result" style="margin:16px 0;font-weight:800;font-size:20px;color:#c8102e;min-height:28px;"></div>
+        <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
+        <button class="gold-btn" id="spin-claim" style="display:none;margin-top:10px;" onclick="claimSpin()">Watch Ad & Collect</button>
+        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="game-quiz" class="page">
+      <div class="header">Quiz</div>
+      <div class="card">
+        <div id="quiz-question" style="font-weight:700;font-size:16px;margin-bottom:16px;text-align:center;"></div>
+        <div id="quiz-options"></div>
+        <div id="quiz-result" style="text-align:center;margin-top:14px;font-weight:700;"></div>
+        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- DART -->
+    <div id="game-dart" class="page">
+      <div class="header">🎯 Dart Game</div>
+      <div class="game-area" id="dart-area">
+        <div class="score-box">Score: <span id="dart-score">0</span></div>
+        <div style="font-size:60px;margin:20px 0;" id="dart-target">🎯</div>
+        <div style="font-size:14px;opacity:0.8;">Tap the target as fast as you can!</div>
+        <button class="game-btn" id="dart-btn" onclick="playDart()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="dart-claim" style="display:none;" onclick="claimGame('dart')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- FRUIT -->
+    <div id="game-fruit" class="page">
+      <div class="header">🍎 Fruit Slice</div>
+      <div class="game-area" id="fruit-area">
+        <div class="score-box">Score: <span id="fruit-score">0</span></div>
+        <div style="font-size:50px;margin:30px 0;" id="fruit-display">🍎</div>
+        <div style="font-size:14px;opacity:0.8;">Tap the fruit before it disappears!</div>
+        <button class="game-btn" id="fruit-btn" onclick="playFruit()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="fruit-claim" style="display:none;" onclick="claimGame('fruit')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- SHOOT -->
+    <div id="game-shoot" class="page">
+      <div class="header">🔫 Shoot</div>
+      <div class="game-area" id="shoot-area">
+        <div class="score-box">Hits: <span id="shoot-score">0</span></div>
+        <div style="font-size:50px;margin:30px 0;" id="shoot-target">🎯</div>
+        <div style="font-size:14px;opacity:0.8;">Tap to shoot the target!</div>
+        <button class="game-btn" id="shoot-btn" onclick="playShoot()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="shoot-claim" style="display:none;" onclick="claimGame('shoot')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- TOWER -->
+    <div id="game-tower" class="page">
+      <div class="header">🗼 Tower Stack</div>
+      <div class="game-area" id="tower-area">
+        <div class="score-box">Height: <span id="tower-score">0</span></div>
+        <div style="font-size:40px;margin:20px 0;" id="tower-display">⬜</div>
+        <div style="font-size:14px;opacity:0.8;">Tap to drop the block!</div>
+        <button class="game-btn" id="tower-btn" onclick="playTower()">Start</button>
+      </div>
+      <div style="text-align:center;padding:10px;">
+        <button class="gold-btn" id="tower-claim" style="display:none;" onclick="claimGame('tower')">Watch Ad & Claim</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- SUDOKU -->
+    <div id="game-sudoku" class="page">
+      <div class="header">🔢 Sudoku (Easy)</div>
+      <div class="card" style="text-align:center;">
+        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(9,32px);gap:2px;justify-content:center;margin:15px 0;"></div>
+        <div id="sudoku-msg" style="font-weight:700;color:#c8102e;margin:10px 0;"></div>
+        <button class="gold-btn" onclick="checkSudoku()">Check</button>
+        <button class="start-btn" style="background:#666;margin-top:8px;" onclick="showPage('fun')">← Back</button>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div id="wallet" class="page">
+      <div class="header">Wallet & History</div>
+      <div class="balance-card">
+        <div style="font-size:13px;opacity:0.9;">Current Balance</div>
+        <div class="amount" id="wallet-balance">0 Coins</div>
+      </div>
+      <div class="section-title">Task History</div>
+      <div id="history-list"><div class="card" style="text-align:center;color:#888;">No history yet</div></div>
+      <div class="section-title">Withdrawal</div>
+      <div class="list-item" onclick="openWithdraw('upi')">
+        <div class="icon" style="background:#FF9800;">🇮🇳</div>
+        <div class="info"><h4>India - UPI / Bank</h4><p>Withdraw in INR</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
+      <div class="list-item" onclick="openWithdraw('usdt')">
+        <div class="icon" style="background:#26A17B;">₮</div>
+        <div class="info"><h4>USDT (International)</h4><p>TRC20 / BEP20</p></div>
+        <button class="start-btn">Withdraw</button>
+      </div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
+    </div>
+
+    <!-- WITHDRAW FORM -->
+    <div id="withdraw-form" class="page">
+      <div class="header">Withdraw</div>
+      <div class="card">
+        <div class="form-group">
+          <label id="withdraw-label">UPI ID / Wallet Address</label>
+          <input type="text" id="withdraw-address" placeholder="Enter details">
+        </div>
+        <div class="form-group">
+          <label>Amount (Coins)</label>
+          <input type="number" id="withdraw-amount" value="500" min="100">
+        </div>
+        <div style="font-size:13px;color:#888;margin-bottom:12px;">Minimum: 500 Coins</div>
+        <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
+        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="profile" class="page">
+      <div class="header">My Profile</div>
+      <div class="card" style="text-align:center;">
+        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
+        <div style="font-weight:700;font-size:18px;" id="profile-name">User</div>
+        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
+        <div style="margin-top:10px;display:inline-block;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;">VIP Status</div>
+      </div>
+      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Contact Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="list-item" id="admin-btn" style="display:none;" onclick="showPage('admin'); loadAdminTasks(); loadAdSettings(); loadPriceSettings();"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4></div><div>›</div></div>
+    </div>
+
+    <!-- REFER -->
+    <div id="refer" class="page">
+      <div class="header">Refer & Earn</div>
+      <div class="banner">
+        <div><div style="font-weight:700;">Invite Friends</div><div style="font-size:12px;">Level 1: 5% | Level 2: 2%</div></div>
+        <div style="font-size:28px;">🎁</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:13px;color:#777;">Your Referral Code</div>
+        <div style="font-size:22px;font-weight:800;margin:8px 0;color:#c8102e;" id="ref-code">VTN000</div>
+        <button class="gold-btn" onclick="copyCode()">Copy Code</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin" class="page">
+      <div class="header">👑 Admin Panel</div>
+
+      <div class="section-title">Service Prices (Coins)</div>
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group"><label>Channel Promote</label><input type="number" id="price-channel" value="200"></div>
+          <div class="form-group"><label>Bot Promote</label><input type="number" id="price-bot" value="150"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Views & Likes</label><input type="number" id="price-views" value="50"></div>
+          <div class="form-group"><label>App Installs</label><input type="number" id="price-install" value="300"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Website Traffic</label><input type="number" id="price-traffic" value="80"></div>
+          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="100"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
+          <div class="form-group"><label>Test App</label><input type="number" id="price-test" value="60"></div>
+        </div>
+        <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
+      </div>
+
+      <div class="section-title">Ad Settings</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Ad Links (one per line – random pick)</label>
+          <textarea id="ad-links" rows="4" placeholder="https://ad1.com&#10;https://ad2.com"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Wait Seconds</label><input type="number" id="ad-wait" value="15"></div>
+          <div class="form-group"><label>Coins Reward</label><input type="number" id="ad-reward" value="5"></div>
+        </div>
+        <button class="gold-btn" style="width:100%;" onclick="saveAdSettings()">Save Ad Settings</button>
+      </div>
+
+      <div class="section-title">User Tools</div>
+      <div class="card">
+        <div class="form-group">
+          <label>Telegram User ID</label>
+          <input type="text" id="admin-userid" placeholder="e.g. 8150531247">
+        </div>
+        <div class="form-group">
+          <label>Coins Amount</label>
+          <input type="number" id="admin-coins" value="100">
+        </div>
+        <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminAddCoins()">+ Add Coins</button>
+        <button class="start-btn" style="width:100%;background:#E91E63;margin-bottom:8px;" onclick="adminRemoveCoins()">− Remove Coins</button>
+        <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminCheckBalance()">Check Balance</button>
+        <button class="start-btn" style="width:100%;background:#009688;margin-bottom:8px;" onclick="adminViewHistory()">View History</button>
+        <button class="start-btn" style="width:100%;background:#333;" onclick="adminBlockUser()">Block User</button>
+        <div id="admin-result" style="margin-top:12px;font-size:13px;color:#555;"></div>
+      </div>
+
+      <div class="section-title">Add New Task</div>
+      <div class="card">
+        <div class="form-group"><label>Task Title *</label><input type="text" id="task-title" placeholder="e.g. Join My Channel"></div>
+        <div class="form-group"><label>Reward (Coins) *</label><input type="number" id="task-reward" value="10"></div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="task-category">
+            <option value="join">Join Channel / Group</option>
+            <option value="bot">Join Bot</option>
+            <option value="watch">Watch Video / Ads</option>
+            <option value="views">Views & Likes</option>
+            <option value="install">Install App</option>
+            <option value="website">Visit Website</option>
+            <option value="affiliate">Affiliate</option>
+            <option value="products">View Products</option>
+            <option value="other">Other / General</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Link</label><input type="text" id="task-link" placeholder="https://t.me/..."></div>
+        <div class="form-row">
+          <div class="form-group"><label>Wait Seconds</label><input type="number" id="task-wait" value="0"></div>
+          <div class="form-group"><label>Max Users (0=Unlimited)</label><input type="number" id="task-max-users" value="0"></div>
+        </div>
+        <button class="gold-btn" style="width:100%;" onclick="addNewTask()">+ Add Task</button>
+      </div>
+
+      <div class="section-title">Current Tasks</div>
+      <div id="admin-tasks-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Back</button></div>
+    </div>
+
   </div>
-</div>
 
-<script>
-/* Telegram WebApp Init */
-if (window.Telegram && window.Telegram.WebApp) {
-  try {
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-  } catch(e) {}
-}
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
+    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
+    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
+  </div>
 
-function triggerHaptic(type) {
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+  <script>
+    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
+    let sb = null;
+    try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+    const tg = window.Telegram.WebApp;
     try {
-      if (type === 'hit6') Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-      else if (type === 'bowled') Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-      else Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-      return;
+      tg.ready();
+      tg.expand();
+      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+      tg.setHeaderColor('#c8102e');
+      tg.setBackgroundColor('#FFF8E7');
     } catch(e) {}
-  }
-  if (navigator.vibrate) {
-    if (type === 'hit6') navigator.vibrate([60, 40, 90, 40, 120]);
-    else if (type === 'bowled') navigator.vibrate([120, 50, 200]);
-    else navigator.vibrate(30);
-  }
-}
 
-class SoundSynth {
-  constructor() { this.ctx = null; this.muted = false; }
-  init() {
-    if (!this.ctx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) this.ctx = new AC();
-    }
-    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
-  }
-  toggle() { this.muted = !this.muted; return this.muted; }
-  swingWhoosh() {
-    if (this.muted) return; this.init(); if (!this.ctx) return;
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(350, t);
-    osc.frequency.exponentialRampToValueAtTime(120, t + 0.18);
-    gain.gain.setValueAtTime(0.25, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    osc.connect(gain); gain.connect(this.ctx.destination);
-    osc.start(t); osc.stop(t + 0.2);
-  }
-  batHit(runs) {
-    if (this.muted) return; this.init(); if (!this.ctx) return;
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(runs === 6 ? 1200 : 900, t);
-    osc.frequency.exponentialRampToValueAtTime(180, t + 0.12);
-    gain.gain.setValueAtTime(runs === 6 ? 0.8 : 0.6, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
-    osc.connect(gain); gain.connect(this.ctx.destination);
-    osc.start(t); osc.stop(t + 0.14);
-  }
-  missedBowled() {
-    if (this.muted) return; this.init(); if (!this.ctx) return;
-    const t = this.ctx.currentTime;
-    for (let i = 0; i < 4; i++) {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const delay = t + i * 0.04;
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(180 + i * 110, delay);
-      osc.frequency.exponentialRampToValueAtTime(70, delay + 0.18);
-      gain.gain.setValueAtTime(0.4 / (i + 1), delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, delay + 0.22);
-      osc.connect(gain); gain.connect(this.ctx.destination);
-      osc.start(delay); osc.stop(delay + 0.22);
-    }
-    const notes = [330, 310, 290, 220];
-    notes.forEach((freq, idx) => {
-      const noteT = t + 0.25 + idx * 0.18;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(freq, noteT);
-      osc.frequency.linearRampToValueAtTime(freq - 15, noteT + 0.15);
-      gain.gain.setValueAtTime(0.2, noteT);
-      gain.gain.exponentialRampToValueAtTime(0.001, noteT + 0.17);
-      osc.connect(gain); gain.connect(this.ctx.destination);
-      osc.start(noteT); osc.stop(noteT + 0.2);
-    });
-  }
-  bounce() {
-    if (this.muted) return; this.init(); if (!this.ctx) return;
-    const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.frequency.setValueAtTime(180, t);
-    osc.frequency.exponentialRampToValueAtTime(70, t + 0.06);
-    gain.gain.setValueAtTime(0.25, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
-    osc.connect(gain); gain.connect(this.ctx.destination);
-    osc.start(t); osc.stop(t + 0.07);
-  }
-}
-const sound = new SoundSynth();
+    const user = tg.initDataUnsafe?.user || null;
+    const userId = user ? String(user.id) : 'guest';
 
-// Characters Roster
-const BATSMEN = [
-  { name: 'Chintu Blaster', num: '18', jersey: '#0284c7', border: '#0369a1', helmet: '#0369a1', pads: '#ffffff', skin: '#fcd34d', glove: '#ef4444' },
-  { name: 'Prof. Googly', num: '10', jersey: '#16a34a', border: '#15803d', helmet: '#15803d', pads: '#fbbf24', skin: '#fed7aa', glove: '#3b82f6' },
-  { name: 'Turban Tornado', num: '07', jersey: '#f59e0b', border: '#d97706', helmet: '#ea580c', pads: '#ef4444', skin: '#fde047', glove: '#10b981' }
-];
+    const balanceKey = 'vtn_b_' + userId;
+    const checkinKey = 'vtn_c_' + userId;
+    const officialKey = 'vtn_o_' + userId;
+    const firstDayKey = 'vtn_f_' + userId;
+    const completedKey = 'vtn_completed_' + userId;
+    const blockedKey = 'vtn_blocked_users';
+    const ordersKey = 'vtn_orders';
 
-const BOWLERS = [
-  { name: 'Speedy Bunty', num: '01', jersey: '#2563eb', skin: '#fed7aa', headgear: 'headband', headColor: '#ef4444', type: 'skinny' },
-  { name: 'Spin King Jignesh', num: '33', jersey: '#059669', skin: '#fde047', headgear: 'cap', headColor: '#10b981', type: 'chubby', glasses: true, mustache: true },
-  { name: 'Rocky Slinger', num: '99', jersey: '#ea580c', skin: '#fcd34d', headgear: 'spikes', headColor: '#f59e0b', type: 'muscular' }
-];
+    let balance = Number(localStorage.getItem(balanceKey)) || 0;
+    let lastCheckIn = localStorage.getItem(checkinKey) || '';
+    let officialDone = localStorage.getItem(officialKey) === '1';
+    let isFirstDay = localStorage.getItem(firstDayKey) !== '1';
+    let currentTasks = [];
+    let completedTasks = JSON.parse(localStorage.getItem(completedKey) || '[]');
+    let currentCategory = 'other';
+    let blockedUsers = JSON.parse(localStorage.getItem(blockedKey) || '[]');
+    let currentPromoType = '';
+    let currentWithdrawType = '';
 
-const TOTAL_BALLS = 18;
-const MAX_WICKETS = 3;
+    let adSettings = {
+      links: ['https://www.profitableratecpmnetwork.com/h1sx36k1p?key=4d473c1c7e21426cf45618bf512433d3'],
+      wait: 15,
+      reward: 5
+    };
+    try {
+      const saved = localStorage.getItem('vtn_ad_settings');
+      if (saved) adSettings = JSON.parse(saved);
+    } catch(e) {}
 
-const BALL_SPECS = [
-  { name: 'Straight Seamer', speed: 2100, pitchX: 0.0, spin: 0.0, bounce: 1.0 },
-  { name: 'Gentle Inswinger', speed: 2200, pitchX: -0.1, spin: 0.15, bounce: 0.95 },
-  { name: 'Rising Short Pitch', speed: 2000, pitchX: 0.08, spin: 0.05, bounce: 1.3 },
-  { name: 'Loopy Off-Break', speed: 2350, pitchX: 0.15, spin: -0.2, bounce: 0.9 },
-  { name: 'Full Pitch Yorker', speed: 1950, pitchX: 0.0, spin: 0.0, bounce: 0.55 },
-  { name: 'Good Length Pace', speed: 2050, pitchX: -0.05, spin: 0.0, bounce: 1.05 },
-  { name: 'Flighted Leg-Break', speed: 2300, pitchX: -0.12, spin: 0.22, bounce: 0.95 },
-  { name: 'Deceptive Slower Ball', speed: 2450, pitchX: 0.05, spin: 0.0, bounce: 0.85 },
-  { name: 'Outswinger', speed: 2150, pitchX: 0.1, spin: -0.18, bounce: 1.0 },
-  { name: 'Chest-High Bouncer', speed: 1950, pitchX: -0.05, spin: 0.0, bounce: 1.35 },
-  { name: 'Arm Ball Flatter', speed: 2100, pitchX: 0.08, spin: -0.1, bounce: 0.7 },
-  { name: 'Blockhole Yorker', speed: 1900, pitchX: 0.0, spin: 0.0, bounce: 0.5 },
-  { name: 'Pace Thunderball', speed: 1850, pitchX: -0.05, spin: 0.0, bounce: 1.0 },
-  { name: 'Sharp Leg-Cutter', speed: 2200, pitchX: -0.12, spin: 0.25, bounce: 0.95 },
-  { name: 'Hooker Bouncer', speed: 1950, pitchX: 0.1, spin: -0.08, bounce: 1.4 },
-  { name: 'Reverse Swing Tail', speed: 2000, pitchX: 0.12, spin: -0.25, bounce: 0.9 },
-  { name: 'Pinpoint Toe-Crusher', speed: 1880, pitchX: 0.0, spin: 0.0, bounce: 0.45 },
-  { name: 'Final Over Climax', speed: 1800, pitchX: 0.0, spin: 0.0, bounce: 1.1 }
-];
+    let prices = {
+      channel: 200, bot: 150, views: 50, install: 300,
+      traffic: 80, banner: 100, affiliate: 40, test: 60
+    };
+    try {
+      const saved = localStorage.getItem('vtn_prices');
+      if (saved) prices = JSON.parse(saved);
+    } catch(e) {}
 
-let match = {
-  runs: 0,
-  wickets: 0,
-  ballsDelivered: 0,
-  history: [],
-  sixes: 0,
-  fours: 0,
-  highScore: parseInt(localStorage.getItem('toon_cricket_hi') || '0', 10) || 0
-};
+    // Games state
+    let tttBoard = ['','','','','','','','',''];
+    let tttTurn = 'X';
+    let tttOver = false;
+    let tttDiff = 'easy';
+    let tttPrize = 0;
+    let spinPrize = 0;
+    let gamePrize = 0;
+    let gameType = '';
 
-function formatOvers(balls) {
-  return Math.floor(balls / 6) + '.' + (balls % 6);
-}
+    const quizData = [
+      {q:'Capital of India?', opts:['Mumbai','Delhi','Kolkata','Chennai'], ans:1},
+      {q:'Days in a week?', opts:['5','6','7','8'], ans:2},
+      {q:'Color of sky?', opts:['Green','Blue','Red','Yellow'], ans:1},
+      {q:'2 + 2 = ?', opts:['3','4','5','6'], ans:1},
+      {q:'Which is fruit?', opts:['Carrot','Apple','Potato','Onion'], ans:1}
+    ];
+    let quizIndex = 0;
 
-function evaluateShotTiming(deltaMs) {
-  const abs = Math.abs(deltaMs);
-  if (abs <= 160) {
-    return { rating: 'PERFECT', runs: 6, isWicket: false, msg: 'MASSIVE SIX!! 🚀', sub: 'Ball landed on Mars!' };
-  } else if (abs <= 320) {
-    return { rating: 'GOOD', runs: 4, isWicket: false, msg: 'CRACKING FOUR!! ⚡', sub: 'Grass is burning!' };
-  } else if (abs <= 480) {
-    const isTwo = abs <= 400;
-    return { rating: 'OKAY', runs: isTwo ? 2 : 1, isWicket: false, msg: isTwo ? 'TWO RUNS! 🏃' : 'SINGLE! 💨', sub: 'Sneaky paddle tap!' };
-  } else if (deltaMs < -480 && deltaMs >= -700) {
-    return { rating: 'EARLY', runs: 0, isWicket: true, msg: 'CLEAN BOWLED!! 💥', sub: 'Too early! Missed the line!' };
-  } else if (deltaMs > 480 && deltaMs <= 700) {
-    return { rating: 'LATE', runs: 0, isWicket: true, msg: 'STUMPS SHATTERED!! 🪵', sub: 'Too late! Rattled middle stump!' };
-  }
-  return { rating: 'MISSED', runs: 0, isWicket: true, msg: 'TIMBERRR! BOWLED!! 🪵💥', sub: 'Clean bowled!' };
-}
-
-const canvas = document.getElementById('game-canvas');
-const ctx = canvas.getContext('2d');
-
-let fielders = [
-  { id: 1, name: 'Gappu', bx: 0.16, by: 0.50, x: 0, y: 0, cap: '#10b981', skin: '#fde047', style: 'bucket_hat', type: 'chubby', glasses: true, state: 'IDLE' },
-  { id: 2, name: 'Lanky Raju', bx: 0.30, by: 0.40, x: 0, y: 0, cap: '#0284c7', skin: '#fed7aa', style: 'sunhat', type: 'tall', state: 'IDLE' },
-  { id: 3, name: 'Tuffy', bx: 0.70, by: 0.40, x: 0, y: 0, cap: '#dc2626', skin: '#fcd34d', style: 'cap', type: 'muscular', mustache: true, state: 'IDLE' },
-  { id: 4, name: 'Speedy Sonu', bx: 0.84, by: 0.52, x: 0, y: 0, cap: '#7c3aed', skin: '#d97706', style: 'afro', type: 'normal', state: 'IDLE' },
-  { id: 5, name: 'Pandit Ji', bx: 0.58, by: 0.35, x: 0, y: 0, cap: '#ea580c', skin: '#fed7aa', style: 'bandana', type: 'short', glasses: true, mustache: true, state: 'IDLE' }
-];
-
-let sim = {
-  ballActive: false,
-  hasSwung: false,
-  ballStartTime: 0,
-  ballDuration: 2100,
-  ballProgress: 0,
-  currentSpec: BALL_SPECS[0],
-  battingAnim: 'IDLE',
-  animTimer: 0,
-  bannerText: '',
-  bannerSubtext: '',
-  bannerColor: '#facc15',
-  bannerTimer: 0,
-  cameraShake: 0,
-  flyingWoods: [],
-  bowlerState: 'IDLE',
-  umpireSignal: 'NONE',
-  hitBallActive: false,
-  hitBallX: 0,
-  hitBallY: 0,
-  hitBallVx: 0,
-  hitBallVy: 0,
-  hitBallScale: 1,
-  w: 390,
-  h: 600,
-  lastTime: performance.now()
-};
-
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.floor(rect.width * dpr);
-  canvas.height = Math.floor(rect.height * dpr);
-  sim.w = rect.width;
-  sim.h = rect.height;
-  for (const f of fielders) {
-    f.x = f.bx * sim.w; f.y = f.by * sim.h;
-  }
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-function triggerHitAction() {
-  if (sim.hasSwung) return;
-  sim.hasSwung = true;
-  sound.swingWhoosh();
-  triggerHaptic('swing');
-
-  const btn = document.getElementById('hit-button');
-  const btnTxt = document.getElementById('hit-button-text');
-  btn.className = 'swung';
-  btnTxt.innerText = 'SWUNG!';
-
-  if (!sim.ballActive) {
-    sim.battingAnim = 'SWING_MISS';
-    sim.animTimer = 1.0;
-    return;
-  }
-
-  const now = performance.now();
-  const optimalTime = sim.ballStartTime + sim.ballDuration;
-  const deltaMs = now - optimalTime;
-
-  const result = evaluateShotTiming(deltaMs);
-  sim.ballActive = false;
-
-  if (result.isWicket) {
-    sim.battingAnim = 'BOWLED';
-    sim.animTimer = 2.4;
-    sim.bowlerState = 'CELEBRATE';
-    sim.umpireSignal = 'OUT';
-    sim.cameraShake = 0.55;
-    sound.missedBowled();
-    triggerHaptic('bowled');
-    shatterStumps();
-    for (const f of fielders) f.state = 'CELEBRATE';
-    sim.bannerText = result.msg;
-    sim.bannerSubtext = result.sub + ' (' + (deltaMs > 0 ? '+' : '') + Math.round(deltaMs) + 'ms)';
-    sim.bannerColor = '#ef4444';
-    sim.bannerTimer = 2.4;
-  } else {
-    sim.hitBallActive = true;
-    sim.hitBallX = sim.w * 0.44;
-    sim.hitBallY = sim.h * 0.64;
-
-    if (result.runs === 6) {
-      sim.battingAnim = 'SWING_SIX';
-      sim.bowlerState = 'DISAPPOINTED';
-      sim.umpireSignal = 'SIX';
-      sim.cameraShake = 0.75;
-      sim.hitBallVx = (Math.random() - 0.5) * 60;
-      sim.hitBallVy = -480;
-      sim.hitBallScale = 1.0;
-      for (const f of fielders) f.state = 'AWE';
-    } else if (result.runs === 4) {
-      sim.battingAnim = 'SWING_FOUR';
-      sim.bowlerState = 'DISAPPOINTED';
-      sim.umpireSignal = 'FOUR';
-      sim.cameraShake = 0.4;
-      sim.hitBallVx = (Math.random() > 0.5 ? 1 : -1) * 200;
-      sim.hitBallVy = -320;
-      sim.hitBallScale = 0.8;
-      for (const f of fielders) f.state = 'CHASE';
-    } else {
-      sim.battingAnim = 'SWING_SINGLE';
-      sim.bowlerState = 'IDLE';
-      sim.cameraShake = 0.15;
-      sim.hitBallVx = (Math.random() - 0.5) * 140;
-      sim.hitBallVy = -190;
-      sim.hitBallScale = 0.6;
-      for (const f of fielders) f.state = 'CHASE';
+    // Check if blocked
+    if (user && blockedUsers.includes(String(user.id))) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#c8102e;">You are blocked from using this app.<br><br>Contact @Vtnhub0</div>';
     }
 
-    sound.batHit(result.runs);
-    triggerHaptic(result.runs === 6 ? 'hit6' : 'hit');
-    sim.animTimer = 2.0;
-    sim.bannerText = result.msg;
-    sim.bannerSubtext = result.sub + ' (' + (deltaMs > 0 ? '+' : '') + Math.round(deltaMs) + 'ms)';
-    sim.bannerColor = result.runs === 6 ? '#facc15' : result.runs === 4 ? '#38bdf8' : '#4ade80';
-    sim.bannerTimer = 2.0;
-  }
-
-  setTimeout(() => {
-    sim.hitBallActive = false;
-    for (const f of fielders) { f.state = 'IDLE'; f.x = f.bx * sim.w; f.y = f.by * sim.h; }
-    resolveDelivery(result);
-  }, 2100);
-}
-
-function shatterStumps() {
-  const sx = sim.w * 0.50; const sy = sim.h * 0.73;
-  sim.flyingWoods = [
-    { x: sx - 8, y: sy - 18, vx: -200, vy: -520, w: 5.5, h: 38, rot: 0, vRot: -8, color: '#b45309' },
-    { x: sx, y: sy - 18, vx: 50, vy: -620, w: 5.5, h: 38, rot: 0, vRot: 12, color: '#b45309' },
-    { x: sx + 8, y: sy - 18, vx: 220, vy: -480, w: 5.5, h: 38, rot: 0, vRot: 9, color: '#b45309' },
-    { x: sx - 4, y: sy - 38, vx: -120, vy: -700, w: 12, h: 3.5, rot: 0, vRot: -20, color: '#f59e0b' },
-    { x: sx + 4, y: sy - 38, vx: 160, vy: -720, w: 12, h: 3.5, rot: 0, vRot: 22, color: '#f59e0b' }
-  ];
-}
-
-function loop(now) {
-  const dt = Math.min((now - sim.lastTime) / 1000, 0.05);
-  sim.lastTime = now;
-
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  ctx.save();
-  ctx.scale(dpr, dpr);
-
-  if (sim.cameraShake > 0) {
-    sim.cameraShake = Math.max(0, sim.cameraShake - dt * 2.5);
-    ctx.translate((Math.random() - 0.5) * sim.cameraShake * 16, (Math.random() - 0.5) * sim.cameraShake * 16);
-  }
-
-  if (sim.animTimer > 0) {
-    sim.animTimer -= dt;
-    if (sim.animTimer <= 0 && !sim.ballActive) {
-      sim.battingAnim = 'IDLE'; sim.bowlerState = 'IDLE'; sim.umpireSignal = 'NONE';
+    function updateUI() {
+      document.getElementById('balance').innerText = balance + ' Coins';
+      document.getElementById('wallet-balance').innerText = balance + ' Coins';
+      localStorage.setItem(balanceKey, balance);
     }
-  }
-  if (sim.bannerTimer > 0) sim.bannerTimer -= dt;
 
-  if (sim.ballActive) {
-    const elapsed = now - sim.ballStartTime;
-    sim.ballProgress = elapsed / sim.ballDuration;
-    sim.bowlerState = sim.ballProgress < 0.28 ? 'RUNUP' : 'RELEASE';
-    if (sim.ballProgress >= 0.52 && sim.ballProgress <= 0.56) sound.bounce();
+    function setupUser() {
+      if (user) {
+        document.getElementById('username').innerText = user.first_name || 'User';
+        document.getElementById('userid').innerText = 'ID: ' + user.id;
+        document.getElementById('profile-name').innerText = user.first_name || 'User';
+        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+        document.getElementById('ref-code').innerText = 'VTN' + user.id;
+        if (Number(user.id) === 8150531247) {
+          document.getElementById('admin-btn').style.display = 'flex';
+        }
+      }
+      if (officialDone) {
+        const el = document.getElementById('official-task');
+        if (el) el.style.display = 'none';
+      }
+      updateUI();
+      loadHistory();
+    }
 
-    if (sim.ballProgress >= 1.25 && !sim.hasSwung) {
-      sim.ballActive = false; sim.hasSwung = true;
-      const res = evaluateShotTiming(999);
-      sim.battingAnim = 'BOWLED'; sim.animTimer = 2.4;
-      sim.bowlerState = 'CELEBRATE'; sim.umpireSignal = 'OUT';
-      sim.cameraShake = 0.55;
-      sound.missedBowled(); triggerHaptic('bowled');
-      shatterStumps();
-      for (const f of fielders) f.state = 'CELEBRATE';
-      sim.bannerText = res.msg; sim.bannerSubtext = 'Clean bowled! Missed the line completely!';
-      sim.bannerColor = '#ef4444'; sim.bannerTimer = 2.4;
+    async function loadUser() {
+      if (!sb || !user) return;
+      try {
+        const { data } = await sb.from('users').select('*').eq('telegram_id', user.id).maybeSingle();
+        if (data) {
+          balance = data.balance || 0;
+          officialDone = !!data.official_done;
+          localStorage.setItem(balanceKey, balance);
+          if (officialDone) {
+            localStorage.setItem(officialKey, '1');
+            const el = document.getElementById('official-task');
+            if (el) el.style.display = 'none';
+          }
+          updateUI();
+        } else {
+          await sb.from('users').insert([{
+            telegram_id: user.id, first_name: user.first_name||'', username: user.username||'',
+            balance, is_vip:false, daily_tasks:0, official_done: officialDone
+          }]);
+        }
+      } catch(e) {}
+    }
 
-      const btn = document.getElementById('hit-button');
-      const btnTxt = document.getElementById('hit-button-text');
-      btn.className = 'swung'; btnTxt.innerText = 'SWUNG!';
+    async function saveBalance(amount, type, desc) {
+      if (!sb || !user) return;
+      try {
+        await sb.from('users').update({ balance }).eq('telegram_id', user.id);
+        await sb.from('transactions').insert([{ telegram_id: user.id, amount, type, description: desc }]);
+      } catch(e) {}
+    }
 
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'game-ttt':3, 'game-spin':3, 'game-quiz':3, 'game-dart':3, 'game-fruit':3, 'game-shoot':3, 'game-tower':3, 'game-sudoku':3, 'promote-form':2, 'withdraw-form':0 };
+      if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+      if (id === 'wallet') loadHistory();
+    }
+
+    function addCoins(amount, title) {
+      balance += amount;
+      updateUI();
+      saveBalance(amount, 'task', title);
+      alert(title + ' Successful! +' + amount + ' Coins');
+    }
+
+    function dailyCheckIn() {
+      const today = new Date().toDateString();
+      if (lastCheckIn === today) { alert('Already claimed today!'); return; }
+      if (!confirm('Watch a short ad to claim?')) return;
+      let reward = isFirstDay ? (Math.floor(Math.random()*70)+30) : (Math.floor(Math.random()*13)+3);
+      if (isFirstDay) { localStorage.setItem(firstDayKey,'1'); isFirstDay=false; alert('🎉 First Day Bonus! +'+reward); }
+      else alert('Daily Check-in! +'+reward);
+      balance += reward; lastCheckIn = today;
+      localStorage.setItem(checkinKey, today); updateUI();
+      saveBalance(reward, 'checkin', 'Daily Check-in');
+    }
+
+    function doOfficialTask() {
+      if (officialDone) { alert('Already completed'); return; }
+      if (!confirm('Join Official Channel & Group?\n\nhttps://t.me/vtnhub\nhttps://t.me/vtnhub1')) return;
+      window.open('https://t.me/vtnhub', '_blank');
+      balance += 50; officialDone = true;
+      localStorage.setItem(officialKey, '1');
+      document.getElementById('official-task').style.display = 'none';
+      updateUI(); saveBalance(50, 'official', 'Official Task');
+      if (sb && user) sb.from('users').update({ official_done: true }).eq('telegram_id', user.id);
+      alert('Official Task Completed! +50 Coins');
+    }
+
+    function copyCode() {
+      const code = document.getElementById('ref-code').innerText;
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Copied: '+code));
+      else alert(code);
+    }
+
+    function getRandomAd() {
+      const links = adSettings.links || [];
+      if (!links.length) return 'https://t.me/Vtnhub0';
+      return links[Math.floor(Math.random() * links.length)];
+    }
+
+    function enterWithAd(type, gameName) {
+      if (!confirm('Watch ad to enter ' + (type==='chat'?'Chat':gameName) + '?\n\nEarn ' + adSettings.reward + ' coins.')) return;
+
+      window.open(getRandomAd(), '_blank');
+      const waitSec = adSettings.wait || 15;
+      alert('Please wait ' + waitSec + ' seconds...\n\nDo not close the app.');
+
+      setTimeout(function() {
+        balance += adSettings.reward;
+        updateUI();
+        saveBalance(adSettings.reward, 'ad', 'Watched ad for ' + type);
+        saveToHistory('Watched Ad (' + type + ')', adSettings.reward);
+
+        if (type === 'chat') {
+          alert('✅ +' + adSettings.reward + ' Coins\n\nChat coming soon. Contact @Vtnhub0');
+        } else if (gameName === 'TicTacToe') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startTTT();
+        } else if (gameName === 'Spin') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          spinPrize = 0;
+          document.getElementById('spin-result').innerText = '';
+          document.getElementById('spin-claim').style.display = 'none';
+          showPage('game-spin');
+        } else if (gameName === 'Quiz') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startQuiz();
+        } else if (gameName === 'Dart') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startDart();
+        } else if (gameName === 'Fruit') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startFruit();
+        } else if (gameName === 'Shoot') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startShoot();
+        } else if (gameName === 'Tower') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startTower();
+        } else if (gameName === 'Sudoku') {
+          alert('✅ +' + adSettings.reward + ' Coins');
+          startSudoku();
+        } else {
+          alert('✅ +' + adSettings.reward + ' Coins\n\n' + gameName + ' coming soon!');
+        }
+      }, waitSec * 1000);
+    }
+
+    // ========== PROMOTE ==========
+    function openPromoteForm(type) {
+      currentPromoType = type;
+      const titles = {
+        channel: 'Promote Channel / Group',
+        bot: 'Promote Bot',
+        views: 'Buy Views & Likes',
+        install: 'Buy App Installs',
+        test: 'Test App / Web',
+        traffic: 'Website Traffic',
+        affiliate: 'Affiliate / Product',
+        monetize: 'Monetize Channel / Group',
+        banner: 'Place Banner Ad'
+      };
+      document.getElementById('promote-form-title').innerText = titles[type] || 'Place Order';
+      document.getElementById('promo-link').value = '';
+      document.getElementById('promo-qty').value = type === 'banner' ? 1 : 100;
+      document.getElementById('promo-notes').value = '';
+      updatePromoCost();
+      showPage('promote-form');
+    }
+
+    function updatePromoCost() {
+      const qty = Number(document.getElementById('promo-qty').value) || 1;
+      let cost = 0;
+      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
+      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
+      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
+      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
+      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+      else if (currentPromoType === 'banner') cost = prices.banner * qty;
+      else if (currentPromoType === 'test') cost = prices.test;
+      else if (currentPromoType === 'monetize') cost = 0;
+      document.getElementById('promo-cost').innerText = 'Cost: ' + cost + ' Coins';
+    }
+
+    document.getElementById('promo-qty')?.addEventListener('input', updatePromoCost);
+
+    function submitPromoteOrder() {
+      const link = document.getElementById('promo-link').value.trim();
+      const qty = Number(document.getElementById('promo-qty').value) || 1;
+      const notes = document.getElementById('promo-notes').value.trim();
+      if (!link && currentPromoType !== 'monetize') {
+        alert('Please enter your link');
+        return;
+      }
+
+      let cost = 0;
+      if (currentPromoType === 'channel') cost = prices.channel * Math.ceil(qty/100);
+      else if (currentPromoType === 'bot') cost = prices.bot * Math.ceil(qty/100);
+      else if (currentPromoType === 'views') cost = prices.views * Math.ceil(qty/100);
+      else if (currentPromoType === 'install') cost = prices.install * Math.ceil(qty/50);
+      else if (currentPromoType === 'traffic') cost = prices.traffic * Math.ceil(qty/100);
+      else if (currentPromoType === 'affiliate') cost = prices.affiliate * Math.ceil(qty/50);
+      else if (currentPromoType === 'banner') cost = prices.banner * qty;
+      else if (currentPromoType === 'test') cost = prices.test;
+
+      if (cost > 0 && balance < cost) {
+        alert('Not enough coins! Need ' + cost + ' coins.');
+        return;
+      }
+
+      if (cost > 0) {
+        balance -= cost;
+        updateUI();
+        saveBalance(-cost, 'promo', 'Promotion order: ' + currentPromoType);
+      }
+
+      // Create task for Earn page
+      const taskTitle = {
+        channel: 'Join Channel: ' + link,
+        bot: 'Start Bot: ' + link,
+        views: 'View / Like: ' + link,
+        install: 'Install App: ' + link,
+        traffic: 'Visit Website: ' + link,
+        affiliate: 'Open Affiliate: ' + link,
+        test: 'Test App: ' + link,
+        banner: 'Banner Ad: ' + link,
+        monetize: 'Monetize Request'
+      }[currentPromoType] || 'Promotion Task';
+
+      const rewardMap = {
+        channel: 15, bot: 20, views: 5, install: 40,
+        traffic: 8, affiliate: 6, test: 15, banner: 10, monetize: 0
+      };
+
+      const newTask = {
+        id: 'order_' + Date.now(),
+        title: taskTitle,
+        reward: rewardMap[currentPromoType] || 10,
+        category: currentPromoType === 'channel' ? 'join' :
+                  currentPromoType === 'bot' ? 'bot' :
+                  currentPromoType === 'views' ? 'views' :
+                  currentPromoType === 'install' ? 'install' :
+                  currentPromoType === 'traffic' ? 'website' :
+                  currentPromoType === 'affiliate' ? 'affiliate' : 'other',
+        link: link,
+        wait_seconds: 10,
+        is_active: true,
+        from_order: true
+      };
+
+      // Save to local orders (so it shows in Earn)
+      let orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+      orders.unshift(newTask);
+      if (orders.length > 50) orders.length = 50;
+      localStorage.setItem(ordersKey, JSON.stringify(orders));
+
+      // Also try to save to Supabase tasks table
+      if (sb) {
+        sb.from('tasks').insert([{
+          title: newTask.title,
+          reward: newTask.reward,
+          category: newTask.category,
+          link: newTask.link,
+          wait_seconds: 10,
+          is_active: true
+        }]).then(()=>{}).catch(()=>{});
+      }
+
+      alert('✅ Order submitted!\nCost: ' + cost + ' Coins\n\nTask is now available in Earn page for users.');
+      showPage('promote');
+    }
+
+    function startCrossPromo() {
+      const today = new Date().toDateString();
+      const key = 'vtn_cross_' + userId + '_' + today;
+      let count = Number(localStorage.getItem(key) || 0);
+      if (count >= 3) {
+        alert('You already used 3 free cross promotions today.');
+        return;
+      }
+      const link = prompt('Enter your Channel / Bot / Post link:');
+      if (!link) return;
+      count++;
+      localStorage.setItem(key, count);
+      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\n\nContact @Vtnhub0 for confirmation.');
+    }
+
+    // ========== GAMES ==========
+    function setDiff(d) {
+      tttDiff = d;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('diff-' + d).classList.add('active');
+    }
+    function startTTT() {
+      tttBoard = ['','','','','','','','',''];
+      tttTurn = 'X'; tttOver = false; tttPrize = 0;
+      document.getElementById('ttt-claim').style.display = 'none';
+      showPage('game-ttt');
+      renderTTT();
+    }
+    function renderTTT() {
+      const board = document.getElementById('ttt-board');
+      board.innerHTML = '';
+      tttBoard.forEach((cell, i) => {
+        const div = document.createElement('div');
+        div.className = 'ttt-cell';
+        div.innerText = cell;
+        div.style.color = cell === 'X' ? '#c8102e' : '#2196F3';
+        div.onclick = () => playTTT(i);
+        board.appendChild(div);
+      });
+      document.getElementById('ttt-status').innerText = tttOver ? (tttPrize > 0 ? 'You Won!' : 'Game Over') : (tttTurn === 'X' ? 'Your turn (X)' : 'Computer...');
+    }
+    function playTTT(i) {
+      if (tttOver || tttBoard[i] || tttTurn !== 'X') return;
+      tttBoard[i] = 'X';
+      if (checkWin('X')) {
+        tttOver = true;
+        tttPrize = tttDiff === 'easy' ? 1 : (tttDiff === 'medium' ? 2 : 3);
+        renderTTT();
+        document.getElementById('ttt-claim').style.display = 'inline-block';
+        document.getElementById('ttt-claim').innerText = 'Watch Ad & Claim ' + tttPrize + ' Coins';
+        return;
+      }
+      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
+      tttTurn = 'O'; renderTTT();
+      setTimeout(computerMove, 400);
+    }
+    function computerMove() {
+      let move;
+      if (tttDiff === 'hard') {
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        move = findBestMove('O') || findBestMove('X') || (tttBoard[4]===''?4:null) || empty[Math.floor(Math.random()*empty.length)];
+      } else if (tttDiff === 'medium') {
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        move = findBestMove('O') || empty[Math.floor(Math.random()*empty.length)];
+      } else {
+        const empty = tttBoard.map((c,i)=>c===''?i:null).filter(x=>x!==null);
+        move = empty[Math.floor(Math.random()*empty.length)];
+      }
+      if (move === undefined || move === null) return;
+      tttBoard[move] = 'O';
+      if (checkWin('O')) { tttOver=true; renderTTT(); alert('Computer Wins!'); return; }
+      if (tttBoard.every(c=>c)) { tttOver=true; renderTTT(); alert('Draw!'); return; }
+      tttTurn = 'X'; renderTTT();
+    }
+    function findBestMove(p) {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (const [a,b,c] of lines) {
+        const line = [tttBoard[a],tttBoard[b],tttBoard[c]];
+        if (line.filter(x=>x===p).length===2 && line.includes('')) {
+          if (tttBoard[a]==='') return a;
+          if (tttBoard[b]==='') return b;
+          if (tttBoard[c]==='') return c;
+        }
+      }
+      return null;
+    }
+    function checkWin(p) {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return lines.some(([a,b,c]) => tttBoard[a]===p && tttBoard[b]===p && tttBoard[c]===p);
+    }
+    function claimTTT() {
+      if (tttPrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
       setTimeout(() => {
-        for (const f of fielders) { f.state = 'IDLE'; f.x = f.bx * sim.w; f.y = f.by * sim.h; }
-        resolveDelivery(res);
-      }, 2100);
+        balance += tttPrize;
+        updateUI();
+        saveBalance(tttPrize, 'game', 'TicTacToe Win');
+        saveToHistory('Tic Tac Toe Win', tttPrize);
+        alert('✅ Claimed +' + tttPrize + ' Coins!');
+        tttPrize = 0;
+        document.getElementById('ttt-claim').style.display = 'none';
+      }, (adSettings.wait||10)*1000);
     }
-  }
 
-  // Hit Ball physics
-  if (sim.hitBallActive) {
-    sim.hitBallX += sim.hitBallVx * dt;
-    sim.hitBallY += sim.hitBallVy * dt;
-    sim.hitBallVy += 140 * dt;
-  }
+    // SPIN
+    function doSpin() {
+      const btn = document.getElementById('spin-btn');
+      btn.disabled = true;
+      document.getElementById('spin-claim').style.display = 'none';
+      const r = Math.random() * 100;
+      let prize;
+      if (r < 40) prize = 1;
+      else if (r < 70) prize = 2;
+      else if (r < 82) prize = 0;
+      else if (r < 90) prize = 3;
+      else if (r < 96) prize = 5;
+      else if (r < 99) prize = 10;
+      else prize = 25;
+      const deg = 1800 + Math.floor(Math.random()*360);
+      document.getElementById('spin-wheel').style.transform = 'rotate(' + deg + 'deg)';
+      setTimeout(() => {
+        spinPrize = prize;
+        if (prize === 0) {
+          document.getElementById('spin-result').innerText = 'Try Again!';
+        } else {
+          document.getElementById('spin-result').innerText = 'You got ' + prize + ' Coins!';
+          document.getElementById('spin-claim').style.display = 'inline-block';
+          document.getElementById('spin-claim').innerText = 'Watch Ad & Collect ' + prize + ' Coins';
+        }
+        btn.disabled = false;
+      }, 4200);
+    }
+    function claimSpin() {
+      if (spinPrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
+      setTimeout(() => {
+        balance += spinPrize;
+        updateUI();
+        saveBalance(spinPrize, 'game', 'Spin Win');
+        saveToHistory('Spin & Win', spinPrize);
+        alert('✅ Collected +' + spinPrize + ' Coins!');
+        spinPrize = 0;
+        document.getElementById('spin-claim').style.display = 'none';
+        document.getElementById('spin-result').innerText = '';
+      }, (adSettings.wait||10)*1000);
+    }
 
-  // Fielders chasing ball
-  for (const f of fielders) {
-    if (f.state === 'IDLE') {
-      f.x = f.bx * sim.w; f.y = f.by * sim.h;
-    } else if (f.state === 'CHASE' && sim.hitBallActive) {
-      const dx = sim.hitBallX - f.x;
-      const dy = sim.hitBallY - f.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist > 15) {
-        f.x += (dx / dist) * 160 * dt;
-        f.y += (dy / dist) * 160 * dt;
+    // QUIZ
+    function startQuiz() {
+      quizIndex = Math.floor(Math.random() * quizData.length);
+      const q = quizData[quizIndex];
+      document.getElementById('quiz-question').innerText = q.q;
+      document.getElementById('quiz-result').innerText = '';
+      const opts = document.getElementById('quiz-options');
+      opts.innerHTML = '';
+      q.opts.forEach((o, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerText = o;
+        div.onclick = () => answerQuiz(i);
+        opts.appendChild(div);
+      });
+      showPage('game-quiz');
+    }
+    function answerQuiz(i) {
+      const q = quizData[quizIndex];
+      if (i === q.ans) {
+        document.getElementById('quiz-result').innerText = '✅ Correct! +3 Coins';
+        balance += 3; updateUI();
+        saveBalance(3, 'game', 'Quiz Correct');
+        saveToHistory('Quiz Win', 3);
+      } else {
+        document.getElementById('quiz-result').innerText = '❌ Wrong! Answer: ' + q.opts[q.ans];
       }
     }
-  }
 
-  // Flying woods
-  for (let i = 0; i < sim.flyingWoods.length; i++) {
-    const w = sim.flyingWoods[i];
-    w.x += w.vx * dt; w.y += w.vy * dt; w.vy += 600 * dt; w.rot += w.vRot * dt;
-    if (w.y > sim.h * 0.95) { w.y = sim.h * 0.95; w.vy = -w.vy * 0.4; w.vx *= 0.6; }
-  }
+    // DART
+    let dartScore = 0, dartTimer = null, dartRunning = false;
+    function startDart() {
+      dartScore = 0; dartRunning = false;
+      document.getElementById('dart-score').innerText = '0';
+      document.getElementById('dart-claim').style.display = 'none';
+      document.getElementById('dart-btn').innerText = 'Start';
+      showPage('game-dart');
+    }
+    function playDart() {
+      if (dartRunning) return;
+      dartRunning = true;
+      dartScore = 0;
+      document.getElementById('dart-score').innerText = '0';
+      document.getElementById('dart-btn').innerText = 'Playing...';
+      let timeLeft = 10;
+      const target = document.getElementById('dart-target');
+      target.onclick = () => {
+        if (!dartRunning) return;
+        dartScore++;
+        document.getElementById('dart-score').innerText = dartScore;
+        target.style.transform = 'scale(1.3)';
+        setTimeout(() => target.style.transform = 'scale(1)', 100);
+      };
+      dartTimer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(dartTimer);
+          dartRunning = false;
+          document.getElementById('dart-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(dartScore / 3), 8);
+          if (gamePrize > 0) {
+            document.getElementById('dart-claim').style.display = 'inline-block';
+            document.getElementById('dart-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          } else alert('Score too low. Try again!');
+        }
+      }, 1000);
+    }
 
-  drawScene(ctx, now);
-  ctx.restore();
-  requestAnimationFrame(loop);
-}
+    // FRUIT
+    let fruitScore = 0, fruitRunning = false, fruitTimeout = null;
+    function startFruit() {
+      fruitScore = 0; fruitRunning = false;
+      document.getElementById('fruit-score').innerText = '0';
+      document.getElementById('fruit-claim').style.display = 'none';
+      document.getElementById('fruit-btn').innerText = 'Start';
+      showPage('game-fruit');
+    }
+    function playFruit() {
+      if (fruitRunning) return;
+      fruitRunning = true;
+      fruitScore = 0;
+      document.getElementById('fruit-score').innerText = '0';
+      document.getElementById('fruit-btn').innerText = 'Playing...';
+      const fruits = ['🍎','🍌','🍇','🍊','🍓','🍉'];
+      let count = 0;
+      function nextFruit() {
+        if (count >= 12) {
+          fruitRunning = false;
+          document.getElementById('fruit-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(fruitScore / 2), 6);
+          if (gamePrize > 0) {
+            document.getElementById('fruit-claim').style.display = 'inline-block';
+            document.getElementById('fruit-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          }
+          return;
+        }
+        const disp = document.getElementById('fruit-display');
+        disp.innerText = fruits[Math.floor(Math.random()*fruits.length)];
+        disp.onclick = () => {
+          if (!fruitRunning) return;
+          fruitScore++;
+          document.getElementById('fruit-score').innerText = fruitScore;
+          disp.onclick = null;
+        };
+        count++;
+        fruitTimeout = setTimeout(nextFruit, 900);
+      }
+      nextFruit();
+    }
 
-function drawScene(ctx, now) {
-  const w = sim.w; const h = sim.h;
-  const sky = ctx.createLinearGradient(0, 0, 0, h * 0.35);
-  sky.addColorStop(0, '#38bdf8'); sky.addColorStop(1, '#bae6fd');
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h * 0.35);
-  ctx.fillStyle = '#0f766e'; ctx.fillRect(0, h * 0.22, w, h * 0.1);
+    // SHOOT
+    let shootScore = 0, shootRunning = false;
+    function startShoot() {
+      shootScore = 0; shootRunning = false;
+      document.getElementById('shoot-score').innerText = '0';
+      document.getElementById('shoot-claim').style.display = 'none';
+      document.getElementById('shoot-btn').innerText = 'Start';
+      showPage('game-shoot');
+    }
+    function playShoot() {
+      if (shootRunning) return;
+      shootRunning = true;
+      shootScore = 0;
+      document.getElementById('shoot-score').innerText = '0';
+      document.getElementById('shoot-btn').innerText = 'Playing...';
+      let left = 12;
+      const target = document.getElementById('shoot-target');
+      function showTarget() {
+        if (left <= 0) {
+          shootRunning = false;
+          document.getElementById('shoot-btn').innerText = 'Finished';
+          gamePrize = Math.min(Math.floor(shootScore / 2), 7);
+          if (gamePrize > 0) {
+            document.getElementById('shoot-claim').style.display = 'inline-block';
+            document.getElementById('shoot-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+          }
+          return;
+        }
+        target.style.opacity = '1';
+        target.onclick = () => {
+          if (!shootRunning) return;
+          shootScore++;
+          document.getElementById('shoot-score').innerText = shootScore;
+          target.style.opacity = '0.3';
+          target.onclick = null;
+        };
+        left--;
+        setTimeout(showTarget, 800);
+      }
+      showTarget();
+    }
 
-  const grass = ctx.createLinearGradient(0, h * 0.32, 0, h);
-  grass.addColorStop(0, '#15803d'); grass.addColorStop(1, '#166534');
-  ctx.fillStyle = grass; ctx.fillRect(0, h * 0.32, w, h * 0.68);
+    // TOWER
+    let towerScore = 0, towerRunning = false;
+    function startTower() {
+      towerScore = 0; towerRunning = false;
+      document.getElementById('tower-score').innerText = '0';
+      document.getElementById('tower-display').innerText = '⬜';
+      document.getElementById('tower-claim').style.display = 'none';
+      document.getElementById('tower-btn').innerText = 'Start';
+      showPage('game-tower');
+    }
+    function playTower() {
+      if (towerRunning) return;
+      towerRunning = true;
+      towerScore = 0;
+      document.getElementById('tower-score').innerText = '0';
+      document.getElementById('tower-btn').innerText = 'Drop Block';
+      document.getElementById('tower-btn').onclick = () => {
+        if (!towerRunning) return;
+        towerScore++;
+        document.getElementById('tower-score').innerText = towerScore;
+        document.getElementById('tower-display').innerText += '⬜';
+        if (towerScore >= 10) {
+          towerRunning = false;
+          document.getElementById('tower-btn').innerText = 'Finished';
+          gamePrize = Math.min(towerScore, 8);
+          document.getElementById('tower-claim').style.display = 'inline-block';
+          document.getElementById('tower-claim').innerText = 'Watch Ad & Claim ' + gamePrize + ' Coins';
+        }
+      };
+    }
 
-  const topW = w * 0.22; const botW = w * 0.70;
-  const topY = h * 0.28; const botY = h * 0.88;
-  ctx.beginPath();
-  ctx.moveTo(w*0.5 - topW*0.5, topY); ctx.lineTo(w*0.5 + topW*0.5, topY);
-  ctx.lineTo(w*0.5 + botW*0.5, botY); ctx.lineTo(w*0.5 - botW*0.5, botY);
-  ctx.closePath();
-  const pitchGrad = ctx.createLinearGradient(0, topY, 0, botY);
-  pitchGrad.addColorStop(0, '#d97706'); pitchGrad.addColorStop(1, '#eab308');
-  ctx.fillStyle = pitchGrad; ctx.fill();
-  ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2.5; ctx.stroke();
-
-  // White Crease markings
-  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5;
-  // Bowler crease
-  ctx.beginPath();
-  ctx.moveTo(w*0.5 - topW*0.45, topY + 12); ctx.lineTo(w*0.5 + topW*0.45, topY + 12);
-  ctx.stroke();
-
-  // Batsman popping crease (h * 0.64)
-  const popY = h * 0.64;
-  const popW = topW + (botW - topW) * ((popY - topY) / (botY - topY));
-  ctx.beginPath();
-  ctx.moveTo(w*0.5 - popW*0.48, popY); ctx.lineTo(w*0.5 + popW*0.48, popY);
-  ctx.stroke();
-
-  // Bowling crease with stumps (h * 0.73 BEHIND batsman)
-  const stmpCreaseY = h * 0.73;
-  const stmpCreaseW = topW + (botW - topW) * ((stmpCreaseY - topY) / (botY - topY));
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'; ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(w*0.5 - stmpCreaseW*0.38, stmpCreaseY); ctx.lineTo(w*0.5 + stmpCreaseW*0.38, stmpCreaseY);
-  ctx.stroke();
-
-  // Strike zone marker (centered on right-handed batting channel)
-  if (sim.ballActive) {
-    const px = w * 0.49 + sim.currentSpec.pitchX * 45; const py = h * 0.48;
-    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.ellipse(px, py, 13, 5.5, 0, 0, Math.PI*2); ctx.stroke();
-    if (sim.ballProgress >= 0.45) {
-      const isOpt = sim.ballProgress >= 0.82 && sim.ballProgress <= 1.15;
-      ctx.strokeStyle = isOpt ? '#22c55e' : 'rgba(74, 222, 128, 0.4)';
-      ctx.fillStyle = isOpt ? 'rgba(34, 197, 94, 0.28)' : 'rgba(74, 222, 128, 0.08)';
-      ctx.beginPath(); ctx.ellipse(w * 0.46, h * 0.63, 34, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-      if (isOpt) {
-        ctx.fillStyle = '#22c55e'; ctx.font = '800 11px "Fredoka", sans-serif'; ctx.textAlign = 'center';
-        ctx.fillText('⚡ TAP NOW! ⚡', w * 0.46, h * 0.63 - 16);
+    // SUDOKU (simple 4x4 for mobile)
+    let sudokuSolution = [];
+    function startSudoku() {
+      // Simple 4x4 puzzle for mobile friendliness
+      const puzzle = [
+        [1,0,0,4],
+        [0,0,1,0],
+        [0,4,0,0],
+        [4,0,0,2]
+      ];
+      sudokuSolution = [
+        [1,2,3,4],
+        [3,4,1,2],
+        [2,3,4,1],
+        [4,1,2,3]
+      ];
+      const board = document.getElementById('sudoku-board');
+      board.innerHTML = '';
+      board.style.gridTemplateColumns = 'repeat(4, 50px)';
+      for (let r=0; r<4; r++) {
+        for (let c=0; c<4; c++) {
+          const inp = document.createElement('input');
+          inp.type = 'number';
+          inp.min = 1; inp.max = 4;
+          inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:20px;font-weight:700;border:2px solid #c8102e;border-radius:8px;';
+          if (puzzle[r][c] !== 0) {
+            inp.value = puzzle[r][c];
+            inp.disabled = true;
+            inp.style.background = '#ffe8e8';
+          }
+          inp.dataset.r = r;
+          inp.dataset.c = c;
+          board.appendChild(inp);
+        }
+      }
+      document.getElementById('sudoku-msg').innerText = '';
+      showPage('game-sudoku');
+    }
+    function checkSudoku() {
+      const inputs = document.querySelectorAll('#sudoku-board input');
+      let correct = true;
+      inputs.forEach(inp => {
+        const r = Number(inp.dataset.r);
+        const c = Number(inp.dataset.c);
+        const val = Number(inp.value);
+        if (val !== sudokuSolution[r][c]) correct = false;
+      });
+      if (correct) {
+        document.getElementById('sudoku-msg').innerText = '✅ Correct! +5 Coins';
+        balance += 5; updateUI();
+        saveBalance(5, 'game', 'Sudoku Win');
+        saveToHistory('Sudoku Win', 5);
+      } else {
+        document.getElementById('sudoku-msg').innerText = '❌ Not correct yet';
       }
     }
-  }
 
-  // 5 Distinct Cartoon Fielders
-  for (const f of fielders) {
-    ctx.save(); ctx.translate(f.x, f.y);
-    let bob = f.state === 'CHASE' ? Math.abs(Math.sin(now * 0.025 + f.id)) * 5 : Math.sin(now * 0.005 + f.id) * 2;
-    ctx.translate(0, -bob);
-    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(0, 12 + bob, f.type === 'chubby' ? 12 : 8, 3.5, 0, 0, Math.PI*2); ctx.fill();
-
-    // Body
-    ctx.fillStyle = '#f8fafc';
-    if (f.type === 'tall') {
-      ctx.fillRect(-6, 0, 4, 13); ctx.fillRect(2, 0, 4, 13);
-      ctx.fillStyle = '#0284c7'; ctx.fillRect(-6, -14, 12, 14);
-    } else if (f.type === 'chubby') {
-      ctx.fillRect(-7, 2, 5, 8); ctx.fillRect(2, 2, 5, 8);
-      ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(0, -5, 9, 0, Math.PI*2); ctx.fill();
-    } else if (f.type === 'muscular') {
-      ctx.fillRect(-6, 0, 4.5, 10); ctx.fillRect(1.5, 0, 4.5, 10);
-      ctx.fillStyle = '#dc2626'; ctx.fillRect(-8, -12, 16, 12);
-    } else {
-      ctx.fillRect(-6, 0, 4.5, 10); ctx.fillRect(1.5, 0, 4.5, 10);
-      ctx.fillStyle = '#7c3aed'; ctx.fillRect(-6, -10, 12, 11);
+    function claimGame(type) {
+      if (gamePrize <= 0) return;
+      window.open(getRandomAd(), '_blank');
+      setTimeout(() => {
+        balance += gamePrize;
+        updateUI();
+        saveBalance(gamePrize, 'game', type + ' Win');
+        saveToHistory(type + ' Game', gamePrize);
+        alert('✅ Claimed +' + gamePrize + ' Coins!');
+        gamePrize = 0;
+        document.getElementById(type + '-claim').style.display = 'none';
+      }, (adSettings.wait||10)*1000);
     }
 
-    // Head
-    const headY = f.type === 'tall' ? -19 : -15;
-    ctx.fillStyle = f.skin; ctx.beginPath(); ctx.arc(0, headY, f.type === 'chubby' ? 6.5 : 5.5, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(-2, headY, 1.2, 0, Math.PI*2); ctx.arc(2, headY, 1.2, 0, Math.PI*2); ctx.fill();
-    if (f.glasses) {
-      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.arc(-2.5, headY, 2.5, 0, Math.PI*2); ctx.arc(2.5, headY, 2.5, 0, Math.PI*2); ctx.stroke();
+    // ========== WALLET WITHDRAW ==========
+    function openWithdraw(type) {
+      currentWithdrawType = type;
+      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank Account' : 'USDT Address (TRC20/BEP20)';
+      document.getElementById('withdraw-address').value = '';
+      document.getElementById('withdraw-amount').value = 500;
+      showPage('withdraw-form');
     }
-    if (f.mustache) {
-      ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(0, headY + 2.5, 2, Math.PI, 0); ctx.fill();
+    function submitWithdraw() {
+      const address = document.getElementById('withdraw-address').value.trim();
+      const amount = Number(document.getElementById('withdraw-amount').value) || 0;
+      if (!address) { alert('Enter address / UPI'); return; }
+      if (amount < 500) { alert('Minimum withdrawal is 500 Coins'); return; }
+      if (balance < amount) { alert('Not enough balance'); return; }
+      balance -= amount;
+      updateUI();
+      saveBalance(-amount, 'withdraw', 'Withdrawal request');
+      saveToHistory('Withdrawal Request', -amount);
+      alert('✅ Withdrawal request submitted!\nAmount: ' + amount + ' Coins\n\nWe will process within 24-48 hours.\nContact @Vtnhub0 for status.');
+      showPage('wallet');
     }
-    // Headgear
-    ctx.fillStyle = f.cap;
-    if (f.style === 'bucket_hat') {
-      ctx.fillRect(-7, headY - 8, 14, 6); ctx.fillRect(-9, headY - 2.5, 18, 2);
-    } else if (f.style === 'sunhat') {
-      ctx.fillStyle = '#f8fafc'; ctx.fillRect(-11, headY - 2.5, 22, 2.5); ctx.beginPath(); ctx.arc(0, headY - 4, 6, Math.PI, 0); ctx.fill();
-    } else if (f.style === 'afro') {
-      ctx.fillStyle = '#1e1b4b'; ctx.beginPath(); ctx.arc(0, headY - 3, 8.5, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#a855f7'; ctx.fillRect(-6.5, headY - 2.5, 13, 2.5);
-    } else if (f.style === 'bandana') {
-      ctx.fillRect(-6, headY - 5, 12, 3);
-    } else {
-      ctx.beginPath(); ctx.arc(0, headY - 2, 6, Math.PI, 0); ctx.fill(); ctx.fillRect(-2, headY - 4, 7, 2);
+
+    // ========== ADMIN ==========
+    function savePriceSettings() {
+      prices.channel = Number(document.getElementById('price-channel').value) || 200;
+      prices.bot = Number(document.getElementById('price-bot').value) || 150;
+      prices.views = Number(document.getElementById('price-views').value) || 50;
+      prices.install = Number(document.getElementById('price-install').value) || 300;
+      prices.traffic = Number(document.getElementById('price-traffic').value) || 80;
+      prices.banner = Number(document.getElementById('price-banner').value) || 100;
+      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
+      prices.test = Number(document.getElementById('price-test').value) || 60;
+      localStorage.setItem('vtn_prices', JSON.stringify(prices));
+      alert('✅ Prices saved!');
     }
-    ctx.fillStyle = '#fef08a'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(f.name, 0, headY - 10);
-    ctx.restore();
-  }
-
-  // Bowler at top of pitch (h * 0.28)
-  const curOv = Math.floor(match.ballsDelivered / 6);
-  const curBowler = BOWLERS[Math.min(curOv, BOWLERS.length - 1)];
-  ctx.save();
-  ctx.translate(w * 0.5, h * 0.28);
-  // Bowling end stumps
-  ctx.fillStyle = '#78350f';
-  ctx.fillRect(-5, -12, 2.5, 12); ctx.fillRect(-1, -12, 2.5, 12); ctx.fillRect(3, -12, 2.5, 12);
-  let bBob = sim.bowlerState === 'RUNUP' ? Math.sin(now * 0.024) * 4 : 0;
-  ctx.translate(14, -16 - bBob);
-  ctx.fillStyle = curBowler.jersey;
-  if (curBowler.type === 'chubby') { ctx.beginPath(); ctx.arc(0, 1, 9, 0, Math.PI*2); ctx.fill(); }
-  else if (curBowler.type === 'muscular') { ctx.fillRect(-8, -6, 16, 14); }
-  else { ctx.fillRect(-6, -6, 12, 14); }
-  ctx.fillStyle = '#ffffff'; ctx.font = 'bold 7px Impact, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(curBowler.num, 0, 4);
-  ctx.fillStyle = curBowler.skin; ctx.beginPath(); ctx.arc(0, -11, 6, 0, Math.PI*2); ctx.fill();
-  if (curBowler.glasses) {
-    ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.strokeRect(-4, -12, 3, 3); ctx.strokeRect(1, -12, 3, 3);
-  }
-  if (curBowler.mustache) {
-    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(0, -9, 2, Math.PI, 0); ctx.fill();
-  }
-  ctx.fillStyle = curBowler.headColor;
-  if (curBowler.headgear === 'headband') { ctx.fillRect(-7, -15, 14, 3); }
-  else if (curBowler.headgear === 'cap') { ctx.beginPath(); ctx.arc(0, -13, 7, Math.PI, 0); ctx.fill(); }
-  else { ctx.fillRect(-5, -17, 10, 6); }
-  ctx.save();
-  ctx.translate(0, -2);
-  ctx.rotate(sim.bowlerState === 'RUNUP' ? now * 0.035 : sim.bowlerState === 'RELEASE' ? -1.2 : 0);
-  ctx.strokeStyle = curBowler.skin; ctx.lineWidth = 3.5;
-  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -14); ctx.stroke();
-  ctx.restore();
-  if (sim.bowlerState === 'CELEBRATE') {
-    ctx.fillStyle = '#fef08a'; ctx.fillRect(-22, -32, 44, 15);
-    ctx.fillStyle = '#713f12'; ctx.font = 'bold 8px sans-serif';
-    ctx.fillText('OUT HO GAYA!💥', -20, -21);
-  }
-  ctx.restore();
-
-  // Umpire
-  ctx.save();
-  ctx.translate(w * 0.32, h * 0.32);
-  ctx.fillStyle = '#ffffff'; ctx.fillRect(-8, 0, 16, 15);
-  ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -5, 6.5, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#ffffff'; ctx.fillRect(-10, -10, 20, 2.5);
-  if (sim.umpireSignal === 'SIX') {
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.5;
-    ctx.beginPath(); ctx.moveTo(-6, 2); ctx.lineTo(-10, -18); ctx.moveTo(6, 2); ctx.lineTo(10, -18); ctx.stroke();
-  } else if (sim.umpireSignal === 'OUT') {
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.5;
-    ctx.beginPath(); ctx.moveTo(5, 3); ctx.lineTo(8, -15); ctx.stroke();
-  }
-  ctx.restore();
-
-  // RIGHT-HANDED BATSMAN ON THE LEFT SIDE OF THE PITCH (w * 0.42, facing UP towards bowler)
-  const curBat = BATSMEN[Math.min(match.wickets, BATSMEN.length - 1)];
-  ctx.save();
-  ctx.translate(w * 0.42, h * 0.64);
-
-  let batRot = -25; let batX = 8; let batY = 10; let batBob = 0; let stride = 0;
-  if (sim.battingAnim === 'READY') { batRot = -55; batY = 4; }
-  else if (sim.battingAnim === 'SWING_SIX') {
-    const t = Math.min((2.0 - sim.animTimer) * 1.5, 1);
-    batRot = -55 + t * 125; batX = 8 - t * 14; batY = 4 - t * 18; batBob = -Math.sin(t*Math.PI)*12; stride = t * 14;
-  } else if (sim.battingAnim === 'SWING_FOUR') {
-    const t = Math.min((2.0 - sim.animTimer) * 2, 1);
-    batRot = -50 + t * 105; batX = 6 - t * 12; batY = 6 - t * 10; stride = t * 12;
-  } else if (sim.battingAnim === 'BOWLED') { batRot = 70; batX = 18; batY = 24; batBob = 6; }
-
-  ctx.translate(0, batBob);
-  // Right-handed stance: Left pad forward (screen left), right pad back (screen right near wickets)
-  ctx.fillStyle = curBat.pads; ctx.fillRect(-14 - stride, 8, 10, 24); ctx.fillRect(3, 10, 10, 24);
-  // Jersey back (facing UP towards bowler)
-  ctx.fillStyle = curBat.jersey; ctx.fillRect(-15, -12, 30, 24);
-  ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText(curBat.name.split(' ')[0].toUpperCase(), 0, -2);
-  ctx.fillStyle = '#facc15'; ctx.font = '800 13px Impact, sans-serif';
-  ctx.fillText(curBat.num, 0, 9);
-
-  // Helmet facing bowler
-  ctx.save();
-  ctx.translate(-2, -22);
-  ctx.fillStyle = curBat.helmet; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#1e293b'; ctx.fillRect(-7, 7, 14, 5);
-  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.8;
-  ctx.beginPath(); ctx.moveTo(-11, -2); ctx.lineTo(-16, -8); ctx.moveTo(-11, 2); ctx.lineTo(-15, -4); ctx.stroke();
-  ctx.restore();
-
-  // Bat held on the inside (right side towards middle/off-stump)
-  ctx.save();
-  ctx.translate(batX, batY); ctx.rotate(batRot * Math.PI / 180);
-  ctx.fillStyle = '#fef3c7'; ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2;
-  ctx.fillRect(-5, -56, 10, 46); ctx.strokeRect(-5, -56, 10, 46);
-  ctx.fillStyle = '#dc2626'; ctx.fillRect(-4, -50, 8, 11);
-  ctx.fillStyle = curBat.glove; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2); ctx.arc(0, 9, 6, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-  ctx.restore();
-
-  // Wickets (at Center w * 0.50, h * 0.73)
-  const sx = w * 0.50; const sy = h * 0.73;
-  if (sim.flyingWoods.length === 0) {
-    ctx.save();
-    ctx.translate(sx, sy);
-    ctx.fillStyle = '#b45309';
-    for (let i = -1; i <= 1; i++) ctx.fillRect(i * 9 - 2.5, -38, 5, 38);
-    ctx.fillStyle = '#f59e0b'; ctx.fillRect(-13, -41, 12, 3); ctx.fillRect(1, -41, 12, 3);
-    ctx.restore();
-  }
-
-  // Wicket Keeper crouching directly behind wickets (Center w * 0.50, h * 0.81)
-  ctx.save();
-  ctx.translate(w * 0.50, h * 0.81);
-  ctx.fillStyle = '#fde047'; ctx.fillRect(-16, 2, 10, 14); ctx.fillRect(6, 2, 10, 14);
-  ctx.fillStyle = '#16a34a'; ctx.fillRect(-12, -10, 24, 16);
-  ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -16, 8, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#15803d'; ctx.beginPath(); ctx.arc(0, -18, 8.5, Math.PI, 0); ctx.fill();
-  ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(-16, -2, 7, 0, Math.PI*2); ctx.arc(16, -2, 7, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-
-  // Delivery Ball
-  if (sim.ballActive) {
-    const p = sim.ballProgress;
-    const startX = w * 0.5; const startY = h * 0.28;
-    const pitchX = w * 0.49 + sim.currentSpec.pitchX * 45;
-    const pitchY = h * 0.48;
-    const batHitX = w * 0.46 + sim.currentSpec.spin * 35;
-    const batHitY = h * 0.63;
-    const stmpX = w * 0.50; const stmpY = h * 0.73;
-    let cx, cy;
-    if (p < 0.55) {
-      const t = p / 0.55;
-      cx = startX + (pitchX - startX) * t;
-      cy = (startY + (pitchY - startY) * t) - Math.sin(t * Math.PI) * 22;
-    } else if (p <= 1.0) {
-      const t = (p - 0.55) / 0.45;
-      cx = pitchX + (batHitX - pitchX) * t;
-      cy = (pitchY + (batHitY - pitchY) * t) - Math.sin(t * Math.PI) * 30 * sim.currentSpec.bounce;
-    } else {
-      const t = Math.min((p - 1.0) / 0.25, 1);
-      cx = batHitX + (stmpX - batHitX) * t;
-      cy = batHitY + (stmpY - batHitY) * t;
+    function loadPriceSettings() {
+      document.getElementById('price-channel').value = prices.channel;
+      document.getElementById('price-bot').value = prices.bot;
+      document.getElementById('price-views').value = prices.views;
+      document.getElementById('price-install').value = prices.install;
+      document.getElementById('price-traffic').value = prices.traffic;
+      document.getElementById('price-banner').value = prices.banner;
+      document.getElementById('price-affiliate').value = prices.affiliate;
+      document.getElementById('price-test').value = prices.test;
     }
-    ctx.save();
-    ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(cx, cy, 3.5 + Math.min(p, 1.25) * 11, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
 
-  // Hit Ball in flight
-  if (sim.hitBallActive) {
-    ctx.save(); ctx.translate(sim.hitBallX, sim.hitBallY);
-    ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(0, 0, 16 * sim.hitBallScale, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
+    function saveAdSettings() {
+      const raw = document.getElementById('ad-links').value.trim();
+      const links = raw.split('\n').map(l => l.trim()).filter(l => l);
+      adSettings.links = links.length ? links : adSettings.links;
+      adSettings.wait = Number(document.getElementById('ad-wait').value) || 15;
+      adSettings.reward = Number(document.getElementById('ad-reward').value) || 5;
+      localStorage.setItem('vtn_ad_settings', JSON.stringify(adSettings));
+      alert('✅ Ad Settings Saved!\n' + adSettings.links.length + ' ad link(s)');
+    }
+    function loadAdSettings() {
+      document.getElementById('ad-links').value = (adSettings.links || []).join('\n');
+      document.getElementById('ad-wait').value = adSettings.wait || 15;
+      document.getElementById('ad-reward').value = adSettings.reward || 5;
+    }
 
-  // Flying Woods (Shattered Stumps)
-  for (const wood of sim.flyingWoods) {
-    ctx.save(); ctx.translate(wood.x, wood.y); ctx.rotate(wood.rot);
-    ctx.fillStyle = wood.color; ctx.fillRect(-wood.w * 0.5, -wood.h * 0.5, wood.w, wood.h);
-    ctx.restore();
-  }
+    function openCategory(cat) {
+      currentCategory = cat;
+      document.getElementById('category-title').innerText = ({
+        join:'Join Channel / Group', bot:'Join Bot', watch:'Watch & Earn', views:'Views & Earn',
+        install:'Install App', website:'Visit Website', affiliate:'Affiliate', products:'View Products', other:'Earn Tasks'
+      })[cat] || 'Tasks';
+      showPage('category-tasks');
+      loadCategoryTasks(cat);
+    }
 
-  // MEDIUM-SIZED RESULT BANNER AT THE TOP (Does not cover the middle/pitch!)
-  if (sim.bannerTimer > 0 && sim.bannerText) {
-    ctx.save();
-    const bannerY = h * 0.08;
-    const bW = Math.min(w * 0.78, 260);
-    const bH = 40;
-    ctx.translate(w * 0.5, bannerY);
+    async function loadCategoryTasks(cat) {
+      const container = document.getElementById('category-list');
+      if (!container) return;
+      container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">Loading...</div>';
 
-    // Rounded badge container
-    ctx.beginPath();
-    ctx.roundRect(-bW * 0.5, -bH * 0.5, bW, bH, 12);
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = sim.bannerColor;
-    ctx.stroke();
+      // Load from local orders first
+      let allTasks = [];
+      try {
+        const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+        allTasks = orders.filter(t => t.category === cat || (cat === 'other' && !t.category));
+      } catch(e) {}
 
-    // Medium text
-    ctx.fillStyle = sim.bannerColor;
-    ctx.font = '800 15px "Fredoka", Impact, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(sim.bannerText, 0, -3);
+      if (sb) {
+        try {
+          let query = sb.from('tasks').select('*').eq('is_active', true).order('id', {ascending:false});
+          if (cat === 'other') query = query.or('category.eq.other,category.is.null');
+          else query = query.eq('category', cat);
+          const { data } = await query;
+          if (data) allTasks = allTasks.concat(data);
+        } catch(e) {}
+      }
 
-    ctx.fillStyle = '#e2e8f0';
-    ctx.font = '600 10px "Fredoka", sans-serif';
-    ctx.fillText(sim.bannerSubtext, 0, 12);
-    ctx.restore();
-  }
-}
+      if (!allTasks.length) {
+        container.innerHTML = '<div class="card" style="text-align:center;color:#888;margin:14px;">No tasks yet</div>';
+        return;
+      }
 
-function startNewMatch() {
-  match.runs = 0; match.wickets = 0; match.ballsDelivered = 0;
-  match.history = []; match.sixes = 0; match.fours = 0;
-  updateHUD();
-  document.getElementById('modal-title').classList.add('hidden');
-  document.getElementById('modal-gameover').classList.add('hidden');
-  queueNextBall(1200);
-}
+      currentTasks = allTasks;
+      let html = '';
+      allTasks.forEach((task, index) => {
+        if (task.category !== 'watch' && completedTasks.includes(task.id)) return;
+        const waitInfo = task.wait_seconds > 0 ? ' • Wait ' + task.wait_seconds + 's' : '';
+        html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'Task')+'</h4><p>+'+(task.reward||0)+' Coins'+waitInfo+'</p></div><button class="start-btn" onclick="doTaskByIndex('+index+')">Start</button></div>';
+      });
+      container.innerHTML = html || '<div class="card" style="text-align:center;color:#888;margin:14px;">No new tasks</div>';
+    }
 
-function queueNextBall(delayMs) {
-  const btn = document.getElementById('hit-button');
-  const btnTxt = document.getElementById('hit-button-text');
-  btn.className = 'waiting'; btnTxt.innerText = 'GET READY...';
+    function doTaskByIndex(index) {
+      const task = currentTasks[index];
+      if (!task) return;
+      if (task.link) window.open(task.link, '_blank');
+      const waitSec = Number(task.wait_seconds) || 0;
+      if (waitSec > 0) {
+        alert('Please wait ' + waitSec + ' seconds...');
+        setTimeout(() => finishTask(task), waitSec * 1000);
+      } else setTimeout(() => finishTask(task), 1500);
+    }
 
-  setTimeout(() => {
-    if (match.wickets >= MAX_WICKETS || match.ballsDelivered >= TOTAL_BALLS) return;
-    sim.currentSpec = BALL_SPECS[match.ballsDelivered % BALL_SPECS.length];
-    document.getElementById('hud-ball-name').innerText = sim.currentSpec.name;
-    sim.ballActive = true; sim.hasSwung = false;
-    sim.ballStartTime = performance.now();
-    sim.ballDuration = sim.currentSpec.speed;
-    sim.ballProgress = 0; sim.battingAnim = 'READY';
-    sim.bowlerState = 'RUNUP'; sim.flyingWoods = [];
-    btn.className = 'ready'; btnTxt.innerText = 'HIT BALL!';
-  }, delayMs);
-}
+    function finishTask(task) {
+      if (!confirm('Did you complete the task?\n\n"' + (task.title||'Task') + '"')) {
+        alert('No coins added.'); return;
+      }
+      const reward = task.reward || 0;
+      if (task.category !== 'watch' && !completedTasks.includes(task.id)) {
+        completedTasks.push(task.id);
+        localStorage.setItem(completedKey, JSON.stringify(completedTasks));
+      }
+      saveToHistory(task.title||'Task', reward);
+      addCoins(reward, task.title||'Task');
+      loadCategoryTasks(currentCategory);
+    }
 
-function resolveDelivery(res) {
-  match.ballsDelivered++; match.runs += res.runs;
-  if (res.isWicket) match.wickets++;
-  if (res.runs === 6) match.sixes++;
-  if (res.runs === 4) match.fours++;
-  match.history.push(res.isWicket ? 'W' : (res.runs === 0 ? '•' : '' + res.runs));
-  match.highScore = Math.max(match.highScore, match.runs);
-  localStorage.setItem('toon_cricket_hi', match.highScore.toString());
-  updateHUD();
+    function saveToHistory(title, amount) {
+      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
+      history.unshift({ title, amount, time: new Date().toLocaleString() });
+      if (history.length > 30) history.length = 30;
+      localStorage.setItem('vtn_history_'+userId, JSON.stringify(history));
+    }
 
-  if (match.wickets >= MAX_WICKETS || match.ballsDelivered >= TOTAL_BALLS) {
-    setTimeout(showGameOver, 600);
-  } else {
-    queueNextBall(1300);
-  }
-}
+    function loadHistory() {
+      const container = document.getElementById('history-list');
+      if (!container) return;
+      const history = JSON.parse(localStorage.getItem('vtn_history_'+userId) || '[]');
+      if (!history.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet</div>'; return; }
+      let html = '';
+      history.forEach(item => {
+        html += '<div class="list-item"><div class="icon" style="background:#4CAF50;">✅</div><div class="info"><h4>'+item.title+'</h4><p>'+item.time+'</p></div><div style="font-weight:700;color:#c8102e;">'+(item.amount > 0 ? '+' : '')+item.amount+'</div></div>';
+      });
+      container.innerHTML = html;
+    }
 
-function updateHUD() {
-  document.getElementById('hud-runs').innerText = match.runs;
-  document.getElementById('hud-wickets').innerText = match.wickets;
-  document.getElementById('hud-overs').innerText = formatOvers(match.ballsDelivered);
+    // ADMIN functions
+    async function adminAddCoins() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const coins = Number(document.getElementById('admin-coins').value) || 0;
+      const result = document.getElementById('admin-result');
+      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
+      try {
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        const newBalance = (data.balance||0) + coins;
+        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
+        await sb.from('transactions').insert([{ telegram_id: tid, amount: coins, type:'admin', description:'Admin added coins' }]);
+        result.innerHTML = '<span style="color:green;">✅ Added '+coins+'. New: '+newBalance+'</span>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
 
-  // Active Batsman & Bowler
-  const curBat = BATSMEN[Math.min(match.wickets, BATSMEN.length - 1)];
-  const curOv = Math.floor(match.ballsDelivered / 6);
-  const curBowler = BOWLERS[Math.min(curOv, BOWLERS.length - 1)];
-  document.getElementById('hud-batsman-name').innerText = '🏏 ' + curBat.name + ' (#' + curBat.num + ')';
-  document.getElementById('hud-bowler-name').innerText = '⚾ ' + curBowler.name;
+    async function adminRemoveCoins() {
+      if (!sb) return alert('Supabase not connected');
+      const tid = document.getElementById('admin-userid').value.trim();
+      const coins = Number(document.getElementById('admin-coins').value) || 0;
+      const result = document.getElementById('admin-result');
+      if (!tid || coins <= 0) return alert('Enter valid ID and amount');
+      try {
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        const newBalance = Math.max(0, (data.balance||0) - coins);
+        await sb.from('users').update({ balance: newBalance }).eq('telegram_id', tid);
+        await sb.from('transactions').insert([{ telegram_id: tid, amount: -coins, type:'admin', description:'Admin removed coins' }]);
+        result.innerHTML = '<span style="color:orange;">− Removed '+coins+'. New: '+newBalance+'</span>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
 
-  for (let i = 0; i < 3; i++) {
-    const sock = document.getElementById('w-sock-' + i);
-    sock.className = i < match.wickets ? 'wicket-pill wicket-out' : 'wicket-pill wicket-live';
-    sock.innerText = i < match.wickets ? '✕' : '';
-  }
+    async function adminCheckBalance() {
+      if (!sb) return;
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+      if (!tid) return alert('Enter User ID');
+      try {
+        const { data } = await sb.from('users').select('*').eq('telegram_id', tid).maybeSingle();
+        if (!data) { result.innerHTML = '<span style="color:red;">User not found</span>'; return; }
+        result.innerHTML = 'User: '+(data.first_name||tid)+'<br>Balance: <b>'+(data.balance||0)+'</b>';
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
 
-  document.getElementById('hud-over-idx').innerText = 'Ov ' + (curOv + 1) + ':';
-  const ballsThisOver = match.history.slice(curOv * 6, (curOv + 1) * 6);
-  const dots = document.getElementById('hud-ball-dots').children;
-  for (let i = 0; i < 6; i++) {
-    const code = ballsThisOver[i] || '';
-    dots[i].innerText = code;
-    dots[i].className = 'ball-badge';
-    if (code === '6') dots[i].classList.add('six');
-    else if (code === '4') dots[i].classList.add('four');
-    else if (code === 'W') dots[i].classList.add('wicket');
-    else if (code === '1' || code === '2') dots[i].classList.add('single');
-    else if (code === '•') dots[i].classList.add('dot');
-  }
-}
+    async function adminViewHistory() {
+      if (!sb) return;
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+      if (!tid) return alert('Enter User ID');
+      try {
+        const { data } = await sb.from('transactions').select('*').eq('telegram_id', tid).order('id',{ascending:false}).limit(10);
+        if (!data || !data.length) { result.innerHTML = 'No transactions'; return; }
+        let html = '<b>Last 10:</b><br>';
+        data.forEach(t => html += (t.description||t.type)+': '+t.amount+'<br>');
+        result.innerHTML = html;
+      } catch(e) { result.innerHTML = '<span style="color:red;">Failed</span>'; }
+    }
 
-function showGameOver() {
-  const isAllOut = match.wickets >= MAX_WICKETS;
-  document.getElementById('go-icon').innerText = isAllOut ? '💥' : '🏆';
-  document.getElementById('go-title').innerText = isAllOut ? 'ALL OUT! (3 WICKETS)' : 'INNINGS COMPLETE!';
+    function adminBlockUser() {
+      const tid = document.getElementById('admin-userid').value.trim();
+      const result = document.getElementById('admin-result');
+      if (!tid) return alert('Enter User ID');
+      if (!confirm('Block user ' + tid + '?')) return;
+      if (!blockedUsers.includes(tid)) {
+        blockedUsers.push(tid);
+        localStorage.setItem(blockedKey, JSON.stringify(blockedUsers));
+      }
+      result.innerHTML = '<span style="color:red;">User ' + tid + ' blocked</span>';
+      alert('User blocked');
+    }
 
-  let perfTitle = 'VALIANT SLOGGER! 😅';
-  let perfSub = 'Great effort! Good bat speed!';
-  if (isAllOut && match.runs < 10) {
-    perfTitle = 'DUCK SUPREME! 🦆'; perfSub = 'Stumps cried for mercy! Back to street cricket!';
-  } else if (match.runs >= 60) {
-    perfTitle = 'GULLY CRICKET GOD! 👑'; perfSub = 'Bowlers are packing bags and moving to tennis!';
-  } else if (match.runs >= 40) {
-    perfTitle = 'MASTER BLASTER! 💥'; perfSub = 'Roof tiles shattered! Neighbors calling the umpire!';
-  } else if (match.runs >= 20) {
-    perfTitle = 'VILLAGE HERO! 🏏'; perfSub = 'Solid knocks and wild swings! Crowd delighted!';
-  }
-  document.getElementById('go-perf-title').innerText = perfTitle;
-  document.getElementById('go-perf-sub').innerText = perfSub;
+    async function addNewTask() {
+      if (!sb) return alert('Supabase not connected');
+      const title = document.getElementById('task-title').value.trim();
+      const reward = Number(document.getElementById('task-reward').value)||0;
+      const category = document.getElementById('task-category').value;
+      const link = document.getElementById('task-link').value.trim();
+      const waitSeconds = Number(document.getElementById('task-wait').value)||0;
+      const maxUsers = Number(document.getElementById('task-max-users').value)||0;
+      if (!title) return alert('Enter title');
+      try {
+        const { error } = await sb.from('tasks').insert([{
+          title, reward, category, link, wait_seconds: waitSeconds, max_users: maxUsers, is_active: true
+        }]);
+        if (error) { alert('Error: '+error.message); return; }
+        alert('✅ Task Added!');
+        document.getElementById('task-title').value = '';
+        document.getElementById('task-reward').value = '10';
+        document.getElementById('task-link').value = '';
+        loadAdminTasks();
+      } catch(e) { alert('Failed'); }
+    }
 
-  document.getElementById('go-runs').innerText = match.runs;
-  document.getElementById('go-wickets').innerText = match.wickets + ' / 3';
-  document.getElementById('go-overs').innerText = formatOvers(match.ballsDelivered);
-  document.getElementById('go-sixes').innerText = match.sixes;
-  document.getElementById('go-fours').innerText = match.fours;
-  document.getElementById('go-best').innerText = match.highScore;
+    async function loadAdminTasks() {
+      if (!sb) return;
+      const container = document.getElementById('admin-tasks-list');
+      container.innerHTML = '<div class="card" style="text-align:center;color:#888;">Loading...</div>';
+      try {
+        const { data } = await sb.from('tasks').select('*').order('id',{ascending:false});
+        if (!data || !data.length) { container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks</div>'; return; }
+        let html = '';
+        data.forEach(task => {
+          const btnText = task.is_active ? 'Off' : 'On';
+          const btnColor = task.is_active ? '#c8102e' : '#4CAF50';
+          const statusDot = task.is_active ? '🟢' : '🔴';
+          html += '<div class="list-item"><div class="icon" style="background:#c8102e;">📋</div><div class="info"><h4>'+(task.title||'')+'</h4><p>+'+(task.reward||0)+' • '+(task.category||'')+' • '+statusDot+'</p></div><button class="start-btn" style="background:'+btnColor+'" onclick="toggleTask('+task.id+','+(!task.is_active)+')">'+btnText+'</button><button class="start-btn" style="background:#666;margin-left:4px;" onclick="deleteTask('+task.id+')">Del</button></div>';
+        });
+        container.innerHTML = html;
+      } catch(e) { container.innerHTML = '<div class="card">Failed</div>'; }
+    }
 
-  document.getElementById('modal-gameover').classList.remove('hidden');
-}
+    async function toggleTask(id, newStatus) {
+      try {
+        await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+        alert(newStatus ? 'Enabled' : 'Disabled');
+        loadAdminTasks();
+      } catch(e) { alert('Failed'); }
+    }
 
-document.getElementById('btn-start-game').addEventListener('click', startNewMatch);
-document.getElementById('btn-restart-game').addEventListener('click', startNewMatch);
-document.getElementById('hit-button').addEventListener('click', triggerHitAction);
-document.getElementById('game-canvas').addEventListener('click', triggerHitAction);
+    async function deleteTask(id) {
+      if (!confirm('Delete?')) return;
+      try {
+        await sb.from('tasks').delete().eq('id', id);
+        alert('Deleted');
+        loadAdminTasks();
+      } catch(e) { alert('Failed'); }
+    }
 
-document.getElementById('btn-sound').addEventListener('click', () => {
-  const isMuted = sound.toggle();
-  document.getElementById('btn-sound').innerText = isMuted ? '🔇' : '🔊';
-});
-
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' || e.code === 'Enter') {
-    e.preventDefault();
-    const titleVisible = !document.getElementById('modal-title').classList.contains('hidden');
-    const goVisible = !document.getElementById('modal-gameover').classList.contains('hidden');
-    if (titleVisible || goVisible) startNewMatch();
-    else triggerHitAction();
-  }
-});
-
-requestAnimationFrame(loop);
-</script>
+    setupUser();
+    loadUser();
+  </script>
 </body>
-  </html>
+      </html>
