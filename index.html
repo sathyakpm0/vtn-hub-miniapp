@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Master Fruit Blade - Deluxe</title>
-  <!-- Telegram WebApp SDK -->
+  <title>Fruit Slice Pro</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
@@ -14,22 +13,21 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
-    }
-
-    html, body {
-      background: #0d0705;
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      color: #fff;
-      height: 100%;
-      width: 100%;
-      position: fixed;
       touch-action: none;
     }
 
+    body {
+      background: #080c16;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #fff;
+      height: 100vh;
+      width: 100vw;
+      overscroll-behavior: none;
+    }
+
     #game-container {
-      position: absolute;
-      inset: 0;
+      position: relative;
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -39,16 +37,14 @@
       display: block;
       width: 100%;
       height: 100%;
-      touch-action: none;
     }
 
-    /* HUD overlay */
     #ui {
       position: absolute;
-      top: 0;
+      top: env(safe-area-inset-top, 12px);
       left: 0;
       width: 100%;
-      padding: 14px 18px;
+      padding: 12px 18px;
       z-index: 10;
       pointer-events: none;
       display: flex;
@@ -56,147 +52,70 @@
       align-items: flex-start;
     }
 
-    .score-box {
+    .stat-badge {
       display: flex;
       flex-direction: column;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 8px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(6px);
     }
 
     #score {
       font-size: 38px;
       font-weight: 900;
       line-height: 1;
-      color: #facc15;
-      text-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+      text-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      background: linear-gradient(180deg, #ffffff 40%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     #best {
-      font-size: 11px;
-      font-weight: 700;
-      color: #cbd5e1;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 3px;
-    }
-
-    /* Center Timer & Strikes */
-    #center-hud {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    #timer-badge {
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 5px 18px;
-      border-radius: 20px;
-      backdrop-filter: blur(6px);
-      text-align: center;
-    }
-
-    #timer-label {
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 600;
       color: #94a3b8;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    #timer-container {
+      text-align: right;
     }
 
     #timer {
-      font-size: 28px;
-      font-weight: 900;
-      font-variant-numeric: tabular-nums;
+      font-size: 26px;
+      font-weight: 800;
       color: #38bdf8;
-      text-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+      text-shadow: 0 0 12px rgba(56,189,248,0.4);
+      font-variant-numeric: tabular-nums;
     }
 
-    #timer.warning {
-      color: #ef4444 !important;
-      animation: pulseAlert 0.8s infinite alternate;
-    }
-
-    /* Strikes Indicator */
-    #strikes-container {
-      display: flex;
-      gap: 7px;
-      margin-top: 2px;
-    }
-
-    .strike-slot {
-      width: 32px;
-      height: 32px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 1.5px solid rgba(239, 68, 68, 0.45);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      filter: grayscale(1) opacity(0.35);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .strike-slot.active {
-      filter: grayscale(0) opacity(1);
-      background: rgba(239, 68, 68, 0.45);
-      border-color: #ef4444;
-      box-shadow: 0 0 16px #ef4444;
-      transform: scale(1.15);
-      animation: strikePop 0.35s ease-out;
-    }
-
-    @keyframes strikePop {
-      0% { transform: scale(0.5); }
-      70% { transform: scale(1.35); }
-      100% { transform: scale(1.15); }
-    }
-
-    @keyframes pulseAlert {
-      from { transform: scale(1); filter: drop-shadow(0 0 3px #ef4444); }
-      to { transform: scale(1.08); filter: drop-shadow(0 0 15px #ef4444); }
-    }
-
-    #combo-box {
+    #combo-popup {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.7);
       font-size: 26px;
       font-weight: 900;
       font-style: italic;
-      color: #4ade80;
-      text-shadow: 0 0 18px rgba(74, 222, 128, 0.9), 0 2px 4px #000;
+      color: #facc15;
+      text-shadow: 0 0 16px rgba(250, 204, 21, 0.7);
       opacity: 0;
-      transform: scale(0.8) rotate(-6deg);
-      transition: opacity 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+      z-index: 12;
     }
 
-    #combo-box.show {
-      opacity: 1;
-      transform: scale(1.15) rotate(-6deg);
-    }
-
-    /* Screen Modals */
-    .screen-overlay {
+    #game-over, #start-screen {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(30, 15, 8, 0.95) 0%, rgba(10, 5, 2, 0.98) 100%);
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(8, 12, 22, 0.98) 100%);
+      backdrop-filter: blur(8px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 40;
+      z-index: 30;
       gap: 14px;
       padding: 24px;
-      backdrop-filter: blur(10px);
+      text-align: center;
     }
 
     #start-screen {
@@ -204,106 +123,64 @@
     }
 
     h1 {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #fef08a 0%, #f97316 45%, #ef4444 100%);
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #f43f5e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
-      text-align: center;
-      line-height: 1.1;
-    }
-
-    h2 {
-      font-size: 36px;
-      font-weight: 900;
-      color: #f87171;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 0 18px rgba(248, 113, 113, 0.6);
-    }
-
-    #game-over-reason {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fca5a5;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 30px;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #38bdf8;
-      font-weight: 800;
-    }
-
-    .rules-card {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 16px 20px;
-      border-radius: 16px;
-      font-size: 14px;
-      color: #e2e8f0;
-      text-align: center;
-      line-height: 1.7;
-      max-width: 310px;
-    }
-
-    .rules-card b {
-      color: #facc15;
-    }
-
-    .stat-card {
-      background: rgba(0, 0, 0, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 16px 40px;
-      border-radius: 16px;
-      text-align: center;
       margin-bottom: 4px;
     }
 
+    h2 {
+      font-size: 34px;
+      font-weight: 800;
+      color: #f43f5e;
+    }
+
     #final-score {
-      font-size: 52px;
+      font-size: 56px;
       font-weight: 900;
-      color: #facc15;
-      text-shadow: 0 0 22px rgba(250, 204, 21, 0.6);
+      color: #38bdf8;
+      text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
     }
 
     #best-score-text {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 15px;
       color: #94a3b8;
-      letter-spacing: 1px;
+      margin-bottom: 16px;
     }
 
     .btn {
-      background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+      color: #ffffff;
       border: none;
       padding: 16px 48px;
       font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      border-radius: 50px;
+      font-weight: 700;
+      border-radius: 999px;
       cursor: pointer;
-      pointer-events: auto;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+      outline: none;
+      transition: transform 0.1s ease, filter 0.1s ease;
       touch-action: manipulation;
-      box-shadow: 0 8px 20px rgba(234, 88, 12, 0.45), inset 0 2px 4px rgba(255,255,255,0.4);
-      transition: transform 0.12s, box-shadow 0.12s;
     }
 
     .btn:active {
-      transform: scale(0.94);
+      transform: scale(0.95);
+      filter: brightness(1.15);
+    }
+
+    .instructions {
+      font-size: 15px;
+      color: #94a3b8;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .instructions span {
+      color: #f87171;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -312,1003 +189,452 @@
     <canvas id="game"></canvas>
 
     <div id="ui">
-      <div class="score-box">
+      <div class="stat-badge">
         <div id="score">0</div>
-        <div id="best">Best: 0</div>
+        <div id="best">BEST: 0</div>
       </div>
-      <div id="combo-box">Combo x3</div>
-    </div>
-
-    <div id="center-hud">
-      <div id="timer-badge">
-        <div id="timer-label">Time Remaining</div>
-        <div id="timer">03:00</div>
-      </div>
-      <div id="strikes-container">
-        <div class="strike-slot" id="strike-1">💣</div>
-        <div class="strike-slot" id="strike-2">💣</div>
-        <div class="strike-slot" id="strike-3">💣</div>
+      <div id="timer-container">
+        <div id="timer">40s</div>
       </div>
     </div>
 
-    <!-- Start Modal -->
-    <div id="start-screen" class="screen-overlay">
-      <div class="badge">Arcade 3-Minute Challenge</div>
-      <h1>Ninja Blade</h1>
-      <div class="rules-card">
-        • Fast-swipe blade to slice big juicy fruits.<br>
-        • Cut multiple fruits at once for <b>Combos</b>!<br>
-        • ⚠️ <b>BOMBS:</b> 3 Bombs sliced = <b>Game Over</b>!
-      </div>
-      <button id="start-btn" class="btn">Start Game</button>
+    <div id="combo-popup">COMBO x2!</div>
+
+    <div id="start-screen">
+      <h1>FRUIT SLICE</h1>
+      <p class="instructions">Swipe like a ninja to slice fruits.<br><span>AVOID THE BOMBS!</span></p>
+      <button class="btn" id="start-btn">PLAY NOW</button>
     </div>
 
-    <!-- Game Over Modal -->
-    <div id="game-over" class="screen-overlay">
-      <h2>Game Over</h2>
-      <div id="game-over-reason">3 Bombs Sliced!</div>
-      <div class="stat-card">
-        <div id="final-score">0</div>
-        <div id="best-score-text">Best: 0</div>
-      </div>
-      <button id="restart-btn" class="btn">Play Again</button>
+    <div id="game-over">
+      <h2>TIME'S UP</h2>
+      <div id="final-score">0</div>
+      <div id="best-score-text">BEST: 0</div>
+      <button class="btn" id="restart-btn">PLAY AGAIN</button>
     </div>
   </div>
 
   <script>
-    // --- Safe Storage Fallback for Telegram iframes ---
-    const Storage = {
-      data: {},
-      get(key, def = '0') {
-        try {
-          return window.localStorage.getItem(key) || def;
-        } catch (e) {
-          return this.data[key] || def;
-        }
-      },
-      set(key, val) {
-        try {
-          window.localStorage.setItem(key, String(val));
-        } catch (e) {
-          this.data[key] = String(val);
-        }
-      }
-    };
-
-    // --- Telegram WebApp Integration ---
+    // ========== Telegram Mini App Setup & Haptics ==========
     const tg = window.Telegram?.WebApp;
     if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.disableVerticalSwipes?.();
+      tg.setHeaderColor?.('#080c16');
+      tg.setBackgroundColor?.('#080c16');
+    }
+
+    function haptic(type = 'light') {
       try {
-        tg.ready();
-        tg.expand();
-        if (typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes();
-        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#0d0705');
-        if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#0d0705');
+        if (!tg?.HapticFeedback) return;
+        if (type === 'light') tg.HapticFeedback.impactOccurred('light');
+        else if (type === 'medium') tg.HapticFeedback.impactOccurred('medium');
+        else if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
+        else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
       } catch (e) {}
     }
 
-    function triggerHaptic(type = 'medium') {
-      try {
-        if (tg?.HapticFeedback) {
-          if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
-          else if (type === 'light') tg.HapticFeedback.impactOccurred('light');
-          else tg.HapticFeedback.impactOccurred('medium');
-        } else if (navigator.vibrate) {
-          navigator.vibrate(type === 'heavy' ? [35, 40, 35] : 18);
-        }
-      } catch (e) {}
-    }
-
-    // --- REBUILT REALISTIC AUDIO ENGINE (Whoosh + Juicy Squelch + Sub-Bass Boom) ---
-    const AudioEngine = {
-      ctx: null,
-      noiseBuffer: null,
-
+    // ========== Procedural Sound Synthesizer (Web Audio API) ==========
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
       init() {
-        try {
-          if (!this.ctx) {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) {
-              this.ctx = new AudioCtx();
-              this.buildNoiseBuffer();
-            }
-          }
-          if (this.ctx && this.ctx.state === 'suspended') {
-            this.ctx.resume();
-          }
-        } catch (e) {}
-      },
-
-      buildNoiseBuffer() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playSwoosh() {
         if (!this.ctx) return;
-        const size = this.ctx.sampleRate * 1.5;
-        this.noiseBuffer = this.ctx.createBuffer(1, size, this.ctx.sampleRate);
-        const data = this.noiseBuffer.getChannelData(0);
-        for (let i = 0; i < size; i++) {
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.12);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+      playSlice(comboCount = 1) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        // Juice squelch (FM synthesis)
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        const baseFreq = 520 + Math.min(comboCount * 70, 600);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(160, now + 0.16);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+      playExplosion() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // White noise burst
+        const bufferSize = this.ctx.sampleRate * 0.4;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
           data[i] = Math.random() * 2 - 1;
         }
-      },
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
 
-      // Aerodynamic air-cutting katana blade whoosh
-      playSwoosh() {
-        if (!this.ctx || !this.noiseBuffer) return;
-        try {
-          const now = this.ctx.currentTime;
-          const noise = this.ctx.createBufferSource();
-          noise.buffer = this.noiseBuffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(400, now);
+        filter.frequency.exponentialRampToValueAtTime(40, now + 0.4);
 
-          const filter = this.ctx.createBiquadFilter();
-          filter.type = 'bandpass';
-          filter.Q.setValueAtTime(3.8, now);
-          // Rapid wind displacement curve
-          filter.frequency.setValueAtTime(350, now);
-          filter.frequency.exponentialRampToValueAtTime(1400, now + 0.05);
-          filter.frequency.exponentialRampToValueAtTime(280, now + 0.12);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
 
-          const gain = this.ctx.createGain();
-          gain.gain.setValueAtTime(0.001, now);
-          gain.gain.linearRampToValueAtTime(0.24, now + 0.04);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
 
-          noise.connect(filter);
-          filter.connect(gain);
-          gain.connect(this.ctx.destination);
-
-          noise.start(now);
-          noise.stop(now + 0.14);
-        } catch (e) {}
-      },
-
-      // Juicy slice squelch + blade snip + pentatonic musical chord
-      playSlice(comboLevel = 1) {
-        if (!this.ctx || !this.noiseBuffer) return;
-        try {
-          const now = this.ctx.currentTime;
-
-          // 1. Blade Chop Transient ("Thump")
-          const chopOsc = this.ctx.createOscillator();
-          const chopGain = this.ctx.createGain();
-          chopOsc.frequency.setValueAtTime(160, now);
-          chopOsc.frequency.exponentialRampToValueAtTime(45, now + 0.06);
-          chopGain.gain.setValueAtTime(0.4, now);
-          chopGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-          chopOsc.connect(chopGain);
-          chopGain.connect(this.ctx.destination);
-          chopOsc.start(now);
-          chopOsc.stop(now + 0.07);
-
-          // 2. Juicy Wet Liquid Squelch
-          const squelch = this.ctx.createBufferSource();
-          squelch.buffer = this.noiseBuffer;
-          const sFilter = this.ctx.createBiquadFilter();
-          sFilter.type = 'bandpass';
-          sFilter.Q.setValueAtTime(2.2, now);
-          sFilter.frequency.setValueAtTime(2400, now);
-          sFilter.frequency.exponentialRampToValueAtTime(550, now + 0.1);
-
-          const sGain = this.ctx.createGain();
-          sGain.gain.setValueAtTime(0.35, now);
-          sGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
-
-          squelch.connect(sFilter);
-          sFilter.connect(sGain);
-          sGain.connect(this.ctx.destination);
-          squelch.start(now);
-          squelch.stop(now + 0.12);
-
-          // 3. Musical Pentatonic Ring for satisfying feedback
-          const scale = [523.25, 587.33, 659.25, 783.99, 880, 1046.5]; // C, D, E, G, A, high C
-          const noteFreq = scale[Math.min(comboLevel - 1, scale.length - 1)];
-
-          const ringOsc = this.ctx.createOscillator();
-          const ringGain = this.ctx.createGain();
-          ringOsc.type = 'triangle';
-          ringOsc.frequency.setValueAtTime(noteFreq, now);
-          ringGain.gain.setValueAtTime(0.18, now);
-          ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-
-          ringOsc.connect(ringGain);
-          ringGain.connect(this.ctx.destination);
-          ringOsc.start(now);
-          ringOsc.stop(now + 0.19);
-        } catch (e) {}
-      },
-
-      // Cinematic Heavy Bass Bomb Explosion
-      playBomb() {
-        if (!this.ctx || !this.noiseBuffer) return;
-        try {
-          const now = this.ctx.currentTime;
-
-          // Sub-bass shockwave drop
-          const sub = this.ctx.createOscillator();
-          const subGain = this.ctx.createGain();
-          sub.type = 'sine';
-          sub.frequency.setValueAtTime(140, now);
-          sub.frequency.exponentialRampToValueAtTime(28, now + 0.7);
-          subGain.gain.setValueAtTime(0.9, now);
-          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
-          sub.connect(subGain);
-          subGain.connect(this.ctx.destination);
-          sub.start(now);
-          sub.stop(now + 0.75);
-
-          // Low rumble explosion noise
-          const noise = this.ctx.createBufferSource();
-          noise.buffer = this.noiseBuffer;
-          const filter = this.ctx.createBiquadFilter();
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(600, now);
-          filter.frequency.exponentialRampToValueAtTime(80, now + 0.6);
-
-          const gain = this.ctx.createGain();
-          gain.gain.setValueAtTime(0.8, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
-
-          noise.connect(filter);
-          filter.connect(gain);
-          gain.connect(this.ctx.destination);
-          noise.start(now);
-          noise.stop(now + 0.66);
-        } catch (e) {}
+        noise.start(now);
       }
-    };
+    }
+    const audio = new SoundEngine();
 
-    // --- Canvas & DOM ---
+    // ========== Canvas & Dimensions ==========
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const comboEl = document.getElementById('combo-box');
+    const comboEl = document.getElementById('combo-popup');
     const timerEl = document.getElementById('timer');
     const gameOverEl = document.getElementById('game-over');
     const finalScoreEl = document.getElementById('final-score');
     const bestScoreTextEl = document.getElementById('best-score-text');
-    const gameOverReasonEl = document.getElementById('game-over-reason');
     const startScreen = document.getElementById('start-screen');
     const startBtn = document.getElementById('start-btn');
     const restartBtn = document.getElementById('restart-btn');
 
-    let width = 360, height = 640;
-    let dpr = 1;
-    let bgCanvas = null;
-
-    // --- HIGH-END DOJO WOOD & CINEMATIC LIGHTING CACHE ---
-    function renderBgCache() {
-      if (width <= 0 || height <= 0) return;
-      bgCanvas = document.createElement('canvas');
-      bgCanvas.width = width;
-      bgCanvas.height = height;
-      const bCtx = bgCanvas.getContext('2d');
-
-      // Base Undercoat
-      bCtx.fillStyle = '#140804';
-      bCtx.fillRect(0, 0, width, height);
-
-      // Deluxe Hardwood Horizontal Dojo Planks
-      const slatHeight = 78;
-      const totalSlats = Math.ceil(height / slatHeight);
-
-      const woodPalettes = [
-        { top: '#3c1d11', mid: '#2c140b', bot: '#1b0a04' },
-        { top: '#35190e', mid: '#250f07', bot: '#170803' },
-        { top: '#422013', mid: '#30160d', bot: '#1f0c05' },
-        { top: '#30150c', mid: '#220e06', bot: '#140702' }
-      ];
-
-      for (let i = 0; i < totalSlats; i++) {
-        const y = i * slatHeight;
-        const pal = woodPalettes[i % woodPalettes.length];
-
-        // Primary plank depth gradient
-        const grad = bCtx.createLinearGradient(0, y, 0, y + slatHeight);
-        grad.addColorStop(0, pal.top);
-        grad.addColorStop(0.3, pal.mid);
-        grad.addColorStop(0.85, pal.bot);
-        grad.addColorStop(1, '#0e0502');
-        bCtx.fillStyle = grad;
-        bCtx.fillRect(0, y, width, slatHeight);
-
-        // Organic Wood Grain Fibers
-        bCtx.save();
-        for (let g = 0; g < 7; g++) {
-          const gy = y + 7 + g * 10 + Math.sin(i * 3 + g) * 3;
-          bCtx.beginPath();
-          bCtx.moveTo(0, gy);
-          bCtx.bezierCurveTo(
-            width * 0.28, gy + Math.sin(g * 1.5) * 4,
-            width * 0.72, gy - Math.cos(g * 2.2) * 4,
-            width, gy + Math.sin(g) * 3
-          );
-          bCtx.strokeStyle = (g % 2 === 0) ? 'rgba(0, 0, 0, 0.18)' : 'rgba(255, 195, 125, 0.04)';
-          bCtx.lineWidth = 1 + (g % 3) * 0.7;
-          bCtx.stroke();
-        }
-
-        // Staggered vertical plank divider joints
-        const seamX = ((i * 187) % (width * 0.72)) + width * 0.14;
-        bCtx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
-        bCtx.lineWidth = 2.5;
-        bCtx.beginPath();
-        bCtx.moveTo(seamX, y);
-        bCtx.lineTo(seamX, y + slatHeight);
-        bCtx.stroke();
-
-        bCtx.strokeStyle = 'rgba(255, 210, 150, 0.09)';
-        bCtx.lineWidth = 1;
-        bCtx.beginPath();
-        bCtx.moveTo(seamX + 1.5, y);
-        bCtx.lineTo(seamX + 1.5, y + slatHeight);
-        bCtx.stroke();
-
-        // 3D Beveled Top Edge Highlight
-        bCtx.strokeStyle = 'rgba(255, 225, 175, 0.16)';
-        bCtx.lineWidth = 1.2;
-        bCtx.beginPath();
-        bCtx.moveTo(0, y + 1);
-        bCtx.lineTo(width, y + 1);
-        bCtx.stroke();
-
-        // Deep Slat Groove & Shadow
-        bCtx.strokeStyle = '#070201';
-        bCtx.lineWidth = 3.5;
-        bCtx.beginPath();
-        bCtx.moveTo(0, y + slatHeight);
-        bCtx.lineTo(width, y + slatHeight);
-        bCtx.stroke();
-
-        bCtx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-        bCtx.lineWidth = 2;
-        bCtx.beginPath();
-        bCtx.moveTo(0, y + slatHeight - 2);
-        bCtx.lineTo(width, y + slatHeight - 2);
-        bCtx.stroke();
-        bCtx.restore();
-      }
-
-      // Elegant Dojo Watermark (Embossed Clan Crest)
-      const cx = width / 2;
-      const cy = height * 0.36;
-      const emblemRadius = Math.min(width, height) * 0.28;
-
-      bCtx.save();
-      bCtx.translate(cx, cy);
-
-      bCtx.beginPath();
-      bCtx.arc(0, 0, emblemRadius, 0, Math.PI * 2);
-      bCtx.strokeStyle = 'rgba(245, 158, 11, 0.045)';
-      bCtx.lineWidth = 6;
-      bCtx.stroke();
-
-      bCtx.beginPath();
-      bCtx.arc(0, 0, emblemRadius * 0.82, 0, Math.PI * 2);
-      bCtx.strokeStyle = 'rgba(245, 158, 11, 0.035)';
-      bCtx.lineWidth = 2;
-      bCtx.setLineDash([8, 8]);
-      bCtx.stroke();
-      bCtx.setLineDash([]);
-
-      bCtx.fillStyle = 'rgba(245, 158, 11, 0.025)';
-      for (let r = 0; r < 8; r++) {
-        bCtx.rotate(Math.PI / 4);
-        bCtx.beginPath();
-        bCtx.moveTo(0, -emblemRadius * 0.74);
-        bCtx.lineTo(emblemRadius * 0.16, 0);
-        bCtx.lineTo(0, emblemRadius * 0.74);
-        bCtx.lineTo(-emblemRadius * 0.16, 0);
-        bCtx.closePath();
-        bCtx.fill();
-      }
-      bCtx.restore();
-
-      // Atmospheric Warm Lantern Glow
-      const glow = bCtx.createRadialGradient(cx, height * 0.22, 25, cx, height * 0.38, Math.max(width, height) * 0.78);
-      glow.addColorStop(0, 'rgba(251, 146, 60, 0.26)');
-      glow.addColorStop(0.35, 'rgba(217, 119, 6, 0.13)');
-      glow.addColorStop(0.7, 'rgba(0, 0, 0, 0.16)');
-      glow.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
-      bCtx.fillStyle = glow;
-      bCtx.fillRect(0, 0, width, height);
-
-      // Cinematic Vignette (Dramatic Fruit/Blade Contrast)
-      const vignette = bCtx.createRadialGradient(cx, cy, width * 0.24, cx, cy, Math.hypot(width, height) * 0.58);
-      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      vignette.addColorStop(0.55, 'rgba(6, 2, 1, 0.38)');
-      vignette.addColorStop(1, 'rgba(2, 1, 0, 0.92)');
-      bCtx.fillStyle = vignette;
-      bCtx.fillRect(0, 0, width, height);
-    }
-
+    let width, height;
     function resize() {
-      width = window.innerWidth || document.documentElement.clientWidth || 360;
-      height = (tg?.viewportHeight) ? tg.viewportHeight : (window.innerHeight || document.documentElement.clientHeight || 640);
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      canvas.style.width = width + 'px';
-      canvas.style.height = height + 'px';
-
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.resetTransform();
       ctx.scale(dpr, dpr);
-
-      renderBgCache();
     }
-
     window.addEventListener('resize', resize);
-    window.addEventListener('orientationchange', () => setTimeout(resize, 200));
-    tg?.onEvent?.('viewportChanged', resize);
     resize();
 
-    function getPointerPos(e) {
-      const rect = canvas.getBoundingClientRect();
-      let cx = 0, cy = 0;
-      if (e.touches && e.touches.length > 0) {
-        cx = e.touches[0].clientX;
-        cy = e.touches[0].clientY;
-      } else if (e.changedTouches && e.changedTouches.length > 0) {
-        cx = e.changedTouches[0].clientX;
-        cy = e.changedTouches[0].clientY;
-      } else {
-        cx = e.clientX;
-        cy = e.clientY;
-      }
-      return { x: cx - rect.left, y: cy - rect.top };
-    }
-
-    // --- Game Variables ---
-    const ROUND_TIME = 180; // 3 minutes = 180s
-    const MAX_STRIKES = 3;
+    // ========== Game State ==========
     let score = 0;
-    let bestScore = parseInt(Storage.get('ninjaBladeBest', '0'));
-    bestEl.textContent = `Best: ${bestScore}`;
+    let bestScore = parseInt(localStorage.getItem('fruitSliceBest_v2') || '0');
+    bestEl.textContent = `BEST: ${bestScore}`;
 
     let fruits = [];
-    let fruitHalves = [];
+    let slicedHalves = [];
     let splatters = [];
     let particles = [];
-    let fuseSparks = [];
-    let floatTexts = [];
-    let bladePath = [];
+    let floatingTexts = [];
+    let slashPoints = [];
     let gameState = 'start';
-    let timeLeft = ROUND_TIME;
-    let bombStrikes = 0;
+    let timeLeft = 40;
     let combo = 0;
-    let lastSliceTime = 0;
+    let comboTimer = 0;
     let spawnTimer = 0;
-    let gameTime = 0;
     let screenShake = 0;
-    let flashScreenAlpha = 0;
 
-    // --- MUCH BIGGER FRUITS & MORE VARIETIES ---
-    const FRUIT_PRESETS = [
-      { name: 'watermelon', radius: 68, points: 1, skinColor: '#22c55e', fleshColor: '#ef4444' },
-      { name: 'pineapple',  radius: 65, points: 2, skinColor: '#ca8a04', fleshColor: '#fde047' },
-      { name: 'orange',     radius: 56, points: 1, skinColor: '#f97316', fleshColor: '#fb923c' },
-      { name: 'apple',      radius: 54, points: 1, skinColor: '#dc2626', fleshColor: '#fef08a' },
-      { name: 'banana',     radius: 58, points: 2, skinColor: '#eab308', fleshColor: '#fef9c3' },
-      { name: 'strawberry', radius: 48, points: 2, skinColor: '#e11d48', fleshColor: '#fda4af' },
-      { name: 'kiwi',       radius: 50, points: 2, skinColor: '#78350f', fleshColor: '#84cc16' },
-      { name: 'peach',      radius: 56, points: 2, skinColor: '#f43f5e', fleshColor: '#fed7aa' },
-      { name: 'coconut',    radius: 58, points: 2, skinColor: '#582b13', fleshColor: '#f8fafc' },
-      { name: 'dragonfruit',radius: 62, points: 3, skinColor: '#db2777', fleshColor: '#fdf2f8' },
-      { name: 'bomb',       radius: 58, points: 0, isBomb: true }
-    ];
+    // Fruit definitions
+    const FRUIT_PROFILES = {
+      apple: { radius: 32, points: 1, skinColor: '#ef4444', innerColor: '#fef08a', seedColor: '#78350f' },
+      orange: { radius: 30, points: 1, skinColor: '#f97316', innerColor: '#ffedd5', seedColor: '#ea580c' },
+      watermelon: { radius: 36, points: 2, skinColor: '#16a34a', innerColor: '#ef4444', seedColor: '#1e293b' },
+      banana: { radius: 28, points: 1, skinColor: '#eab308', innerColor: '#fef9c3', seedColor: '#854d0e' },
+      grape: { radius: 30, points: 2, skinColor: '#a855f7', innerColor: '#f3e8ff', seedColor: '#6b21a8' },
+      bomb: { radius: 30, isBomb: true }
+    };
+    const FRUIT_NAMES = ['apple', 'orange', 'watermelon', 'banana', 'grape'];
 
-    // --- Dojo Flooring Rendering ---
-    function drawBackground() {
-      if (!bgCanvas) renderBgCache();
-      if (bgCanvas) {
-        ctx.drawImage(bgCanvas, 0, 0, width, height);
-      }
-
-      splatters.forEach(s => {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, s.alpha);
-        ctx.translate(s.x, s.y);
-        ctx.rotate(s.rotation);
-        ctx.fillStyle = s.color;
+    // ========== Drawing Logic ==========
+    function drawFruitBody(name, r) {
+      if (name === 'apple') {
         ctx.beginPath();
-        ctx.ellipse(0, 0, s.rx, s.ry, 0, 0, Math.PI * 2);
+        ctx.arc(0, 2, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
         ctx.fill();
 
-        s.drops.forEach(d => {
+        ctx.beginPath();
+        ctx.arc(-r * 0.35, -r * 0.3, r * 0.3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fill();
+
+        // Stem & Leaf
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 0.85);
+        ctx.lineTo(2, -r * 1.3);
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.ellipse(r * 0.45, -r * 1.15, r * 0.45, r * 0.22, 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#22c55e';
+        ctx.fill();
+      } else if (name === 'orange') {
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#f97316';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(-r * 0.35, -r * 0.35, r * 0.28, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        for (let i = 0; i < 7; i++) {
+          const a = (i / 7) * Math.PI * 2;
           ctx.beginPath();
-          ctx.arc(d.dx, d.dy, d.r, 0, Math.PI * 2);
+          ctx.arc(Math.cos(a) * r * 0.5, Math.sin(a) * r * 0.5, 2.2, 0, Math.PI * 2);
           ctx.fill();
-        });
-        ctx.restore();
-      });
-      ctx.globalAlpha = 1;
-    }
+        }
+      } else if (name === 'watermelon') {
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#16a34a';
+        ctx.fill();
 
-    // --- HIGH-VISIBILITY BOMB ---
-    function drawBomb(f) {
-      ctx.save();
-      ctx.translate(f.x, f.y);
-
-      const t = performance.now() * 0.008;
-      const pulse = 0.5 + 0.5 * Math.sin(t * 5);
-
-      // Bright Red Danger Halo
-      ctx.beginPath();
-      ctx.arc(0, 0, f.radius + 20 + pulse * 8, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(239, 68, 68, ${0.3 + pulse * 0.25})`;
-      ctx.fill();
-
-      ctx.strokeStyle = `rgba(251, 191, 36, ${0.55 + pulse * 0.45})`;
-      ctx.lineWidth = 3.5;
-      ctx.stroke();
-
-      // Metallic Bomb Body
-      ctx.rotate(f.rotation);
-      ctx.beginPath();
-      ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
-      const bombGrad = ctx.createRadialGradient(-14, -14, 5, 0, 0, f.radius);
-      bombGrad.addColorStop(0, '#64748b');
-      bombGrad.addColorStop(0.5, '#1e293b');
-      bombGrad.addColorStop(1, '#020617');
-      ctx.fillStyle = bombGrad;
-      ctx.fill();
-
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#ef4444';
-      ctx.stroke();
-
-      // Metal Cap
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(-10, -f.radius - 8, 20, 10);
-
-      // Fuse
-      ctx.beginPath();
-      ctx.moveTo(0, -f.radius - 8);
-      ctx.quadraticCurveTo(18, -f.radius - 28, 14, -f.radius - 38);
-      ctx.strokeStyle = '#ea580c';
-      ctx.lineWidth = 5;
-      ctx.stroke();
-
-      // Burning Spark Head
-      ctx.beginPath();
-      ctx.arc(14, -f.radius - 38, 9 + pulse * 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#fde047';
-      ctx.shadowColor = '#f97316';
-      ctx.shadowBlur = 20;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Hazard Skull
-      ctx.fillStyle = '#facc15';
-      ctx.shadowColor = '#f97316';
-      ctx.shadowBlur = 10;
-      ctx.font = '900 28px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('☠', 0, 3);
-      ctx.shadowBlur = 0;
-
-      ctx.restore();
-    }
-
-    // --- DRAW WHOLE GLOSSY FRUITS ---
-    function drawFruit(f) {
-      if (f.isBomb) {
-        drawBomb(f);
-        return;
-      }
-
-      ctx.save();
-      ctx.translate(f.x, f.y);
-      ctx.rotate(f.rotation);
-
-      const rad = f.radius;
-
-      // Base Fruit Body
-      ctx.beginPath();
-      ctx.arc(0, 0, rad, 0, Math.PI * 2);
-      const skinGrad = ctx.createRadialGradient(-rad * 0.35, -rad * 0.35, rad * 0.08, 0, 0, rad);
-      skinGrad.addColorStop(0, '#ffffff45');
-      skinGrad.addColorStop(0.35, f.skinColor);
-      skinGrad.addColorStop(1, '#00000045');
-      ctx.fillStyle = skinGrad;
-      ctx.fill();
-
-      // Custom exterior details
-      if (f.name === 'watermelon') {
+        // Dark Stripes
         ctx.strokeStyle = '#14532d';
-        ctx.lineWidth = 7;
+        ctx.lineWidth = 4;
         for (let i = -2; i <= 2; i++) {
           ctx.beginPath();
-          ctx.moveTo(i * 18, -rad + 4);
-          ctx.quadraticCurveTo(i * 22 + 6, 0, i * 18, rad - 4);
+          ctx.arc(i * 12, 0, r * 0.95, -Math.PI / 2, Math.PI / 2);
           ctx.stroke();
         }
-      } else if (f.name === 'pineapple') {
-        // Crosshatch diamond skin
-        ctx.strokeStyle = '#854d0e';
+
+        ctx.beginPath();
+        ctx.arc(-r * 0.35, -r * 0.35, r * 0.3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fill();
+      } else if (name === 'banana') {
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#eab308';
+        ctx.fill();
+
+        ctx.strokeStyle = '#a16207';
         ctx.lineWidth = 2.5;
-        for (let a = -rad; a <= rad; a += 18) {
-          ctx.beginPath();
-          ctx.moveTo(a, -rad * 0.85);
-          ctx.lineTo(a + 30, rad * 0.85);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(a + 30, -rad * 0.85);
-          ctx.lineTo(a, rad * 0.85);
-          ctx.stroke();
-        }
-        // Pineapple leafy crown
-        ctx.fillStyle = '#15803d';
-        for (let k = -2; k <= 2; k++) {
-          ctx.beginPath();
-          ctx.moveTo(k * 7, -rad);
-          ctx.quadraticCurveTo(k * 14, -rad - 26, k * 20, -rad - 22);
-          ctx.quadraticCurveTo(k * 6, -rad - 12, 0, -rad);
-          ctx.fill();
-        }
-      } else if (f.name === 'strawberry') {
-        // Tiny golden seeds
-        ctx.fillStyle = '#fde047';
-        for (let i = 0; i < 14; i++) {
-          const a = (i / 14) * Math.PI * 2;
-          const d = rad * 0.55;
-          ctx.fillRect(Math.cos(a) * d, Math.sin(a) * d, 3, 3);
-        }
-        // Green leaves on top
-        ctx.fillStyle = '#22c55e';
-        for (let j = 0; j < 5; j++) {
-          const ang = (j / 5) * Math.PI * 2;
-          ctx.beginPath();
-          ctx.ellipse(Math.cos(ang) * (rad * 0.5), -rad * 0.85, 9, 4, ang, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (f.name === 'kiwi') {
-        // Fuzzy hairs
-        ctx.strokeStyle = 'rgba(69, 26, 3, 0.4)';
-        ctx.lineWidth = 2;
-        for (let a = 0; a < 16; a++) {
-          const ang = (a / 16) * Math.PI * 2;
-          ctx.beginPath();
-          ctx.moveTo(Math.cos(ang) * (rad - 3), Math.sin(ang) * (rad - 3));
-          ctx.lineTo(Math.cos(ang) * (rad + 3), Math.sin(ang) * (rad + 3));
-          ctx.stroke();
-        }
-      } else if (f.name === 'peach') {
-        // Peach cleft indent
-        ctx.strokeStyle = '#be123c';
-        ctx.lineWidth = 3.5;
         ctx.beginPath();
-        ctx.moveTo(0, -rad + 4);
-        ctx.quadraticCurveTo(8, 0, 0, rad - 4);
+        ctx.arc(0, -6, r * 0.75, 0.2, Math.PI - 0.2);
         ctx.stroke();
-      } else if (f.name === 'apple') {
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(-3, -rad - 12, 6, 14);
-        ctx.beginPath();
-        ctx.ellipse(10, -rad - 9, 12, 6, 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = '#4ade80';
-        ctx.fill();
-      }
-
-      // 3D Specular Highlight
-      ctx.beginPath();
-      ctx.ellipse(-rad * 0.35, -rad * 0.35, rad * 0.32, rad * 0.18, -0.6, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    // --- DRAW SLICED FRUIT HALF ---
-    function drawFruitHalf(h) {
-      ctx.save();
-      ctx.translate(h.x, h.y);
-      ctx.rotate(h.rotation);
-
-      const r = h.radius;
-
-      // Outer peel semi-circle
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI, false);
-      ctx.closePath();
-      ctx.fillStyle = h.skinColor;
-      ctx.fill();
-
-      // Inner pulp
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.88, 0, Math.PI, false);
-      ctx.closePath();
-      ctx.fillStyle = h.fleshColor;
-      ctx.fill();
-
-      // Specific sliced insides for all fruits
-      if (h.name === 'watermelon') {
-        ctx.fillStyle = '#1e293b';
-        [[-r * 0.48, 12], [0, 18], [r * 0.48, 12], [-r * 0.24, 28], [r * 0.24, 28]].forEach(([sx, sy]) => {
+      } else if (name === 'grape') {
+        const cluster = [
+          [0, -10], [-12, -2], [12, -2],
+          [-7, 10], [7, 10], [0, 18]
+        ];
+        cluster.forEach(([gx, gy]) => {
           ctx.beginPath();
-          ctx.ellipse(sx, sy, 3, 5.5, 0.2, 0, Math.PI * 2);
+          ctx.arc(gx, gy, 11, 0, Math.PI * 2);
+          ctx.fillStyle = '#a855f7';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(gx - 3, gy - 3, 3, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.3)';
           ctx.fill();
         });
-      } else if (h.name === 'kiwi') {
-        // White core
-        ctx.fillStyle = '#fef08a';
         ctx.beginPath();
-        ctx.arc(0, 0, r * 0.35, 0, Math.PI, false);
-        ctx.fill();
-        // Black seed ring
-        ctx.fillStyle = '#0f172a';
-        for (let a = 1; a < 8; a++) {
-          const ang = (Math.PI / 8) * a;
-          ctx.fillRect(Math.cos(ang) * (r * 0.52), Math.sin(ang) * (r * 0.52), 3, 3);
-        }
-      } else if (h.name === 'pineapple') {
-        // Golden core ring
-        ctx.strokeStyle = '#ca8a04';
+        ctx.moveTo(0, -12);
+        ctx.lineTo(0, -26);
+        ctx.strokeStyle = '#4d7c0f';
         ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(0, 0, r * 0.45, 0, Math.PI, false);
         ctx.stroke();
-      } else if (h.name === 'orange') {
-        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-        ctx.lineWidth = 2;
-        for (let a = 1; a < 6; a++) {
-          const ang = (Math.PI / 6) * a;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.lineTo(Math.cos(ang) * (r * 0.85), Math.sin(ang) * (r * 0.85));
-          ctx.stroke();
-        }
-      } else if (h.name === 'peach') {
-        // Peach Pit
-        ctx.fillStyle = '#78350f';
+      } else if (name === 'bomb') {
+        // Bomb Body
         ctx.beginPath();
-        ctx.arc(0, 6, r * 0.3, 0, Math.PI, false);
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
         ctx.fill();
-      } else if (h.name === 'apple') {
-        ctx.fillStyle = '#ca8a04';
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+
         ctx.beginPath();
-        ctx.ellipse(0, 10, 10, 14, 0, 0, Math.PI * 2);
+        ctx.arc(-r * 0.35, -r * 0.35, r * 0.28, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
         ctx.fill();
-        ctx.fillStyle = '#451a03';
+
+        // Bomb Cap
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(-6, -r - 4, 12, 6);
+
+        // Burning Fuse
         ctx.beginPath();
-        ctx.arc(3, 10, 4, 0, Math.PI * 2);
+        ctx.moveTo(0, -r - 4);
+        ctx.quadraticCurveTo(12, -r - 18, 6, -r - 28);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Fuse Spark
+        const sparkX = 6 + (Math.random() - 0.5) * 4;
+        const sparkY = -r - 28 + (Math.random() - 0.5) * 4;
+        ctx.beginPath();
+        ctx.arc(sparkX, sparkY, 4.5 + Math.random() * 3, 0, Math.PI * 2);
+        ctx.fillStyle = Math.random() > 0.5 ? '#fef08a' : '#ef4444';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 10;
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
+    }
+
+    // ========== Splitting Cut Half Renderer ==========
+    function drawSlicedHalf(half) {
+      ctx.save();
+      ctx.translate(half.x, half.y);
+      ctx.rotate(half.rotation);
+
+      // Clip along the cut line (semi-circle)
+      ctx.save();
+      ctx.beginPath();
+      if (half.side === 1) {
+        ctx.rect(-half.radius * 1.5, -half.radius * 1.5, half.radius * 3, half.radius * 1.5);
+      } else {
+        ctx.rect(-half.radius * 1.5, 0, half.radius * 3, half.radius * 1.5);
+      }
+      ctx.clip();
+
+      drawFruitBody(half.name, half.radius);
+      ctx.restore();
+
+      // Draw juicy fleshy cut plane
+      ctx.beginPath();
+      ctx.moveTo(-half.radius, 0);
+      ctx.lineTo(half.radius, 0);
+      ctx.strokeStyle = half.profile.innerColor || '#ffffff';
+      ctx.lineWidth = 4;
+      ctx.stroke();
 
       ctx.restore();
     }
 
-    function addFloatText(text, x, y, color = '#facc15', size = 28) {
-      floatTexts.push({ text, x, y, color, size, alpha: 1, vy: -2.6 });
-    }
-
-    function createSplatter(x, y, color) {
-      const drops = [];
-      const numDrops = 8 + Math.floor(Math.random() * 8);
-      for (let i = 0; i < numDrops; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 22 + Math.random() * 65;
-        drops.push({
-          dx: Math.cos(angle) * dist,
-          dy: Math.sin(angle) * dist,
-          r: 3 + Math.random() * 5
-        });
-      }
-
-      splatters.push({
-        x, y,
-        rx: 34 + Math.random() * 26,
-        ry: 22 + Math.random() * 18,
-        rotation: Math.random() * Math.PI * 2,
-        color: color + '55',
-        drops,
-        alpha: 0.95
-      });
-
-      if (splatters.length > 22) splatters.shift();
-    }
-
-    function updateStrikesUI() {
-      for (let i = 1; i <= MAX_STRIKES; i++) {
-        const el = document.getElementById(`strike-${i}`);
-        if (el) {
-          if (i <= bombStrikes) {
-            el.classList.add('active');
-            el.textContent = '❌';
-          } else {
-            el.classList.remove('active');
-            el.textContent = '💣';
-          }
-        }
-      }
-    }
-
-    function sliceFruit(f, bladeAngle) {
-      if (f.sliced) return;
-      f.sliced = true;
-
-      // Bomb Strike Hit
-      if (f.isBomb) {
-        bombStrikes++;
-        updateStrikesUI();
-
-        AudioEngine.playBomb();
-        triggerHaptic('heavy');
-        screenShake = 30;
-        flashScreenAlpha = 0.9;
-
-        addFloatText(`BOMB STRIKE ${bombStrikes}/${MAX_STRIKES}!`, f.x, f.y - 20, '#ef4444', 32);
-
-        for (let i = 0; i < 50; i++) {
-          particles.push({
-            x: f.x, y: f.y,
-            vx: (Math.random() - 0.5) * 22,
-            vy: (Math.random() - 0.5) * 22,
-            radius: 4 + Math.random() * 9,
-            color: ['#ef4444', '#f97316', '#fbbf24', '#0f172a'][Math.floor(Math.random() * 4)],
-            alpha: 1,
-            gravity: 0.35
-          });
-        }
-
-        fruits = fruits.filter(item => item !== f);
-
-        if (bombStrikes >= MAX_STRIKES) {
-          setTimeout(() => endGame('3 Bombs Sliced!'), 350);
-        }
-        return;
-      }
-
-      // Regular Fruit Sliced
-      const now = Date.now();
-      if (now - lastSliceTime < 450) combo++;
-      else combo = 1;
-      lastSliceTime = now;
-
-      const earnedPoints = f.points * (combo > 1 ? combo : 1);
-      score += earnedPoints;
-      scoreEl.textContent = score;
-
-      AudioEngine.playSlice(combo);
-      triggerHaptic(combo > 2 ? 'heavy' : 'light');
-
-      if (combo > 1) {
-        addFloatText(`+${earnedPoints} (Combo x${combo})`, f.x, f.y - 14, '#4ade80', 30);
-        comboEl.textContent = `Combo x${combo}!`;
-        comboEl.classList.add('show');
-      } else {
-        addFloatText(`+${earnedPoints}`, f.x, f.y - 12, '#fef08a', 24);
-      }
-
-      createSplatter(f.x, f.y, f.fleshColor);
-
-      // Squirting juice droplets
-      for (let i = 0; i < 24; i++) {
-        const spd = 5 + Math.random() * 12;
-        const ang = Math.random() * Math.PI * 2;
-        particles.push({
-          x: f.x, y: f.y,
-          vx: Math.cos(ang) * spd,
-          vy: Math.sin(ang) * spd,
-          radius: 3 + Math.random() * 4.5,
-          color: Math.random() > 0.4 ? f.fleshColor : f.skinColor,
-          alpha: 1,
-          gravity: 0.4
-        });
-      }
-
-      // Push split halves apart
-      const perpAngle = bladeAngle + Math.PI / 2;
-      const pushSpeed = 5.2 + Math.random() * 2.5;
-
-      fruitHalves.push({
-        x: f.x, y: f.y,
-        vx: f.vx + Math.cos(perpAngle) * pushSpeed,
-        vy: f.vy + Math.sin(perpAngle) * pushSpeed - 1.5,
-        rotation: bladeAngle,
-        rotSpeed: -0.1 - Math.random() * 0.15,
-        radius: f.radius,
-        name: f.name,
-        skinColor: f.skinColor,
-        fleshColor: f.fleshColor,
-        alpha: 1
-      });
-
-      fruitHalves.push({
-        x: f.x, y: f.y,
-        vx: f.vx - Math.cos(perpAngle) * pushSpeed,
-        vy: f.vy - Math.sin(perpAngle) * pushSpeed - 1.5,
-        rotation: bladeAngle + Math.PI,
-        rotSpeed: 0.1 + Math.random() * 0.15,
-        radius: f.radius,
-        name: f.name,
-        skinColor: f.skinColor,
-        fleshColor: f.fleshColor,
-        alpha: 1
-      });
-
-      fruits = fruits.filter(item => item !== f);
-    }
-
-    function spawnWave() {
-      const isMulti = Math.random() < 0.65;
-      const waveSize = isMulti ? 2 + Math.floor(Math.random() * 2) : 1;
-
-      for (let i = 0; i < waveSize; i++) {
-        setTimeout(() => {
-          if (gameState !== 'playing') return;
-          const isBomb = Math.random() < 0.20;
-          const template = isBomb 
-            ? FRUIT_PRESETS.find(p => p.isBomb) 
-            : FRUIT_PRESETS[Math.floor(Math.random() * (FRUIT_PRESETS.length - 1))];
-
-          const startX = width * 0.15 + Math.random() * (width * 0.7);
-          const startY = height + 50;
-          const targetX = width * 0.25 + Math.random() * (width * 0.5);
-          const launchVx = (targetX - startX) * 0.022;
-          const launchVy = -(14 + Math.random() * 4.2);
-
-          fruits.push({
-            ...template,
-            x: startX,
-            y: startY,
-            vx: launchVx,
-            vy: launchVy,
-            rotation: Math.random() * Math.PI * 2,
-            rotSpeed: (Math.random() - 0.5) * 0.08,
-            sliced: false
-          });
-        }, i * 180);
-      }
-    }
-
-    // --- Touch / Swipe Handling ---
+    // ========== Input Handling ==========
     let isTouching = false;
-    let prevPoint = null;
+    let lastPos = null;
 
-    function onPointerStart(e) {
+    function getCanvasCoordinates(e) {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX, y: clientY };
+    }
+
+    function onPointerDown(e) {
       if (gameState !== 'playing') return;
+      audio.init();
       isTouching = true;
-      const p = getPointerPos(e);
-      prevPoint = p;
-      bladePath = [{ x: p.x, y: p.y, time: performance.now() }];
+      lastPos = getCanvasCoordinates(e);
+      slashPoints = [{ x: lastPos.x, y: lastPos.y, age: 0 }];
     }
 
     function onPointerMove(e) {
       if (!isTouching || gameState !== 'playing') return;
-      const p = getPointerPos(e);
-      const now = performance.now();
+      const currentPos = getCanvasCoordinates(e);
+      slashPoints.push({ x: currentPos.x, y: currentPos.y, age: 0 });
 
-      bladePath.push({ x: p.x, y: p.y, time: now });
-      if (bladePath.length > 18) bladePath.shift();
+      const dist = Math.hypot(currentPos.x - lastPos.x, currentPos.y - lastPos.y);
+      if (dist > 16) {
+        audio.playSwoosh();
+        // Emit slicing sparks along blade
+        particles.push({
+          x: currentPos.x,
+          y: currentPos.y,
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          color: '#ffffff',
+          size: 2.5,
+          alpha: 1,
+          decay: 0.08
+        });
+      }
 
-      if (prevPoint) {
-        const dx = p.x - prevPoint.x;
-        const dy = p.y - prevPoint.y;
-        const dist = Math.hypot(dx, dy);
+      checkSliceCollisions(lastPos.x, lastPos.y, currentPos.x, currentPos.y);
+      lastPos = currentPos;
+    }
 
-        if (dist > 14) {
-          AudioEngine.playSwoosh();
-          const bladeAngle = Math.atan2(dy, dx);
+    function onPointerUp() {
+      isTouching = false;
+    }
 
-          for (let i = fruits.length - 1; i >= 0; i--) {
-            const f = fruits[i];
-            const d = pointToSegmentDistance(f.x, f.y, prevPoint.x, prevPoint.y, p.x, p.y);
-            // Slicing hit area matching larger fruits
-            if (d < f.radius + 15) {
-              sliceFruit(f, bladeAngle);
-            }
+    window.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    window.addEventListener('touchstart', onPointerDown, { passive: false });
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp, { passive: false });
+
+    // ========== Collision & Slicing ==========
+    function checkSliceCollisions(x1, y1, x2, y2) {
+      let slicedThisStroke = 0;
+
+      for (let i = fruits.length - 1; i >= 0; i--) {
+        const f = fruits[i];
+        if (f.sliced) continue;
+
+        const d = distToSegment(f.x, f.y, x1, y1, x2, y2);
+        if (d < f.radius + 6) {
+          f.sliced = true;
+          const sliceAngle = Math.atan2(y2 - y1, x2 - x1);
+
+          if (f.isBomb) {
+            triggerBombExplosion(f.x, f.y);
+            return;
           }
+
+          slicedThisStroke++;
+          sliceFruit(f, sliceAngle);
         }
       }
-      prevPoint = p;
+
+      if (slicedThisStroke > 0) {
+        combo += slicedThisStroke;
+        comboTimer = 0.35; // Combo window in seconds
+        if (combo >= 2) {
+          showComboText(combo);
+          haptic('heavy');
+        } else {
+          haptic('medium');
+        }
+      }
     }
 
-    function onPointerEnd() {
-      isTouching = false;
-      prevPoint = null;
-    }
-
-    function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+    function distToSegment(px, py, x1, y1, x2, y2) {
       const l2 = (x2 - x1) ** 2 + (y2 - y1) ** 2;
       if (l2 === 0) return Math.hypot(px - x1, py - y1);
       let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
@@ -1316,245 +642,383 @@
       return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
     }
 
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); onPointerStart(e); }, { passive: false });
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); onPointerMove(e); }, { passive: false });
-    window.addEventListener('touchend', () => onPointerEnd());
-    window.addEventListener('touchcancel', () => onPointerEnd());
+    function sliceFruit(f, cutAngle) {
+      audio.playSlice(combo);
 
-    canvas.addEventListener('mousedown', onPointerStart);
-    canvas.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerEnd);
+      // Score increment
+      const pointsEarned = f.profile.points * (combo > 1 ? combo : 1);
+      score += pointsEarned;
+      scoreEl.textContent = score;
 
-    function drawBladeTrail() {
-      const now = performance.now();
-      bladePath = bladePath.filter(pt => now - pt.time < 160);
-      if (bladePath.length < 2) return;
+      floatingTexts.push({
+        x: f.x,
+        y: f.y - 10,
+        text: `+${pointsEarned}`,
+        color: '#facc15',
+        alpha: 1,
+        vy: -2
+      });
 
-      ctx.beginPath();
-      ctx.moveTo(bladePath[0].x, bladePath[0].y);
-      for (let i = 1; i < bladePath.length; i++) ctx.lineTo(bladePath[i].x, bladePath[i].y);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
-      ctx.lineWidth = 16;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.stroke();
+      // Split into 2 halves pushed perpendicularly to slice
+      const perpAngle = cutAngle + Math.PI / 2;
+      const pushSpeed = 3.5 + Math.random() * 2;
 
-      ctx.beginPath();
-      ctx.moveTo(bladePath[0].x, bladePath[0].y);
-      for (let i = 1; i < bladePath.length; i++) ctx.lineTo(bladePath[i].x, bladePath[i].y);
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 4.5;
-      ctx.stroke();
+      slicedHalves.push({
+        x: f.x,
+        y: f.y,
+        vx: f.vx + Math.cos(perpAngle) * pushSpeed,
+        vy: f.vy + Math.sin(perpAngle) * pushSpeed,
+        rotation: cutAngle,
+        vRot: -0.1 - Math.random() * 0.15,
+        radius: f.radius,
+        name: f.name,
+        profile: f.profile,
+        side: 1
+      });
+
+      slicedHalves.push({
+        x: f.x,
+        y: f.y,
+        vx: f.vx - Math.cos(perpAngle) * pushSpeed,
+        vy: f.vy - Math.sin(perpAngle) * pushSpeed,
+        rotation: cutAngle,
+        vRot: 0.1 + Math.random() * 0.15,
+        radius: f.radius,
+        name: f.name,
+        profile: f.profile,
+        side: -1
+      });
+
+      // Splatter on background
+      splatters.push({
+        x: f.x,
+        y: f.y,
+        radius: 26 + Math.random() * 18,
+        color: f.profile.skinColor,
+        alpha: 0.38
+      });
+
+      // Juicy Droplets
+      for (let i = 0; i < 18; i++) {
+        const speed = 3 + Math.random() * 7;
+        const ang = Math.random() * Math.PI * 2;
+        particles.push({
+          x: f.x,
+          y: f.y,
+          vx: Math.cos(ang) * speed,
+          vy: Math.sin(ang) * speed - 1.5,
+          color: Math.random() > 0.4 ? f.profile.skinColor : f.profile.innerColor,
+          size: 3 + Math.random() * 4,
+          alpha: 1,
+          decay: 0.02 + Math.random() * 0.02
+        });
+      }
+
+      screenShake = Math.max(screenShake, 5);
+      fruits = fruits.filter(item => item !== f);
     }
 
-    // --- Main Loop Update ---
+    function triggerBombExplosion(x, y) {
+      audio.playExplosion();
+      haptic('error');
+      screenShake = 22;
+
+      // Heavy explosion particles
+      for (let i = 0; i < 45; i++) {
+        const speed = 2 + Math.random() * 14;
+        const ang = Math.random() * Math.PI * 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(ang) * speed,
+          vy: Math.sin(ang) * speed,
+          color: ['#ef4444', '#f97316', '#fbbf24', '#ffffff'][Math.floor(Math.random() * 4)],
+          size: 4 + Math.random() * 6,
+          alpha: 1,
+          decay: 0.015
+        });
+      }
+
+      gameOver();
+    }
+
+    function showComboText(count) {
+      comboEl.textContent = `COMBO x${count}!`;
+      comboEl.style.opacity = '1';
+      comboEl.style.transform = 'translateX(-50%) scale(1.15)';
+      setTimeout(() => {
+        comboEl.style.transform = 'translateX(-50%) scale(1.0)';
+      }, 100);
+    }
+
+    // ========== Fruit Spawner (Upward Fountain) ==========
+    function spawnWave() {
+      const count = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          if (gameState !== 'playing') return;
+          const isBomb = Math.random() < 0.16;
+          const name = isBomb ? 'bomb' : FRUIT_NAMES[Math.floor(Math.random() * FRUIT_NAMES.length)];
+          const profile = FRUIT_PROFILES[name];
+
+          const startX = width * 0.15 + Math.random() * (width * 0.7);
+          const startY = height + 40;
+
+          // Target arc towards center
+          const targetX = width * 0.2 + Math.random() * (width * 0.6);
+          const gravity = 0.32;
+          const peakY = height * 0.2 + Math.random() * (height * 0.25);
+
+          const vy = -Math.sqrt(2 * gravity * (startY - peakY));
+          const timeToPeak = -vy / gravity;
+          const vx = (targetX - startX) / (timeToPeak * 1.8);
+
+          fruits.push({
+            x: startX,
+            y: startY,
+            vx,
+            vy,
+            gravity,
+            radius: profile.radius,
+            name,
+            profile,
+            isBomb: !!profile.isBomb,
+            sliced: false,
+            rotation: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.08
+          });
+        }, i * 160);
+      }
+    }
+
+    // ========== Main Loop ==========
+    let lastTimestamp = performance.now();
+
     function update(dt) {
       if (gameState !== 'playing') return;
 
-      gameTime += dt;
-      spawnTimer += dt;
+      timeLeft -= dt;
+      timerEl.textContent = `${Math.max(0, Math.ceil(timeLeft))}s`;
+      if (timeLeft <= 0) {
+        gameOver();
+        return;
+      }
 
-      const currentInterval = Math.max(0.9, 2.1 - (gameTime / ROUND_TIME) * 1.0);
-      if (spawnTimer >= currentInterval) {
+      // Combo cooldown
+      if (comboTimer > 0) {
+        comboTimer -= dt;
+        if (comboTimer <= 0) {
+          combo = 0;
+          comboEl.style.opacity = '0';
+        }
+      }
+
+      // Fruit Spawner
+      spawnTimer += dt;
+      if (spawnTimer > 1.25) {
         spawnWave();
         spawnTimer = 0;
       }
 
+      // Update whole fruits
       for (let i = fruits.length - 1; i >= 0; i--) {
         const f = fruits[i];
         f.x += f.vx;
         f.y += f.vy;
-        f.vy += 0.38;
-        f.rotation += f.rotSpeed;
+        f.vy += f.gravity;
+        f.rotation += f.vRot;
 
-        if (f.isBomb && Math.random() < 0.6) {
-          fuseSparks.push({
-            x: f.x + 14,
-            y: f.y - f.radius - 32,
-            vx: (Math.random() - 0.5) * 4,
-            vy: (Math.random() - 0.5) * 4 - 2,
-            radius: 2 + Math.random() * 3,
-            alpha: 1
-          });
-        }
-
-        if (f.y > height + 90 && f.vy > 0) {
+        if (f.y > height + 80 && f.vy > 0) {
           fruits.splice(i, 1);
         }
       }
 
-      for (let i = fuseSparks.length - 1; i >= 0; i--) {
-        const sp = fuseSparks[i];
-        sp.x += sp.vx;
-        sp.y += sp.vy;
-        sp.alpha -= 0.05;
-        if (sp.alpha <= 0) fuseSparks.splice(i, 1);
-      }
-
-      for (let i = fruitHalves.length - 1; i >= 0; i--) {
-        const h = fruitHalves[i];
+      // Update sliced halves
+      for (let i = slicedHalves.length - 1; i >= 0; i--) {
+        const h = slicedHalves[i];
         h.x += h.vx;
         h.y += h.vy;
-        h.vy += 0.48;
-        h.rotation += h.rotSpeed;
-        if (h.y > height + 100) fruitHalves.splice(i, 1);
+        h.vy += 0.38; // heavier fall
+        h.rotation += h.vRot;
+
+        if (h.y > height + 80) {
+          slicedHalves.splice(i, 1);
+        }
       }
 
+      // Update juice particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += p.gravity;
-        p.alpha -= 0.02;
-        if (p.alpha <= 0 || p.y > height) particles.splice(i, 1);
+        p.vy += 0.2;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) particles.splice(i, 1);
       }
 
-      for (let i = floatTexts.length - 1; i >= 0; i--) {
-        const ft = floatTexts[i];
+      // Fade background splatters
+      for (let i = splatters.length - 1; i >= 0; i--) {
+        const s = splatters[i];
+        s.alpha -= 0.0006;
+        s.y += 0.05; // slow drip
+        if (s.alpha <= 0) splatters.splice(i, 1);
+      }
+
+      // Update floating score numbers
+      for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
         ft.y += ft.vy;
-        ft.alpha -= 0.024;
-        if (ft.alpha <= 0) floatTexts.splice(i, 1);
+        ft.alpha -= 0.02;
+        if (ft.alpha <= 0) floatingTexts.splice(i, 1);
       }
 
-      splatters.forEach(s => s.alpha -= 0.0003);
-      splatters = splatters.filter(s => s.alpha > 0.05);
-
-      if (Date.now() - lastSliceTime > 650) {
-        combo = 0;
-        comboEl.classList.remove('show');
+      // Update Blade Trail
+      for (let i = slashPoints.length - 1; i >= 0; i--) {
+        slashPoints[i].age += dt;
+        if (slashPoints[i].age > 0.16) {
+          slashPoints.splice(i, 1);
+        }
       }
 
-      if (screenShake > 0) screenShake *= 0.88;
-      if (flashScreenAlpha > 0) flashScreenAlpha -= dt * 2.5;
-
-      // 3-Minute Timer
-      timeLeft -= dt;
-      if (timeLeft < 0) timeLeft = 0;
-
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = Math.floor(timeLeft % 60);
-      timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-      if (timeLeft <= 30) timerEl.classList.add('warning');
-      else timerEl.classList.remove('warning');
-
-      if (timeLeft <= 0) {
-        endGame("Time's Up!");
+      // Shake dampening
+      if (screenShake > 0) {
+        screenShake *= 0.88;
+        if (screenShake < 0.2) screenShake = 0;
       }
     }
 
     function render() {
       ctx.save();
 
-      if (screenShake > 0.5) {
-        ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+      // Screen Shake
+      if (screenShake > 0) {
+        const rx = (Math.random() - 0.5) * screenShake * 2;
+        const ry = (Math.random() - 0.5) * screenShake * 2;
+        ctx.translate(rx, ry);
       }
 
-      drawBackground();
+      // Clear Screen with Rich Radial Dojo Vibe
+      const bgGrad = ctx.createRadialGradient(width / 2, height * 0.4, 40, width / 2, height * 0.5, width);
+      bgGrad.addColorStop(0, '#1e293b');
+      bgGrad.addColorStop(1, '#080c16');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
 
-      fruitHalves.forEach(h => drawFruitHalf(h));
-      fruits.forEach(f => drawFruit(f));
-
-      fuseSparks.forEach(sp => {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, sp.alpha);
-        ctx.fillStyle = '#fde047';
+      // Background Splatters
+      splatters.forEach(s => {
         ctx.beginPath();
-        ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha;
         ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+
+      // Draw Sliced Halves
+      slicedHalves.forEach(h => drawSlicedHalf(h));
+
+      // Draw Airborne Whole Fruits
+      fruits.forEach(f => {
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        ctx.rotate(f.rotation);
+        drawFruitBody(f.name, f.radius);
         ctx.restore();
       });
 
+      // Draw Splatter Particles
       particles.forEach(p => {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, p.alpha);
-        ctx.fillStyle = p.color;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.alpha);
         ctx.fill();
-        ctx.restore();
       });
+      ctx.globalAlpha = 1;
 
-      floatTexts.forEach(ft => {
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, ft.alpha);
+      // Draw Floating Texts
+      floatingTexts.forEach(ft => {
+        ctx.font = 'bold 22px system-ui';
         ctx.fillStyle = ft.color;
-        ctx.font = `bold ${ft.size}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.shadowColor = '#000';
-        ctx.shadowBlur = 8;
+        ctx.globalAlpha = Math.max(0, ft.alpha);
         ctx.fillText(ft.text, ft.x, ft.y);
-        ctx.restore();
       });
+      ctx.globalAlpha = 1;
 
-      drawBladeTrail();
+      // Render Blade Slash Ribbon
+      if (slashPoints.length > 2) {
+        for (let i = 1; i < slashPoints.length; i++) {
+          const prev = slashPoints[i - 1];
+          const curr = slashPoints[i];
+          const factor = i / slashPoints.length;
 
-      if (flashScreenAlpha > 0.02) {
-        ctx.fillStyle = `rgba(255, 68, 68, ${flashScreenAlpha * 0.8})`;
-        ctx.fillRect(0, 0, width, height);
+          ctx.beginPath();
+          ctx.moveTo(prev.x, prev.y);
+          ctx.lineTo(curr.x, curr.y);
+          ctx.strokeStyle = `rgba(56, 189, 248, ${factor * 0.8})`;
+          ctx.lineWidth = factor * 14;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+
+          // White glowing core
+          ctx.beginPath();
+          ctx.moveTo(prev.x, prev.y);
+          ctx.lineTo(curr.x, curr.y);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${factor * 0.95})`;
+          ctx.lineWidth = factor * 5;
+          ctx.stroke();
+        }
       }
 
       ctx.restore();
     }
 
-    let lastStamp = performance.now();
-    function tick(now) {
-      const dt = Math.min((now - lastStamp) / 1000, 0.05);
-      lastStamp = now;
+    function gameLoop(now) {
+      const dt = Math.min((now - lastTimestamp) / 1000, 0.05);
+      lastTimestamp = now;
+
       update(dt);
       render();
-      requestAnimationFrame(tick);
+      requestAnimationFrame(gameLoop);
     }
 
+    // ========== Flow Controls ==========
     function startGame() {
-      AudioEngine.init();
+      audio.init();
+      haptic('medium');
       score = 0;
-      timeLeft = ROUND_TIME; // Exact 3-minute round
-      bombStrikes = 0;
-      combo = 0;
-      gameTime = 0;
-      spawnTimer = 0;
-      fruits = [];
-      fruitHalves = [];
-      particles = [];
-      fuseSparks = [];
-      splatters = [];
-      floatTexts = [];
-      bladePath = [];
-      screenShake = 0;
-      flashScreenAlpha = 0;
-
       scoreEl.textContent = '0';
-      timerEl.textContent = '03:00';
-      timerEl.classList.remove('warning');
-      updateStrikesUI();
+      timeLeft = 40;
+      combo = 0;
+      fruits = [];
+      slicedHalves = [];
+      particles = [];
+      splatters = [];
+      floatingTexts = [];
+      slashPoints = [];
+      spawnTimer = 0;
+      gameState = 'playing';
 
       startScreen.style.display = 'none';
       gameOverEl.style.display = 'none';
-      gameState = 'playing';
-      resize();
+      comboEl.style.opacity = '0';
     }
 
-    function endGame(reason = 'Game Over') {
+    function gameOver() {
       gameState = 'gameover';
-      triggerHaptic('heavy');
-
       if (score > bestScore) {
         bestScore = score;
-        Storage.set('ninjaBladeBest', bestScore);
-        bestEl.textContent = `Best: ${bestScore}`;
+        localStorage.setItem('fruitSliceBest_v2', bestScore);
+        bestEl.textContent = `BEST: ${bestScore}`;
       }
-
-      gameOverReasonEl.textContent = reason;
       finalScoreEl.textContent = score;
-      bestScoreTextEl.textContent = `Highscore: ${bestScore}`;
+      bestScoreTextEl.textContent = `BEST: ${bestScore}`;
       gameOverEl.style.display = 'flex';
     }
 
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', startGame);
 
-    requestAnimationFrame(tick);
+    requestAnimationFrame(gameLoop);
   </script>
 </body>
-    </html>
+</html>
