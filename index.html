@@ -571,6 +571,153 @@
 
     let width = 360, height = 640;
     let dpr = 1;
+    let bgCanvas = null;
+
+    // --- HIGH-END DOJO WOOD & CINEMATIC LIGHTING CACHE ---
+    function renderBgCache() {
+      if (width <= 0 || height <= 0) return;
+      bgCanvas = document.createElement('canvas');
+      bgCanvas.width = width;
+      bgCanvas.height = height;
+      const bCtx = bgCanvas.getContext('2d');
+
+      // Base Undercoat
+      bCtx.fillStyle = '#140804';
+      bCtx.fillRect(0, 0, width, height);
+
+      // Deluxe Hardwood Horizontal Dojo Planks
+      const slatHeight = 78;
+      const totalSlats = Math.ceil(height / slatHeight);
+
+      const woodPalettes = [
+        { top: '#3c1d11', mid: '#2c140b', bot: '#1b0a04' },
+        { top: '#35190e', mid: '#250f07', bot: '#170803' },
+        { top: '#422013', mid: '#30160d', bot: '#1f0c05' },
+        { top: '#30150c', mid: '#220e06', bot: '#140702' }
+      ];
+
+      for (let i = 0; i < totalSlats; i++) {
+        const y = i * slatHeight;
+        const pal = woodPalettes[i % woodPalettes.length];
+
+        // Primary plank depth gradient
+        const grad = bCtx.createLinearGradient(0, y, 0, y + slatHeight);
+        grad.addColorStop(0, pal.top);
+        grad.addColorStop(0.3, pal.mid);
+        grad.addColorStop(0.85, pal.bot);
+        grad.addColorStop(1, '#0e0502');
+        bCtx.fillStyle = grad;
+        bCtx.fillRect(0, y, width, slatHeight);
+
+        // Organic Wood Grain Fibers
+        bCtx.save();
+        for (let g = 0; g < 7; g++) {
+          const gy = y + 7 + g * 10 + Math.sin(i * 3 + g) * 3;
+          bCtx.beginPath();
+          bCtx.moveTo(0, gy);
+          bCtx.bezierCurveTo(
+            width * 0.28, gy + Math.sin(g * 1.5) * 4,
+            width * 0.72, gy - Math.cos(g * 2.2) * 4,
+            width, gy + Math.sin(g) * 3
+          );
+          bCtx.strokeStyle = (g % 2 === 0) ? 'rgba(0, 0, 0, 0.18)' : 'rgba(255, 195, 125, 0.04)';
+          bCtx.lineWidth = 1 + (g % 3) * 0.7;
+          bCtx.stroke();
+        }
+
+        // Staggered vertical plank divider joints
+        const seamX = ((i * 187) % (width * 0.72)) + width * 0.14;
+        bCtx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+        bCtx.lineWidth = 2.5;
+        bCtx.beginPath();
+        bCtx.moveTo(seamX, y);
+        bCtx.lineTo(seamX, y + slatHeight);
+        bCtx.stroke();
+
+        bCtx.strokeStyle = 'rgba(255, 210, 150, 0.09)';
+        bCtx.lineWidth = 1;
+        bCtx.beginPath();
+        bCtx.moveTo(seamX + 1.5, y);
+        bCtx.lineTo(seamX + 1.5, y + slatHeight);
+        bCtx.stroke();
+
+        // 3D Beveled Top Edge Highlight
+        bCtx.strokeStyle = 'rgba(255, 225, 175, 0.16)';
+        bCtx.lineWidth = 1.2;
+        bCtx.beginPath();
+        bCtx.moveTo(0, y + 1);
+        bCtx.lineTo(width, y + 1);
+        bCtx.stroke();
+
+        // Deep Slat Groove & Shadow
+        bCtx.strokeStyle = '#070201';
+        bCtx.lineWidth = 3.5;
+        bCtx.beginPath();
+        bCtx.moveTo(0, y + slatHeight);
+        bCtx.lineTo(width, y + slatHeight);
+        bCtx.stroke();
+
+        bCtx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+        bCtx.lineWidth = 2;
+        bCtx.beginPath();
+        bCtx.moveTo(0, y + slatHeight - 2);
+        bCtx.lineTo(width, y + slatHeight - 2);
+        bCtx.stroke();
+        bCtx.restore();
+      }
+
+      // Elegant Dojo Watermark (Embossed Clan Crest)
+      const cx = width / 2;
+      const cy = height * 0.36;
+      const emblemRadius = Math.min(width, height) * 0.28;
+
+      bCtx.save();
+      bCtx.translate(cx, cy);
+
+      bCtx.beginPath();
+      bCtx.arc(0, 0, emblemRadius, 0, Math.PI * 2);
+      bCtx.strokeStyle = 'rgba(245, 158, 11, 0.045)';
+      bCtx.lineWidth = 6;
+      bCtx.stroke();
+
+      bCtx.beginPath();
+      bCtx.arc(0, 0, emblemRadius * 0.82, 0, Math.PI * 2);
+      bCtx.strokeStyle = 'rgba(245, 158, 11, 0.035)';
+      bCtx.lineWidth = 2;
+      bCtx.setLineDash([8, 8]);
+      bCtx.stroke();
+      bCtx.setLineDash([]);
+
+      bCtx.fillStyle = 'rgba(245, 158, 11, 0.025)';
+      for (let r = 0; r < 8; r++) {
+        bCtx.rotate(Math.PI / 4);
+        bCtx.beginPath();
+        bCtx.moveTo(0, -emblemRadius * 0.74);
+        bCtx.lineTo(emblemRadius * 0.16, 0);
+        bCtx.lineTo(0, emblemRadius * 0.74);
+        bCtx.lineTo(-emblemRadius * 0.16, 0);
+        bCtx.closePath();
+        bCtx.fill();
+      }
+      bCtx.restore();
+
+      // Atmospheric Warm Lantern Glow
+      const glow = bCtx.createRadialGradient(cx, height * 0.22, 25, cx, height * 0.38, Math.max(width, height) * 0.78);
+      glow.addColorStop(0, 'rgba(251, 146, 60, 0.26)');
+      glow.addColorStop(0.35, 'rgba(217, 119, 6, 0.13)');
+      glow.addColorStop(0.7, 'rgba(0, 0, 0, 0.16)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
+      bCtx.fillStyle = glow;
+      bCtx.fillRect(0, 0, width, height);
+
+      // Cinematic Vignette (Dramatic Fruit/Blade Contrast)
+      const vignette = bCtx.createRadialGradient(cx, cy, width * 0.24, cx, cy, Math.hypot(width, height) * 0.58);
+      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignette.addColorStop(0.55, 'rgba(6, 2, 1, 0.38)');
+      vignette.addColorStop(1, 'rgba(2, 1, 0, 0.92)');
+      bCtx.fillStyle = vignette;
+      bCtx.fillRect(0, 0, width, height);
+    }
 
     function resize() {
       width = window.innerWidth || document.documentElement.clientWidth || 360;
@@ -584,6 +731,8 @@
 
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
+
+      renderBgCache();
     }
 
     window.addEventListener('resize', resize);
@@ -646,31 +795,12 @@
       { name: 'bomb',       radius: 58, points: 0, isBomb: true }
     ];
 
-    // --- Dojo Flooring ---
+    // --- Dojo Flooring Rendering ---
     function drawBackground() {
-      const slatHeight = 78;
-      const totalSlats = Math.ceil(height / slatHeight);
-
-      for (let i = 0; i < totalSlats; i++) {
-        const y = i * slatHeight;
-        const grad = ctx.createLinearGradient(0, y, 0, y + slatHeight);
-        grad.addColorStop(0, i % 2 === 0 ? '#26160d' : '#1f110a');
-        grad.addColorStop(0.5, i % 2 === 0 ? '#2d1b11' : '#23140c');
-        grad.addColorStop(1, '#150a06');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, y, width, slatHeight);
-
-        ctx.strokeStyle = '#0a0402';
-        ctx.lineWidth = 2.5;
-        ctx.strokeRect(0, y, width, slatHeight);
+      if (!bgCanvas) renderBgCache();
+      if (bgCanvas) {
+        ctx.drawImage(bgCanvas, 0, 0, width, height);
       }
-
-      const glow = ctx.createRadialGradient(width / 2, height * 0.2, 30, width / 2, height * 0.45, width * 0.85);
-      glow.addColorStop(0, 'rgba(251, 146, 60, 0.16)');
-      glow.addColorStop(0.65, 'rgba(0, 0, 0, 0.38)');
-      glow.addColorStop(1, 'rgba(0, 0, 0, 0.88)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, width, height);
 
       splatters.forEach(s => {
         ctx.save();
@@ -1427,4 +1557,4 @@
     requestAnimationFrame(tick);
   </script>
 </body>
-  </html>
+    </html>
