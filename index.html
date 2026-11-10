@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="module" src="/@vite/client"></script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Toon Cricket 3-Overs Telegram Mini App</title>
@@ -390,7 +388,7 @@
     }
     .stats-footer strong { color: #facc15; }
   </style>
-<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+</head>
 <body>
 
 <div id="app-container">
@@ -613,9 +611,9 @@ const sound = new SoundSynth();
 
 // Characters Roster
 const BATSMEN = [
-  { name: 'Chintu Blaster', num: '18', jersey: '#0284c7', border: '#0369a1', helmet: '#0369a1', pads: '#ffffff', skin: '#fcd34d', head: 'helmet', glove: '#ef4444' },
-  { name: 'Prof. Googly', num: '10', jersey: '#16a34a', border: '#15803d', helmet: '#15803d', pads: '#fbbf24', skin: '#fed7aa', head: 'hat', glove: '#3b82f6' },
-  { name: 'Turban Tornado', num: '07', jersey: '#f59e0b', border: '#d97706', helmet: '#ea580c', pads: '#ef4444', skin: '#fde047', head: 'turban', glove: '#10b981' }
+  { name: 'Chintu Blaster', num: '18', jersey: '#0284c7', border: '#0369a1', helmet: '#0369a1', pads: '#ffffff', skin: '#fcd34d', glove: '#ef4444' },
+  { name: 'Prof. Googly', num: '10', jersey: '#16a34a', border: '#15803d', helmet: '#15803d', pads: '#fbbf24', skin: '#fed7aa', glove: '#3b82f6' },
+  { name: 'Turban Tornado', num: '07', jersey: '#f59e0b', border: '#d97706', helmet: '#ea580c', pads: '#ef4444', skin: '#fde047', glove: '#10b981' }
 ];
 
 const BOWLERS = [
@@ -629,21 +627,21 @@ const MAX_WICKETS = 3;
 
 const BALL_SPECS = [
   { name: 'Straight Seamer', speed: 2100, pitchX: 0.0, spin: 0.0, bounce: 1.0 },
-  { name: 'Gentle Inswinger', speed: 2200, pitchX: -0.15, spin: 0.2, bounce: 0.95 },
-  { name: 'Rising Short Pitch', speed: 2000, pitchX: 0.1, spin: 0.05, bounce: 1.3 },
-  { name: 'Loopy Off-Break', speed: 2350, pitchX: 0.25, spin: -0.3, bounce: 0.9 },
+  { name: 'Gentle Inswinger', speed: 2200, pitchX: -0.1, spin: 0.15, bounce: 0.95 },
+  { name: 'Rising Short Pitch', speed: 2000, pitchX: 0.08, spin: 0.05, bounce: 1.3 },
+  { name: 'Loopy Off-Break', speed: 2350, pitchX: 0.15, spin: -0.2, bounce: 0.9 },
   { name: 'Full Pitch Yorker', speed: 1950, pitchX: 0.0, spin: 0.0, bounce: 0.55 },
   { name: 'Good Length Pace', speed: 2050, pitchX: -0.05, spin: 0.0, bounce: 1.05 },
-  { name: 'Flighted Leg-Break', speed: 2300, pitchX: -0.2, spin: 0.35, bounce: 0.95 },
+  { name: 'Flighted Leg-Break', speed: 2300, pitchX: -0.12, spin: 0.22, bounce: 0.95 },
   { name: 'Deceptive Slower Ball', speed: 2450, pitchX: 0.05, spin: 0.0, bounce: 0.85 },
-  { name: 'Outswinger', speed: 2150, pitchX: 0.15, spin: -0.25, bounce: 1.0 },
+  { name: 'Outswinger', speed: 2150, pitchX: 0.1, spin: -0.18, bounce: 1.0 },
   { name: 'Chest-High Bouncer', speed: 1950, pitchX: -0.05, spin: 0.0, bounce: 1.35 },
-  { name: 'Arm Ball Flatter', speed: 2100, pitchX: 0.1, spin: -0.1, bounce: 0.7 },
+  { name: 'Arm Ball Flatter', speed: 2100, pitchX: 0.08, spin: -0.1, bounce: 0.7 },
   { name: 'Blockhole Yorker', speed: 1900, pitchX: 0.0, spin: 0.0, bounce: 0.5 },
-  { name: 'Pace Thunderball', speed: 1850, pitchX: -0.08, spin: 0.0, bounce: 1.0 },
-  { name: 'Sharp Leg-Cutter', speed: 2200, pitchX: -0.2, spin: 0.4, bounce: 0.95 },
-  { name: 'Hooker Bouncer', speed: 1950, pitchX: 0.15, spin: -0.08, bounce: 1.4 },
-  { name: 'Reverse Swing Tail', speed: 2000, pitchX: 0.18, spin: -0.35, bounce: 0.9 },
+  { name: 'Pace Thunderball', speed: 1850, pitchX: -0.05, spin: 0.0, bounce: 1.0 },
+  { name: 'Sharp Leg-Cutter', speed: 2200, pitchX: -0.12, spin: 0.25, bounce: 0.95 },
+  { name: 'Hooker Bouncer', speed: 1950, pitchX: 0.1, spin: -0.08, bounce: 1.4 },
+  { name: 'Reverse Swing Tail', speed: 2000, pitchX: 0.12, spin: -0.25, bounce: 0.9 },
   { name: 'Pinpoint Toe-Crusher', speed: 1880, pitchX: 0.0, spin: 0.0, bounce: 0.45 },
   { name: 'Final Over Climax', speed: 1800, pitchX: 0.0, spin: 0.0, bounce: 1.1 }
 ];
@@ -672,9 +670,9 @@ function evaluateShotTiming(deltaMs) {
     const isTwo = abs <= 400;
     return { rating: 'OKAY', runs: isTwo ? 2 : 1, isWicket: false, msg: isTwo ? 'TWO RUNS! 🏃' : 'SINGLE! 💨', sub: 'Sneaky paddle tap!' };
   } else if (deltaMs < -480 && deltaMs >= -700) {
-    return { rating: 'EARLY', runs: 0, isWicket: true, msg: 'CLEAN BOWLED!! 💥', sub: 'Way too early! Missed the line!' };
+    return { rating: 'EARLY', runs: 0, isWicket: true, msg: 'CLEAN BOWLED!! 💥', sub: 'Too early! Missed the line!' };
   } else if (deltaMs > 480 && deltaMs <= 700) {
-    return { rating: 'LATE', runs: 0, isWicket: true, msg: 'STUMPS SHATTERED!! 🪵', sub: 'Way too late! Ball rattled middle stump!' };
+    return { rating: 'LATE', runs: 0, isWicket: true, msg: 'STUMPS SHATTERED!! 🪵', sub: 'Too late! Rattled middle stump!' };
   }
   return { rating: 'MISSED', runs: 0, isWicket: true, msg: 'TIMBERRR! BOWLED!! 🪵💥', sub: 'Clean bowled!' };
 }
@@ -684,10 +682,10 @@ const ctx = canvas.getContext('2d');
 
 let fielders = [
   { id: 1, name: 'Gappu', bx: 0.16, by: 0.50, x: 0, y: 0, cap: '#10b981', skin: '#fde047', style: 'bucket_hat', type: 'chubby', glasses: true, state: 'IDLE' },
-  { id: 2, name: 'Lanky Raju', bx: 0.32, by: 0.40, x: 0, y: 0, cap: '#0284c7', skin: '#fed7aa', style: 'sunhat', type: 'tall', state: 'IDLE' },
-  { id: 3, name: 'Tuffy', bx: 0.68, by: 0.40, x: 0, y: 0, cap: '#dc2626', skin: '#fcd34d', style: 'cap', type: 'muscular', mustache: true, state: 'IDLE' },
+  { id: 2, name: 'Lanky Raju', bx: 0.30, by: 0.40, x: 0, y: 0, cap: '#0284c7', skin: '#fed7aa', style: 'sunhat', type: 'tall', state: 'IDLE' },
+  { id: 3, name: 'Tuffy', bx: 0.70, by: 0.40, x: 0, y: 0, cap: '#dc2626', skin: '#fcd34d', style: 'cap', type: 'muscular', mustache: true, state: 'IDLE' },
   { id: 4, name: 'Speedy Sonu', bx: 0.84, by: 0.52, x: 0, y: 0, cap: '#7c3aed', skin: '#d97706', style: 'afro', type: 'normal', state: 'IDLE' },
-  { id: 5, name: 'Pandit Ji', bx: 0.56, by: 0.35, x: 0, y: 0, cap: '#ea580c', skin: '#fed7aa', style: 'bandana', type: 'short', glasses: true, mustache: true, state: 'IDLE' }
+  { id: 5, name: 'Pandit Ji', bx: 0.58, by: 0.35, x: 0, y: 0, cap: '#ea580c', skin: '#fed7aa', style: 'bandana', type: 'short', glasses: true, mustache: true, state: 'IDLE' }
 ];
 
 let sim = {
@@ -772,8 +770,8 @@ function triggerHitAction() {
     sim.bannerTimer = 2.4;
   } else {
     sim.hitBallActive = true;
-    sim.hitBallX = sim.w * 0.52;
-    sim.hitBallY = sim.h * 0.76;
+    sim.hitBallX = sim.w * 0.44;
+    sim.hitBallY = sim.h * 0.64;
 
     if (result.runs === 6) {
       sim.battingAnim = 'SWING_SIX';
@@ -820,7 +818,7 @@ function triggerHitAction() {
 }
 
 function shatterStumps() {
-  const sx = sim.w * 0.48; const sy = sim.h * 0.73;
+  const sx = sim.w * 0.50; const sy = sim.h * 0.73;
   sim.flyingWoods = [
     { x: sx - 8, y: sy - 18, vx: -200, vy: -520, w: 5.5, h: 38, rot: 0, vRot: -8, color: '#b45309' },
     { x: sx, y: sy - 18, vx: 50, vy: -620, w: 5.5, h: 38, rot: 0, vRot: 12, color: '#b45309' },
@@ -958,19 +956,19 @@ function drawScene(ctx, now) {
   ctx.moveTo(w*0.5 - stmpCreaseW*0.38, stmpCreaseY); ctx.lineTo(w*0.5 + stmpCreaseW*0.38, stmpCreaseY);
   ctx.stroke();
 
-  // Pitch bounce and sweet spot markers
+  // Strike zone marker (centered on right-handed batting channel)
   if (sim.ballActive) {
-    const px = w * 0.5 + sim.currentSpec.pitchX * 45; const py = h * 0.48;
+    const px = w * 0.49 + sim.currentSpec.pitchX * 45; const py = h * 0.48;
     ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.ellipse(px, py, 13, 5.5, 0, 0, Math.PI*2); ctx.stroke();
     if (sim.ballProgress >= 0.45) {
       const isOpt = sim.ballProgress >= 0.82 && sim.ballProgress <= 1.15;
       ctx.strokeStyle = isOpt ? '#22c55e' : 'rgba(74, 222, 128, 0.4)';
       ctx.fillStyle = isOpt ? 'rgba(34, 197, 94, 0.28)' : 'rgba(74, 222, 128, 0.08)';
-      ctx.beginPath(); ctx.ellipse(w*0.50, h*0.63, 36, 11, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(w * 0.46, h * 0.63, 34, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
       if (isOpt) {
-        ctx.fillStyle = '#22c55e'; ctx.font = '800 12px "Fredoka", sans-serif'; ctx.textAlign = 'center';
-        ctx.fillText('⚡ TAP NOW! ⚡', w*0.50, h*0.63 - 18);
+        ctx.fillStyle = '#22c55e'; ctx.font = '800 11px "Fredoka", sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('⚡ TAP NOW! ⚡', w * 0.46, h * 0.63 - 16);
       }
     }
   }
@@ -1068,7 +1066,7 @@ function drawScene(ctx, now) {
 
   // Umpire
   ctx.save();
-  ctx.translate(w * 0.36, h * 0.32);
+  ctx.translate(w * 0.32, h * 0.32);
   ctx.fillStyle = '#ffffff'; ctx.fillRect(-8, 0, 16, 15);
   ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -5, 6.5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#ffffff'; ctx.fillRect(-10, -10, 20, 2.5);
@@ -1081,42 +1079,41 @@ function drawScene(ctx, now) {
   }
   ctx.restore();
 
-  // Batsman in front of stumps (at h * 0.64) facing UP towards bowler!
+  // RIGHT-HANDED BATSMAN ON THE LEFT SIDE OF THE PITCH (w * 0.42, facing UP towards bowler)
   const curBat = BATSMEN[Math.min(match.wickets, BATSMEN.length - 1)];
   ctx.save();
-  ctx.translate(w * 0.52, h * 0.64);
+  ctx.translate(w * 0.42, h * 0.64);
 
   let batRot = -25; let batX = 8; let batY = 10; let batBob = 0; let stride = 0;
-  if (sim.battingAnim === 'READY') { batRot = -60; batY = 2; }
+  if (sim.battingAnim === 'READY') { batRot = -55; batY = 4; }
   else if (sim.battingAnim === 'SWING_SIX') {
     const t = Math.min((2.0 - sim.animTimer) * 1.5, 1);
-    batRot = -60 + t * 125; batX = 8 - t * 20; batY = 2 - t * 18; batBob = -Math.sin(t*Math.PI)*12; stride = t * 16;
+    batRot = -55 + t * 125; batX = 8 - t * 14; batY = 4 - t * 18; batBob = -Math.sin(t*Math.PI)*12; stride = t * 14;
   } else if (sim.battingAnim === 'SWING_FOUR') {
     const t = Math.min((2.0 - sim.animTimer) * 2, 1);
-    batRot = -55 + t * 105; batX = 6 - t * 18; batY = 6 - t * 10; stride = t * 14;
-  } else if (sim.battingAnim === 'BOWLED') { batRot = 70; batX = 20; batY = 24; batBob = 6; }
+    batRot = -50 + t * 105; batX = 6 - t * 12; batY = 6 - t * 10; stride = t * 12;
+  } else if (sim.battingAnim === 'BOWLED') { batRot = 70; batX = 18; batY = 24; batBob = 6; }
 
   ctx.translate(0, batBob);
-  // Pads
-  ctx.fillStyle = curBat.pads; ctx.fillRect(-14 - stride, 8, 10, 24); ctx.fillRect(4, 10, 10, 24);
-  // Back of Jersey (Facing UP towards bowler)
+  // Right-handed stance: Left pad forward (screen left), right pad back (screen right near wickets)
+  ctx.fillStyle = curBat.pads; ctx.fillRect(-14 - stride, 8, 10, 24); ctx.fillRect(3, 10, 10, 24);
+  // Jersey back (facing UP towards bowler)
   ctx.fillStyle = curBat.jersey; ctx.fillRect(-15, -12, 30, 24);
   ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText(curBat.name.split(' ')[0].toUpperCase(), 0, -2);
   ctx.fillStyle = '#facc15'; ctx.font = '800 13px Impact, sans-serif';
   ctx.fillText(curBat.num, 0, 9);
 
-  // Helmet / Head facing UP towards bowler
+  // Helmet facing bowler
   ctx.save();
   ctx.translate(-2, -22);
   ctx.fillStyle = curBat.helmet; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#1e293b'; ctx.fillRect(-7, 7, 14, 5);
-  // Visor and grill pointing UP-LEFT towards bowler
   ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.8;
-  ctx.beginPath(); ctx.moveTo(-13, -3); ctx.lineTo(-18, -9); ctx.moveTo(-13, 1); ctx.lineTo(-17, -5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-11, -2); ctx.lineTo(-16, -8); ctx.moveTo(-11, 2); ctx.lineTo(-15, -4); ctx.stroke();
   ctx.restore();
 
-  // Bat
+  // Bat held on the inside (right side towards middle/off-stump)
   ctx.save();
   ctx.translate(batX, batY); ctx.rotate(batRot * Math.PI / 180);
   ctx.fillStyle = '#fef3c7'; ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2;
@@ -1126,8 +1123,8 @@ function drawScene(ctx, now) {
   ctx.restore();
   ctx.restore();
 
-  // Wickets & Keeper (BEHIND the batsman at h * 0.73 and h * 0.81!)
-  const sx = w * 0.48; const sy = h * 0.73;
+  // Wickets (at Center w * 0.50, h * 0.73)
+  const sx = w * 0.50; const sy = h * 0.73;
   if (sim.flyingWoods.length === 0) {
     ctx.save();
     ctx.translate(sx, sy);
@@ -1136,10 +1133,11 @@ function drawScene(ctx, now) {
     ctx.fillStyle = '#f59e0b'; ctx.fillRect(-13, -41, 12, 3); ctx.fillRect(1, -41, 12, 3);
     ctx.restore();
   }
-  // Wicket Keeper Cheeku crouching behind stumps
+
+  // Wicket Keeper crouching directly behind wickets (Center w * 0.50, h * 0.81)
   ctx.save();
-  ctx.translate(w * 0.48, h * 0.81);
-  ctx.fillStyle = '#fde047'; ctx.fillRect(-16, 2, 10, 14); ctx.fillRect(6, 2, 10, 14); // squat pads
+  ctx.translate(w * 0.50, h * 0.81);
+  ctx.fillStyle = '#fde047'; ctx.fillRect(-16, 2, 10, 14); ctx.fillRect(6, 2, 10, 14);
   ctx.fillStyle = '#16a34a'; ctx.fillRect(-12, -10, 24, 16);
   ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -16, 8, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#15803d'; ctx.beginPath(); ctx.arc(0, -18, 8.5, Math.PI, 0); ctx.fill();
@@ -1150,11 +1148,11 @@ function drawScene(ctx, now) {
   if (sim.ballActive) {
     const p = sim.ballProgress;
     const startX = w * 0.5; const startY = h * 0.28;
-    const pitchX = w * 0.5 + sim.currentSpec.pitchX * 45;
+    const pitchX = w * 0.49 + sim.currentSpec.pitchX * 45;
     const pitchY = h * 0.48;
-    const batX = w * 0.50 + sim.currentSpec.spin * 40;
-    const batY = h * 0.63;
-    const stmpX = w * 0.48; const stmpY = h * 0.73;
+    const batHitX = w * 0.46 + sim.currentSpec.spin * 35;
+    const batHitY = h * 0.63;
+    const stmpX = w * 0.50; const stmpY = h * 0.73;
     let cx, cy;
     if (p < 0.55) {
       const t = p / 0.55;
@@ -1162,12 +1160,12 @@ function drawScene(ctx, now) {
       cy = (startY + (pitchY - startY) * t) - Math.sin(t * Math.PI) * 22;
     } else if (p <= 1.0) {
       const t = (p - 0.55) / 0.45;
-      cx = pitchX + (batX - pitchX) * t;
-      cy = (pitchY + (batY - pitchY) * t) - Math.sin(t * Math.PI) * 30 * sim.currentSpec.bounce;
+      cx = pitchX + (batHitX - pitchX) * t;
+      cy = (pitchY + (batHitY - pitchY) * t) - Math.sin(t * Math.PI) * 30 * sim.currentSpec.bounce;
     } else {
       const t = Math.min((p - 1.0) / 0.25, 1);
-      cx = batX + (stmpX - batX) * t;
-      cy = batY + (stmpY - batY) * t;
+      cx = batHitX + (stmpX - batHitX) * t;
+      cy = batHitY + (stmpY - batHitY) * t;
     }
     ctx.save();
     ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(cx, cy, 3.5 + Math.min(p, 1.25) * 11, 0, Math.PI*2); ctx.fill();
@@ -1188,22 +1186,32 @@ function drawScene(ctx, now) {
     ctx.restore();
   }
 
-  // Banner
+  // MEDIUM-SIZED RESULT BANNER AT THE TOP (Does not cover the middle/pitch!)
   if (sim.bannerTimer > 0 && sim.bannerText) {
     ctx.save();
-    ctx.translate(w * 0.5, h * 0.38);
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+    const bannerY = h * 0.08;
+    const bW = Math.min(w * 0.78, 260);
+    const bH = 40;
+    ctx.translate(w * 0.5, bannerY);
+
+    // Rounded badge container
+    ctx.beginPath();
+    ctx.roundRect(-bW * 0.5, -bH * 0.5, bW, bH, 12);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+    ctx.fill();
+    ctx.lineWidth = 2;
     ctx.strokeStyle = sim.bannerColor;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(-160, -32, 320, 64);
-    ctx.fillRect(-160, -32, 320, 64);
+    ctx.stroke();
+
+    // Medium text
     ctx.fillStyle = sim.bannerColor;
-    ctx.font = '800 18px Impact, sans-serif';
+    ctx.font = '800 15px "Fredoka", Impact, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(sim.bannerText, 0, -8);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 11px sans-serif';
-    ctx.fillText(sim.bannerSubtext, 0, 16);
+    ctx.fillText(sim.bannerText, 0, -3);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '600 10px "Fredoka", sans-serif';
+    ctx.fillText(sim.bannerSubtext, 0, 12);
     ctx.restore();
   }
 }
@@ -1337,4 +1345,4 @@ window.addEventListener('keydown', (e) => {
 requestAnimationFrame(loop);
 </script>
 </body>
-</html>
+  </html>
