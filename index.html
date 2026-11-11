@@ -297,14 +297,14 @@
         <button class="start-btn" onclick="verifyOfficialGate()">Verify</button>
       </div>
 
-      <!-- AUTO EARN (MOVED TO EARN PAGE) -->
+      <!-- AUTO EARN - COMING SOON -->
       <div class="section-title">Auto Earn</div>
-      <div class="card" style="border: 2px dashed #4CAF50; display:flex; justify-content:space-between; align-items:center;">
+      <div class="card" style="border: 2px dashed #999; display:flex; justify-content:space-between; align-items:center; opacity:0.85;">
         <div>
-          <div style="font-weight:800; font-size:14px; color:#2E7D32;">⚡ Auto Earn Engine</div>
-          <div style="font-size:11px; color:#666;">Runs eligible tasks every 60s (limited)</div>
+          <div style="font-weight:800; font-size:14px; color:#666;">⚡ Auto Earn Engine</div>
+          <div style="font-size:11px; color:#888;">Coming Soon — Smart task automation</div>
         </div>
-        <button class="gold-btn" style="padding:7px 14px; font-size:12px;" id="auto-earn-toggle" onclick="toggleAutoEarn()">Turn ON</button>
+        <button class="gold-btn" style="padding:7px 14px; font-size:12px; background:#999; color:#fff; cursor:not-allowed;" disabled>Coming Soon</button>
       </div>
 
       <div class="section-title">Categories</div>
@@ -595,6 +595,46 @@
         <button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadMasterStats()">🔄 Refresh Ledger</button>
       </div>
 
+      <!-- APP & CATEGORY PAUSE CONTROLS -->
+      <div class="section-title">App & Earn Controls (Pause / Resume)</div>
+      <div class="card">
+        <div style="font-size:12px;color:#666;margin-bottom:12px;">Pause the full app or individual earn categories for maintenance or events.</div>
+        
+        <div class="form-group">
+          <label>Full App Status</label>
+          <select id="admin-app-status">
+            <option value="live">🟢 LIVE (Normal)</option>
+            <option value="paused">🔴 PAUSED (Maintenance)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pause Message (shown to users)</label>
+          <input type="text" id="admin-pause-msg" placeholder="App under maintenance. Back in 2 hours.">
+        </div>
+        <div class="form-group">
+          <label>Pause Until (optional datetime)</label>
+          <input type="datetime-local" id="admin-pause-until">
+        </div>
+        <button class="gold-btn" style="width:100%;margin-bottom:14px;" onclick="saveAppStatus()">Save App Status</button>
+
+        <div style="font-size:13px;font-weight:800;color:#c8102e;margin-bottom:8px;">Pause Individual Categories</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+          <label><input type="checkbox" id="pause-watch"> Pause Watch</label>
+          <label><input type="checkbox" id="pause-views"> Pause Views</label>
+          <label><input type="checkbox" id="pause-join"> Pause Join</label>
+          <label><input type="checkbox" id="pause-bot"> Pause Bot</label>
+          <label><input type="checkbox" id="pause-install"> Pause Install</label>
+          <label><input type="checkbox" id="pause-website"> Pause Website</label>
+          <label><input type="checkbox" id="pause-affiliate"> Pause Affiliate</label>
+          <label><input type="checkbox" id="pause-products"> Pause Products</label>
+          <label><input type="checkbox" id="pause-other"> Pause General</label>
+          <label><input type="checkbox" id="pause-promote"> Pause Promote</label>
+          <label><input type="checkbox" id="pause-games"> Pause Games</label>
+          <label><input type="checkbox" id="pause-chat"> Pause Chat</label>
+        </div>
+        <button class="gold-btn" style="width:100%;margin-top:12px;" onclick="saveCategoryPauses()">Save Category Pauses</button>
+      </div>
+
       <div class="section-title">Global Broadcast / Shoutcast</div>
       <div class="card">
         <div class="form-group"><label>Announcement Message</label><input type="text" id="admin-broadcast-msg" placeholder="e.g. 50% Bonus on all tasks today!"></div>
@@ -803,6 +843,16 @@
 
     let prices = { channel:200, bot:150, views:50, watch:70, install:300, website:80, affiliate:40, products:50, banner:500 };
 
+    // App & Category Pause Controls
+    let appStatus = 'live';          // 'live' or 'paused'
+    let pauseMessage = 'App is under maintenance. Please check back later.';
+    let pauseUntil = null;
+    let categoryPauses = {
+      watch: false, views: false, join: false, bot: false,
+      install: false, website: false, affiliate: false, products: false,
+      other: false, promote: false, games: false, chat: false
+    };
+
     function updateUI() {
       document.getElementById('balance').innerText = balance + ' Coins';
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
@@ -850,9 +900,42 @@
             if (item.setting_key === 'prices') {
               try { prices = { ...prices, ...JSON.parse(item.setting_value) }; } catch(e) {}
             }
+            if (item.setting_key === 'app_status') appStatus = item.setting_value || 'live';
+            if (item.setting_key === 'pause_message') pauseMessage = item.setting_value || pauseMessage;
+            if (item.setting_key === 'pause_until') pauseUntil = item.setting_value || null;
+            if (item.setting_key === 'category_pauses') {
+              try { categoryPauses = { ...categoryPauses, ...JSON.parse(item.setting_value) }; } catch(e) {}
+            }
           });
         }
+        // Auto resume if pause time has passed
+        if (appStatus === 'paused' && pauseUntil) {
+          if (new Date(pauseUntil) < new Date()) {
+            appStatus = 'live';
+            pauseUntil = null;
+            if (sb) {
+              await sb.from('app_settings').upsert([
+                { setting_key: 'app_status', setting_value: 'live' },
+                { setting_key: 'pause_until', setting_value: '' }
+              ]);
+            }
+          }
+        }
       } catch(e) {}
+    }
+
+    function isAppPaused() {
+      if (appStatus !== 'paused') return false;
+      if (pauseUntil && new Date(pauseUntil) < new Date()) return false;
+      return true;
+    }
+
+    function isCategoryPaused(cat) {
+      return !!categoryPauses[cat];
+    }
+
+    function showPausedMessage(extra) {
+      alert('⏸️ ' + (extra || pauseMessage));
     }
 
     async function syncUser() {
@@ -1007,6 +1090,7 @@
 
     // ========== DAILY CHECK-IN (FIXED - ONCE PER DAY) ==========
     async function dailyCheckIn() {
+      if (isAppPaused()) return showPausedMessage();
       if (!checkGateAccess()) return;
       const today = new Date().toDateString();
       if (lastDailyClaim === today) {
@@ -1021,19 +1105,9 @@
       alert('🎉 +10 Coins Daily Bonus Claimed!');
     }
 
-    // ========== AUTO EARN (SAFER + ON EARN PAGE) ==========
+    // ========== AUTO EARN - COMING SOON (disabled) ==========
     async function toggleAutoEarn() {
-      if (!checkGateAccess()) return;
-      autoEarnActive = !autoEarnActive;
-      updateAutoEarnBtn();
-      if (sb) await sb.from('users').update({ auto_earn_active: autoEarnActive }).eq('telegram_id', userId);
-
-      if (autoEarnActive) {
-        alert('⚡ Auto Earn Started!\nIt will run 1 eligible task every 60 seconds (max 10 per session).');
-        startAutoEarnLoop();
-      } else {
-        if (autoEarnTimer) clearInterval(autoEarnTimer);
-      }
+      alert('⚡ Auto Earn is Coming Soon!\nThis feature is under development.');
     }
 
     function updateAutoEarnBtn() {
@@ -1103,6 +1177,8 @@
 
     // ========== COMMUNITY CHAT ==========
     function enterCommunityChat() {
+      if (isAppPaused()) return showPausedMessage();
+      if (isCategoryPaused('chat')) return showPausedMessage('Chat is temporarily paused by admin.');
       if (!checkGateAccess()) return;
       const now = Date.now();
       if (now > chatPassExpiry) {
@@ -1179,7 +1255,9 @@
 
     // ========== TASKS ==========
     function openCategory(cat) {
+      if (isAppPaused()) return showPausedMessage();
       if (!checkGateAccess()) return;
+      if (isCategoryPaused(cat)) return showPausedMessage(cat.toUpperCase() + ' category is temporarily paused by admin.');
       currentCategory = cat;
       const names = { watch:'Watch & Earn', views:'Views & Likes', join:'Join Communities', bot:'Bot Tasks', install:'Install Apps', website:'Website Visits', affiliate:'Affiliate Offers', products:'Product Views', other:'General Tasks' };
       document.getElementById('category-title').innerText = names[cat] || 'Tasks';
@@ -1332,6 +1410,8 @@
 
     // ========== PROMOTE ==========
     function openPromoteForm(type) {
+      if (isAppPaused()) return showPausedMessage();
+      if (isCategoryPaused('promote')) return showPausedMessage('Promote is temporarily paused by admin.');
       if (!checkGateAccess()) return;
       currentPromoType = type;
       const titles = {
@@ -1485,6 +1565,8 @@
 
     // ========== GAMES ==========
     function enterGame(g) {
+      if (isAppPaused()) return showPausedMessage();
+      if (isCategoryPaused('games')) return showPausedMessage('Games are temporarily paused by admin.');
       if (!checkGateAccess()) return;
       if (g === 'TicTacToe') startTTT();
       else if (g === 'Spin') showPage('game-spin');
@@ -1659,10 +1741,58 @@
       document.getElementById('price-products').value = prices.products || 50;
       document.getElementById('price-banner').value = prices.banner || 500;
 
+      // Load App Status & Category Pauses
+      document.getElementById('admin-app-status').value = appStatus || 'live';
+      document.getElementById('admin-pause-msg').value = pauseMessage || '';
+      if (pauseUntil) {
+        try {
+          const d = new Date(pauseUntil);
+          document.getElementById('admin-pause-until').value = d.toISOString().slice(0, 16);
+        } catch(e) {}
+      } else {
+        document.getElementById('admin-pause-until').value = '';
+      }
+      // Checkboxes
+      const cats = ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'];
+      cats.forEach(c => {
+        const el = document.getElementById('pause-' + c);
+        if (el) el.checked = !!categoryPauses[c];
+      });
+
       loadMasterStats();
       loadAdminAdsList();
       loadAdminPayouts();
       loadAdminTaskList();
+    }
+
+    async function saveAppStatus() {
+      appStatus = document.getElementById('admin-app-status').value;
+      pauseMessage = document.getElementById('admin-pause-msg').value.trim() || 'App is under maintenance. Please check back later.';
+      const untilVal = document.getElementById('admin-pause-until').value;
+      pauseUntil = untilVal ? new Date(untilVal).toISOString() : null;
+
+      if (sb) {
+        await sb.from('app_settings').upsert([
+          { setting_key: 'app_status', setting_value: appStatus },
+          { setting_key: 'pause_message', setting_value: pauseMessage },
+          { setting_key: 'pause_until', setting_value: pauseUntil || '' }
+        ]);
+      }
+      alert(appStatus === 'paused' ? '🔴 App is now PAUSED. Users will see the maintenance message.' : '🟢 App is now LIVE.');
+    }
+
+    async function saveCategoryPauses() {
+      const cats = ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'];
+      cats.forEach(c => {
+        const el = document.getElementById('pause-' + c);
+        categoryPauses[c] = el ? el.checked : false;
+      });
+      if (sb) {
+        await sb.from('app_settings').upsert([
+          { setting_key: 'category_pauses', setting_value: JSON.stringify(categoryPauses) }
+        ]);
+      }
+      alert('✅ Category pause settings saved!');
     }
 
     async function loadMasterStats() {
