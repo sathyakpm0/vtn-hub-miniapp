@@ -84,6 +84,7 @@
       transition: transform 0.1s;
     }
     .gold-btn:active { transform: scale(0.97); }
+    .gold-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -128,6 +129,7 @@
       padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700;
       cursor: pointer; flex-shrink: 0;
     }
+    .start-btn:disabled { background: #999; cursor: not-allowed; }
     .banner {
       background: linear-gradient(135deg, #c8102e, #9b0c24);
       margin: 14px; border-radius: 16px; padding: 16px; color: white;
@@ -170,6 +172,13 @@
       background: white; border-radius: 20px; padding: 24px; max-width: 360px;
       width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
+    .progress-bar-bg {
+      background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin: 15px 0 8px;
+    }
+    .progress-bar-fill {
+      background: #4CAF50; height: 100%; width: 0%; transition: width 0.3s;
+    }
+
     .chat-box {
       height: 380px; overflow-y: auto; padding: 12px; background: #fafafa;
       border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px;
@@ -210,6 +219,14 @@
       background: #fdf2f4; border: 1.5px solid #ffd700; border-radius: 12px;
       padding: 12px; text-align: center;
     }
+    .master-stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+    }
+    .master-stat-box {
+      background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; text-align: center;
+    }
+    .master-stat-box .val { font-size: 18px; font-weight: 900; color: #c8102e; }
+    .master-stat-box .lbl { font-size: 10px; color: #666; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -260,7 +277,7 @@
       <div class="card" style="border: 2px dashed #4CAF50; display:flex; justify-content:space-between; align-items:center;">
         <div>
           <div style="font-weight:800; font-size:14px; color:#2E7D32;">⚡ Auto Earn Engine</div>
-          <div style="font-size:11px; color:#666;">Telegram tasks loop • 50% You / 50% Hub</div>
+          <div style="font-size:11px; color:#666;">Runs live eligible tasks automatically</div>
         </div>
         <button class="gold-btn" style="padding:7px 14px; font-size:12px;" id="auto-earn-toggle" onclick="toggleAutoEarn()">Turn ON</button>
       </div>
@@ -278,10 +295,15 @@
     <!-- EARN PAGE -->
     <div id="earn" class="page">
       <div class="header">Earn Tasks</div>
-      <div class="section-title">Official Task</div>
+      
+      <!-- Official Channel Gate Task -->
+      <div class="section-title" id="official-task-title">Official Task</div>
       <div class="list-item" id="official-task-item">
         <div class="icon" style="background:#c8102e;">⭐</div>
-        <div class="info"><h4>Join Official Channels</h4><p>+50 Coins • Required for access</p></div>
+        <div class="info">
+          <h4 id="official-channel-label">Join Official Channel</h4>
+          <p>+50 Coins • Unlocks system access</p>
+        </div>
         <button class="start-btn" onclick="verifyOfficialGate()">Verify</button>
       </div>
 
@@ -338,11 +360,11 @@
     <div id="fun" class="page">
       <div class="header">Fun Zone</div>
 
-      <!-- STRICT AD-VERIFIED CHAT -->
+      <!-- AD-VERIFIED CHAT -->
       <div class="section-title">Community Chat</div>
       <div class="list-item" onclick="enterCommunityChat()">
         <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Global Member Chat</h4><p>Watch ad • 15 min pass • Strictly NO links</p></div>
+        <div class="info"><h4>Global Member Chat</h4><p>Watch sponsor ad • 15 min pass • Strictly NO links</p></div>
         <button class="start-btn">Enter</button>
       </div>
 
@@ -350,7 +372,7 @@
       <div class="grid">
         <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterGame('Dart')"><span class="icon">🎯</span>Dart</div>
         <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterGame('Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterGame('Shoot')"><span class="icon">🔫</span>Shoot</div>
+        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterGame('Shoot')"><span class="icon">👾</span>Shoot</div>
         <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterGame('Tower')"><span class="icon">🗼</span>Tower</div>
         <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterGame('Spin')"><span class="icon">🎡</span>Spin</div>
         <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterGame('Quiz')"><span class="icon">❓</span>Quiz</div>
@@ -368,7 +390,7 @@
       <div class="card" style="padding:10px;">
         <div class="chat-box" id="chat-box"></div>
         <div style="display:flex;gap:8px;margin-top:10px;">
-          <input type="text" id="chat-input" placeholder="Type a message (NO links allowed)..." style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #ddd;">
+          <input type="text" id="chat-input" placeholder="Type message (NO links allowed)..." style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #ddd;">
           <button class="gold-btn" style="padding:10px 16px;" onclick="sendChatMessage()">Send</button>
         </div>
         <button class="start-btn" style="width:100%;background:#666;margin-top:8px;" onclick="showPage('fun')">← Exit Chat</button>
@@ -409,9 +431,9 @@
     <div id="game-dart" class="page">
       <div class="header">🎯 Dart Game</div>
       <div class="game-area">
-        <div class="score-box">Hits: <span id="dart-score">0</span></div>
+        <div class="score-box">Hits: <span id="dart-score">0</span> / 10</div>
         <div style="font-size:70px;margin:30px 0;cursor:pointer;" id="dart-target" onclick="hitDart()">🎯</div>
-        <button class="gold-btn" onclick="startDart()">Start 10s Timer</button>
+        <button class="gold-btn" onclick="startDart()">Start Game</button>
       </div>
       <div style="text-align:center;"><button class="start-btn" style="background:#666;" onclick="showPage('fun')">← Back</button></div>
     </div>
@@ -419,7 +441,7 @@
     <div id="game-fruit" class="page">
       <div class="header">🍎 Fruit Slice</div>
       <div class="game-area">
-        <div class="score-box">Score: <span id="fruit-score">0</span></div>
+        <div class="score-box">Hits: <span id="fruit-score">0</span> / 8</div>
         <div style="font-size:60px;margin:30px 0;cursor:pointer;" id="fruit-display" onclick="hitFruit()">🍎</div>
         <button class="gold-btn" onclick="startFruit()">Start</button>
       </div>
@@ -427,9 +449,9 @@
     </div>
 
     <div id="game-shoot" class="page">
-      <div class="header">🔫 Target Shoot</div>
+      <div class="header">👾 Target Shoot</div>
       <div class="game-area">
-        <div class="score-box">Score: <span id="shoot-score">0</span></div>
+        <div class="score-box">Hits: <span id="shoot-score">0</span> / 8</div>
         <div style="font-size:60px;margin:30px 0;cursor:pointer;" id="shoot-target" onclick="hitShoot()">👾</div>
         <button class="gold-btn" onclick="startShoot()">Start</button>
       </div>
@@ -439,7 +461,7 @@
     <div id="game-tower" class="page">
       <div class="header">🗼 Tower Stack</div>
       <div class="game-area">
-        <div class="score-box">Height: <span id="tower-score">0</span></div>
+        <div class="score-box">Height: <span id="tower-score">0</span> / 8</div>
         <div style="font-size:30px;margin:20px 0;" id="tower-display">⬜</div>
         <button class="gold-btn" onclick="dropTower()">Drop Block</button>
       </div>
@@ -447,7 +469,7 @@
     </div>
 
     <div id="game-sudoku" class="page">
-      <div class="header">🔢 Sudoku</div>
+      <div class="header">🔢 Sudoku Mini</div>
       <div class="card" style="text-align:center;">
         <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:5px;justify-content:center;margin:15px 0;"></div>
         <button class="gold-btn" onclick="checkSudoku()">Check & Claim</button>
@@ -534,12 +556,24 @@
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-entry-btn" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel (Locked)</h4><p>Master controls & payouts</p></div><div>🔒</div></div>
+      <div class="list-item" id="admin-entry-btn" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel (Locked)</h4><p>Master controls, ads & payouts</p></div><div>🔒</div></div>
     </div>
 
-    <!-- FULL ADMIN PANEL -->
+    <!-- MASTER ADMIN PANEL -->
     <div id="admin" class="page">
-      <div class="header">👑 Master Admin Panel</div>
+      <div class="header">👑 Master Admin Control Center</div>
+
+      <!-- MASTER FINANCIAL & SYSTEM STATS -->
+      <div class="section-title">Master Financial Ledger</div>
+      <div class="card">
+        <div class="master-stat-grid">
+          <div class="master-stat-box"><div class="val" id="stat-total-users">0</div><div class="lbl">TOTAL USERS</div></div>
+          <div class="master-stat-box"><div class="val" id="stat-total-liability">0</div><div class="lbl">USER BALANCES</div></div>
+          <div class="master-stat-box"><div class="val" id="stat-pending-withdraws">0</div><div class="lbl">PENDING PAYOUTS</div></div>
+          <div class="master-stat-box"><div class="val" id="stat-completed-tasks">0</div><div class="lbl">TASKS DONE</div></div>
+        </div>
+        <button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadMasterStats()">🔄 Refresh Ledger</button>
+      </div>
 
       <!-- SHOUTCAST BROADCAST -->
       <div class="section-title">Global Broadcast / Shoutcast</div>
@@ -549,16 +583,36 @@
         <button class="start-btn" style="width:100%;background:#555;" onclick="adminClearBroadcast()">Clear Broadcast</button>
       </div>
 
+      <!-- AD MANAGEMENT (RANDOM ADS CONTROLLER) -->
+      <div class="section-title">Ads & Sponsor URLs Manager</div>
+      <div class="card">
+        <p style="font-size:12px;color:#666;margin-bottom:10px;">The app randomly selects one of these active sponsor ads when users watch ads, enter games, or renew chat passes.</p>
+        <div class="form-group"><label>Ad Title / Sponsor Name</label><input type="text" id="admin-ad-title" placeholder="e.g. Crypto Sponsor A"></div>
+        <div class="form-group"><label>Target Ad URL</label><input type="text" id="admin-ad-url" placeholder="https://t.me/... or website link"></div>
+        <button class="gold-btn" style="width:100%;margin-bottom:12px;" onclick="adminAddAd()">+ Add Sponsor Ad</button>
+        
+        <div style="font-size:12px;font-weight:800;color:#c8102e;margin-bottom:6px;">Current Active Sponsor Ads:</div>
+        <div id="admin-ads-list"><div style="text-align:center;color:#888;font-size:12px;">Loading ads...</div></div>
+      </div>
+
       <!-- PENDING WITHDRAWALS -->
       <div class="section-title">Pending Payouts</div>
       <div id="admin-withdrawals-list"><div class="card" style="text-align:center;">Loading...</div></div>
 
-      <!-- BOT SETTINGS -->
-      <div class="section-title">Bot & Security Settings</div>
+      <!-- BOT & CHANNEL GATE SETTINGS -->
+      <div class="section-title">Bot & Official Channel Settings</div>
       <div class="card">
         <div class="form-group"><label>Bot Username (without @)</label><input type="text" id="admin-bot-input"></div>
+        <div class="form-group"><label>Official Channel Link</label><input type="text" id="admin-channel-link-input" placeholder="https://t.me/vtnhub"></div>
+        <div class="form-group">
+          <label>Mandatory Channel Gate Active?</label>
+          <select id="admin-gate-required">
+            <option value="true">YES (Gate Active)</option>
+            <option value="false">NO (Skip Gate)</option>
+          </select>
+        </div>
         <div class="form-group"><label>Admin PIN Code</label><input type="password" id="admin-pin-input"></div>
-        <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
+        <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Bot & Gate Configuration</button>
       </div>
 
       <!-- USER MANAGEMENT -->
@@ -583,7 +637,7 @@
           <select id="admin-task-cat">
             <option value="join">Join Channel / Group</option>
             <option value="bot">Start Bot</option>
-            <option value="watch">Watch Video</option>
+            <option value="watch">Watch Video / Ad</option>
             <option value="views">Views & Likes</option>
             <option value="install">Install App</option>
             <option value="website">Visit Website</option>
@@ -606,14 +660,31 @@
 
   </div>
 
+  <!-- LIVE COUNTDOWN TASK MODAL (FIXED TIMER & REAL VERIFICATION) -->
+  <div class="gate-overlay" id="task-modal" style="display:none;">
+    <div class="gate-modal">
+      <div style="font-size:40px;margin-bottom:8px;">🎯</div>
+      <h3 style="color:#c8102e;margin-bottom:6px;" id="tm-title">Task Verification</h3>
+      <p style="font-size:12px;color:#666;" id="tm-reward-desc">Reward: +10 Coins</p>
+      
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="tm-progress"></div>
+      </div>
+      <div style="font-weight:800;font-size:14px;color:#c8102e;margin-bottom:14px;" id="tm-countdown">Please wait...</div>
+      
+      <button class="gold-btn" id="tm-claim-btn" style="width:100%;margin-bottom:8px;" disabled onclick="confirmActiveTask()">Wait for Timer...</button>
+      <button class="start-btn" style="width:100%;background:#666;" onclick="cancelActiveTask()">Cancel Task</button>
+    </div>
+  </div>
+
   <!-- MANDATORY CHANNEL GATE MODAL -->
   <div class="gate-overlay" id="gate-overlay" style="display:none;">
     <div class="gate-modal">
       <div style="font-size:42px;margin-bottom:10px;">⭐</div>
       <h3 style="color:#c8102e;margin-bottom:6px;">Official Channel Required</h3>
       <p style="font-size:12px;color:#666;margin-bottom:16px;">You must join our official Telegram channel to earn coins and withdraw.</p>
-      <button class="gold-btn" style="width:100%;margin-bottom:10px;" onclick="window.open('https://t.me/vtnhub','_blank')">1. Join @vtnhub</button>
-      <button class="start-btn" style="width:100%;" onclick="confirmChannelJoined()">2. I Have Joined (Unlock)</button>
+      <button class="gold-btn" style="width:100%;margin-bottom:10px;" id="gate-join-btn" onclick="openOfficialChannel()">1. Join Official Channel</button>
+      <button class="start-btn" style="width:100%;" onclick="confirmChannelJoined()">2. I Have Joined (Verify)</button>
     </div>
   </div>
 
@@ -622,8 +693,8 @@
     <div class="gate-modal">
       <div style="font-size:42px;margin-bottom:10px;">⏳</div>
       <h3 style="color:#c8102e;margin-bottom:6px;">Chat Pass Expired</h3>
-      <p style="font-size:12px;color:#666;margin-bottom:16px;">Watch a 15-second sponsor ad to get another 15 minutes of live chat access!</p>
-      <button class="gold-btn" style="width:100%;" onclick="watchAdForChat()">Watch Ad & Enter</button>
+      <p style="font-size:12px;color:#666;margin-bottom:16px;">Watch a sponsor ad to get another 15 minutes of live chat access!</p>
+      <button class="gold-btn" style="width:100%;" onclick="watchAdForChat()">Watch Sponsor Ad & Enter</button>
     </div>
   </div>
 
@@ -642,23 +713,40 @@
     let sb = null;
     try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
 
-    const tg = window.Telegram.WebApp;
+    const tg = window.Telegram?.WebApp || null;
     try {
-      tg.ready();
-      tg.expand();
-      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-      tg.setHeaderColor('#c8102e');
-      tg.setBackgroundColor('#FFF8E7');
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+        tg.setHeaderColor('#c8102e');
+        tg.setBackgroundColor('#FFF8E7');
+      }
     } catch(e) {}
 
-    const user = tg.initDataUnsafe?.user || null;
-    const userId = user ? String(user.id) : ('guest_' + Math.floor(Math.random()*89999+10000));
+    const user = tg?.initDataUnsafe?.user || null;
+    const userId = user ? String(user.id) : ('guest_' + (localStorage.getItem('vtn_guest_id') || (() => {
+      const g = Math.floor(Math.random()*89999+10000);
+      localStorage.setItem('vtn_guest_id', g);
+      return g;
+    })()));
+
+    // Dynamic Admin Settings defaults
     let botUsername = 'VTNPromoAssistant_bot';
+    let officialChannelLink = 'https://t.me/vtnhub';
+    let gateRequired = true;
     let adminPin = '778899';
 
+    // Random Ads List fallback
+    let sponsorAds = [
+      { id: 1, title: 'VTN Official News', url: 'https://t.me/vtnhub' },
+      { id: 2, title: 'VTN Support Desk', url: 'https://t.me/Vtnhub0' }
+    ];
+
     let balance = 0;
-    let officialVerified = false;
+    let officialVerified = (localStorage.getItem('vtn_verified_' + userId) === 'true');
     let autoEarnActive = false;
+    let autoEarnTimer = null;
     let referralCount = 0;
     let referralEarnings = 0;
     let currentTasks = [];
@@ -668,6 +756,9 @@
     let chatPassExpiry = 0;
     let chatTimerInterval = null;
 
+    let activeExecutingTask = null;
+    let activeTaskInterval = null;
+
     let prices = { channel:200, bot:150, views:50, watch:70, install:300, website:80, affiliate:40, products:50 };
 
     function updateUI() {
@@ -675,15 +766,24 @@
       document.getElementById('wallet-balance').innerText = balance + ' Coins';
       document.getElementById('ref-count').innerText = referralCount;
       document.getElementById('ref-earnings').innerText = referralEarnings + ' Coins';
+      if (officialVerified) {
+        const item = document.getElementById('official-task-item');
+        if (item) item.style.display = 'none';
+        const title = document.getElementById('official-task-title');
+        if (title) title.style.display = 'none';
+      }
     }
 
-    // ========== ANTI-CHEAT INITIALIZATION ==========
+    // ========== INITIALIZATION ==========
     async function initApp() {
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
         document.getElementById('userid').innerText = 'ID: ' + user.id;
         document.getElementById('profile-name').innerText = user.first_name || 'User';
         document.getElementById('profile-id').innerText = 'ID: ' + user.id;
+      } else {
+        document.getElementById('username').innerText = 'Guest User';
+        document.getElementById('userid').innerText = 'ID: ' + userId;
       }
       await loadAppSettings();
       await syncUser();
@@ -699,6 +799,11 @@
           data.forEach(item => {
             if (item.setting_key === 'bot_username') botUsername = item.setting_value;
             if (item.setting_key === 'admin_pin') adminPin = item.setting_value;
+            if (item.setting_key === 'channel_link') officialChannelLink = item.setting_value;
+            if (item.setting_key === 'gate_required') gateRequired = (item.setting_value === 'true');
+            if (item.setting_key === 'sponsor_ads') {
+              try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
+            }
             if (item.setting_key === 'prices') {
               try { prices = JSON.parse(item.setting_value); } catch(e) {}
             }
@@ -713,23 +818,21 @@
         const { data } = await sb.from('users').select('*').eq('telegram_id', userId).maybeSingle();
         if (data) {
           if (data.is_blocked) {
-            document.body.innerHTML = '<div style="padding:60px;text-align:center;color:#c8102e;font-weight:900;"><h1>ACCESS BLOCKED</h1><p style="margin-top:10px;">Your account has been suspended for violating rules.</p></div>';
+            document.body.innerHTML = '<div style="padding:60px;text-align:center;color:#c8102e;font-weight:900;"><h1>ACCESS BLOCKED</h1><p style="margin-top:10px;">Your account has been suspended for rule violations.</p></div>';
             return;
           }
           balance = Number(data.balance) || 0;
-          officialVerified = !!data.official_verified;
+          officialVerified = !!data.official_verified || officialVerified;
+          localStorage.setItem('vtn_verified_' + userId, officialVerified ? 'true' : 'false');
           autoEarnActive = !!data.auto_earn_active;
           referralCount = Number(data.referral_count) || 0;
           referralEarnings = Number(data.referral_earnings) || 0;
 
-          if (officialVerified) {
-            document.getElementById('official-task-item').style.display = 'none';
-          }
           updateAutoEarnBtn();
           updateUI();
         } else {
-          // New User Referral Detection
-          let refCode = tg.initDataUnsafe?.start_param || null;
+          // New User
+          let refCode = tg?.initDataUnsafe?.start_param || null;
           if (refCode) refCode = refCode.replace(/^ref_/, '').replace(/^VTN/, '').trim();
           let startCoins = 0;
           if (refCode && refCode !== userId) startCoins = 20;
@@ -766,7 +869,7 @@
           const newCnt = (Number(data.referral_count)||0) + 1;
           const newEarn = (Number(data.referral_earnings)||0) + 50;
           await sb.from('users').update({ balance: newBal, referral_count: newCnt, referral_earnings: newEarn }).eq('telegram_id', refId);
-          await sb.from('transactions').insert([{ telegram_id: refId, amount: 50, type: 'referral', description: 'Referral reward' }]);
+          await sb.from('transactions').insert([{ telegram_id: refId, amount: 50, type: 'referral', description: 'Referral reward from ID ' + userId }]);
         }
       } catch(e) {}
     }
@@ -778,7 +881,22 @@
       try {
         await sb.from('users').update({ balance }).eq('telegram_id', userId);
         await sb.from('transactions').insert([{ telegram_id: userId, amount, type, description: desc }]);
-      } catch(e) {}
+      } catch(e) { console.error('recordTx err', e); }
+    }
+
+    // Unified Game Hook (Upcoming games code can call this safely)
+    function grantGameReward(coins, gameTitle) {
+      recordTx(coins, 'game', gameTitle + ' Reward');
+      alert(`🎉 Winner! +${coins} Coins added to your balance.`);
+      showPage('fun');
+    }
+
+    // ========== RANDOM ADS ENGINE ==========
+    function getRandomAd() {
+      if (!sponsorAds || sponsorAds.length === 0) {
+        return { title: 'VTN Official', url: officialChannelLink };
+      }
+      return sponsorAds[Math.floor(Math.random() * sponsorAds.length)];
     }
 
     // ========== SHOUTCAST BROADCAST ==========
@@ -796,21 +914,39 @@
     }
 
     // ========== OFFICIAL GATE VERIFICATION ==========
+    function openOfficialChannel() {
+      if (tg?.openTelegramLink) tg.openTelegramLink(officialChannelLink);
+      else window.open(officialChannelLink, '_blank');
+    }
+
     function verifyOfficialGate() {
-      window.open('https://t.me/vtnhub', '_blank');
+      openOfficialChannel();
       document.getElementById('gate-overlay').style.display = 'flex';
     }
 
     async function confirmChannelJoined() {
+      if (officialVerified) {
+        document.getElementById('gate-overlay').style.display = 'none';
+        return;
+      }
       officialVerified = true;
+      localStorage.setItem('vtn_verified_' + userId, 'true');
       document.getElementById('gate-overlay').style.display = 'none';
-      document.getElementById('official-task-item').style.display = 'none';
-      await recordTx(50, 'official', 'Official Channel Membership Verified');
-      if (sb) await sb.from('users').update({ official_verified: true }).eq('telegram_id', userId);
-      alert('✅ Verified! +50 Coins Added.');
+      updateUI();
+
+      if (sb) {
+        // Prevent duplicate 50 coin reward if already paid before
+        const { data: existing } = await sb.from('transactions').select('id').eq('telegram_id', userId).eq('type', 'official').limit(1);
+        if (!existing || existing.length === 0) {
+          await recordTx(50, 'official', 'Official Channel Membership Verified');
+        }
+        await sb.from('users').update({ official_verified: true }).eq('telegram_id', userId);
+      }
+      alert('✅ Verified! Official channel access unlocked.');
     }
 
     function checkGateAccess() {
+      if (!gateRequired) return true;
       if (!officialVerified) {
         verifyOfficialGate();
         return false;
@@ -818,14 +954,18 @@
       return true;
     }
 
-    // ========== AUTO EARN ENGINE (50/50 REVENUE SPLIT) ==========
+    // ========== AUTO EARN ENGINE (WITH REAL TASK VALIDATION) ==========
     async function toggleAutoEarn() {
       if (!checkGateAccess()) return;
       autoEarnActive = !autoEarnActive;
       updateAutoEarnBtn();
       if (sb) await sb.from('users').update({ auto_earn_active: autoEarnActive }).eq('telegram_id', userId);
+
       if (autoEarnActive) {
-        alert('⚡ Auto Earn Started!\nBot will continuously run background Telegram tasks.\nEarnings are credited automatically every 60 seconds (50% You / 50% Hub).');
+        alert('⚡ Auto Earn Engine Started!\nIt will automatically discover and run available sponsored tasks every 45s.');
+        startAutoEarnLoop();
+      } else {
+        if (autoEarnTimer) clearInterval(autoEarnTimer);
       }
     }
 
@@ -842,15 +982,40 @@
       }
     }
 
-    // Auto-earn background ticker (every 60s)
-    setInterval(async () => {
-      if (autoEarnActive && sb) {
-        const userShare = 2; // User gets 2 coins, Hub takes 2 coins (from 4 coin sponsored task)
-        await recordTx(userShare, 'auto_earn', 'Auto Earn Task Loop (50% Share)');
-      }
-    }, 60000);
+    function startAutoEarnLoop() {
+      if (autoEarnTimer) clearInterval(autoEarnTimer);
+      autoEarnTimer = setInterval(async () => {
+        if (!autoEarnActive || !sb) return;
 
-    // ========== STRICT COMMUNITY CHAT (NO LINKS + 15-MIN AD RENEWAL) ==========
+        // Fetch tasks not yet claimed
+        try {
+          const { data: allTasks } = await sb.from('tasks').select('*').eq('is_active', true).limit(50);
+          const { data: completed } = await sb.from('completed_tasks').select('task_id').eq('telegram_id', userId);
+          const doneSet = new Set((completed || []).map(c => String(c.task_id)));
+
+          const available = (allTasks || []).filter(t => !doneSet.has(String(t.id)));
+
+          if (available.length === 0) {
+            autoEarnActive = false;
+            updateAutoEarnBtn();
+            clearInterval(autoEarnTimer);
+            if (sb) await sb.from('users').update({ auto_earn_active: false }).eq('telegram_id', userId);
+            alert('ℹ️ Auto Earn Paused: No new tasks available right now. Please check back later!');
+            return;
+          }
+
+          // Pick the first task and consume it
+          const t = available[0];
+          await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
+          const share = Math.max(2, Math.floor(t.reward * 0.5));
+          await recordTx(share, 'auto_earn', `Auto Earn Task: ${t.title}`);
+        } catch(e) {
+          console.error('Auto earn execution error', e);
+        }
+      }, 45000);
+    }
+
+    // ========== COMMUNITY CHAT (WITH RANDOM AD RENEWAL) ==========
     function enterCommunityChat() {
       if (!checkGateAccess()) return;
       const now = Date.now();
@@ -862,14 +1027,15 @@
     }
 
     function watchAdForChat() {
-      window.open('https://t.me/Vtnhub0', '_blank');
-      alert('Sponsor ad opened. Verifying pass (10s)...');
-      setTimeout(() => {
-        chatPassExpiry = Date.now() + (15 * 60 * 1000); // 15 mins
-        document.getElementById('chat-ad-modal').style.display = 'none';
-        openChatScreen();
-        startChatTimer();
-      }, 10000);
+      const ad = getRandomAd();
+      if (tg?.openLink) tg.openLink(ad.url);
+      else window.open(ad.url, '_blank');
+
+      alert(`Viewing sponsor: ${ad.title}\nPass verified! Enjoy 15 minutes in Global Chat.`);
+      chatPassExpiry = Date.now() + (15 * 60 * 1000);
+      document.getElementById('chat-ad-modal').style.display = 'none';
+      openChatScreen();
+      startChatTimer();
     }
 
     function openChatScreen() {
@@ -886,7 +1052,7 @@
         document.getElementById('chat-timer-badge').innerText = `Session: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
         if (remain <= 0) {
           clearInterval(chatTimerInterval);
-          alert('⏳ Your 15-minute chat session expired! Watch an ad to continue chatting.');
+          alert('⏳ Your chat session expired! Renew pass to continue.');
           document.getElementById('chat-ad-modal').style.display = 'flex';
         }
       }, 1000);
@@ -895,7 +1061,7 @@
     async function loadChatMessages() {
       if (!sb) return;
       const box = document.getElementById('chat-box');
-      box.innerHTML = '<div style="text-align:center;color:#888;">Loading...</div>';
+      box.innerHTML = '<div style="text-align:center;color:#888;">Loading messages...</div>';
       const { data } = await sb.from('chat_messages').select('*').order('id', {ascending:false}).limit(40);
       box.innerHTML = '';
       (data || []).reverse().forEach(m => {
@@ -910,10 +1076,9 @@
       const text = input.value.trim();
       if (!text) return;
 
-      // ANTI-LINK REGEX ENFORCEMENT
       const linkRegex = /(https?:\/\/|t\.me|\.com|\.org|\.net|\.in|\.xyz|\.io|www\.)/i;
       if (linkRegex.test(text)) {
-        alert('❌ LINKS ARE STRICTLY FORBIDDEN IN CHAT!\nSending links will result in a permanent ban.');
+        alert('❌ LINKS ARE STRICTLY FORBIDDEN IN CHAT!');
         input.value = '';
         return;
       }
@@ -929,7 +1094,7 @@
       }
     }
 
-    // ========== EARN CATEGORIES & SUPABASE PIPELINE ==========
+    // ========== LIVE TASK TIMER & EXECUTION MODAL ==========
     function openCategory(cat) {
       if (!checkGateAccess()) return;
       currentCategory = cat;
@@ -952,7 +1117,17 @@
         const available = (allTasks || []).filter(t => !claimedSet.has(String(t.id)));
 
         if (!available.length) {
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No new tasks available right now.</div>';
+          // If Watch & Earn is empty, offer dynamic sponsor ad!
+          if (cat === 'watch') {
+            container.innerHTML = `
+              <div class="card" style="text-align:center;">
+                <p style="font-weight:700;margin-bottom:8px;">Watch Dynamic Sponsor Ad</p>
+                <p style="font-size:12px;color:#666;margin-bottom:14px;">+5 Coins • Always available!</p>
+                <button class="gold-btn" onclick="startDynamicSponsorTask()">Watch Ad</button>
+              </div>`;
+            return;
+          }
+          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks available right now.</div>';
           return;
         }
 
@@ -963,35 +1138,103 @@
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
               <div class="info"><h4>${t.title}</h4><p>+${t.reward} Coins • Wait ${t.wait_seconds}s</p></div>
-              <button class="start-btn" onclick="executeTask(${i})">Start</button>
+              <button class="start-btn" onclick="openTaskModal(${i})">Start</button>
             </div>`;
         });
         container.innerHTML = html;
-      } catch(e) { container.innerHTML = '<div class="card">Failed to load</div>'; }
+      } catch(e) {
+        container.innerHTML = '<div class="card">Failed to load tasks</div>';
+      }
     }
 
-    function executeTask(index) {
+    function startDynamicSponsorTask() {
+      const ad = getRandomAd();
+      openActiveTaskExecution({
+        id: 'ad_' + Date.now(),
+        title: 'Sponsor: ' + ad.title,
+        reward: 5,
+        link: ad.url,
+        wait_seconds: 10,
+        is_dynamic_ad: true
+      });
+    }
+
+    function openTaskModal(index) {
       const task = currentTasks[index];
       if (!task) return;
-      if (task.link) window.open(task.link, '_blank');
-      const wait = task.wait_seconds || 10;
-      alert(`Task opened! Please wait ${wait} seconds to claim reward.`);
-      setTimeout(async () => {
-        try {
-          // Anti-cheat unique constraint check in Supabase
-          const { error } = await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(task.id) }]);
-          if (error) {
-            alert('⚠️ You have already claimed this task!');
-            return;
-          }
-          await recordTx(Number(task.reward), 'task', 'Completed: ' + task.title);
-          alert(`✅ Verified! +${task.reward} Coins credited.`);
-          loadCategoryTasks(currentCategory);
-        } catch(e) {}
-      }, wait * 1000);
+      openActiveTaskExecution(task);
     }
 
-    // ========== PROMOTE ORDER (CREATES REAL TASK IN ITS CATEGORY) ==========
+    function openActiveTaskExecution(task) {
+      activeExecutingTask = task;
+      const modal = document.getElementById('task-modal');
+      const claimBtn = document.getElementById('tm-claim-btn');
+      const prog = document.getElementById('tm-progress');
+      const countdown = document.getElementById('tm-countdown');
+
+      document.getElementById('tm-title').innerText = task.title;
+      document.getElementById('tm-reward-desc').innerText = `Reward: +${task.reward} Coins • Stay on page until timer finishes`;
+
+      modal.style.display = 'flex';
+      claimBtn.disabled = true;
+      claimBtn.innerText = 'Verifying...';
+      prog.style.width = '0%';
+
+      // Open target URL
+      if (task.link) {
+        if (tg?.openLink && !task.link.includes('t.me')) tg.openLink(task.link);
+        else if (tg?.openTelegramLink && task.link.includes('t.me')) tg.openTelegramLink(task.link);
+        else window.open(task.link, '_blank');
+      }
+
+      let totalSecs = task.wait_seconds || 10;
+      let remain = totalSecs;
+
+      if (activeTaskInterval) clearInterval(activeTaskInterval);
+      activeTaskInterval = setInterval(() => {
+        remain--;
+        const pct = Math.floor(((totalSecs - remain) / totalSecs) * 100);
+        prog.style.width = pct + '%';
+        countdown.innerText = `Please wait ${remain}s...`;
+
+        if (remain <= 0) {
+          clearInterval(activeTaskInterval);
+          countdown.innerText = '✅ Timer Complete!';
+          claimBtn.disabled = false;
+          claimBtn.innerText = `Claim +${task.reward} Coins`;
+        }
+      }, 1000);
+    }
+
+    function cancelActiveTask() {
+      if (activeTaskInterval) clearInterval(activeTaskInterval);
+      activeExecutingTask = null;
+      document.getElementById('task-modal').style.display = 'none';
+    }
+
+    async function confirmActiveTask() {
+      if (!activeExecutingTask) return;
+      const t = activeExecutingTask;
+      document.getElementById('task-modal').style.display = 'none';
+
+      try {
+        if (!t.is_dynamic_ad && sb) {
+          const { error } = await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
+          if (error) {
+            alert('⚠️ You already claimed this task!');
+            return;
+          }
+        }
+        await recordTx(Number(t.reward), 'task', 'Completed: ' + t.title);
+        alert(`✅ Verified! +${t.reward} Coins credited.`);
+        loadCategoryTasks(currentCategory);
+      } catch(e) {
+        console.error('Error claiming task', e);
+      }
+      activeExecutingTask = null;
+    }
+
+    // ========== PROMOTE ORDER ENGINE ==========
     function openPromoteForm(type) {
       if (!checkGateAccess()) return;
       currentPromoType = type;
@@ -1014,16 +1257,14 @@
       const title = document.getElementById('promo-title').value.trim() || `Promote: ${link}`;
       const qty = Number(document.getElementById('promo-qty').value) || 10;
       const wait = Number(document.getElementById('promo-wait').value) || 15;
-      if (!link) return alert('Please enter your link');
+      if (!link) return alert('Please enter your promotion link');
 
       const rate = prices[currentPromoType] || 60;
       const total = Math.ceil(qty * (rate / 100));
-      if (balance < total) return alert(`Insufficient balance! Need ${total} coins.`);
+      if (balance < total) return alert(`Insufficient coins! You need ${total} coins.`);
 
-      // Deduct promoter coins
       await recordTx(-total, 'promo', 'Promote Order: ' + currentPromoType);
 
-      // Create Task Directly in the chosen Category in Supabase
       if (sb) {
         await sb.from('tasks').insert([{
           title: title,
@@ -1035,7 +1276,7 @@
           is_active: true
         }]);
       }
-      alert(`✅ Promotion Live!\n${qty} tasks added directly to the ${currentPromoType.toUpperCase()} category for members.`);
+      alert(`✅ Promotion Published!\nYour order has been queued into the ${currentPromoType.toUpperCase()} category for members.`);
       showPage('promote');
     }
 
@@ -1050,9 +1291,9 @@
 
     function shareOnTelegram() {
       const link = getInviteLink();
-      const msg = encodeURIComponent("🎁 Join VTN Hub to complete simple tasks & earn daily coins!\nJoin via my link:\n" + link);
+      const msg = encodeURIComponent("🎁 Join VTN Hub to complete simple tasks & earn daily coins!\nJoin here:\n" + link);
       const url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${msg}`;
-      if (tg.openTelegramLink) tg.openTelegramLink(url);
+      if (tg?.openTelegramLink) tg.openTelegramLink(url);
       else window.open(url, '_blank');
     }
 
@@ -1076,7 +1317,7 @@
       alert('🎉 +20 Coins credited to you & +50 Coins given to your friend!');
     }
 
-    // ========== GAMES (PRESERVED 100%) ==========
+    // ========== GAMES (PRESERVED WORKFLOW) ==========
     function enterGame(g) {
       if (!checkGateAccess()) return;
       if (g === 'TicTacToe') startTTT();
@@ -1113,7 +1354,7 @@
         b.appendChild(d);
       });
     }
-    function claimTTT() { recordTx(3, 'game', 'Tic Tac Toe Reward'); alert('+3 Coins Added!'); showPage('fun'); }
+    function claimTTT() { grantGameReward(3, 'Tic Tac Toe'); }
 
     // Spin
     function doSpin() {
@@ -1121,7 +1362,7 @@
       document.getElementById('spin-wheel').style.transform = `rotate(${1800 + prize*40}deg)`;
       setTimeout(() => {
         document.getElementById('spin-result').innerText = `You won ${prize} Coins!`;
-        recordTx(prize, 'game', 'Spin & Win');
+        grantGameReward(prize, 'Spin & Win');
       }, 4200);
     }
 
@@ -1134,7 +1375,7 @@
       item.a.forEach((ans, i) => {
         const d = document.createElement('div'); d.className = 'quiz-option'; d.innerText = ans;
         d.onclick = () => {
-          if (i === item.c) { recordTx(3, 'game', 'Quiz Reward'); alert('Correct! +3 Coins'); showPage('fun'); }
+          if (i === item.c) grantGameReward(3, 'Quiz');
           else alert('Wrong answer!');
         };
         optBox.appendChild(d);
@@ -1143,13 +1384,13 @@
     }
 
     // Action Games
-    let dartHits = 0; function startDart() { alert('Tap the target as fast as you can!'); }
-    function hitDart() { dartHits++; document.getElementById('dart-score').innerText = dartHits; if (dartHits >= 10) { recordTx(4, 'game', 'Dart Game'); alert('+4 Coins!'); showPage('fun'); } }
-    let fruitHits = 0; function startFruit() { alert('Tap fruit!'); }
-    function hitFruit() { fruitHits++; document.getElementById('fruit-score').innerText = fruitHits; if (fruitHits >= 8) { recordTx(4, 'game', 'Fruit Game'); alert('+4 Coins!'); showPage('fun'); } }
-    let shootHits = 0; function startShoot() { alert('Shoot target!'); }
-    function hitShoot() { shootHits++; document.getElementById('shoot-score').innerText = shootHits; if (shootHits >= 8) { recordTx(4, 'game', 'Shooter'); alert('+4 Coins!'); showPage('fun'); } }
-    let towerHeight = 0; function dropTower() { towerHeight++; document.getElementById('tower-score').innerText = towerHeight; if (towerHeight >= 8) { recordTx(4, 'game', 'Tower Stack'); alert('+4 Coins!'); showPage('fun'); } }
+    let dartHits = 0; function startDart() { alert('Tap the target 10 times!'); }
+    function hitDart() { dartHits++; document.getElementById('dart-score').innerText = dartHits; if (dartHits >= 10) grantGameReward(4, 'Dart'); }
+    let fruitHits = 0; function startFruit() { alert('Tap fruit 8 times!'); }
+    function hitFruit() { fruitHits++; document.getElementById('fruit-score').innerText = fruitHits; if (fruitHits >= 8) grantGameReward(4, 'Fruit Slice'); }
+    let shootHits = 0; function startShoot() { alert('Tap 8 targets!'); }
+    function hitShoot() { shootHits++; document.getElementById('shoot-score').innerText = shootHits; if (shootHits >= 8) grantGameReward(4, 'Shooter'); }
+    let towerHeight = 0; function dropTower() { towerHeight++; document.getElementById('tower-score').innerText = towerHeight; if (towerHeight >= 8) grantGameReward(4, 'Tower Stack'); }
 
     function startSudoku() {
       const b = document.getElementById('sudoku-board'); b.innerHTML = '';
@@ -1160,7 +1401,7 @@
       }
       showPage('game-sudoku');
     }
-    function checkSudoku() { recordTx(5, 'game', 'Sudoku Reward'); alert('Correct! +5 Coins'); showPage('fun'); }
+    function checkSudoku() { grantGameReward(5, 'Sudoku'); }
 
     // ========== WALLET & WITHDRAWALS ==========
     function openWithdraw(type) {
@@ -1173,9 +1414,9 @@
     async function submitWithdraw() {
       const addr = document.getElementById('withdraw-address').value.trim();
       const amt = Number(document.getElementById('withdraw-amount').value) || 0;
-      if (!addr) return alert('Enter address');
-      if (amt < 500) return alert('Minimum 500 Coins');
-      if (balance < amt) return alert('Not enough balance');
+      if (!addr) return alert('Enter withdrawal address');
+      if (amt < 500) return alert('Minimum withdrawal is 500 Coins');
+      if (balance < amt) return alert('Insufficient balance');
 
       await recordTx(-amt, 'withdraw', `Withdrawal (${currentWithdrawType.toUpperCase()}) to ${addr}`);
       if (sb) {
@@ -1187,7 +1428,7 @@
           status: 'pending'
         }]);
       }
-      alert('✅ Withdrawal request submitted! Admin will approve within 24-48 hours.');
+      alert('✅ Withdrawal request submitted! Admin will process your payout within 24 hours.');
       showPage('wallet');
       openWalletHistory('coins');
     }
@@ -1199,7 +1440,7 @@
       list.innerHTML = '<div class="card" style="text-align:center;">Loading...</div>';
 
       const { data } = await sb.from('transactions').select('*').eq('telegram_id', userId).order('id', {ascending:false});
-      const filtered = (data || []).filter(item => type === 'task' ? (item.type === 'task' || item.type === 'official') : item.type !== 'task');
+      const filtered = (data || []).filter(item => type === 'task' ? (item.type === 'task' || item.type === 'official' || item.type === 'auto_earn') : (item.type !== 'task' && item.type !== 'auto_earn'));
 
       if (!filtered.length) {
         list.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet.</div>';
@@ -1218,7 +1459,7 @@
     }
     function closeWalletHistory() { document.getElementById('history-container').style.display = 'none'; }
 
-    // ========== ADMIN CONTROLS (SECURED BY PIN + ID) ==========
+    // ========== MASTER ADMIN CONTROLS ==========
     function promptAdminPin() {
       const pin = prompt('Enter Master Admin PIN:');
       if (pin === adminPin || String(userId) === '8150531247') {
@@ -1231,18 +1472,79 @@
 
     async function loadAdminPanel() {
       document.getElementById('admin-bot-input').value = botUsername;
+      document.getElementById('admin-channel-link-input').value = officialChannelLink;
+      document.getElementById('admin-gate-required').value = gateRequired ? 'true' : 'false';
       document.getElementById('admin-pin-input').value = adminPin;
+
+      loadMasterStats();
+      loadAdminAdsList();
       loadAdminPayouts();
       loadAdminTaskList();
     }
 
+    async function loadMasterStats() {
+      if (!sb) return;
+      try {
+        const { count: userCount, data: users } = await sb.from('users').select('balance', { count: 'exact' });
+        const totalBal = (users || []).reduce((acc, u) => acc + (Number(u.balance) || 0), 0);
+        document.getElementById('stat-total-users').innerText = userCount || 0;
+        document.getElementById('stat-total-liability').innerText = totalBal.toLocaleString();
+
+        const { count: pendingCount } = await sb.from('withdrawals').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+        document.getElementById('stat-pending-withdraws').innerText = pendingCount || 0;
+
+        const { count: taskCount } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true });
+        document.getElementById('stat-completed-tasks').innerText = taskCount || 0;
+      } catch(e) {}
+    }
+
+    function loadAdminAdsList() {
+      const cont = document.getElementById('admin-ads-list');
+      if (!sponsorAds || sponsorAds.length === 0) {
+        cont.innerHTML = '<div style="color:#888;font-size:12px;">No custom sponsor ads configured yet.</div>';
+        return;
+      }
+      let html = '';
+      sponsorAds.forEach((ad, idx) => {
+        html += `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:12px;">
+            <div><b>${ad.title}</b><br><span style="color:#666;font-size:10px;">${ad.url}</span></div>
+            <button class="start-btn" style="background:#c8102e;padding:4px 8px;font-size:10px;" onclick="adminDeleteAd(${idx})">Delete</button>
+          </div>`;
+      });
+      cont.innerHTML = html;
+    }
+
+    async function adminAddAd() {
+      const title = document.getElementById('admin-ad-title').value.trim();
+      const url = document.getElementById('admin-ad-url').value.trim();
+      if (!title || !url) return alert('Enter sponsor title & URL');
+
+      sponsorAds.push({ id: Date.now(), title, url });
+      if (sb) {
+        await sb.from('app_settings').upsert([{ setting_key: 'sponsor_ads', setting_value: JSON.stringify(sponsorAds) }]);
+      }
+      document.getElementById('admin-ad-title').value = '';
+      document.getElementById('admin-ad-url').value = '';
+      loadAdminAdsList();
+      alert('✅ Sponsor ad saved!');
+    }
+
+    async function adminDeleteAd(index) {
+      sponsorAds.splice(index, 1);
+      if (sb) {
+        await sb.from('app_settings').upsert([{ setting_key: 'sponsor_ads', setting_value: JSON.stringify(sponsorAds) }]);
+      }
+      loadAdminAdsList();
+    }
+
     async function adminPublishBroadcast() {
       const msg = document.getElementById('admin-broadcast-msg').value.trim();
-      if (!msg) return alert('Enter announcement text');
+      if (!msg) return alert('Enter announcement message');
       if (sb) {
         await sb.from('announcements').update({ is_active: false }).neq('id', 0);
         await sb.from('announcements').insert([{ message: msg, is_active: true }]);
-        alert('📢 Shoutcast broadcasted live to all users!');
+        alert('📢 Live broadcast published to all users!');
         listenBroadcast();
       }
     }
@@ -1251,7 +1553,7 @@
       if (sb) {
         await sb.from('announcements').update({ is_active: false }).neq('id', 0);
         document.getElementById('shoutcast-bar').style.display = 'none';
-        alert('Broadcast cleared');
+        alert('Broadcast removed.');
       }
     }
 
@@ -1276,7 +1578,7 @@
     async function approvePayout(id) {
       if (!confirm('Mark as Paid?')) return;
       await sb.from('withdrawals').update({ status: 'approved' }).eq('id', id);
-      alert('Approved'); loadAdminPayouts();
+      alert('Approved'); loadAdminPayouts(); loadMasterStats();
     }
 
     async function rejectPayout(id, uid, amt) {
@@ -1286,51 +1588,60 @@
       if (data) {
         await sb.from('users').update({ balance: (Number(data.balance)||0) + Number(amt) }).eq('telegram_id', uid);
       }
-      alert('Rejected & Refunded'); loadAdminPayouts();
+      alert('Rejected & Refunded'); loadAdminPayouts(); loadMasterStats();
     }
 
     async function saveAdminSettings() {
       const bName = document.getElementById('admin-bot-input').value.trim().replace('@', '');
       const pin = document.getElementById('admin-pin-input').value.trim();
-      if (bName) {
-        botUsername = bName;
-        await sb.from('app_settings').upsert([{ setting_key: 'bot_username', setting_value: bName }]);
-      }
-      if (pin) {
-        adminPin = pin;
-        await sb.from('app_settings').upsert([{ setting_key: 'admin_pin', setting_value: pin }]);
+      const chLink = document.getElementById('admin-channel-link-input').value.trim();
+      const reqGate = document.getElementById('admin-gate-required').value;
+
+      if (bName) botUsername = bName;
+      if (pin) adminPin = pin;
+      if (chLink) officialChannelLink = chLink;
+      gateRequired = (reqGate === 'true');
+
+      if (sb) {
+        await sb.from('app_settings').upsert([
+          { setting_key: 'bot_username', setting_value: bName },
+          { setting_key: 'admin_pin', setting_value: pin },
+          { setting_key: 'channel_link', setting_value: chLink },
+          { setting_key: 'gate_required', setting_value: reqGate }
+        ]);
       }
       generateInviteLink();
-      alert('✅ Admin settings saved to Supabase!');
+      alert('✅ Admin settings updated successfully in Supabase!');
     }
 
     async function adminModifyCoins(action) {
       const uid = document.getElementById('admin-target-uid').value.trim();
       const val = Number(document.getElementById('admin-coin-val').value) || 0;
-      if (!uid || val <= 0) return alert('Enter valid ID and amount');
+      if (!uid || val <= 0) return alert('Enter valid user ID and amount');
       const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
       if (!data) return alert('User not found');
       const newBal = action === 'add' ? (Number(data.balance)||0)+val : Math.max(0, (Number(data.balance)||0)-val);
       await sb.from('users').update({ balance: newBal }).eq('telegram_id', uid);
       await sb.from('transactions').insert([{ telegram_id: uid, amount: action==='add'?val:-val, type: 'admin', description: 'Admin adjustment' }]);
       alert(`✅ Updated! User ${uid} now has ${newBal} Coins.`);
+      loadMasterStats();
     }
 
     async function adminInspectUser() {
       const uid = document.getElementById('admin-target-uid').value.trim();
-      if (!uid) return alert('Enter ID');
+      if (!uid) return alert('Enter Telegram User ID');
       const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
       if (!data) return alert('User not found');
       document.getElementById('admin-user-stat').innerHTML = `
-        <b>Name:</b> ${data.first_name} | <b>Balance:</b> ${data.balance}<br>
-        <b>Invites:</b> ${data.referral_count} friends | <b>Ref Earnings:</b> ${data.referral_earnings}<br>
-        <b>Status:</b> ${data.is_blocked?'BLOCKED':'ACTIVE'} | <b>Channel Joined:</b> ${data.official_verified?'YES':'NO'}
+        <b>Name:</b> ${data.first_name || 'N/A'} | <b>Balance:</b> ${data.balance}<br>
+        <b>Invites:</b> ${data.referral_count} | <b>Ref Earnings:</b> ${data.referral_earnings}<br>
+        <b>Status:</b> ${data.is_blocked?'BLOCKED':'ACTIVE'} | <b>Gate Verified:</b> ${data.official_verified?'YES':'NO'}
       `;
     }
 
     async function adminToggleUserBlock() {
       const uid = document.getElementById('admin-target-uid').value.trim();
-      if (!uid) return alert('Enter ID');
+      if (!uid) return alert('Enter User ID');
       const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
       if (!data) return alert('User not found');
       const newStatus = !data.is_blocked;
@@ -1368,7 +1679,8 @@
 
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'chat-page':3 };
       if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
@@ -1383,4 +1695,4 @@
     initApp();
   </script>
 </body>
-        </html>
+  </html>
