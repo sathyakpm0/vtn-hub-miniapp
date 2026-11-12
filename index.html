@@ -270,16 +270,35 @@
         <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
           <span class="icon">🎮</span>Fun Zone
         </div>
+        <div class="btn" style="background: linear-gradient(135deg, #2196F3, #1565C0);" onclick="showLeaderboard()">
+          <span class="icon">🏆</span>Leaderboard
+        </div>
+        <div class="btn" style="background: linear-gradient(135deg, #00897B, #00695C);" onclick="showPage('refer')">
+          <span class="icon">👥</span>Refer
+        </div>
       </div>
 
       <!-- INVITE BANNER -->
       <div class="banner">
         <div>
           <div style="font-weight:800; font-size:15px;">Refer Friends & Earn</div>
-          <div style="font-size:12px; opacity:0.9;">+50 Coins per friend!</div>
+          <div style="font-size:12px; opacity:0.9;">Invite & earn referral coins!</div>
         </div>
         <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
       </div>
+    </div>
+
+    <!-- LEADERBOARD PAGE -->
+    <div id="leaderboard" class="page">
+      <div class="header">🏆 Leaderboard</div>
+      <div class="card" style="text-align:center;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button class="gold-btn" style="flex:1;font-size:12px;padding:8px;" onclick="loadLeaderboard('balance')">Top Balance</button>
+          <button class="start-btn" style="flex:1;background:#3F51B5;" onclick="loadLeaderboard('referral')">Top Referrers</button>
+        </div>
+        <div id="leaderboard-list"><div style="color:#888;">Loading...</div></div>
+      </div>
+      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('home')">← Back</button></div>
     </div>
 
     <!-- EARN PAGE -->
@@ -396,6 +415,7 @@
       </div>
 
       <div class="section-title">Games (Play & Earn)</div>
+      <p style="font-size:11px;color:#666;margin:0 14px 10px;">Watch a short ad after each game to claim coins. No long cooldown.</p>
       <div class="grid">
         <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterGame('Dart')"><span class="icon">🎯</span>Dart</div>
         <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterGame('Fruit')"><span class="icon">🍎</span>Fruit</div>
@@ -737,7 +757,15 @@
         <div class="form-group"><label>Signup Bonus Coins (new user)</label><input type="number" id="admin-signup-bonus" value="30"></div>
         <div class="form-group"><label>Referral Reward (to YOU when friend joins)</label><input type="number" id="admin-ref-reward" value="50"></div>
         <div class="form-group"><label>Referral Welcome Bonus (extra to new user who used code)</label><input type="number" id="admin-ref-welcome" value="20"></div>
-        <div class="form-group"><label>Max Coins a user can earn per day (0 = no limit)</label><input type="number" id="admin-daily-cap" value="500"></div>
+        <div class="form-group"><label>Max Coins a user can earn per day (0 = no limit)</label><input type="number" id="admin-daily-cap" value="0"></div>
+        <div class="form-group"><label>Daily Check-in requires Watch Ad?</label>
+          <select id="admin-checkin-ad"><option value="true">YES</option><option value="false">NO</option></select>
+        </div>
+        <div class="form-group"><label>Game claim requires Watch Ad?</label>
+          <select id="admin-game-ad"><option value="true">YES</option><option value="false">NO</option></select>
+        </div>
+        <div class="form-group"><label>Force ad every X minutes while playing (0 = off)</label><input type="number" id="admin-game-ad-mins" value="3" min="0"></div>
+        <div class="form-group"><label>Daily Check-in Reward Coins</label><input type="number" id="admin-daily-reward" value="10"></div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
       </div>
 
@@ -908,16 +936,24 @@
     let signupBonus = 30;
     let referralReward = 50;       // coins to referrer
     let referralWelcomeBonus = 20; // extra coins to new user who used invite
-    let dailyEarnCap = 500;        // max positive coins per day per user
+    let dailyEarnCap = 0;          // 0 = no limit (set in Admin if you want a daily max)
+    let requireCheckinAd = true;
+    let requireGameAd = true;
+    let gameAdEveryMins = 3;
+    let dailyCheckinReward = 10;
+    let pendingGameReward = null;
+    let lastGameAdTime = 0;
 
     // Only these Telegram IDs can open Admin (add your real ID here)
     const ALLOWED_ADMIN_IDS = ['8150531247'];
 
     function isRealTelegramUser() {
-      // Block guests / cloned browser without Telegram WebApp user
-      if (!user || !user.id) return false;
+      // Allow if we have a numeric Telegram ID from WebApp OR a non-guest stored id
       if (String(userId).startsWith('guest_')) return false;
-      return true;
+      if (user && user.id) return true;
+      // Fallback: numeric telegram id string still counts as real account in DB
+      if (userId && /^\d+$/.test(String(userId))) return true;
+      return false;
     }
 
     function isAdminUser() {
@@ -1021,7 +1057,11 @@
             if (item.setting_key === 'signup_bonus') signupBonus = Number(item.setting_value) || 30;
             if (item.setting_key === 'referral_reward') referralReward = Number(item.setting_value) || 50;
             if (item.setting_key === 'referral_welcome') referralWelcomeBonus = Number(item.setting_value) || 20;
-            if (item.setting_key === 'daily_earn_cap') dailyEarnCap = Number(item.setting_value) || 500;
+            if (item.setting_key === 'daily_earn_cap') dailyEarnCap = Number(item.setting_value) || 0;
+            if (item.setting_key === 'require_checkin_ad') requireCheckinAd = item.setting_value !== 'false';
+            if (item.setting_key === 'require_game_ad') requireGameAd = item.setting_value !== 'false';
+            if (item.setting_key === 'game_ad_mins') gameAdEveryMins = Number(item.setting_value) || 0;
+            if (item.setting_key === 'daily_checkin_reward') dailyCheckinReward = Number(item.setting_value) || 10;
             if (item.setting_key === 'sponsor_ads') {
               try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
             }
@@ -1258,13 +1298,13 @@
     }
 
     async function getTodayEarned() {
-      if (!sb || !isRealTelegramUser()) return 0;
+      if (!sb) return 0;
       try {
         const start = new Date();
         start.setHours(0, 0, 0, 0);
         const { data } = await sb.from('transactions')
           .select('amount')
-          .eq('telegram_id', userId)
+          .eq('telegram_id', String(userId))
           .gte('created_at', start.toISOString());
         let sum = 0;
         (data || []).forEach(t => { if (Number(t.amount) > 0) sum += Number(t.amount); });
@@ -1273,14 +1313,19 @@
     }
 
     async function recordTx(amount, type, desc) {
-      // Block guests / cloned apps without real Telegram user
-      if (!isRealTelegramUser()) {
-        alert('Open this app from official Telegram bot to earn.');
+      amount = Number(amount) || 0;
+      if (!sb) {
+        alert('Database not connected. Check internet / Supabase.');
         return false;
       }
-      if (!sb) return false;
+      if (!isRealTelegramUser()) {
+        alert('Open this app from the official Telegram bot to earn.');
+        return false;
+      }
 
-      // Daily earn cap (only on positive amounts)
+      const uid = String(userId);
+
+      // Daily earn cap (only when admin set > 0)
       if (amount > 0 && dailyEarnCap > 0) {
         const earned = await getTodayEarned();
         if (earned + amount > dailyEarnCap) {
@@ -1290,9 +1335,31 @@
       }
 
       try {
-        // Always re-read balance from server (anti-tamper)
-        const { data: u } = await sb.from('users').select('balance, is_blocked').eq('telegram_id', userId).maybeSingle();
-        if (!u) return false;
+        const { data: u, error: readErr } = await sb.from('users').select('balance, is_blocked').eq('telegram_id', uid).maybeSingle();
+        if (readErr) {
+          console.error('read user', readErr);
+          alert('Could not read balance: ' + (readErr.message || 'DB error'));
+          return false;
+        }
+        if (!u) {
+          // Auto-create user row if missing (fixes some claim failures)
+          await sb.from('users').insert([{
+            telegram_id: uid,
+            first_name: user?.first_name || 'User',
+            username: user?.username || '',
+            balance: Math.max(0, amount),
+            official_verified: false,
+            is_blocked: false
+          }]);
+          if (amount > 0) {
+            await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
+            balance = Math.max(0, amount);
+            updateUI();
+            return true;
+          }
+          alert('User account missing. Close app and open again from bot.');
+          return false;
+        }
         if (u.is_blocked) {
           alert('Account blocked.');
           return false;
@@ -1303,30 +1370,84 @@
           alert('Insufficient balance');
           return false;
         }
-        await sb.from('users').update({ balance: newBal }).eq('telegram_id', userId);
-        await sb.from('transactions').insert([{ telegram_id: userId, amount, type, description: desc }]);
+
+        const { error: upErr } = await sb.from('users').update({ balance: newBal }).eq('telegram_id', uid);
+        if (upErr) {
+          console.error('update bal', upErr);
+          alert('Balance update failed: ' + (upErr.message || 'permission/RLS?'));
+          return false;
+        }
+
+        const { error: txErr } = await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
+        if (txErr) {
+          console.error('insert tx', txErr);
+          // Balance already updated – still treat as success for user, log error
+        }
+
         balance = newBal;
         updateUI();
         return true;
       } catch(e) {
         console.error('recordTx err', e);
+        alert('Coin error: ' + (e.message || e));
         return false;
       }
     }
 
     function grantGameReward(coins, gameTitle) {
       if (!isRealTelegramUser()) return alert('Open from official Telegram bot to earn.');
-      // Cooldown: 1 reward per game type every 45 minutes
-      const key = 'game_' + gameTitle;
-      const now = Date.now();
-      if (lastGameReward[key] && (now - lastGameReward[key]) < 45 * 60 * 1000) {
-        alert('⏳ Please wait before claiming another reward from this game.');
+      // No long cooldown – but must watch ad if admin requires it
+      if (requireGameAd) {
+        pendingGameReward = { coins, title: gameTitle };
+        watchAdThen('game', () => {
+          const p = pendingGameReward;
+          pendingGameReward = null;
+          if (!p) return;
+          lastGameAdTime = Date.now();
+          recordTx(p.coins, 'game', p.title + ' Reward');
+          alert('🎉 +' + p.coins + ' Coins added after ad!');
+          showPage('fun');
+        });
         return;
       }
-      lastGameReward[key] = now;
       recordTx(coins, 'game', gameTitle + ' Reward');
-      alert(`🎉 Winner! +${coins} Coins added.`);
+      alert('🎉 Winner! +' + coins + ' Coins added.');
       showPage('fun');
+    }
+
+    // Unified ad watcher: tries Monetag → AdsGram → sponsor link
+    async function watchAdThen(reason, onDone) {
+      const msg = reason === 'checkin' ? 'Watch an ad to claim Daily Bonus' : 'Watch an ad to claim your game reward';
+      alert(msg);
+
+      // Try Monetag first
+      if (monetagZone) {
+        try {
+          await showMonetagAd();
+          onDone && onDone();
+          return;
+        } catch(e) { console.warn('Monetag skip', e); }
+      }
+      // Try AdsGram
+      if (adsgramBlockId) {
+        try {
+          await showAdsgramAd();
+          onDone && onDone();
+          return;
+        } catch(e) { console.warn('AdsGram skip', e); }
+      }
+      // Fallback: open sponsor / random ad link
+      const ad = getRandomAd();
+      openLinkInTelegram(ad.url);
+      // Short confirm after open
+      setTimeout(() => {
+        if (confirm('Did you finish watching the ad?\nOK = claim reward')) {
+          onDone && onDone();
+        } else {
+          alert('Ad required to claim. Try again.');
+          if (reason === 'game') pendingGameReward = null;
+        }
+      }, Math.max(8, autoEarnTimerSec || 12) * 1000);
     }
 
     function getRandomAd() {
@@ -1393,17 +1514,26 @@
     async function dailyCheckIn() {
       if (isAppPaused()) return showPausedMessage();
       if (!checkGateAccess()) return;
+      if (!isRealTelegramUser()) return alert('Open from official Telegram bot.');
       const today = new Date().toDateString();
       if (lastDailyClaim === today) {
         alert('Already claimed today! Come back tomorrow.');
         return;
       }
-      lastDailyClaim = today;
-      if (sb) {
-        await sb.from('users').update({ last_daily_claim: today }).eq('telegram_id', userId);
+
+      const doClaim = async () => {
+        lastDailyClaim = today;
+        if (sb) await sb.from('users').update({ last_daily_claim: today }).eq('telegram_id', userId);
+        const amt = Number(dailyCheckinReward) || 10;
+        const ok = await recordTx(amt, 'daily', 'Daily Check-in Bonus');
+        if (ok) alert('🎉 +' + amt + ' Coins Daily Bonus Claimed!');
+      };
+
+      if (requireCheckinAd) {
+        watchAdThen('checkin', doClaim);
+      } else {
+        await doClaim();
       }
-      await recordTx(10, 'daily', 'Daily Check-in Bonus');
-      alert('🎉 +10 Coins Daily Bonus Claimed!');
     }
 
     // ========== AUTO EARN (Admin Ads Loop) ==========
@@ -1861,6 +1991,7 @@
         return;
       }
       const t = activeExecutingTask;
+      const uid = String(userId);
       const needsProof = t.require_proof && t.require_proof !== 'none';
       const proofVal = (document.getElementById('tm-proof-input')?.value || '').trim();
 
@@ -1869,12 +2000,20 @@
         return;
       }
 
-      // Disable button to avoid double click
       const claimBtn = document.getElementById('tm-claim-btn');
       if (claimBtn) claimBtn.disabled = true;
 
       try {
         if (!t.is_dynamic_ad && sb) {
+          // Already claimed?
+          const { data: existing } = await sb.from('completed_tasks').select('id').eq('telegram_id', uid).eq('task_id', String(t.id)).maybeSingle();
+          if (existing) {
+            alert('⚠️ You already claimed this task!');
+            document.getElementById('task-modal').style.display = 'none';
+            activeExecutingTask = null;
+            return;
+          }
+
           if (t.max_users && t.max_users > 0) {
             const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
             if (count >= t.max_users) {
@@ -1885,19 +2024,11 @@
             }
           }
 
-          // Mark as completed attempt (blocks double claim)
-          const { error } = await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
-          if (error) {
-            alert('⚠️ You already claimed / submitted this task!');
-            document.getElementById('task-modal').style.display = 'none';
-            activeExecutingTask = null;
-            return;
-          }
-
-          // Proof required → pending admin approval (no instant coins)
+          // Proof path – mark completed + pending (no coins yet)
           if (needsProof) {
+            await sb.from('completed_tasks').insert([{ telegram_id: uid, task_id: String(t.id) }]);
             await sb.from('task_proofs').insert([{
-              telegram_id: userId,
+              telegram_id: uid,
               task_id: String(t.id),
               task_title: t.title || '',
               reward: Number(t.reward) || 0,
@@ -1905,30 +2036,41 @@
               proof_text: proofVal,
               status: 'pending'
             }]);
-            document.getElementById('task-modal').style.display = 'none';
-            activeExecutingTask = null;
-            alert('📤 Proof submitted!\nAdmin will review and credit +' + t.reward + ' coins if approved.\nThis stays in your history as pending.');
-            // Log pending in transactions as 0 amount note is optional – use type for history
             await sb.from('transactions').insert([{
-              telegram_id: userId,
+              telegram_id: uid,
               amount: 0,
               type: 'task_pending',
               description: 'Proof submitted (pending): ' + t.title
             }]);
+            document.getElementById('task-modal').style.display = 'none';
+            activeExecutingTask = null;
+            alert('📤 Proof submitted!\nAdmin will review and credit +' + t.reward + ' coins if approved.');
             loadCategoryTasks(currentCategory);
             return;
           }
         }
 
-        // Instant pay path
-        const ok = await recordTx(Number(t.reward) || 0, 'task', 'Completed: ' + (t.title || 'Task'));
+        // ===== INSTANT PAY: coins FIRST, then mark completed =====
+        const rewardAmt = Number(t.reward) || 0;
+        const ok = await recordTx(rewardAmt, 'task', 'Completed: ' + (t.title || 'Task'));
+
+        if (!ok) {
+          // Do NOT mark task completed – user can retry
+          if (claimBtn) claimBtn.disabled = false;
+          alert('Coins could not be added. Please try Claim again.\n(If Daily Cap is set in Admin, raise or set 0.)');
+          return;
+        }
+
+        // Only after successful credit – lock the task
+        if (!t.is_dynamic_ad && sb) {
+          const { error: cErr } = await sb.from('completed_tasks').insert([{ telegram_id: uid, task_id: String(t.id) }]);
+          // If duplicate, coins already given once – OK
+          if (cErr) console.warn('completed_tasks', cErr);
+        }
+
         document.getElementById('task-modal').style.display = 'none';
         activeExecutingTask = null;
-        if (ok) {
-          alert('✅ Verified! +' + t.reward + ' Coins credited.');
-        } else {
-          alert('Task recorded but coins could not be added (limit or error). Check history / try later.');
-        }
+        alert('✅ Verified! +' + rewardAmt + ' Coins credited.');
         loadCategoryTasks(currentCategory);
       } catch(e) {
         console.error('Error claiming task', e);
@@ -2100,6 +2242,13 @@
       if (isAppPaused()) return showPausedMessage();
       if (isCategoryPaused('games')) return showPausedMessage('Games are temporarily paused by admin.');
       if (!checkGateAccess()) return;
+      // Optional: force ad every X minutes before starting another game
+      if (gameAdEveryMins > 0 && lastGameAdTime > 0) {
+        const mins = (Date.now() - lastGameAdTime) / 60000;
+        if (mins < gameAdEveryMins && requireGameAd) {
+          // Allow play but claim still needs ad; optional soft message
+        }
+      }
       if (g === 'TicTacToe') startTTT();
       else if (g === 'Spin') showPage('game-spin');
       else if (g === 'Quiz') startQuiz();
@@ -2264,6 +2413,10 @@
       document.getElementById('admin-ref-reward').value = referralReward;
       document.getElementById('admin-ref-welcome').value = referralWelcomeBonus;
       document.getElementById('admin-daily-cap').value = dailyEarnCap;
+      document.getElementById('admin-checkin-ad').value = requireCheckinAd ? 'true' : 'false';
+      document.getElementById('admin-game-ad').value = requireGameAd ? 'true' : 'false';
+      document.getElementById('admin-game-ad-mins').value = gameAdEveryMins;
+      document.getElementById('admin-daily-reward').value = dailyCheckinReward;
 
       // Load prices
       document.getElementById('price-channel').value = prices.channel || 200;
@@ -2534,6 +2687,10 @@
       const rReward = Number(document.getElementById('admin-ref-reward').value) || 50;
       const rWelcome = Number(document.getElementById('admin-ref-welcome').value) || 20;
       const dCap = Number(document.getElementById('admin-daily-cap').value) || 0;
+      const cAd = document.getElementById('admin-checkin-ad').value;
+      const gAd = document.getElementById('admin-game-ad').value;
+      const gMins = Number(document.getElementById('admin-game-ad-mins').value) || 0;
+      const dRew = Number(document.getElementById('admin-daily-reward').value) || 10;
 
       if (bName) botUsername = bName;
       if (pin) adminPin = pin;
@@ -2543,6 +2700,10 @@
       referralReward = rReward;
       referralWelcomeBonus = rWelcome;
       dailyEarnCap = dCap;
+      requireCheckinAd = (cAd === 'true');
+      requireGameAd = (gAd === 'true');
+      gameAdEveryMins = gMins;
+      dailyCheckinReward = dRew;
 
       if (sb) {
         await sb.from('app_settings').upsert([
@@ -2553,11 +2714,15 @@
           { setting_key: 'signup_bonus', setting_value: String(sBonus) },
           { setting_key: 'referral_reward', setting_value: String(rReward) },
           { setting_key: 'referral_welcome', setting_value: String(rWelcome) },
-          { setting_key: 'daily_earn_cap', setting_value: String(dCap) }
+          { setting_key: 'daily_earn_cap', setting_value: String(dCap) },
+          { setting_key: 'require_checkin_ad', setting_value: cAd },
+          { setting_key: 'require_game_ad', setting_value: gAd },
+          { setting_key: 'game_ad_mins', setting_value: String(gMins) },
+          { setting_key: 'daily_checkin_reward', setting_value: String(dRew) }
         ]);
       }
       generateInviteLink();
-      alert('✅ Settings saved!\nReferral to inviter: ' + rReward + ' | Welcome extra: ' + rWelcome + ' | Daily cap: ' + dCap);
+      alert('✅ Settings saved!');
     }
 
     async function savePriceSettings() {
@@ -2746,6 +2911,43 @@
       cont.innerHTML = html;
     }
 
+    function showLeaderboard() {
+      showPage('leaderboard');
+      loadLeaderboard('balance');
+    }
+
+    async function loadLeaderboard(mode) {
+      const cont = document.getElementById('leaderboard-list');
+      if (!cont || !sb) return;
+      cont.innerHTML = '<div style="color:#888;">Loading...</div>';
+      let data = [];
+      if (mode === 'referral') {
+        const res = await sb.from('users').select('telegram_id, first_name, referral_count, referral_earnings').order('referral_count', { ascending: false }).limit(20);
+        data = res.data || [];
+      } else {
+        const res = await sb.from('users').select('telegram_id, first_name, balance').order('balance', { ascending: false }).limit(20);
+        data = res.data || [];
+      }
+      if (!data.length) {
+        cont.innerHTML = '<div style="color:#888;">No data yet</div>';
+        return;
+      }
+      let html = '';
+      data.forEach((u, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+        const name = u.first_name || ('User ' + String(u.telegram_id).slice(-4));
+        const val = mode === 'referral'
+          ? (u.referral_count || 0) + ' invites • ' + (u.referral_earnings || 0) + ' coins'
+          : (Number(u.balance) || 0) + ' coins';
+        const isMe = String(u.telegram_id) === String(userId);
+        html += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;${isMe ? 'background:#fff8e1;border-radius:8px;padding:10px;' : ''}">
+          <div style="font-weight:700;">${medal} ${name}${isMe ? ' (You)' : ''}</div>
+          <div style="color:#c8102e;font-weight:800;font-size:13px;">${val}</div>
+        </div>`;
+      });
+      cont.innerHTML = html;
+    }
+
     function showPage(id) {
       // Stop Auto Earn if user leaves Earn page
       if (autoEarnActive && id !== 'earn') {
@@ -2760,7 +2962,7 @@
       const target = document.getElementById(id);
       if (target) target.classList.add('active');
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'chat-page':3, 'promote-form':2, 'withdraw-form':0 };
+      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, leaderboard:0, 'category-tasks':1, 'chat-page':3, 'promote-form':2, 'withdraw-form':0 };
       if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
     }
 
