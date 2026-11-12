@@ -4,16 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Bubble Shooter 3D Legend</title>
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Three.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
-      --primary: #00f0ff;
-      --accent: #ff0077;
+      --primary: #00e5ff;
       --bg-dark: #070913;
-      --panel-bg: rgba(15, 23, 42, 0.7);
+      --panel-bg: rgba(15, 23, 42, 0.75);
     }
 
     * {
@@ -23,7 +20,7 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
@@ -43,7 +40,6 @@
       z-index: 1;
     }
 
-    /* Glassmorphism HUD UI */
     #ui {
       position: absolute;
       top: 0;
@@ -62,10 +58,10 @@
       background: var(--panel-bg);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 16px;
       padding: 8px 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
     }
 
     #score-box {
@@ -74,18 +70,17 @@
     }
 
     #score {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 900;
-      letter-spacing: -0.5px;
       background: linear-gradient(135deg, #fff 30%, var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 8px rgba(0, 240, 255, 0.4));
+      filter: drop-shadow(0 2px 8px rgba(0, 229, 255, 0.5));
     }
 
     #best {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #94a3b8;
@@ -96,54 +91,48 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 4px;
+      gap: 6px;
     }
 
     #level-badge {
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 1px;
-      text-transform: uppercase;
       color: #fff;
-      background: linear-gradient(90deg, #ff0077, #7928ca);
+      background: linear-gradient(90deg, #ff0055, #7928ca);
       padding: 4px 12px;
       border-radius: 20px;
-      box-shadow: 0 0 12px rgba(255, 0, 119, 0.5);
+      box-shadow: 0 0 14px rgba(255, 0, 85, 0.5);
     }
 
     #shots-left {
       font-size: 14px;
-      font-weight: 700;
-      color: #f87171;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-weight: 800;
+      color: #ff3366;
     }
 
-    /* Floating Combo Splash */
     #combo-splash {
       position: absolute;
-      top: 40%;
+      top: 38%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0);
-      font-size: 38px;
+      font-size: 42px;
       font-weight: 900;
       font-style: italic;
-      color: #ffc600;
-      text-shadow: 0 0 20px rgba(255, 198, 0, 0.8), 0 0 40px rgba(255, 0, 119, 0.8);
+      color: #ffd000;
+      text-shadow: 0 0 25px rgba(255, 208, 0, 0.8), 0 0 45px rgba(255, 0, 85, 0.8);
       pointer-events: none;
       z-index: 15;
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
       opacity: 0;
     }
 
-    /* Modals & Overlays */
     .overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.85) 0%, rgba(7, 9, 19, 0.98) 100%);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(7, 9, 19, 0.98) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -155,34 +144,32 @@
     }
 
     h1 {
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 900;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, #fff 0%, #00f0ff 50%, #ff0077 100%);
+      background: linear-gradient(135deg, #fff 0%, #00e5ff 50%, #ff0055 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 4px 16px rgba(0, 240, 255, 0.4));
+      filter: drop-shadow(0 4px 16px rgba(0, 229, 255, 0.4));
     }
 
     p {
       font-size: 14px;
-      color: #94a3b8;
-      max-width: 300px;
+      color: #cbd5e1;
+      max-width: 320px;
       line-height: 1.6;
     }
 
     .btn {
-      background: linear-gradient(135deg, #00f0ff 0%, #0072ff 100%);
+      background: linear-gradient(135deg, #00e5ff 0%, #0066ff 100%);
       color: #030712;
       border: none;
       padding: 16px 48px;
       font-size: 16px;
       font-weight: 800;
-      letter-spacing: 0.5px;
       border-radius: 50px;
       cursor: pointer;
       pointer-events: auto;
-      box-shadow: 0 0 24px rgba(0, 240, 255, 0.5), inset 0 2px 2px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
       transition: transform 0.15s ease, filter 0.15s ease;
     }
 
@@ -199,16 +186,10 @@
     }
 
     #banner-text {
-      font-size: 42px;
+      font-size: 44px;
       font-weight: 900;
-      color: #00ff87;
-      text-shadow: 0 0 25px rgba(0, 255, 135, 0.8);
-      animation: pulse 1s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { transform: scale(0.95); }
-      to { transform: scale(1.05); }
+      color: #00ff66;
+      text-shadow: 0 0 30px rgba(0, 255, 102, 0.8);
     }
   </style>
 </head>
@@ -226,25 +207,22 @@
 
   <div id="combo-splash">3x COMBO!</div>
 
-  <!-- Start Overlay -->
   <div class="overlay" id="start-screen">
     <h1>BUBBLE 3D</h1>
-    <p>Aim the energetic 3D pulse cannon. Match 3 or more glowing plasma orbs to trigger chained explosions!</p>
-    <button class="btn" id="start-btn">LAUNCH MISSION</button>
+    <p>Aim the energetic 3D pulse cannon. Match 3 or more matching colored glyph orbs to pop them!</p>
+    <button class="btn" id="start-btn">START MISSION</button>
   </div>
 
-  <!-- Level Banner -->
   <div class="overlay" id="level-banner">
     <div id="banner-text">LEVEL 2</div>
-    <p style="color: #cbd5e1; font-weight:600;">NEW ENERGY SIGNATURE DETECTED</p>
+    <p style="color: #cbd5e1; font-weight:700;">NEW FREQUENCIES UNLOCKED</p>
   </div>
 
-  <!-- Game Over Overlay -->
   <div class="overlay" id="game-over" style="display: none;">
     <h1 id="game-over-title">ENERGY DEPLETED</h1>
-    <div style="font-size: 48px; font-weight: 900; color: #00f0ff;" id="final-score">0</div>
+    <div style="font-size: 48px; font-weight: 900; color: #00e5ff;" id="final-score">0</div>
     <p id="best-score-text">BEST RECORD: 0</p>
-    <button class="btn" id="restart-btn">RECHARGE & REPLAY</button>
+    <button class="btn" id="restart-btn">PLAY AGAIN</button>
   </div>
 
   <canvas id="webgl-canvas"></canvas>
@@ -260,29 +238,21 @@
     }
 
     function hapticImpact(style = 'medium') {
-      try {
-        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
-      } catch (e) {}
+      try { tg?.HapticFeedback?.impactOccurred(style); } catch (e) {}
     }
 
     function hapticNotification(type = 'success') {
-      try {
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
-      } catch (e) {}
+      try { tg?.HapticFeedback?.notificationOccurred(type); } catch (e) {}
     }
 
-    /* ================= SYNTH AUDIO ENGINE (Zero-Asset) ================= */
+    /* ================= SYNTH AUDIO ENGINE ================= */
     let audioCtx = null;
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playSound(type, pitchModifier = 1) {
+    function playSound(type, pitch = 1) {
       if (!audioCtx) return;
       const t = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
@@ -292,15 +262,15 @@
 
       if (type === 'shoot') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(480, t);
-        osc.frequency.exponentialRampToValueAtTime(120, t + 0.15);
+        osc.frequency.setValueAtTime(520, t);
+        osc.frequency.exponentialRampToValueAtTime(130, t + 0.14);
         gain.gain.setValueAtTime(0.3, t);
-        gain.gain.linearRampToValueAtTime(0.01, t + 0.15);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.14);
         osc.start(t);
-        osc.stop(t + 0.15);
+        osc.stop(t + 0.14);
       } else if (type === 'pop') {
         osc.type = 'sine';
-        const baseFreq = 400 * pitchModifier;
+        const baseFreq = 440 * pitch;
         osc.frequency.setValueAtTime(baseFreq, t);
         osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.8, t + 0.08);
         gain.gain.setValueAtTime(0.4, t);
@@ -309,8 +279,8 @@
         osc.stop(t + 0.08);
       } else if (type === 'bounce') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(260, t);
-        gain.gain.setValueAtTime(0.15, t);
+        osc.frequency.setValueAtTime(300, t);
+        gain.gain.setValueAtTime(0.18, t);
         gain.gain.linearRampToValueAtTime(0.01, t + 0.05);
         osc.start(t);
         osc.stop(t + 0.05);
@@ -330,10 +300,10 @@
       }
     }
 
-    /* ================= 3D GRAPHICS SETUP (Three.js) ================= */
+    /* ================= 3D THREE.JS ENGINE ================= */
     const canvas = document.getElementById('webgl-canvas');
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x070913, 0.018);
+    scene.fog = new THREE.FogExp2(0x070913, 0.02);
 
     const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 24);
@@ -341,23 +311,17 @@
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // Balanced Lighting (no washed-out white spots)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    keyLight.position.set(10, 15, 20);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    keyLight.position.set(8, 12, 18);
     scene.add(keyLight);
 
-    const pointLight = new THREE.PointLight(0x00f0ff, 2.5, 30);
-    pointLight.position.set(0, -9, 8);
-    scene.add(pointLight);
-
     // Glowing Neon Starfield
-    const starCount = 350;
+    const starCount = 300;
     const starGeometry = new THREE.BufferGeometry();
     const starPositions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount * 3; i += 3) {
@@ -370,32 +334,74 @@
     const stars = new THREE.Points(starGeometry, starMaterial);
     scene.add(stars);
 
-    /* ================= BUBBLE COLOR PALETTE ================= */
+    /* ================= DISTINCT HIGH-CONTRAST PALETTE & GLYPH TEXTURES ================= */
+    // 5 completely distinct spectral hues with dedicated visual symbols
     const PALETTE = [
-      { color: 0xff0055, emissive: 0x880022 }, // Neon Pink
-      { color: 0x00f0ff, emissive: 0x005577 }, // Cyan
-      { color: 0x00ff87, emissive: 0x006633 }, // Acid Lime
-      { color: 0xffb703, emissive: 0x774400 }, // Electric Amber
-      { color: 0x9d4edd, emissive: 0x441166 }, // Hyper Purple
+      { name: 'Red',    hex: '#ff003c', numHex: 0xff003c, symbol: '✖' }, // Vivid Crimson Cross
+      { name: 'Cyan',   hex: '#00e5ff', numHex: 0x00e5ff, symbol: '◆' }, // Electric Azure Diamond
+      { name: 'Yellow', hex: '#ffd000', numHex: 0xffd000, symbol: '★' }, // Pure Gold Star
+      { name: 'Green',  hex: '#00ff66', numHex: 0x00ff66, symbol: '▲' }, // Acid Emerald Triangle
+      { name: 'Purple', hex: '#b000ff', numHex: 0xb000ff, symbol: '●' }, // Royal Violet Circle
     ];
 
-    const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
-    const materials = PALETTE.map(p => new THREE.MeshPhysicalMaterial({
-      color: p.color,
-      emissive: p.emissive,
-      emissiveIntensity: 0.45,
-      roughness: 0.1,
-      metalness: 0.15,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      reflectivity: 0.9
-    }));
+    // Procedural texture generator creates vibrant orbs with centered high-contrast symbols
+    function createBubbleTexture(colorHex, symbol) {
+      const texCanvas = document.createElement('canvas');
+      texCanvas.width = 256;
+      texCanvas.height = 256;
+      const ctx = texCanvas.getContext('2d');
 
-    /* ================= GAMEPLAY CONSTANTS & STATE ================= */
+      // Sphere shading gradient
+      const grad = ctx.createRadialGradient(128, 128, 20, 128, 128, 124);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.35, colorHex);
+      grad.addColorStop(0.85, colorHex);
+      grad.addColorStop(1, '#000000');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(128, 128, 122, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer rim
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      // Sharp Central Glyph with dark outline for 100% legibility
+      ctx.font = '900 115px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+      ctx.lineWidth = 14;
+      ctx.strokeText(symbol, 128, 134);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(symbol, 128, 134);
+
+      const texture = new THREE.CanvasTexture(texCanvas);
+      texture.generateMipmaps = true;
+      return texture;
+    }
+
+    const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+    // Align texture properly towards the camera (+Z)
+    sphereGeo.rotateY(Math.PI / 2);
+
+    const materials = PALETTE.map(p => {
+      const map = createBubbleTexture(p.hex, p.symbol);
+      return new THREE.MeshStandardMaterial({
+        map: map,
+        roughness: 0.25,
+        metalness: 0.05,
+        emissive: p.numHex,
+        emissiveIntensity: 0.25
+      });
+    });
+
+    /* ================= GAMEPLAY CONSTANTS ================= */
     const BUBBLE_RADIUS = 0.78;
     const GRID_COLS = 8;
     const GRID_ROWS = 7;
-    const WORLD_WIDTH = 13.0; // Playfield bounds
+    const WORLD_WIDTH = 13.0;
     const TOP_WALL_Y = 10.0;
     const CANNON_Y = -9.2;
 
@@ -403,11 +409,11 @@
     let bestScore = parseInt(localStorage.getItem('bubble3DBest') || '0');
     let level = 1;
     let shotsLeft = 22;
-    let gameState = 'start'; // start, playing, gameover
+    let gameState = 'start';
 
-    let grid = []; // 2D array of grid orbs
+    let grid = [];
     let activeShooter = null;
-    let nextColor = 0;
+    let nextColor = null;
     let particles = [];
     let cameraShake = 0;
 
@@ -425,38 +431,34 @@
     const bestScoreTextEl = document.getElementById('best-score-text');
     bestEl.textContent = `BEST: ${bestScore}`;
 
-    /* ================= 3D CANNON & AIM LASER ================= */
+    /* ================= CANNON & LASER ================= */
     const cannonGroup = new THREE.Group();
     cannonGroup.position.set(0, CANNON_Y, 0);
     scene.add(cannonGroup);
 
-    // Outer Cannon Ring
     const ringGeo = new THREE.TorusGeometry(1.4, 0.12, 16, 40);
-    const ringMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0072ff, emissiveIntensity: 0.8, metalness: 0.8 });
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x0066ff, emissiveIntensity: 0.7, metalness: 0.7 });
     const cannonRing = new THREE.Mesh(ringGeo, ringMat);
     cannonRing.rotation.x = Math.PI / 2;
     cannonGroup.add(cannonRing);
 
-    // Mechanical barrel
     const barrelGeo = new THREE.CylinderGeometry(0.45, 0.65, 1.6, 16);
     barrelGeo.translate(0, 0.8, 0);
     barrelGeo.rotateX(Math.PI / 2);
     const barrelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
-    const barrel = new THREE.Mesh(barrelGeo, barrelMat);
-    cannonGroup.add(barrel);
+    cannonGroup.add(new THREE.Mesh(barrelGeo, barrelMat));
 
-    // Aim Laser Line Dots
+    // Trajectory dots
     const laserCount = 20;
     const laserDots = [];
     const dotGeo = new THREE.SphereGeometry(0.08, 8, 8);
-    const dotMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 });
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.85 });
     for (let i = 0; i < laserCount; i++) {
       const dot = new THREE.Mesh(dotGeo, dotMat);
       scene.add(dot);
       laserDots.push(dot);
     }
 
-    /* ================= GRID LOGIC & COORDINATES ================= */
     function getGridWorldPos(r, c) {
       const rowOffset = (r % 2 === 1) ? BUBBLE_RADIUS : 0;
       const startX = -((GRID_COLS * BUBBLE_RADIUS * 2) / 2) + BUBBLE_RADIUS;
@@ -472,7 +474,6 @@
     }
 
     function initGrid() {
-      // Clean existing
       grid.forEach(row => row.forEach(b => { if (b) scene.remove(b.mesh); }));
       grid = [];
 
@@ -481,7 +482,7 @@
         const row = [];
         const cols = (r % 2 === 1) ? GRID_COLS - 1 : GRID_COLS;
         for (let c = 0; c < cols; c++) {
-          if (r < 4) { // Populate upper rows
+          if (r < 4) {
             const color = Math.floor(Math.random() * activeColors);
             const mesh = createBubbleMesh(color);
             const pos = getGridWorldPos(r, c);
@@ -496,7 +497,6 @@
       }
     }
 
-    /* ================= GAMEPLAY CYCLES ================= */
     function setupShooter() {
       const activeColors = Math.min(PALETTE.length, 3 + Math.floor(level / 2));
       const chosenColor = nextColor !== null ? nextColor : Math.floor(Math.random() * activeColors);
@@ -532,7 +532,7 @@
       setupShooter();
     }
 
-    /* ================= AIM & INPUT HANDLING ================= */
+    /* ================= AIM & TOUCH INPUT ================= */
     let aimAngle = Math.PI / 2;
 
     function updateAim(clientX, clientY) {
@@ -541,22 +541,15 @@
       const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
       const ny = -(((clientY - rect.top) / rect.height) * 2 - 1);
 
-      // Project onto 3D z=0 plane
       const vector = new THREE.Vector3(nx, ny, 0.5).unproject(camera);
       const dir = vector.sub(camera.position).normalize();
       const distance = -camera.position.z / dir.z;
       const worldPos = camera.position.clone().add(dir.multiplyScalar(distance));
 
       aimAngle = Math.atan2(worldPos.y - CANNON_Y, worldPos.x);
-
-      // Clamp angle (prevent shooting backwards/downwards)
       aimAngle = Math.max(0.2, Math.min(Math.PI - 0.2, aimAngle));
       cannonGroup.rotation.z = aimAngle - Math.PI / 2;
 
-      renderLaserTrajectory();
-    }
-
-    function renderLaserTrajectory() {
       let x = 0;
       let y = CANNON_Y;
       let vx = Math.cos(aimAngle);
@@ -567,16 +560,10 @@
       for (let i = 0; i < laserCount; i++) {
         x += vx * 0.7;
         y += vy * 0.7;
-        if (x <= leftBound || x >= rightBound) {
-          vx *= -1; // Reflect
-        }
+        if (x <= leftBound || x >= rightBound) vx *= -1;
         laserDots[i].position.set(x, y, 0);
         laserDots[i].visible = true;
       }
-    }
-
-    function hideLaser() {
-      laserDots.forEach(d => d.visible = false);
     }
 
     function fireBubble() {
@@ -585,12 +572,11 @@
       activeShooter.vx = Math.cos(aimAngle) * speed;
       activeShooter.vy = Math.sin(aimAngle) * speed;
       activeShooter.isFlying = true;
-      hideLaser();
+      laserDots.forEach(d => d.visible = false);
 
       shotsLeft--;
       shotsLeftEl.textContent = `⚡ SHOTS: ${shotsLeft}`;
 
-      // Cannon kickback animation
       cannonGroup.position.y = CANNON_Y - 0.4;
       cameraShake = 0.3;
 
@@ -625,7 +611,7 @@
       }
     }
 
-    /* ================= MATCH-3 & PHYSICS SOLVER ================= */
+    /* ================= MATCH-3 SOLVER ================= */
     function findNeighbors(r, c) {
       const neighbors = [];
       const isOdd = r % 2 === 1;
@@ -647,7 +633,6 @@
     }
 
     function snapAndProcess(shooter) {
-      // Find closest grid slot
       let bestDist = Infinity;
       let targetRow = 0;
       let targetCol = 0;
@@ -655,7 +640,7 @@
       for (let r = 0; r < GRID_ROWS + 3; r++) {
         const cols = (r % 2 === 1) ? GRID_COLS - 1 : GRID_COLS;
         for (let c = 0; c < cols; c++) {
-          if (grid[r] && grid[r][c]) continue; // occupied
+          if (grid[r] && grid[r][c]) continue;
           const pos = getGridWorldPos(r, c);
           const dist = Math.hypot(shooter.mesh.position.x - pos.x, shooter.mesh.position.y - pos.y);
           if (dist < bestDist) {
@@ -666,25 +651,21 @@
         }
       }
 
-      // Expand grid if needed
       while (grid.length <= targetRow) {
         grid.push(new Array((grid.length % 2 === 1) ? GRID_COLS - 1 : GRID_COLS).fill(null));
       }
 
-      // Snap shooter into place
       const targetPos = getGridWorldPos(targetRow, targetCol);
       shooter.mesh.position.set(targetPos.x, targetPos.y, 0);
 
-      const bubbleNode = {
-        mesh: shooter.mesh,
-        color: shooter.color,
-        r: targetRow,
-        c: targetCol
-      };
+      // Re-orient glyph towards camera
+      shooter.mesh.rotation.set(0, 0, 0);
+
+      const bubbleNode = { mesh: shooter.mesh, color: shooter.color, r: targetRow, c: targetCol };
       grid[targetRow][targetCol] = bubbleNode;
       activeShooter = null;
 
-      // Flood-Fill Match-3 Search
+      // Flood-fill search
       const matched = [];
       const queue = [bubbleNode];
       const visited = new Set();
@@ -704,14 +685,13 @@
       }
 
       if (matched.length >= 3) {
-        // MATCH BURST!
         cameraShake = 0.6;
         hapticNotification('success');
         triggerComboSplash(matched.length);
 
         matched.forEach((node, idx) => {
           setTimeout(() => {
-            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].color);
+            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].numHex);
             scene.remove(node.mesh);
             playSound('pop', 1 + idx * 0.15);
           }, idx * 40);
@@ -721,14 +701,11 @@
         score += matched.length * 100 * level;
         scoreEl.textContent = score;
 
-        // Drop Floating Disconnected Clusters
         setTimeout(dropFloatingBubbles, matched.length * 40 + 50);
       } else {
-        // No match sound
         playSound('bounce');
       }
 
-      // Post Shot Status Check
       setTimeout(() => {
         checkBoardState();
         if (gameState === 'playing') setupShooter();
@@ -739,7 +716,6 @@
       const connected = new Set();
       const queue = [];
 
-      // Ceiling bubbles (Row 0) are always connected anchors
       if (grid[0]) {
         for (let c = 0; c < grid[0].length; c++) {
           if (grid[0][c]) {
@@ -749,7 +725,6 @@
         }
       }
 
-      // BFS to mark all connected bubbles
       while (queue.length > 0) {
         const curr = queue.shift();
         for (const n of findNeighbors(curr.r, curr.c)) {
@@ -761,7 +736,6 @@
         }
       }
 
-      // Any active bubble not in `connected` falls!
       let drops = 0;
       for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[r].length; c++) {
@@ -769,7 +743,7 @@
           if (node && !connected.has(`${r},${c}`)) {
             grid[r][c] = null;
             drops++;
-            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].color);
+            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].numHex);
             scene.remove(node.mesh);
           }
         }
@@ -793,15 +767,13 @@
     }
 
     function checkBoardState() {
-      // Check Win: Zero active bubbles remaining
       let remaining = 0;
       for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[r].length; c++) {
           if (grid[r][c]) {
             remaining++;
-            // Check Loss by Overflow reaching bottom
             if (grid[r][c].mesh.position.y <= CANNON_Y + 1.8) {
-              gameOver('GRID BREACHED!');
+              gameOver('GRID OVERFLOW!');
               return;
             }
           }
@@ -814,7 +786,7 @@
       }
 
       if (shotsLeft <= 0) {
-        gameOver('ENERGY EXHAUSTED');
+        gameOver('OUT OF SHOTS');
       }
     }
 
@@ -851,7 +823,7 @@
       gameOverEl.style.display = 'flex';
     }
 
-    /* ================= MAIN ANIMATION & RENDER LOOP ================= */
+    /* ================= MAIN ANIMATION LOOP ================= */
     let lastTime = performance.now();
 
     function animate(currentTime) {
@@ -859,24 +831,19 @@
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
 
-      // Cannon spring recovery
       cannonGroup.position.y += (CANNON_Y - cannonGroup.position.y) * 8 * dt;
 
-      // Ambient Starfield Rotation
       stars.rotation.y += 0.04 * dt;
       stars.rotation.x += 0.02 * dt;
 
-      // Flying Bubble Mechanics
       if (activeShooter && activeShooter.isFlying) {
         const b = activeShooter;
         b.mesh.position.x += b.vx * dt;
         b.mesh.position.y += b.vy * dt;
 
-        // Spin flying orb in 3D
-        b.mesh.rotation.x += 10 * dt;
-        b.mesh.rotation.y += 8 * dt;
+        // Gentle roll on Z axis only so the glyph remains clearly legible
+        b.mesh.rotation.z += 8 * dt;
 
-        // Wall Bouncing
         const leftLimit = -WORLD_WIDTH / 2 + BUBBLE_RADIUS;
         const rightLimit = WORLD_WIDTH / 2 - BUBBLE_RADIUS;
 
@@ -892,12 +859,10 @@
           hapticImpact('light');
         }
 
-        // Ceiling collision
         if (b.mesh.position.y >= TOP_WALL_Y - BUBBLE_RADIUS) {
           b.isFlying = false;
           snapAndProcess(b);
         } else {
-          // Check collision against grid
           outerLoop:
           for (let r = 0; r < grid.length; r++) {
             for (let c = 0; c < grid[r].length; c++) {
@@ -914,7 +879,7 @@
         }
       }
 
-      // Update Particle Explosions
+      // Update particle explosions
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life -= p.decay * dt;
@@ -930,7 +895,7 @@
         p.mesh.material.opacity = p.life;
       }
 
-      // Screen Camera Shake decay
+      // Camera shake
       if (cameraShake > 0) {
         camera.position.x = (Math.random() - 0.5) * cameraShake;
         camera.position.y = (Math.random() - 0.5) * cameraShake;
@@ -943,7 +908,6 @@
       renderer.render(scene, camera);
     }
 
-    /* ================= RESIZE & REORIENT ================= */
     function onWindowResize() {
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -956,8 +920,7 @@
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', startGame);
 
-    // Initial render call
     requestAnimationFrame(animate);
   </script>
 </body>
-</html>
+  </html>
