@@ -1,2022 +1,963 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VTN HUB - Earning Ecosystem</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Bubble Shooter 3D Legend</title>
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #FFF8E7;
-      color: #333;
-      padding-bottom: 85px;
-      min-height: 100vh;
+    :root {
+      --primary: #00f0ff;
+      --accent: #ff0077;
+      --bg-dark: #070913;
+      --panel-bg: rgba(15, 23, 42, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
-    .header {
-      background: linear-gradient(135deg, #c8102e, #8a0b1f);
-      color: white;
-      padding: 14px;
-      text-align: center;
-      position: sticky;
+
+    body {
+      background: var(--bg-dark);
+      overflow: hidden;
+      color: #fff;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #webgl-canvas {
+      position: absolute;
       top: 0;
-      z-index: 100;
-      font-size: 17px;
-      font-weight: 800;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
-    .broadcast-bar {
-      background: #ffd700;
-      color: #5c3d00;
-      padding: 8px 14px;
+
+    /* Glassmorphism HUD UI */
+    #ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: env(safe-area-inset-top, 16px) 16px 12px 16px;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: linear-gradient(180deg, rgba(7, 9, 19, 0.9) 0%, rgba(7, 9, 19, 0) 100%);
+    }
+
+    .glass-card {
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 8px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    #score-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #score {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(0, 240, 255, 0.4));
+    }
+
+    #best {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    #level-box {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    #level-badge {
       font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(90deg, #ff0077, #7928ca);
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(255, 0, 119, 0.5);
+    }
+
+    #shots-left {
+      font-size: 14px;
       font-weight: 700;
+      color: #f87171;
       display: flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1);
+      gap: 4px;
     }
-    .broadcast-marquee {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex: 1;
-    }
-    .card {
-      background: white;
-      margin: 12px 14px;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-    }
-    .balance-card {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px;
-      border-radius: 18px;
-      padding: 20px;
-      color: white;
-      text-align: center;
-      box-shadow: 0 6px 20px rgba(200,16,46,0.28);
-    }
-    .balance-card .amount {
-      font-size: 34px;
+
+    /* Floating Combo Splash */
+    #combo-splash {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 38px;
       font-weight: 900;
-      color: #ffd700;
-      margin: 8px 0 14px;
-      letter-spacing: 0.5px;
+      font-style: italic;
+      color: #ffc600;
+      text-shadow: 0 0 20px rgba(255, 198, 0, 0.8), 0 0 40px rgba(255, 0, 119, 0.8);
+      pointer-events: none;
+      z-index: 15;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      opacity: 0;
     }
-    .gold-btn {
-      background: linear-gradient(90deg, #ffd700, #ffb700);
-      color: #5c3d00;
-      border: none;
-      padding: 11px 24px;
-      border-radius: 30px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
+
+    /* Modals & Overlays */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.85) 0%, rgba(7, 9, 19, 0.98) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: transform 0.1s;
-    }
-    .gold-btn:active { transform: scale(0.97); }
-    .gold-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 0 14px 14px;
-    }
-    .btn {
-      border-radius: 16px;
-      padding: 16px 10px;
+      z-index: 30;
+      gap: 16px;
+      padding: 24px;
       text-align: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: white;
+    }
+
+    h1 {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 0%, #00f0ff 50%, #ff0077 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 16px rgba(0, 240, 255, 0.4));
+    }
+
+    p {
+      font-size: 14px;
+      color: #94a3b8;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #00f0ff 0%, #0072ff 100%);
+      color: #030712;
       border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      padding: 16px 48px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      border-radius: 50px;
       cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn:active { transform: scale(0.96); }
-    .btn .icon { font-size: 24px; margin-bottom: 6px; display: block; }
-    .list-item {
-      background: white;
-      margin: 0 14px 10px;
-      border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 1.5px solid #ffe1e5;
-    }
-    .list-item .icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; color: white; flex-shrink: 0;
-    }
-    .list-item .info { flex: 1; min-width: 0; }
-    .list-item .info h4 { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .list-item .info p { font-size: 12px; color: #777; margin-top: 3px; }
-    .start-btn {
-      background: #c8102e; color: white; border: none;
-      padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700;
-      cursor: pointer; flex-shrink: 0;
-    }
-    .start-btn:disabled { background: #999; cursor: not-allowed; }
-    .banner {
-      background: linear-gradient(135deg, #c8102e, #9b0c24);
-      margin: 14px; border-radius: 16px; padding: 16px; color: white;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; background: white;
-      display: flex; justify-content: space-around; padding: 10px 0;
-      box-shadow: 0 -3px 18px rgba(0,0,0,0.08); z-index: 200;
-    }
-    .nav-item { text-align: center; font-size: 11px; color: #888; flex: 1; cursor: pointer; }
-    .nav-item.active { color: #c8102e; font-weight: 800; }
-    .nav-item .icon { font-size: 22px; display: block; margin-bottom: 2px; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .section-title {
-      margin: 16px 14px 10px; font-size: 14px; font-weight: 800; color: #c8102e;
-      text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .form-group { margin-bottom: 12px; }
-    .form-group label {
-      display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #555;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 11px 12px; border: 1.5px solid #e2e8f0;
-      border-radius: 10px; font-size: 14px; outline: none; background: #fff;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: #c8102e;
-    }
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
-
-    .gate-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
-    .gate-modal {
-      background: white; border-radius: 20px; padding: 24px; max-width: 360px;
-      width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-    .progress-bar-bg {
-      background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin: 15px 0 8px;
-    }
-    .progress-bar-fill {
-      background: #4CAF50; height: 100%; width: 0%; transition: width 0.3s;
+      pointer-events: auto;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.5), inset 0 2px 2px rgba(255, 255, 255, 0.5);
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
 
-    .chat-box {
-      height: 380px; overflow-y: auto; padding: 12px; background: #fafafa;
-      border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px;
+    .btn:active {
+      transform: scale(0.95);
+      filter: brightness(1.2);
     }
-    .chat-bubble {
-      background: white; padding: 8px 12px; border-radius: 12px; max-width: 85%;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06); font-size: 13px;
-    }
-    .chat-bubble.mine {
-      align-self: flex-end; background: #ffebee; border: 1px solid #ffcdd2;
-    }
-    .chat-bubble .sender { font-size: 10px; font-weight: 700; color: #c8102e; margin-bottom: 2px; }
 
-    .ttt-board { display: grid; grid-template-columns: repeat(3, 85px); gap: 10px; justify-content: center; margin: 15px 0; }
-    .ttt-cell {
-      width: 85px; height: 85px; background: white; border: 3px solid #c8102e;
-      border-radius: 16px; font-size: 38px; font-weight: 900; display: flex;
-      align-items: center; justify-content: center; cursor: pointer;
+    #level-banner {
+      display: none;
+      pointer-events: none;
+      z-index: 25;
+      background: transparent;
     }
-    .spin-wrap { text-align: center; padding: 10px; }
-    .spin-pointer { font-size: 26px; color: #c8102e; margin-bottom: -15px; position: relative; z-index: 2; }
-    .spin-wheel {
-      width: 230px; height: 230px; border-radius: 50%; margin: 0 auto;
-      background: conic-gradient(#c8102e 0deg 45deg, #ffd700 45deg 90deg, #4CAF50 90deg 135deg, #2196F3 135deg 180deg, #9C27B0 180deg 225deg, #FF9800 225deg 270deg, #E91E63 270deg 315deg, #00BCD4 315deg 360deg);
-      border: 6px solid #5c3d00; box-shadow: 0 0 0 5px #ffd700;
-      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+
+    #banner-text {
+      font-size: 42px;
+      font-weight: 900;
+      color: #00ff87;
+      text-shadow: 0 0 25px rgba(0, 255, 135, 0.8);
+      animation: pulse 1s infinite alternate;
     }
-    .quiz-option {
-      background: white; border: 2px solid #c8102e; border-radius: 12px; padding: 13px;
-      margin: 8px 14px; text-align: center; font-weight: 700; cursor: pointer;
+
+    @keyframes pulse {
+      from { transform: scale(0.95); }
+      to { transform: scale(1.05); }
     }
-    .game-area {
-      background: #1a1a2e; border-radius: 16px; padding: 20px; margin: 14px;
-      color: white; text-align: center; min-height: 270px;
-    }
-    .stat-badge {
-      background: #fdf2f4; border: 1.5px solid #ffd700; border-radius: 12px;
-      padding: 12px; text-align: center;
-    }
-    .master-stat-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
-    }
-    .master-stat-box {
-      background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; text-align: center;
-    }
-    .master-stat-box .val { font-size: 18px; font-weight: 900; color: #c8102e; }
-    .master-stat-box .lbl { font-size: 10px; color: #666; font-weight: 700; }
-    .score-box { font-size: 20px; font-weight: 800; color: #ffd700; margin-bottom: 12px; }
   </style>
 </head>
 <body>
-
-  <!-- LIVE SHOUTCAST BAR -->
-  <div class="broadcast-bar" id="shoutcast-bar" style="display:none;">
-    <span>📢</span>
-    <div class="broadcast-marquee" id="shoutcast-text">Welcome to VTN Hub!</div>
-  </div>
-
-  <div id="main-app">
-
-    <!-- HOME PAGE -->
-    <div id="home" class="page active">
-      <div class="header">👑 VTN HUB OFFICIAL</div>
-      <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer;" onclick="showPage('profile')">
-        <div style="width:48px;height:48px;background:#c8102e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;">🤖</div>
-        <div>
-          <div style="font-weight:800;" id="username">Loading...</div>
-          <div style="font-size:12px;color:#777;" id="userid">ID: --</div>
-        </div>
-        <div style="margin-left:auto;background:linear-gradient(90deg,#ffd700,#ffb700);color:#5c3d00;font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;">VIP</div>
-      </div>
-
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Total Balance</div>
-        <div class="amount" id="balance">0 Coins</div>
-        <button class="gold-btn" onclick="showPage('wallet')">💳 Wallet & Withdraw</button>
-      </div>
-
-      <div class="section-title">Quick Actions</div>
-      <div class="grid">
-        <div class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);" onclick="dailyCheckIn()">
-          <span class="icon">🎁</span>Daily Bonus
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #FF9800, #F57C00);" onclick="showPage('earn')">
-          <span class="icon">🎯</span>Earn Tasks
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #E91E63, #C2185B);" onclick="showPage('promote')">
-          <span class="icon">📢</span>Promote
-        </div>
-        <div class="btn" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);" onclick="showPage('fun')">
-          <span class="icon">🎮</span>Fun Zone
-        </div>
-      </div>
-
-      <!-- INVITE BANNER -->
-      <div class="banner">
-        <div>
-          <div style="font-weight:800; font-size:15px;">Refer Friends & Earn</div>
-          <div style="font-size:12px; opacity:0.9;">+50 Coins per friend!</div>
-        </div>
-        <button class="gold-btn" style="padding:8px 16px;" onclick="showPage('refer')">Invite</button>
-      </div>
+  <div id="ui">
+    <div class="glass-card" id="score-box">
+      <div id="score">0</div>
+      <div id="best">BEST: 0</div>
     </div>
-
-    <!-- EARN PAGE -->
-    <div id="earn" class="page">
-      <div class="header">Earn Tasks</div>
-      
-      <!-- Official Channel Gate Task -->
-      <div class="section-title" id="official-task-title">Official Task</div>
-      <div class="list-item" id="official-task-item">
-        <div class="icon" style="background:#c8102e;">⭐</div>
-        <div class="info">
-          <h4 id="official-channel-label">Join Official Channel</h4>
-          <p>+50 Coins • Unlocks system access</p>
-        </div>
-        <button class="start-btn" onclick="verifyOfficialGate()">Verify</button>
-      </div>
-
-      <!-- AUTO EARN - COMING SOON -->
-      <div class="section-title">Auto Earn</div>
-      <div class="card" style="border: 2px dashed #999; display:flex; justify-content:space-between; align-items:center; opacity:0.85;">
-        <div>
-          <div style="font-weight:800; font-size:14px; color:#666;">⚡ Auto Earn Engine</div>
-          <div style="font-size:11px; color:#888;">Coming Soon — Smart task automation</div>
-        </div>
-        <button class="gold-btn" style="padding:7px 14px; font-size:12px; background:#999; color:#fff; cursor:not-allowed;" disabled>Coming Soon</button>
-      </div>
-
-      <div class="section-title">Categories</div>
-      <div id="earn-categories">
-        <div class="list-item" onclick="openCategory('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Watch & Earn</h4><p>Watch sponsored videos & ads</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('views')"><div class="icon" style="background:#9C27B0;">👀</div><div class="info"><h4>Views & Likes</h4><p>View channels & posts</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('join')"><div class="icon" style="background:#3F51B5;">📢</div><div class="info"><h4>Join Channel / Group</h4><p>Join communities</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('bot')"><div class="icon" style="background:#00BCD4;">🤖</div><div class="info"><h4>Start Bots</h4><p>Try new Telegram bots</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>Install App</h4><p>App installations</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('website')"><div class="icon" style="background:#FF5722;">🌐</div><div class="info"><h4>Visit Website</h4><p>Website visits & traffic</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate Offers</h4><p>Click & view deals</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('products')"><div class="icon" style="background:#673AB7;">🛒</div><div class="info"><h4>View Products</h4><p>Product promotions</p></div><button class="start-btn">Open</button></div>
-        <div class="list-item" onclick="openCategory('other')"><div class="icon" style="background:#607D8B;">📋</div><div class="info"><h4>General Tasks</h4><p>Other custom tasks</p></div><button class="start-btn">Open</button></div>
-      </div>
-    </div>
-
-    <!-- TASK LIST DETAIL -->
-    <div id="category-tasks" class="page">
-      <div class="header" id="category-title">Tasks</div>
-      <div id="category-list"><div class="card" style="text-align:center;color:#888;">Loading tasks...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('earn')">← Back to Categories</button></div>
-    </div>
-
-    <!-- PROMOTE PAGE -->
-    <div id="promote" class="page">
-      <div class="header">Promote Services</div>
-      
-      <div class="section-title">Order Promotion (Auto-Added to Tasks)</div>
-      <div class="list-item" onclick="openPromoteForm('channel')"><div class="icon" style="background:#c8102e;">📢</div><div class="info"><h4>Promote Channel / Group</h4><p>Members for your community</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('bot')"><div class="icon" style="background:#9C27B0;">🤖</div><div class="info"><h4>Promote Bot</h4><p>Active bot users</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('views')"><div class="icon" style="background:#3F51B5;">👀</div><div class="info"><h4>Views & Likes</h4><p>Post views & reactions</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('watch')"><div class="icon" style="background:#E91E63;">▶️</div><div class="info"><h4>Promote Video / Watch</h4><p>Video watch time & traffic</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('install')"><div class="icon" style="background:#4CAF50;">📱</div><div class="info"><h4>App Installs</h4><p>Real app installs</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('website')"><div class="icon" style="background:#00BCD4;">🌐</div><div class="info"><h4>Website Traffic</h4><p>Web visitors & clicks</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('affiliate')"><div class="icon" style="background:#795548;">🔗</div><div class="info"><h4>Affiliate Offer</h4><p>Leads & impressions</p></div><button class="start-btn">Buy</button></div>
-      <div class="list-item" onclick="openPromoteForm('products')"><div class="icon" style="background:#673AB7;">🛒</div><div class="info"><h4>Product Promotion</h4><p>Showcase products</p></div><button class="start-btn">Buy</button></div>
-
-      <div class="section-title">Banner Ads</div>
-      <div class="list-item" onclick="openPromoteForm('banner')">
-        <div class="icon" style="background:#FF5722;">📣</div>
-        <div class="info"><h4>Place Banner Ad</h4><p>Home page sponsored banner (7 days)</p></div>
-        <button class="start-btn">Buy</button>
-      </div>
-
-      <div class="section-title">Monetization</div>
-      <div class="list-item" onclick="openPromoteForm('monetize')">
-        <div class="icon" style="background:#2196F3;">💰</div>
-        <div class="info"><h4>Monetize My Channel / Group</h4><p>Earn by allowing ads in your community</p></div>
-        <button class="start-btn">Apply</button>
-      </div>
-
-      <div class="section-title">Cross Promotion</div>
-      <div class="list-item" onclick="startCrossPromo()">
-        <div class="icon" style="background:#009688;">🔄</div>
-        <div class="info"><h4>Free Cross Promotion</h4><p>Max 3 posts per day • Auto delete after 24h</p></div>
-        <button class="start-btn">Start</button>
-      </div>
-    </div>
-
-    <!-- PROMOTE ORDER FORM -->
-    <div id="promote-form" class="page">
-      <div class="header" id="promote-form-title">Order Promotion</div>
-      <div class="card">
-        <div class="form-group"><label>Your Link / Username</label><input type="text" id="promo-link" placeholder="https://t.me/... or URL"></div>
-        <div class="form-group"><label>Target Users</label><input type="number" id="promo-qty" value="100" min="10" oninput="updatePromoCost()"></div>
-        <div class="form-group"><label>Task Description / Title</label><input type="text" id="promo-title" placeholder="e.g. Join my official channel"></div>
-        <div class="form-group"><label>Wait Seconds per User</label><input type="number" id="promo-wait" value="15" min="5"></div>
-        <div style="font-size:16px;margin:14px 0;color:#c8102e;font-weight:900;" id="promo-cost">Cost: 0 Coins (Users get ~50%)</div>
-        <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Confirm & Publish Task</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Cancel</button>
-      </div>
-    </div>
-
-    <!-- FUN ZONE & COMMUNITY CHAT -->
-    <div id="fun" class="page">
-      <div class="header">Fun Zone</div>
-
-      <div class="section-title">Community Chat</div>
-      <div class="list-item" onclick="enterCommunityChat()">
-        <div class="icon" style="background:#009688;">💬</div>
-        <div class="info"><h4>Global Member Chat</h4><p>Watch sponsor ad • 15 min pass • Strictly NO links</p></div>
-        <button class="start-btn">Enter</button>
-      </div>
-
-      <div class="section-title">Games (Play & Earn)</div>
-      <div class="grid">
-        <div class="btn" style="background:linear-gradient(135deg,#FF5722,#E64A19);" onclick="enterGame('Dart')"><span class="icon">🎯</span>Dart</div>
-        <div class="btn" style="background:linear-gradient(135deg,#4CAF50,#388E3C);" onclick="enterGame('Fruit')"><span class="icon">🍎</span>Fruit</div>
-        <div class="btn" style="background:linear-gradient(135deg,#2196F3,#1976D2);" onclick="enterGame('Shoot')"><span class="icon">👾</span>Shoot</div>
-        <div class="btn" style="background:linear-gradient(135deg,#9C27B0,#7B1FA2);" onclick="enterGame('Tower')"><span class="icon">🗼</span>Tower</div>
-        <div class="btn" style="background:linear-gradient(135deg,#FF9800,#F57C00);" onclick="enterGame('Spin')"><span class="icon">🎡</span>Spin</div>
-        <div class="btn" style="background:linear-gradient(135deg,#00BCD4,#0097A7);" onclick="enterGame('Quiz')"><span class="icon">❓</span>Quiz</div>
-        <div class="btn" style="background:linear-gradient(135deg,#E91E63,#C2185B);" onclick="enterGame('TicTacToe')"><span class="icon">❌</span>Tic Tac Toe</div>
-        <div class="btn" style="background:linear-gradient(135deg,#607D8B,#455A64);" onclick="enterGame('Sudoku')"><span class="icon">🔢</span>Sudoku</div>
-      </div>
-    </div>
-
-    <!-- LIVE CHAT SCREEN -->
-    <div id="chat-page" class="page">
-      <div class="header">
-        Community Chat
-        <div style="font-size:11px;font-weight:400;" id="chat-timer-badge">Session: 15:00</div>
-      </div>
-      <div class="card" style="padding:10px;">
-        <div class="chat-box" id="chat-box"></div>
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <input type="text" id="chat-input" placeholder="Type message (NO links allowed)..." style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #ddd;">
-          <button class="gold-btn" style="padding:10px 16px;" onclick="sendChatMessage()">Send</button>
-        </div>
-        <button class="start-btn" style="width:100%;background:#666;margin-top:8px;" onclick="showPage('fun')">← Exit Chat</button>
-      </div>
-    </div>
-
-    <!-- GAME PAGES -->
-    <div id="game-ttt" class="page">
-      <div class="header">Tic Tac Toe</div>
-      <div class="card" style="text-align:center;">
-        <div id="ttt-status" style="font-weight:800;color:#c8102e;margin-bottom:10px;">Your turn (X)</div>
-        <div class="ttt-board" id="ttt-board"></div>
-        <button class="gold-btn" id="ttt-claim" style="display:none;margin-top:10px;" onclick="claimTTT()">Claim 3 Coins</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <div id="game-spin" class="page">
-      <div class="header">Spin & Win</div>
-      <div class="card spin-wrap">
-        <div class="spin-pointer">▼</div>
-        <div style="position:relative;display:inline-block;"><div class="spin-wheel" id="spin-wheel"></div></div>
-        <div id="spin-result" style="margin:16px 0;font-weight:900;font-size:22px;color:#c8102e;min-height:28px;"></div>
-        <button class="gold-btn" id="spin-btn" onclick="doSpin()">SPIN</button>
-        <button class="start-btn" style="margin-top:12px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <div id="game-quiz" class="page">
-      <div class="header">Quiz</div>
-      <div class="card">
-        <div id="quiz-question" style="font-weight:800;font-size:16px;margin-bottom:16px;text-align:center;"></div>
-        <div id="quiz-options"></div>
-        <button class="start-btn" style="width:100%;margin-top:14px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <div id="game-dart" class="page">
-      <div class="header">🎯 Dart Game</div>
-      <div class="game-area">
-        <div class="score-box">Hits: <span id="dart-score">0</span> / 10</div>
-        <div style="font-size:70px;margin:30px 0;cursor:pointer;" id="dart-target" onclick="hitDart()">🎯</div>
-        <button class="gold-btn" onclick="startDart()">Start Game</button>
-      </div>
-      <div style="text-align:center;"><button class="start-btn" style="background:#666;" onclick="showPage('fun')">← Back</button></div>
-    </div>
-
-    <div id="game-fruit" class="page">
-      <div class="header">🍎 Fruit Slice</div>
-      <div class="game-area">
-        <div class="score-box">Hits: <span id="fruit-score">0</span> / 8</div>
-        <div style="font-size:60px;margin:30px 0;cursor:pointer;" id="fruit-display" onclick="hitFruit()">🍎</div>
-        <button class="gold-btn" onclick="startFruit()">Start</button>
-      </div>
-      <div style="text-align:center;"><button class="start-btn" style="background:#666;" onclick="showPage('fun')">← Back</button></div>
-    </div>
-
-    <div id="game-shoot" class="page">
-      <div class="header">👾 Target Shoot</div>
-      <div class="game-area">
-        <div class="score-box">Hits: <span id="shoot-score">0</span> / 8</div>
-        <div style="font-size:60px;margin:30px 0;cursor:pointer;" id="shoot-target" onclick="hitShoot()">👾</div>
-        <button class="gold-btn" onclick="startShoot()">Start</button>
-      </div>
-      <div style="text-align:center;"><button class="start-btn" style="background:#666;" onclick="showPage('fun')">← Back</button></div>
-    </div>
-
-    <div id="game-tower" class="page">
-      <div class="header">🗼 Tower Stack</div>
-      <div class="game-area">
-        <div class="score-box">Height: <span id="tower-score">0</span> / 8</div>
-        <div style="font-size:30px;margin:20px 0;" id="tower-display">⬜</div>
-        <button class="gold-btn" onclick="dropTower()">Drop Block</button>
-      </div>
-      <div style="text-align:center;"><button class="start-btn" style="background:#666;" onclick="showPage('fun')">← Back</button></div>
-    </div>
-
-    <div id="game-sudoku" class="page">
-      <div class="header">🔢 Sudoku Mini</div>
-      <div class="card" style="text-align:center;">
-        <div id="sudoku-board" style="display:grid;grid-template-columns:repeat(4,50px);gap:5px;justify-content:center;margin:15px 0;"></div>
-        <button class="gold-btn" onclick="checkSudoku()">Check & Claim</button>
-        <button class="start-btn" style="margin-top:10px;background:#666;" onclick="showPage('fun')">← Back</button>
-      </div>
-    </div>
-
-    <!-- WALLET -->
-    <div id="wallet" class="page">
-      <div class="header">Wallet & History</div>
-      <div class="balance-card">
-        <div style="font-size:13px;opacity:0.9;">Available Balance</div>
-        <div class="amount" id="wallet-balance">0 Coins</div>
-      </div>
-
-      <div class="section-title">History Records</div>
-      <div style="display:flex;gap:10px;margin:0 14px 14px;">
-        <button class="btn" style="flex:1;background:linear-gradient(135deg,#c8102e,#9b0c24);" onclick="openWalletHistory('task')">📋 Task History</button>
-        <button class="btn" style="flex:1;background:linear-gradient(135deg,#3F51B5,#1A237E);" onclick="openWalletHistory('coins')">💳 Withdraw & Coins</button>
-      </div>
-
-      <div id="history-container" style="display:none;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin:0 14px 10px;">
-          <div id="history-view-title" style="font-size:14px;font-weight:800;color:#c8102e;">📋 History</div>
-          <button style="border:none;background:#ffe8e8;color:#c8102e;font-weight:700;border-radius:12px;padding:4px 12px;cursor:pointer;" onclick="closeWalletHistory()">✖ Close</button>
-        </div>
-        <div id="history-list"></div>
-      </div>
-
-      <div class="section-title">Withdrawal Options</div>
-      <div class="list-item" onclick="openWithdraw('upi')"><div class="icon" style="background:#FF9800;">🇮🇳</div><div class="info"><h4>India - UPI / Bank</h4><p>Min. 500 Coins</p></div><button class="start-btn">Withdraw</button></div>
-      <div class="list-item" onclick="openWithdraw('usdt')"><div class="icon" style="background:#26A17B;">₮</div><div class="info"><h4>USDT Crypto</h4><p>TRC20 / BEP20 (Min. 500)</p></div><button class="start-btn">Withdraw</button></div>
-    </div>
-
-    <!-- WITHDRAW FORM -->
-    <div id="withdraw-form" class="page">
-      <div class="header">Request Withdrawal</div>
-      <div class="card">
-        <div class="form-group"><label id="withdraw-label">UPI ID / USDT Address</label><input type="text" id="withdraw-address" placeholder="Enter recipient details"></div>
-        <div class="form-group"><label>Amount (Coins)</label><input type="number" id="withdraw-amount" value="500" min="500"></div>
-        <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
-        <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
-      </div>
-    </div>
-
-    <!-- REFER -->
-    <div id="refer" class="page">
-      <div class="header">Refer & Earn</div>
-      <div class="banner">
-        <div><div style="font-weight:800;">Invite Friends</div><div style="font-size:12px;">Earn +50 Coins per friend!</div></div>
-        <div style="font-size:28px;">🎁</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <div class="form-row">
-          <div class="stat-badge" style="flex:1;">
-            <div style="font-size:11px;color:#888;">Friends Invited</div>
-            <div style="font-size:22px;font-weight:900;color:#c8102e;" id="ref-count">0</div>
-          </div>
-          <div class="stat-badge" style="flex:1;">
-            <div style="font-size:11px;color:#888;">Total Earned</div>
-            <div style="font-size:22px;font-weight:900;color:#4CAF50;" id="ref-earnings">0</div>
-          </div>
-        </div>
-        <div style="font-size:13px;color:#777;margin-top:14px;">Your Invite Link</div>
-        <input type="text" id="ref-link-input" readonly style="font-size:12px;padding:10px;text-align:center;margin:8px 0;background:#f9f9f9;border:1.5px dashed #c8102e;width:100%;border-radius:10px;">
-        <button class="gold-btn" style="width:100%;margin-bottom:8px;background:linear-gradient(90deg,#0088cc,#00b4d8);color:white;" onclick="shareOnTelegram()">🚀 Share on Telegram</button>
-        <button class="gold-btn" style="width:100%;" onclick="copyInviteLink()">📋 Copy Link</button>
-        <div style="margin-top:18px;border-top:1px solid #eee;padding-top:12px;text-align:left;">
-          <div style="font-weight:800;font-size:13px;color:#c8102e;">Have a Referral Code?</div>
-          <div style="display:flex;gap:8px;margin-top:6px;">
-            <input type="text" id="manual-ref-code" placeholder="Enter Friend's ID" style="flex:1;padding:8px;border-radius:8px;border:1px solid #ddd;">
-            <button class="gold-btn" style="padding:8px 14px;font-size:12px;" onclick="submitManualRef()">Claim</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div id="profile" class="page">
-      <div class="header">Profile</div>
-      <div class="card" style="text-align:center;">
-        <div style="width:70px;height:70px;background:#c8102e;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;">🤖</div>
-        <div style="font-weight:800;font-size:18px;" id="profile-name">User</div>
-        <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
-      </div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-entry-btn" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel (Locked)</h4><p>Master controls, ads & payouts</p></div><div>🔒</div></div>
-    </div>
-
-    <!-- MASTER ADMIN PANEL (STRENGTHENED) -->
-    <div id="admin" class="page">
-      <div class="header">👑 Master Admin Control Center</div>
-
-      <div class="section-title">Master Financial Ledger</div>
-      <div class="card">
-        <div class="master-stat-grid">
-          <div class="master-stat-box"><div class="val" id="stat-total-users">0</div><div class="lbl">TOTAL USERS</div></div>
-          <div class="master-stat-box"><div class="val" id="stat-total-liability">0</div><div class="lbl">USER BALANCES</div></div>
-          <div class="master-stat-box"><div class="val" id="stat-pending-withdraws">0</div><div class="lbl">PENDING PAYOUTS</div></div>
-          <div class="master-stat-box"><div class="val" id="stat-completed-tasks">0</div><div class="lbl">TASKS DONE</div></div>
-        </div>
-        <button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadMasterStats()">🔄 Refresh Ledger</button>
-      </div>
-
-      <!-- APP & CATEGORY PAUSE CONTROLS -->
-      <div class="section-title">App & Earn Controls (Pause / Resume)</div>
-      <div class="card">
-        <div style="font-size:12px;color:#666;margin-bottom:12px;">Pause the full app or individual earn categories for maintenance or events.</div>
-        
-        <div class="form-group">
-          <label>Full App Status</label>
-          <select id="admin-app-status">
-            <option value="live">🟢 LIVE (Normal)</option>
-            <option value="paused">🔴 PAUSED (Maintenance)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Pause Message (shown to users)</label>
-          <input type="text" id="admin-pause-msg" placeholder="App under maintenance. Back in 2 hours.">
-        </div>
-        <div class="form-group">
-          <label>Pause Until (optional datetime)</label>
-          <input type="datetime-local" id="admin-pause-until">
-        </div>
-        <button class="gold-btn" style="width:100%;margin-bottom:14px;" onclick="saveAppStatus()">Save App Status</button>
-
-        <div style="font-size:13px;font-weight:800;color:#c8102e;margin-bottom:8px;">Pause Individual Categories</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
-          <label><input type="checkbox" id="pause-watch"> Pause Watch</label>
-          <label><input type="checkbox" id="pause-views"> Pause Views</label>
-          <label><input type="checkbox" id="pause-join"> Pause Join</label>
-          <label><input type="checkbox" id="pause-bot"> Pause Bot</label>
-          <label><input type="checkbox" id="pause-install"> Pause Install</label>
-          <label><input type="checkbox" id="pause-website"> Pause Website</label>
-          <label><input type="checkbox" id="pause-affiliate"> Pause Affiliate</label>
-          <label><input type="checkbox" id="pause-products"> Pause Products</label>
-          <label><input type="checkbox" id="pause-other"> Pause General</label>
-          <label><input type="checkbox" id="pause-promote"> Pause Promote</label>
-          <label><input type="checkbox" id="pause-games"> Pause Games</label>
-          <label><input type="checkbox" id="pause-chat"> Pause Chat</label>
-        </div>
-        <button class="gold-btn" style="width:100%;margin-top:12px;" onclick="saveCategoryPauses()">Save Category Pauses</button>
-      </div>
-
-      <div class="section-title">Global Broadcast / Shoutcast</div>
-      <div class="card">
-        <div class="form-group"><label>Announcement Message</label><input type="text" id="admin-broadcast-msg" placeholder="e.g. 50% Bonus on all tasks today!"></div>
-        <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="adminPublishBroadcast()">📢 Broadcast to All Users</button>
-        <button class="start-btn" style="width:100%;background:#555;" onclick="adminClearBroadcast()">Clear Broadcast</button>
-      </div>
-
-      <div class="section-title">Ads & Sponsor URLs Manager</div>
-      <div class="card">
-        <p style="font-size:12px;color:#666;margin-bottom:10px;">Randomly selected when users watch ads, enter games, or renew chat passes.</p>
-        <div class="form-group"><label>Ad Title / Sponsor Name</label><input type="text" id="admin-ad-title" placeholder="e.g. Crypto Sponsor A"></div>
-        <div class="form-group"><label>Target Ad URL</label><input type="text" id="admin-ad-url" placeholder="https://t.me/... or website link"></div>
-        <button class="gold-btn" style="width:100%;margin-bottom:12px;" onclick="adminAddAd()">+ Add Sponsor Ad</button>
-        <div style="font-size:12px;font-weight:800;color:#c8102e;margin-bottom:6px;">Current Active Sponsor Ads:</div>
-        <div id="admin-ads-list"><div style="text-align:center;color:#888;font-size:12px;">Loading ads...</div></div>
-      </div>
-
-      <div class="section-title">Service Prices (Coins)</div>
-      <div class="card">
-        <div class="form-row">
-          <div class="form-group"><label>Channel</label><input type="number" id="price-channel" value="200"></div>
-          <div class="form-group"><label>Bot</label><input type="number" id="price-bot" value="150"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Views</label><input type="number" id="price-views" value="50"></div>
-          <div class="form-group"><label>Watch</label><input type="number" id="price-watch" value="70"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Install</label><input type="number" id="price-install" value="300"></div>
-          <div class="form-group"><label>Website</label><input type="number" id="price-website" value="80"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Affiliate</label><input type="number" id="price-affiliate" value="40"></div>
-          <div class="form-group"><label>Products</label><input type="number" id="price-products" value="50"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Banner Ad</label><input type="number" id="price-banner" value="500"></div>
-          <div class="form-group"><label></label></div>
-        </div>
-        <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
-      </div>
-
-      <div class="section-title">Pending Payouts</div>
-      <div id="admin-withdrawals-list"><div class="card" style="text-align:center;">Loading...</div></div>
-
-      <div class="section-title">Bot & Official Channel Settings</div>
-      <div class="card">
-        <div class="form-group"><label>Bot Username (without @)</label><input type="text" id="admin-bot-input"></div>
-        <div class="form-group"><label>Official Channel Link</label><input type="text" id="admin-channel-link-input" placeholder="https://t.me/vtnhub"></div>
-        <div class="form-group">
-          <label>Mandatory Channel Gate Active?</label>
-          <select id="admin-gate-required">
-            <option value="true">YES (Gate Active)</option>
-            <option value="false">NO (Skip Gate)</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Admin PIN Code (change often)</label><input type="password" id="admin-pin-input"></div>
-        <div class="form-group"><label>Signup Bonus Coins</label><input type="number" id="admin-signup-bonus" value="30"></div>
-        <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
-      </div>
-
-      <div class="section-title">Inspect & Control User</div>
-      <div class="card">
-        <div class="form-group"><label>User Telegram ID</label><input type="text" id="admin-target-uid" placeholder="e.g. 8150531247"></div>
-        <div class="form-group"><label>Coins Amount</label><input type="number" id="admin-coin-val" value="100"></div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <button class="gold-btn" style="flex:1;" onclick="adminModifyCoins('add')">+ Add Coins</button>
-          <button class="start-btn" style="flex:1;background:#E91E63;" onclick="adminModifyCoins('deduct')">− Remove</button>
-        </div>
-        <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:8px;" onclick="adminInspectUser()">Inspect User & Referrals</button>
-        <button class="start-btn" style="width:100%;background:#333;" onclick="adminToggleUserBlock()">Toggle Block / Unblock</button>
-        <div id="admin-user-stat" style="margin-top:10px;font-size:12px;color:#333;"></div>
-      </div>
-
-      <div class="section-title">Create New Task</div>
-      <div class="card">
-        <div class="form-group"><label>Title</label><input type="text" id="admin-task-title" placeholder="Join Channel..."></div>
-        <div class="form-group"><label>Category</label>
-          <select id="admin-task-cat">
-            <option value="join">Join Channel / Group</option>
-            <option value="bot">Start Bot</option>
-            <option value="watch">Watch Video / Ad</option>
-            <option value="views">Views & Likes</option>
-            <option value="install">Install App</option>
-            <option value="website">Visit Website</option>
-            <option value="affiliate">Affiliate</option>
-            <option value="products">Products</option>
-            <option value="other">General</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Reward (Coins)</label><input type="number" id="admin-task-reward" value="15"></div>
-        <div class="form-group"><label>Link</label><input type="text" id="admin-task-link" placeholder="https://t.me/..."></div>
-        <div class="form-group"><label>Wait Seconds</label><input type="number" id="admin-task-wait" value="10"></div>
-        <div class="form-group"><label>Max Completions (0 = unlimited)</label><input type="number" id="admin-task-max" value="0"></div>
-        <button class="gold-btn" style="width:100%;" onclick="adminCreateTask()">+ Publish Task</button>
-      </div>
-
-      <div class="section-title">Active Database Tasks</div>
-      <div id="admin-task-list"><div class="card">Loading...</div></div>
-      <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Exit Admin</button></div>
-    </div>
-
-  </div>
-
-  <!-- LIVE COUNTDOWN TASK MODAL -->
-  <div class="gate-overlay" id="task-modal" style="display:none;">
-    <div class="gate-modal">
-      <div style="font-size:40px;margin-bottom:8px;">🎯</div>
-      <h3 style="color:#c8102e;margin-bottom:6px;" id="tm-title">Task Verification</h3>
-      <p style="font-size:12px;color:#666;" id="tm-reward-desc">Reward: +10 Coins</p>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="tm-progress"></div>
-      </div>
-      <div style="font-weight:800;font-size:14px;color:#c8102e;margin-bottom:14px;" id="tm-countdown">Please wait...</div>
-      <button class="gold-btn" id="tm-claim-btn" style="width:100%;margin-bottom:8px;" disabled onclick="confirmActiveTask()">Wait for Timer...</button>
-      <button class="start-btn" style="width:100%;background:#666;" onclick="cancelActiveTask()">Cancel Task</button>
+    <div id="level-box">
+      <div id="level-badge">LEVEL 1</div>
+      <div class="glass-card" id="shots-left">⚡ SHOTS: 22</div>
     </div>
   </div>
 
-  <!-- MANDATORY CHANNEL GATE MODAL -->
-  <div class="gate-overlay" id="gate-overlay" style="display:none;">
-    <div class="gate-modal">
-      <div style="font-size:42px;margin-bottom:10px;">⭐</div>
-      <h3 style="color:#c8102e;margin-bottom:6px;">Official Channel Required</h3>
-      <p style="font-size:12px;color:#666;margin-bottom:16px;">You must join our official Telegram channel to earn coins and withdraw.</p>
-      <button class="gold-btn" style="width:100%;margin-bottom:10px;" id="gate-join-btn" onclick="openOfficialChannel()">1. Join Official Channel</button>
-      <button class="start-btn" style="width:100%;" onclick="confirmChannelJoined()">2. I Have Joined (Verify)</button>
-    </div>
+  <div id="combo-splash">3x COMBO!</div>
+
+  <!-- Start Overlay -->
+  <div class="overlay" id="start-screen">
+    <h1>BUBBLE 3D</h1>
+    <p>Aim the energetic 3D pulse cannon. Match 3 or more glowing plasma orbs to trigger chained explosions!</p>
+    <button class="btn" id="start-btn">LAUNCH MISSION</button>
   </div>
 
-  <!-- CHAT AD TIMEOUT MODAL -->
-  <div class="gate-overlay" id="chat-ad-modal" style="display:none;">
-    <div class="gate-modal">
-      <div style="font-size:42px;margin-bottom:10px;">⏳</div>
-      <h3 style="color:#c8102e;margin-bottom:6px;">Chat Pass Expired</h3>
-      <p style="font-size:12px;color:#666;margin-bottom:16px;">Watch a sponsor ad to get another 15 minutes of live chat access!</p>
-      <button class="gold-btn" style="width:100%;" onclick="watchAdForChat()">Watch Sponsor Ad & Enter</button>
-    </div>
+  <!-- Level Banner -->
+  <div class="overlay" id="level-banner">
+    <div id="banner-text">LEVEL 2</div>
+    <p style="color: #cbd5e1; font-weight:600;">NEW ENERGY SIGNATURE DETECTED</p>
   </div>
 
-  <!-- BOTTOM NAVIGATION -->
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Home</div>
-    <div class="nav-item" onclick="showPage('earn')"><span class="icon">💰</span>Earn</div>
-    <div class="nav-item" onclick="showPage('promote')"><span class="icon">📢</span>Promote</div>
-    <div class="nav-item" onclick="showPage('fun')"><span class="icon">🎮</span>Fun</div>
-    <div class="nav-item" onclick="showPage('profile')"><span class="icon">👤</span>Profile</div>
+  <!-- Game Over Overlay -->
+  <div class="overlay" id="game-over" style="display: none;">
+    <h1 id="game-over-title">ENERGY DEPLETED</h1>
+    <div style="font-size: 48px; font-weight: 900; color: #00f0ff;" id="final-score">0</div>
+    <p id="best-score-text">BEST RECORD: 0</p>
+    <button class="btn" id="restart-btn">RECHARGE & REPLAY</button>
   </div>
+
+  <canvas id="webgl-canvas"></canvas>
 
   <script>
-    const SUPABASE_URL = 'https://dkservnassatehmhgojm.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aKGo5rp3nOEQnh054P-WtA_exkxy3mv';
-    let sb = null;
-    try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+    /* ================= TELEGRAM MINI APP INTEGRATION ================= */
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor('#070913');
+      tg.setBackgroundColor('#070913');
+    }
 
-    const tg = window.Telegram?.WebApp || null;
-    try {
-      if (tg) {
-        tg.ready();
-        tg.expand();
-        if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-        tg.setHeaderColor('#c8102e');
-        tg.setBackgroundColor('#FFF8E7');
+    function hapticImpact(style = 'medium') {
+      try {
+        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
+      } catch (e) {}
+    }
+
+    function hapticNotification(type = 'success') {
+      try {
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
+      } catch (e) {}
+    }
+
+    /* ================= SYNTH AUDIO ENGINE (Zero-Asset) ================= */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-    } catch(e) {}
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
 
-    const user = tg?.initDataUnsafe?.user || null;
-    const userId = user ? String(user.id) : ('guest_' + (localStorage.getItem('vtn_guest_id') || (() => {
-      const g = Math.floor(Math.random()*89999+10000);
-      localStorage.setItem('vtn_guest_id', g);
-      return g;
-    })()));
+    function playSound(type, pitchModifier = 1) {
+      if (!audioCtx) return;
+      const t = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
 
-    // Dynamic Admin Settings
-    let botUsername = 'VTNPromoAssistant_bot';
-    let officialChannelLink = 'https://t.me/vtnhub';
-    let gateRequired = true;
-    let adminPin = '778899';
-    let signupBonus = 30;
+      if (type === 'shoot') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(480, t);
+        osc.frequency.exponentialRampToValueAtTime(120, t + 0.15);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.15);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      } else if (type === 'pop') {
+        osc.type = 'sine';
+        const baseFreq = 400 * pitchModifier;
+        osc.frequency.setValueAtTime(baseFreq, t);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.8, t + 0.08);
+        gain.gain.setValueAtTime(0.4, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.08);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      } else if (type === 'bounce') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, t);
+        gain.gain.setValueAtTime(0.15, t);
+        gain.gain.linearRampToValueAtTime(0.01, t + 0.05);
+        osc.start(t);
+        osc.stop(t + 0.05);
+      } else if (type === 'win') {
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.type = 'triangle';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.2, t + idx * 0.08);
+          g.gain.linearRampToValueAtTime(0.01, t + idx * 0.08 + 0.25);
+          o.start(t + idx * 0.08);
+          o.stop(t + idx * 0.08 + 0.25);
+        });
+      }
+    }
 
-    // Only these Telegram IDs can open Admin (add your ID here)
-    const ALLOWED_ADMIN_IDS = ['8150531247'];
+    /* ================= 3D GRAPHICS SETUP (Three.js) ================= */
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x070913, 0.018);
 
-    let sponsorAds = [
-      { id: 1, title: 'VTN Official News', url: 'https://t.me/vtnhub' },
-      { id: 2, title: 'VTN Support Desk', url: 'https://t.me/Vtnhub0' }
+    const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 24);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    keyLight.position.set(10, 15, 20);
+    scene.add(keyLight);
+
+    const pointLight = new THREE.PointLight(0x00f0ff, 2.5, 30);
+    pointLight.position.set(0, -9, 8);
+    scene.add(pointLight);
+
+    // Glowing Neon Starfield
+    const starCount = 350;
+    const starGeometry = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 60;
+      starPositions[i + 1] = (Math.random() - 0.5) * 60;
+      starPositions[i + 2] = (Math.random() - 0.5) * 40 - 10;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.15, transparent: true, opacity: 0.7 });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    /* ================= BUBBLE COLOR PALETTE ================= */
+    const PALETTE = [
+      { color: 0xff0055, emissive: 0x880022 }, // Neon Pink
+      { color: 0x00f0ff, emissive: 0x005577 }, // Cyan
+      { color: 0x00ff87, emissive: 0x006633 }, // Acid Lime
+      { color: 0xffb703, emissive: 0x774400 }, // Electric Amber
+      { color: 0x9d4edd, emissive: 0x441166 }, // Hyper Purple
     ];
 
-    let balance = 0;
-    let officialVerified = (localStorage.getItem('vtn_verified_' + userId) === 'true');
-    let autoEarnActive = false;
-    let autoEarnTimer = null;
-    let referralCount = 0;
-    let referralEarnings = 0;
-    let currentTasks = [];
-    let currentCategory = 'other';
-    let currentPromoType = 'channel';
-    let currentWithdrawType = 'upi';
-    let chatPassExpiry = 0;
-    let chatTimerInterval = null;
-    let lastDailyClaim = '';
-    let lastGameReward = {};
+    const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+    const materials = PALETTE.map(p => new THREE.MeshPhysicalMaterial({
+      color: p.color,
+      emissive: p.emissive,
+      emissiveIntensity: 0.45,
+      roughness: 0.1,
+      metalness: 0.15,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      reflectivity: 0.9
+    }));
 
-    let activeExecutingTask = null;
-    let activeTaskInterval = null;
+    /* ================= GAMEPLAY CONSTANTS & STATE ================= */
+    const BUBBLE_RADIUS = 0.78;
+    const GRID_COLS = 8;
+    const GRID_ROWS = 7;
+    const WORLD_WIDTH = 13.0; // Playfield bounds
+    const TOP_WALL_Y = 10.0;
+    const CANNON_Y = -9.2;
 
-    let prices = { channel:200, bot:150, views:50, watch:70, install:300, website:80, affiliate:40, products:50, banner:500 };
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('bubble3DBest') || '0');
+    let level = 1;
+    let shotsLeft = 22;
+    let gameState = 'start'; // start, playing, gameover
 
-    // App & Category Pause Controls
-    let appStatus = 'live';          // 'live' or 'paused'
-    let pauseMessage = 'App is under maintenance. Please check back later.';
-    let pauseUntil = null;
-    let categoryPauses = {
-      watch: false, views: false, join: false, bot: false,
-      install: false, website: false, affiliate: false, products: false,
-      other: false, promote: false, games: false, chat: false
-    };
+    let grid = []; // 2D array of grid orbs
+    let activeShooter = null;
+    let nextColor = 0;
+    let particles = [];
+    let cameraShake = 0;
 
-    function updateUI() {
-      document.getElementById('balance').innerText = balance + ' Coins';
-      document.getElementById('wallet-balance').innerText = balance + ' Coins';
-      document.getElementById('ref-count').innerText = referralCount;
-      document.getElementById('ref-earnings').innerText = referralEarnings + ' Coins';
-      if (officialVerified) {
-        const item = document.getElementById('official-task-item');
-        if (item) item.style.display = 'none';
-        const title = document.getElementById('official-task-title');
-        if (title) title.style.display = 'none';
-      }
+    // UI elements
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const levelBadge = document.getElementById('level-badge');
+    const shotsLeftEl = document.getElementById('shots-left');
+    const comboSplash = document.getElementById('combo-splash');
+    const startScreen = document.getElementById('start-screen');
+    const levelBanner = document.getElementById('level-banner');
+    const bannerText = document.getElementById('banner-text');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const bestScoreTextEl = document.getElementById('best-score-text');
+    bestEl.textContent = `BEST: ${bestScore}`;
+
+    /* ================= 3D CANNON & AIM LASER ================= */
+    const cannonGroup = new THREE.Group();
+    cannonGroup.position.set(0, CANNON_Y, 0);
+    scene.add(cannonGroup);
+
+    // Outer Cannon Ring
+    const ringGeo = new THREE.TorusGeometry(1.4, 0.12, 16, 40);
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0072ff, emissiveIntensity: 0.8, metalness: 0.8 });
+    const cannonRing = new THREE.Mesh(ringGeo, ringMat);
+    cannonRing.rotation.x = Math.PI / 2;
+    cannonGroup.add(cannonRing);
+
+    // Mechanical barrel
+    const barrelGeo = new THREE.CylinderGeometry(0.45, 0.65, 1.6, 16);
+    barrelGeo.translate(0, 0.8, 0);
+    barrelGeo.rotateX(Math.PI / 2);
+    const barrelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+    const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+    cannonGroup.add(barrel);
+
+    // Aim Laser Line Dots
+    const laserCount = 20;
+    const laserDots = [];
+    const dotGeo = new THREE.SphereGeometry(0.08, 8, 8);
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 });
+    for (let i = 0; i < laserCount; i++) {
+      const dot = new THREE.Mesh(dotGeo, dotMat);
+      scene.add(dot);
+      laserDots.push(dot);
     }
 
-    // ========== INITIALIZATION ==========
-    async function initApp() {
-      if (user) {
-        document.getElementById('username').innerText = user.first_name || 'User';
-        document.getElementById('userid').innerText = 'ID: ' + user.id;
-        document.getElementById('profile-name').innerText = user.first_name || 'User';
-        document.getElementById('profile-id').innerText = 'ID: ' + user.id;
-      } else {
-        document.getElementById('username').innerText = 'Guest User';
-        document.getElementById('userid').innerText = 'ID: ' + userId;
-      }
-      await loadAppSettings();
-      await syncUser();
-      listenBroadcast();
-      generateInviteLink();
+    /* ================= GRID LOGIC & COORDINATES ================= */
+    function getGridWorldPos(r, c) {
+      const rowOffset = (r % 2 === 1) ? BUBBLE_RADIUS : 0;
+      const startX = -((GRID_COLS * BUBBLE_RADIUS * 2) / 2) + BUBBLE_RADIUS;
+      const x = startX + c * (BUBBLE_RADIUS * 2) + rowOffset;
+      const y = TOP_WALL_Y - (r * (BUBBLE_RADIUS * 1.732));
+      return { x, y };
     }
 
-    async function loadAppSettings() {
-      if (!sb) return;
-      try {
-        const { data } = await sb.from('app_settings').select('*');
-        if (data) {
-          data.forEach(item => {
-            if (item.setting_key === 'bot_username') botUsername = item.setting_value;
-            if (item.setting_key === 'admin_pin') adminPin = item.setting_value;
-            if (item.setting_key === 'channel_link') officialChannelLink = item.setting_value;
-            if (item.setting_key === 'gate_required') gateRequired = (item.setting_value === 'true');
-            if (item.setting_key === 'signup_bonus') signupBonus = Number(item.setting_value) || 30;
-            if (item.setting_key === 'sponsor_ads') {
-              try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
-            }
-            if (item.setting_key === 'prices') {
-              try { prices = { ...prices, ...JSON.parse(item.setting_value) }; } catch(e) {}
-            }
-            if (item.setting_key === 'app_status') appStatus = item.setting_value || 'live';
-            if (item.setting_key === 'pause_message') pauseMessage = item.setting_value || pauseMessage;
-            if (item.setting_key === 'pause_until') pauseUntil = item.setting_value || null;
-            if (item.setting_key === 'category_pauses') {
-              try { categoryPauses = { ...categoryPauses, ...JSON.parse(item.setting_value) }; } catch(e) {}
-            }
-          });
-        }
-        // Auto resume if pause time has passed
-        if (appStatus === 'paused' && pauseUntil) {
-          if (new Date(pauseUntil) < new Date()) {
-            appStatus = 'live';
-            pauseUntil = null;
-            if (sb) {
-              await sb.from('app_settings').upsert([
-                { setting_key: 'app_status', setting_value: 'live' },
-                { setting_key: 'pause_until', setting_value: '' }
-              ]);
-            }
+    function createBubbleMesh(colorIndex) {
+      const mesh = new THREE.Mesh(sphereGeo, materials[colorIndex]);
+      mesh.scale.set(BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS);
+      return mesh;
+    }
+
+    function initGrid() {
+      // Clean existing
+      grid.forEach(row => row.forEach(b => { if (b) scene.remove(b.mesh); }));
+      grid = [];
+
+      const activeColors = Math.min(PALETTE.length, 3 + Math.floor(level / 2));
+      for (let r = 0; r < GRID_ROWS; r++) {
+        const row = [];
+        const cols = (r % 2 === 1) ? GRID_COLS - 1 : GRID_COLS;
+        for (let c = 0; c < cols; c++) {
+          if (r < 4) { // Populate upper rows
+            const color = Math.floor(Math.random() * activeColors);
+            const mesh = createBubbleMesh(color);
+            const pos = getGridWorldPos(r, c);
+            mesh.position.set(pos.x, pos.y, 0);
+            scene.add(mesh);
+            row.push({ mesh, color, r, c });
+          } else {
+            row.push(null);
           }
         }
-      } catch(e) {}
+        grid.push(row);
+      }
     }
 
-    function isAppPaused() {
-      if (appStatus !== 'paused') return false;
-      if (pauseUntil && new Date(pauseUntil) < new Date()) return false;
-      return true;
+    /* ================= GAMEPLAY CYCLES ================= */
+    function setupShooter() {
+      const activeColors = Math.min(PALETTE.length, 3 + Math.floor(level / 2));
+      const chosenColor = nextColor !== null ? nextColor : Math.floor(Math.random() * activeColors);
+      nextColor = Math.floor(Math.random() * activeColors);
+
+      const mesh = createBubbleMesh(chosenColor);
+      mesh.position.set(0, CANNON_Y, 0);
+      scene.add(mesh);
+
+      activeShooter = {
+        mesh,
+        color: chosenColor,
+        vx: 0,
+        vy: 0,
+        isFlying: false
+      };
     }
 
-    function isCategoryPaused(cat) {
-      return !!categoryPauses[cat];
+    function startGame() {
+      initAudio();
+      score = 0;
+      level = 1;
+      scoreEl.textContent = '0';
+      levelBadge.textContent = 'LEVEL 1';
+      startScreen.style.display = 'none';
+      gameOverEl.style.display = 'none';
+      levelBanner.style.display = 'none';
+      gameState = 'playing';
+      nextColor = null;
+      shotsLeft = 24;
+      shotsLeftEl.textContent = `⚡ SHOTS: ${shotsLeft}`;
+      initGrid();
+      setupShooter();
     }
 
-    function showPausedMessage(extra) {
-      alert('⏸️ ' + (extra || pauseMessage));
+    /* ================= AIM & INPUT HANDLING ================= */
+    let aimAngle = Math.PI / 2;
+
+    function updateAim(clientX, clientY) {
+      if (gameState !== 'playing' || !activeShooter || activeShooter.isFlying) return;
+      const rect = canvas.getBoundingClientRect();
+      const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const ny = -(((clientY - rect.top) / rect.height) * 2 - 1);
+
+      // Project onto 3D z=0 plane
+      const vector = new THREE.Vector3(nx, ny, 0.5).unproject(camera);
+      const dir = vector.sub(camera.position).normalize();
+      const distance = -camera.position.z / dir.z;
+      const worldPos = camera.position.clone().add(dir.multiplyScalar(distance));
+
+      aimAngle = Math.atan2(worldPos.y - CANNON_Y, worldPos.x);
+
+      // Clamp angle (prevent shooting backwards/downwards)
+      aimAngle = Math.max(0.2, Math.min(Math.PI - 0.2, aimAngle));
+      cannonGroup.rotation.z = aimAngle - Math.PI / 2;
+
+      renderLaserTrajectory();
     }
 
-    async function syncUser() {
-      if (!sb) return;
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', userId).maybeSingle();
-        if (data) {
-          if (data.is_blocked) {
-            document.body.innerHTML = '<div style="padding:60px;text-align:center;color:#c8102e;font-weight:900;"><h1>ACCESS BLOCKED</h1><p style="margin-top:10px;">Your account has been suspended.</p></div>';
-            return;
-          }
-          balance = Number(data.balance) || 0;
-          officialVerified = !!data.official_verified || officialVerified;
-          localStorage.setItem('vtn_verified_' + userId, officialVerified ? 'true' : 'false');
-          autoEarnActive = !!data.auto_earn_active;
-          referralCount = Number(data.referral_count) || 0;
-          referralEarnings = Number(data.referral_earnings) || 0;
-          lastDailyClaim = data.last_daily_claim || '';
+    function renderLaserTrajectory() {
+      let x = 0;
+      let y = CANNON_Y;
+      let vx = Math.cos(aimAngle);
+      let vy = Math.sin(aimAngle);
+      const leftBound = -WORLD_WIDTH / 2 + BUBBLE_RADIUS;
+      const rightBound = WORLD_WIDTH / 2 - BUBBLE_RADIUS;
 
-          updateAutoEarnBtn();
-          updateUI();
-        } else {
-          // ========== NEW USER + SIGNUP BONUS ==========
-          let refCode = tg?.initDataUnsafe?.start_param || null;
-          if (refCode) refCode = refCode.replace(/^ref_/, '').replace(/^VTN/, '').trim();
-
-          let startCoins = signupBonus; // Main signup bonus
-          if (refCode && refCode !== userId) startCoins += 20; // Extra if referred
-
-          await sb.from('users').insert([{
-            telegram_id: userId,
-            first_name: user?.first_name || 'User',
-            username: user?.username || '',
-            balance: startCoins,
-            referred_by: (refCode && refCode !== userId) ? refCode : null,
-            referral_count: 0,
-            referral_earnings: 0,
-            official_verified: false,
-            is_blocked: false,
-            last_daily_claim: '',
-            signup_bonus_given: true
-          }]);
-
-          balance = startCoins;
-          await recordTx(startCoins, 'signup', 'Welcome Signup Bonus' + (refCode ? ' + Referral Bonus' : ''));
-
-          if (refCode && refCode !== userId) {
-            await rewardReferrer(refCode);
-          }
-          updateUI();
-          alert('🎉 Welcome to VTN Hub!\nYou received +' + startCoins + ' Coins as Signup Bonus!');
+      for (let i = 0; i < laserCount; i++) {
+        x += vx * 0.7;
+        y += vy * 0.7;
+        if (x <= leftBound || x >= rightBound) {
+          vx *= -1; // Reflect
         }
-      } catch(e) { console.error('Sync failed', e); }
-    }
-
-    async function rewardReferrer(refId) {
-      try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', refId).maybeSingle();
-        if (data) {
-          const newBal = (Number(data.balance)||0) + 50;
-          const newCnt = (Number(data.referral_count)||0) + 1;
-          const newEarn = (Number(data.referral_earnings)||0) + 50;
-          await sb.from('users').update({ balance: newBal, referral_count: newCnt, referral_earnings: newEarn }).eq('telegram_id', refId);
-          await sb.from('transactions').insert([{ telegram_id: refId, amount: 50, type: 'referral', description: 'Referral reward from ID ' + userId }]);
-        }
-      } catch(e) {}
-    }
-
-    async function recordTx(amount, type, desc) {
-      balance += amount;
-      updateUI();
-      if (!sb) return;
-      try {
-        await sb.from('users').update({ balance }).eq('telegram_id', userId);
-        await sb.from('transactions').insert([{ telegram_id: userId, amount, type, description: desc }]);
-      } catch(e) { console.error('recordTx err', e); }
-    }
-
-    function grantGameReward(coins, gameTitle) {
-      // Cooldown: 1 reward per game type every 45 minutes
-      const key = 'game_' + gameTitle;
-      const now = Date.now();
-      if (lastGameReward[key] && (now - lastGameReward[key]) < 45 * 60 * 1000) {
-        alert('⏳ Please wait before claiming another reward from this game.');
-        return;
-      }
-      lastGameReward[key] = now;
-      recordTx(coins, 'game', gameTitle + ' Reward');
-      alert(`🎉 Winner! +${coins} Coins added.`);
-      showPage('fun');
-    }
-
-    function getRandomAd() {
-      if (!sponsorAds || sponsorAds.length === 0) {
-        return { title: 'VTN Official', url: officialChannelLink };
-      }
-      return sponsorAds[Math.floor(Math.random() * sponsorAds.length)];
-    }
-
-    async function listenBroadcast() {
-      if (!sb) return;
-      try {
-        const { data } = await sb.from('announcements').select('*').eq('is_active', true).order('id', {ascending:false}).limit(1);
-        if (data && data.length) {
-          document.getElementById('shoutcast-bar').style.display = 'flex';
-          document.getElementById('shoutcast-text').innerText = data[0].message;
-        } else {
-          document.getElementById('shoutcast-bar').style.display = 'none';
-        }
-      } catch(e) {}
-    }
-
-    // ========== OFFICIAL GATE ==========
-    function openOfficialChannel() {
-      if (tg?.openTelegramLink) tg.openTelegramLink(officialChannelLink);
-      else window.open(officialChannelLink, '_blank');
-    }
-
-    function verifyOfficialGate() {
-      openOfficialChannel();
-      document.getElementById('gate-overlay').style.display = 'flex';
-    }
-
-    async function confirmChannelJoined() {
-      if (officialVerified) {
-        document.getElementById('gate-overlay').style.display = 'none';
-        return;
-      }
-      officialVerified = true;
-      localStorage.setItem('vtn_verified_' + userId, 'true');
-      document.getElementById('gate-overlay').style.display = 'none';
-      updateUI();
-
-      if (sb) {
-        const { data: existing } = await sb.from('transactions').select('id').eq('telegram_id', userId).eq('type', 'official').limit(1);
-        if (!existing || existing.length === 0) {
-          await recordTx(50, 'official', 'Official Channel Membership Verified');
-        }
-        await sb.from('users').update({ official_verified: true }).eq('telegram_id', userId);
-      }
-      alert('✅ Verified! Official channel access unlocked.');
-    }
-
-    function checkGateAccess() {
-      if (!gateRequired) return true;
-      if (!officialVerified) {
-        verifyOfficialGate();
-        return false;
-      }
-      return true;
-    }
-
-    // ========== DAILY CHECK-IN (FIXED - ONCE PER DAY) ==========
-    async function dailyCheckIn() {
-      if (isAppPaused()) return showPausedMessage();
-      if (!checkGateAccess()) return;
-      const today = new Date().toDateString();
-      if (lastDailyClaim === today) {
-        alert('Already claimed today! Come back tomorrow.');
-        return;
-      }
-      lastDailyClaim = today;
-      if (sb) {
-        await sb.from('users').update({ last_daily_claim: today }).eq('telegram_id', userId);
-      }
-      await recordTx(10, 'daily', 'Daily Check-in Bonus');
-      alert('🎉 +10 Coins Daily Bonus Claimed!');
-    }
-
-    // ========== AUTO EARN - COMING SOON (disabled) ==========
-    async function toggleAutoEarn() {
-      alert('⚡ Auto Earn is Coming Soon!\nThis feature is under development.');
-    }
-
-    function updateAutoEarnBtn() {
-      const btn = document.getElementById('auto-earn-toggle');
-      if (!btn) return;
-      if (autoEarnActive) {
-        btn.innerText = 'Active (ON)';
-        btn.style.background = '#4CAF50';
-        btn.style.color = '#fff';
-      } else {
-        btn.innerText = 'Turn ON';
-        btn.style.background = 'linear-gradient(90deg, #ffd700, #ffb700)';
-        btn.style.color = '#5c3d00';
+        laserDots[i].position.set(x, y, 0);
+        laserDots[i].visible = true;
       }
     }
 
-    let autoEarnCount = 0;
-    function startAutoEarnLoop() {
-      if (autoEarnTimer) clearInterval(autoEarnTimer);
-      autoEarnCount = 0;
-      autoEarnTimer = setInterval(async () => {
-        if (!autoEarnActive || !sb) return;
-        if (autoEarnCount >= 10) {
-          autoEarnActive = false;
-          updateAutoEarnBtn();
-          clearInterval(autoEarnTimer);
-          if (sb) await sb.from('users').update({ auto_earn_active: false }).eq('telegram_id', userId);
-          alert('Auto Earn stopped after 10 tasks. Turn ON again later.');
-          return;
-        }
-
-        try {
-          const { data: allTasks } = await sb.from('tasks').select('*').eq('is_active', true).limit(30);
-          const { data: completed } = await sb.from('completed_tasks').select('task_id').eq('telegram_id', userId);
-          const doneSet = new Set((completed || []).map(c => String(c.task_id)));
-
-          // Also respect max_users
-          const available = [];
-          for (const t of (allTasks || [])) {
-            if (doneSet.has(String(t.id))) continue;
-            if (t.max_users && t.max_users > 0) {
-              const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
-              if (count >= t.max_users) continue;
-            }
-            available.push(t);
-          }
-
-          if (available.length === 0) {
-            autoEarnActive = false;
-            updateAutoEarnBtn();
-            clearInterval(autoEarnTimer);
-            if (sb) await sb.from('users').update({ auto_earn_active: false }).eq('telegram_id', userId);
-            alert('No new tasks available for Auto Earn.');
-            return;
-          }
-
-          const t = available[0];
-          await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
-          const share = Math.max(2, Math.floor(t.reward * 0.4));
-          await recordTx(share, 'auto_earn', `Auto Earn: ${t.title}`);
-          autoEarnCount++;
-        } catch(e) {
-          console.error('Auto earn error', e);
-        }
-      }, 60000);
+    function hideLaser() {
+      laserDots.forEach(d => d.visible = false);
     }
 
-    // ========== COMMUNITY CHAT ==========
-    function enterCommunityChat() {
-      if (isAppPaused()) return showPausedMessage();
-      if (isCategoryPaused('chat')) return showPausedMessage('Chat is temporarily paused by admin.');
-      if (!checkGateAccess()) return;
-      const now = Date.now();
-      if (now > chatPassExpiry) {
-        document.getElementById('chat-ad-modal').style.display = 'flex';
-      } else {
-        openChatScreen();
-      }
+    function fireBubble() {
+      if (gameState !== 'playing' || !activeShooter || activeShooter.isFlying) return;
+      const speed = 26;
+      activeShooter.vx = Math.cos(aimAngle) * speed;
+      activeShooter.vy = Math.sin(aimAngle) * speed;
+      activeShooter.isFlying = true;
+      hideLaser();
+
+      shotsLeft--;
+      shotsLeftEl.textContent = `⚡ SHOTS: ${shotsLeft}`;
+
+      // Cannon kickback animation
+      cannonGroup.position.y = CANNON_Y - 0.4;
+      cameraShake = 0.3;
+
+      playSound('shoot');
+      hapticImpact('medium');
     }
 
-    function watchAdForChat() {
-      const ad = getRandomAd();
-      if (tg?.openLink) tg.openLink(ad.url);
-      else window.open(ad.url, '_blank');
-      alert(`Viewing sponsor: ${ad.title}\nPass verified! Enjoy 15 minutes.`);
-      chatPassExpiry = Date.now() + (15 * 60 * 1000);
-      document.getElementById('chat-ad-modal').style.display = 'none';
-      openChatScreen();
-      startChatTimer();
-    }
+    window.addEventListener('pointermove', (e) => updateAim(e.clientX, e.clientY));
+    window.addEventListener('pointerup', fireBubble);
 
-    function openChatScreen() {
-      showPage('chat-page');
-      loadChatMessages();
-    }
+    /* ================= PARTICLE EXPLOSIONS ================= */
+    function spawnExplosion(x, y, colorHex) {
+      const pCount = 18;
+      const pGeo = new THREE.SphereGeometry(0.18, 6, 6);
+      const pMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true });
 
-    function startChatTimer() {
-      if (chatTimerInterval) clearInterval(chatTimerInterval);
-      chatTimerInterval = setInterval(() => {
-        const remain = Math.max(0, chatPassExpiry - Date.now());
-        const mins = Math.floor(remain / 60000);
-        const secs = Math.floor((remain % 60000) / 1000);
-        document.getElementById('chat-timer-badge').innerText = `Session: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        if (remain <= 0) {
-          clearInterval(chatTimerInterval);
-          alert('⏳ Chat session expired!');
-          document.getElementById('chat-ad-modal').style.display = 'flex';
-        }
-      }, 1000);
-    }
+      for (let i = 0; i < pCount; i++) {
+        const mesh = new THREE.Mesh(pGeo, pMat);
+        mesh.position.set(x, y, 0);
+        scene.add(mesh);
 
-    async function loadChatMessages() {
-      if (!sb) return;
-      const box = document.getElementById('chat-box');
-      box.innerHTML = '<div style="text-align:center;color:#888;">Loading...</div>';
-      const { data } = await sb.from('chat_messages').select('*').order('id', {ascending:false}).limit(40);
-      box.innerHTML = '';
-      (data || []).reverse().forEach(m => {
-        const isMe = m.telegram_id === userId;
-        box.innerHTML += `<div class="chat-bubble ${isMe?'mine':''}"><div class="sender">${m.sender_name}</div><div>${m.message}</div></div>`;
-      });
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendChatMessage() {
-      const input = document.getElementById('chat-input');
-      const text = input.value.trim();
-      if (!text) return;
-      const linkRegex = /(https?:\/\/|t\.me|\.com|\.org|\.net|\.in|\.xyz|\.io|www\.)/i;
-      if (linkRegex.test(text)) {
-        alert('❌ LINKS ARE STRICTLY FORBIDDEN!');
-        input.value = '';
-        return;
-      }
-      input.value = '';
-      if (sb) {
-        await sb.from('chat_messages').insert([{
-          telegram_id: userId,
-          sender_name: user?.first_name || 'Member',
-          message: text
-        }]);
-        loadChatMessages();
-      }
-    }
-
-    // ========== TASKS ==========
-    function openCategory(cat) {
-      if (isAppPaused()) return showPausedMessage();
-      if (!checkGateAccess()) return;
-      if (isCategoryPaused(cat)) return showPausedMessage(cat.toUpperCase() + ' category is temporarily paused by admin.');
-      currentCategory = cat;
-      const names = { watch:'Watch & Earn', views:'Views & Likes', join:'Join Communities', bot:'Bot Tasks', install:'Install Apps', website:'Website Visits', affiliate:'Affiliate Offers', products:'Product Views', other:'General Tasks' };
-      document.getElementById('category-title').innerText = names[cat] || 'Tasks';
-      showPage('category-tasks');
-      loadCategoryTasks(cat);
-    }
-
-    async function loadCategoryTasks(cat) {
-      const container = document.getElementById('category-list');
-      container.innerHTML = '<div class="card" style="text-align:center;">Loading tasks...</div>';
-      if (!sb) return;
-
-      try {
-        const { data: allTasks } = await sb.from('tasks').select('*').eq('category', cat).eq('is_active', true).order('id', {ascending:false});
-        const { data: claims } = await sb.from('completed_tasks').select('task_id').eq('telegram_id', userId);
-        const claimedSet = new Set((claims || []).map(c => String(c.task_id)));
-
-        const available = [];
-        for (const t of (allTasks || [])) {
-          if (claimedSet.has(String(t.id))) continue;
-          if (t.max_users && t.max_users > 0) {
-            const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
-            if (count >= t.max_users) continue;
-          }
-          available.push(t);
-        }
-
-        if (!available.length) {
-          if (cat === 'watch') {
-            container.innerHTML = `
-              <div class="card" style="text-align:center;">
-                <p style="font-weight:700;margin-bottom:8px;">Watch Dynamic Sponsor Ad</p>
-                <p style="font-size:12px;color:#666;margin-bottom:14px;">+5 Coins • Always available!</p>
-                <button class="gold-btn" onclick="startDynamicSponsorTask()">Watch Ad</button>
-              </div>`;
-            return;
-          }
-          container.innerHTML = '<div class="card" style="text-align:center;color:#888;">No tasks available right now.</div>';
-          return;
-        }
-
-        currentTasks = available;
-        let html = '';
-        available.forEach((t, i) => {
-          html += `
-            <div class="list-item">
-              <div class="icon" style="background:#c8102e;">📋</div>
-              <div class="info"><h4>${t.title}</h4><p>+${t.reward} Coins • Wait ${t.wait_seconds}s</p></div>
-              <button class="start-btn" onclick="openTaskModal(${i})">Start</button>
-            </div>`;
+        const angle = Math.random() * Math.PI * 2;
+        const vel = 3 + Math.random() * 8;
+        particles.push({
+          mesh,
+          vx: Math.cos(angle) * vel,
+          vy: Math.sin(angle) * vel,
+          vz: (Math.random() - 0.5) * 6,
+          life: 1.0,
+          decay: 1.5 + Math.random() * 1.5
         });
-        container.innerHTML = html;
-      } catch(e) {
-        container.innerHTML = '<div class="card">Failed to load tasks</div>';
       }
     }
 
-    function startDynamicSponsorTask() {
-      const ad = getRandomAd();
-      openActiveTaskExecution({
-        id: 'ad_' + Date.now(),
-        title: 'Sponsor: ' + ad.title,
-        reward: 5,
-        link: ad.url,
-        wait_seconds: 10,
-        is_dynamic_ad: true
-      });
-    }
+    /* ================= MATCH-3 & PHYSICS SOLVER ================= */
+    function findNeighbors(r, c) {
+      const neighbors = [];
+      const isOdd = r % 2 === 1;
+      const offsets = isOdd
+        ? [[-1, 0], [-1, 1], [0, -1], [0, 1], [1, 0], [1, 1]]
+        : [[-1, -1], [-1, 0], [0, -1], [0, 1], [1, -1], [1, 0]];
 
-    function openTaskModal(index) {
-      const task = currentTasks[index];
-      if (!task) return;
-      openActiveTaskExecution(task);
-    }
-
-    function openActiveTaskExecution(task) {
-      activeExecutingTask = task;
-      const modal = document.getElementById('task-modal');
-      const claimBtn = document.getElementById('tm-claim-btn');
-      const prog = document.getElementById('tm-progress');
-      const countdown = document.getElementById('tm-countdown');
-
-      document.getElementById('tm-title').innerText = task.title;
-      document.getElementById('tm-reward-desc').innerText = `Reward: +${task.reward} Coins`;
-
-      modal.style.display = 'flex';
-      claimBtn.disabled = true;
-      claimBtn.innerText = 'Verifying...';
-      prog.style.width = '0%';
-
-      if (task.link) {
-        if (tg?.openLink && !task.link.includes('t.me')) tg.openLink(task.link);
-        else if (tg?.openTelegramLink && task.link.includes('t.me')) tg.openTelegramLink(task.link);
-        else window.open(task.link, '_blank');
-      }
-
-      let totalSecs = task.wait_seconds || 10;
-      let remain = totalSecs;
-
-      if (activeTaskInterval) clearInterval(activeTaskInterval);
-      activeTaskInterval = setInterval(() => {
-        remain--;
-        const pct = Math.floor(((totalSecs - remain) / totalSecs) * 100);
-        prog.style.width = pct + '%';
-        countdown.innerText = `Please wait ${remain}s...`;
-        if (remain <= 0) {
-          clearInterval(activeTaskInterval);
-          countdown.innerText = '✅ Timer Complete!';
-          claimBtn.disabled = false;
-          claimBtn.innerText = `Claim +${task.reward} Coins`;
+      for (const [dr, dc] of offsets) {
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < grid.length) {
+          const maxCols = (nr % 2 === 1) ? GRID_COLS - 1 : GRID_COLS;
+          if (nc >= 0 && nc < maxCols && grid[nr][nc]) {
+            neighbors.push(grid[nr][nc]);
+          }
         }
-      }, 1000);
+      }
+      return neighbors;
     }
 
-    function cancelActiveTask() {
-      if (activeTaskInterval) clearInterval(activeTaskInterval);
-      activeExecutingTask = null;
-      document.getElementById('task-modal').style.display = 'none';
+    function snapAndProcess(shooter) {
+      // Find closest grid slot
+      let bestDist = Infinity;
+      let targetRow = 0;
+      let targetCol = 0;
+
+      for (let r = 0; r < GRID_ROWS + 3; r++) {
+        const cols = (r % 2 === 1) ? GRID_COLS - 1 : GRID_COLS;
+        for (let c = 0; c < cols; c++) {
+          if (grid[r] && grid[r][c]) continue; // occupied
+          const pos = getGridWorldPos(r, c);
+          const dist = Math.hypot(shooter.mesh.position.x - pos.x, shooter.mesh.position.y - pos.y);
+          if (dist < bestDist) {
+            bestDist = dist;
+            targetRow = r;
+            targetCol = c;
+          }
+        }
+      }
+
+      // Expand grid if needed
+      while (grid.length <= targetRow) {
+        grid.push(new Array((grid.length % 2 === 1) ? GRID_COLS - 1 : GRID_COLS).fill(null));
+      }
+
+      // Snap shooter into place
+      const targetPos = getGridWorldPos(targetRow, targetCol);
+      shooter.mesh.position.set(targetPos.x, targetPos.y, 0);
+
+      const bubbleNode = {
+        mesh: shooter.mesh,
+        color: shooter.color,
+        r: targetRow,
+        c: targetCol
+      };
+      grid[targetRow][targetCol] = bubbleNode;
+      activeShooter = null;
+
+      // Flood-Fill Match-3 Search
+      const matched = [];
+      const queue = [bubbleNode];
+      const visited = new Set();
+      visited.add(`${targetRow},${targetCol}`);
+
+      while (queue.length > 0) {
+        const current = queue.shift();
+        matched.push(current);
+
+        for (const neighbor of findNeighbors(current.r, current.c)) {
+          const key = `${neighbor.r},${neighbor.c}`;
+          if (!visited.has(key) && neighbor.color === shooter.color) {
+            visited.add(key);
+            queue.push(neighbor);
+          }
+        }
+      }
+
+      if (matched.length >= 3) {
+        // MATCH BURST!
+        cameraShake = 0.6;
+        hapticNotification('success');
+        triggerComboSplash(matched.length);
+
+        matched.forEach((node, idx) => {
+          setTimeout(() => {
+            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].color);
+            scene.remove(node.mesh);
+            playSound('pop', 1 + idx * 0.15);
+          }, idx * 40);
+          grid[node.r][node.c] = null;
+        });
+
+        score += matched.length * 100 * level;
+        scoreEl.textContent = score;
+
+        // Drop Floating Disconnected Clusters
+        setTimeout(dropFloatingBubbles, matched.length * 40 + 50);
+      } else {
+        // No match sound
+        playSound('bounce');
+      }
+
+      // Post Shot Status Check
+      setTimeout(() => {
+        checkBoardState();
+        if (gameState === 'playing') setupShooter();
+      }, 250);
     }
 
-    async function confirmActiveTask() {
-      if (!activeExecutingTask) return;
-      const t = activeExecutingTask;
-      document.getElementById('task-modal').style.display = 'none';
+    function dropFloatingBubbles() {
+      const connected = new Set();
+      const queue = [];
 
-      try {
-        if (!t.is_dynamic_ad && sb) {
-          // Check max_users again
-          if (t.max_users && t.max_users > 0) {
-            const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
-            if (count >= t.max_users) {
-              alert('This task has reached its maximum completions.');
+      // Ceiling bubbles (Row 0) are always connected anchors
+      if (grid[0]) {
+        for (let c = 0; c < grid[0].length; c++) {
+          if (grid[0][c]) {
+            connected.add(`${0},${c}`);
+            queue.push(grid[0][c]);
+          }
+        }
+      }
+
+      // BFS to mark all connected bubbles
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        for (const n of findNeighbors(curr.r, curr.c)) {
+          const key = `${n.r},${n.c}`;
+          if (!connected.has(key)) {
+            connected.add(key);
+            queue.push(n);
+          }
+        }
+      }
+
+      // Any active bubble not in `connected` falls!
+      let drops = 0;
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+          const node = grid[r][c];
+          if (node && !connected.has(`${r},${c}`)) {
+            grid[r][c] = null;
+            drops++;
+            spawnExplosion(node.mesh.position.x, node.mesh.position.y, PALETTE[node.color].color);
+            scene.remove(node.mesh);
+          }
+        }
+      }
+
+      if (drops > 0) {
+        score += drops * 150 * level;
+        scoreEl.textContent = score;
+        hapticImpact('heavy');
+      }
+    }
+
+    function triggerComboSplash(count) {
+      comboSplash.textContent = `${count}x COMBO!`;
+      comboSplash.style.opacity = '1';
+      comboSplash.style.transform = 'translate(-50%, -50%) scale(1.3)';
+      setTimeout(() => {
+        comboSplash.style.transform = 'translate(-50%, -50%) scale(0)';
+        comboSplash.style.opacity = '0';
+      }, 800);
+    }
+
+    function checkBoardState() {
+      // Check Win: Zero active bubbles remaining
+      let remaining = 0;
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+          if (grid[r][c]) {
+            remaining++;
+            // Check Loss by Overflow reaching bottom
+            if (grid[r][c].mesh.position.y <= CANNON_Y + 1.8) {
+              gameOver('GRID BREACHED!');
               return;
             }
           }
-          const { error } = await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
-          if (error) {
-            alert('⚠️ You already claimed this task!');
-            return;
+        }
+      }
+
+      if (remaining === 0) {
+        levelUp();
+        return;
+      }
+
+      if (shotsLeft <= 0) {
+        gameOver('ENERGY EXHAUSTED');
+      }
+    }
+
+    function levelUp() {
+      gameState = 'leveling';
+      playSound('win');
+      hapticNotification('success');
+      level++;
+      bannerText.textContent = `LEVEL ${level}`;
+      levelBanner.style.display = 'flex';
+
+      setTimeout(() => {
+        levelBanner.style.display = 'none';
+        levelBadge.textContent = `LEVEL ${level}`;
+        shotsLeft = Math.max(14, 24 - level * 2);
+        shotsLeftEl.textContent = `⚡ SHOTS: ${shotsLeft}`;
+        initGrid();
+        setupShooter();
+        gameState = 'playing';
+      }, 1800);
+    }
+
+    function gameOver(reason) {
+      gameState = 'gameover';
+      hapticNotification('error');
+      document.getElementById('game-over-title').textContent = reason;
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('bubble3DBest', bestScore);
+        bestEl.textContent = `BEST: ${bestScore}`;
+      }
+      finalScoreEl.textContent = score;
+      bestScoreTextEl.textContent = `BEST RECORD: ${bestScore}`;
+      gameOverEl.style.display = 'flex';
+    }
+
+    /* ================= MAIN ANIMATION & RENDER LOOP ================= */
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      requestAnimationFrame(animate);
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime = currentTime;
+
+      // Cannon spring recovery
+      cannonGroup.position.y += (CANNON_Y - cannonGroup.position.y) * 8 * dt;
+
+      // Ambient Starfield Rotation
+      stars.rotation.y += 0.04 * dt;
+      stars.rotation.x += 0.02 * dt;
+
+      // Flying Bubble Mechanics
+      if (activeShooter && activeShooter.isFlying) {
+        const b = activeShooter;
+        b.mesh.position.x += b.vx * dt;
+        b.mesh.position.y += b.vy * dt;
+
+        // Spin flying orb in 3D
+        b.mesh.rotation.x += 10 * dt;
+        b.mesh.rotation.y += 8 * dt;
+
+        // Wall Bouncing
+        const leftLimit = -WORLD_WIDTH / 2 + BUBBLE_RADIUS;
+        const rightLimit = WORLD_WIDTH / 2 - BUBBLE_RADIUS;
+
+        if (b.mesh.position.x <= leftLimit) {
+          b.mesh.position.x = leftLimit;
+          b.vx *= -1;
+          playSound('bounce');
+          hapticImpact('light');
+        } else if (b.mesh.position.x >= rightLimit) {
+          b.mesh.position.x = rightLimit;
+          b.vx *= -1;
+          playSound('bounce');
+          hapticImpact('light');
+        }
+
+        // Ceiling collision
+        if (b.mesh.position.y >= TOP_WALL_Y - BUBBLE_RADIUS) {
+          b.isFlying = false;
+          snapAndProcess(b);
+        } else {
+          // Check collision against grid
+          outerLoop:
+          for (let r = 0; r < grid.length; r++) {
+            for (let c = 0; c < grid[r].length; c++) {
+              const target = grid[r][c];
+              if (!target) continue;
+              const dist = b.mesh.position.distanceTo(target.mesh.position);
+              if (dist <= BUBBLE_RADIUS * 1.85) {
+                b.isFlying = false;
+                snapAndProcess(b);
+                break outerLoop;
+              }
+            }
           }
         }
-        await recordTx(Number(t.reward), 'task', 'Completed: ' + t.title);
-        alert(`✅ Verified! +${t.reward} Coins credited.`);
-        loadCategoryTasks(currentCategory);
-      } catch(e) {
-        console.error('Error claiming task', e);
       }
-      activeExecutingTask = null;
-    }
 
-    // ========== PROMOTE ==========
-    function openPromoteForm(type) {
-      if (isAppPaused()) return showPausedMessage();
-      if (isCategoryPaused('promote')) return showPausedMessage('Promote is temporarily paused by admin.');
-      if (!checkGateAccess()) return;
-      currentPromoType = type;
-      const titles = {
-        channel: 'Promote Channel / Group',
-        bot: 'Promote Bot',
-        views: 'Views & Likes',
-        watch: 'Promote Video / Watch',
-        install: 'App Installs',
-        website: 'Website Traffic',
-        affiliate: 'Affiliate Offer',
-        products: 'Product Promotion',
-        banner: 'Place Banner Ad',
-        monetize: 'Monetize Channel / Group'
-      };
-      document.getElementById('promote-form-title').innerText = titles[type] || 'Order Promotion';
-      document.getElementById('promo-link').value = '';
-      document.getElementById('promo-qty').value = type === 'banner' || type === 'monetize' ? 1 : 100;
-      document.getElementById('promo-title').value = '';
-      document.getElementById('promo-wait').value = 15;
-      updatePromoCost();
-      showPage('promote-form');
-    }
-
-    function updatePromoCost() {
-      const qty = Number(document.getElementById('promo-qty').value) || 10;
-      let total = 0;
-      if (currentPromoType === 'banner') total = prices.banner || 500;
-      else if (currentPromoType === 'monetize') total = 0;
-      else {
-        const rate = prices[currentPromoType] || 60;
-        total = Math.ceil(qty * (rate / 100));
-      }
-      document.getElementById('promo-cost').innerText = total === 0 ? 'Free Application' : `Cost: ${total} Coins (Users get ~50%)`;
-    }
-
-    async function submitPromoteOrder() {
-      const link = document.getElementById('promo-link').value.trim();
-      const title = document.getElementById('promo-title').value.trim() || `Promote: ${link}`;
-      const qty = Number(document.getElementById('promo-qty').value) || 10;
-      const wait = Number(document.getElementById('promo-wait').value) || 15;
-
-      if (currentPromoType === 'monetize') {
-        if (!link) return alert('Please enter your channel link');
-        if (sb) {
-          await sb.from('monetize_requests').insert([{
-            telegram_id: userId,
-            channel_link: link,
-            status: 'pending',
-            notes: title
-          }]);
+      // Update Particle Explosions
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= p.decay * dt;
+        if (p.life <= 0) {
+          scene.remove(p.mesh);
+          particles.splice(i, 1);
+          continue;
         }
-        alert('✅ Monetize application submitted!\nAdmin will review within 24-48 hours.');
-        showPage('promote');
-        return;
+        p.mesh.position.x += p.vx * dt;
+        p.mesh.position.y += p.vy * dt;
+        p.mesh.position.z += p.vz * dt;
+        p.mesh.scale.setScalar(p.life * 0.18);
+        p.mesh.material.opacity = p.life;
       }
 
-      if (!link) return alert('Please enter your promotion link');
-
-      let total = 0;
-      if (currentPromoType === 'banner') total = prices.banner || 500;
-      else {
-        const rate = prices[currentPromoType] || 60;
-        total = Math.ceil(qty * (rate / 100));
-      }
-
-      if (balance < total) return alert(`Insufficient coins! Need ${total} coins.`);
-
-      await recordTx(-total, 'promo', 'Promote Order: ' + currentPromoType);
-
-      // 50% of cost goes to user rewards
-      const userShare = Math.floor(total * 0.5);
-      const perUserReward = Math.max(3, Math.floor(userShare / Math.max(qty, 1)));
-
-      if (sb) {
-        await sb.from('tasks').insert([{
-          title: title,
-          category: currentPromoType === 'banner' ? 'other' : currentPromoType,
-          reward: perUserReward,
-          link: link,
-          wait_seconds: wait,
-          max_users: qty,
-          is_active: true,
-          from_promo: true
-        }]);
-      }
-      alert(`✅ Promotion Published!\nCost: ${total} Coins\nUsers will get ~${perUserReward} coins each (50% share)`);
-      showPage('promote');
-    }
-
-    // ========== CROSS PROMOTION ==========
-    async function startCrossPromo() {
-      if (!checkGateAccess()) return;
-      const today = new Date().toDateString();
-      const key = 'vtn_cross_' + userId + '_' + today;
-      let count = Number(localStorage.getItem(key) || 0);
-      if (count >= 3) {
-        alert('You already used 3 free cross promotions today.');
-        return;
-      }
-      const link = prompt('Enter your Channel / Bot / Post link:');
-      if (!link) return;
-      count++;
-      localStorage.setItem(key, count);
-
-      if (sb) {
-        await sb.from('cross_promos').insert([{
-          telegram_id: userId,
-          link: link,
-          status: 'pending'
-        }]);
-      }
-      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\nAdmin will review.');
-    }
-
-    // ========== REFERRAL ==========
-    function getInviteLink() {
-      return `https://t.me/${botUsername}?startapp=ref_${userId}`;
-    }
-
-    function generateInviteLink() {
-      document.getElementById('ref-link-input').value = getInviteLink();
-    }
-
-    function shareOnTelegram() {
-      const link = getInviteLink();
-      const msg = encodeURIComponent("🎁 Join VTN Hub to complete simple tasks & earn daily coins!\nJoin here:\n" + link);
-      const url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${msg}`;
-      if (tg?.openTelegramLink) tg.openTelegramLink(url);
-      else window.open(url, '_blank');
-    }
-
-    function copyInviteLink() {
-      const link = getInviteLink();
-      if (navigator.clipboard) navigator.clipboard.writeText(link).then(()=>alert('Copied!')).catch(()=>alert(link));
-      else alert(link);
-    }
-
-    async function submitManualRef() {
-      const code = document.getElementById('manual-ref-code').value.trim().replace(/^ref_/, '');
-      if (!code) return alert('Enter a valid ID');
-      if (code === userId) return alert('Cannot refer yourself!');
-
-      const { data } = await sb.from('users').select('*').eq('telegram_id', userId).maybeSingle();
-      if (data && data.referred_by) return alert('You have already claimed an invite code!');
-
-      await sb.from('users').update({ referred_by: code }).eq('telegram_id', userId);
-      await recordTx(20, 'referral_welcome', 'Manual referral code bonus');
-      await rewardReferrer(code);
-      alert('🎉 +20 Coins to you & +50 Coins to your friend!');
-    }
-
-    // ========== GAMES ==========
-    function enterGame(g) {
-      if (isAppPaused()) return showPausedMessage();
-      if (isCategoryPaused('games')) return showPausedMessage('Games are temporarily paused by admin.');
-      if (!checkGateAccess()) return;
-      if (g === 'TicTacToe') startTTT();
-      else if (g === 'Spin') showPage('game-spin');
-      else if (g === 'Quiz') startQuiz();
-      else if (g === 'Dart') { dartHits=0; document.getElementById('dart-score').innerText='0'; showPage('game-dart'); }
-      else if (g === 'Fruit') { fruitHits=0; document.getElementById('fruit-score').innerText='0'; showPage('game-fruit'); }
-      else if (g === 'Shoot') { shootHits=0; document.getElementById('shoot-score').innerText='0'; showPage('game-shoot'); }
-      else if (g === 'Tower') { towerHeight=0; document.getElementById('tower-score').innerText='0'; showPage('game-tower'); }
-      else if (g === 'Sudoku') startSudoku();
-    }
-
-    let tttBoard = ['','','','','','','','',''];
-    function startTTT() {
-      tttBoard = ['','','','','','','','',''];
-      document.getElementById('ttt-claim').style.display = 'none';
-      renderTTT(); showPage('game-ttt');
-    }
-    function renderTTT() {
-      const b = document.getElementById('ttt-board'); b.innerHTML = '';
-      tttBoard.forEach((c, i) => {
-        const d = document.createElement('div'); d.className = 'ttt-cell'; d.innerText = c;
-        d.onclick = () => {
-          if (tttBoard[i]) return;
-          tttBoard[i] = 'X'; renderTTT();
-          setTimeout(() => {
-            const empty = tttBoard.map((v,idx)=>v===''?idx:null).filter(v=>v!==null);
-            if (empty.length) tttBoard[empty[Math.floor(Math.random()*empty.length)]] = 'O';
-            renderTTT();
-            document.getElementById('ttt-claim').style.display = 'inline-block';
-          }, 300);
-        };
-        b.appendChild(d);
-      });
-    }
-    function claimTTT() { grantGameReward(3, 'TicTacToe'); }
-
-    function doSpin() {
-      const prize = Math.floor(Math.random()*6)+2;
-      document.getElementById('spin-wheel').style.transform = `rotate(${1800 + prize*40}deg)`;
-      setTimeout(() => {
-        document.getElementById('spin-result').innerText = `You won ${prize} Coins!`;
-        grantGameReward(prize, 'Spin');
-      }, 4200);
-    }
-
-    const quizList = [{q:'Capital of India?', a:['Delhi','Mumbai','Goa'], c:0}, {q:'Sun rises in?', a:['West','East','North'], c:1}];
-    function startQuiz() {
-      const item = quizList[Math.floor(Math.random()*quizList.length)];
-      document.getElementById('quiz-question').innerText = item.q;
-      const optBox = document.getElementById('quiz-options'); optBox.innerHTML = '';
-      item.a.forEach((ans, i) => {
-        const d = document.createElement('div'); d.className = 'quiz-option'; d.innerText = ans;
-        d.onclick = () => {
-          if (i === item.c) grantGameReward(3, 'Quiz');
-          else alert('Wrong answer!');
-        };
-        optBox.appendChild(d);
-      });
-      showPage('game-quiz');
-    }
-
-    let dartHits = 0; function startDart() { alert('Tap the target 10 times!'); }
-    function hitDart() { dartHits++; document.getElementById('dart-score').innerText = dartHits; if (dartHits >= 10) grantGameReward(4, 'Dart'); }
-    let fruitHits = 0; function startFruit() { alert('Tap fruit 8 times!'); }
-    function hitFruit() { fruitHits++; document.getElementById('fruit-score').innerText = fruitHits; if (fruitHits >= 8) grantGameReward(4, 'Fruit'); }
-    let shootHits = 0; function startShoot() { alert('Tap 8 targets!'); }
-    function hitShoot() { shootHits++; document.getElementById('shoot-score').innerText = shootHits; if (shootHits >= 8) grantGameReward(4, 'Shoot'); }
-    let towerHeight = 0; function dropTower() { towerHeight++; document.getElementById('tower-score').innerText = towerHeight; if (towerHeight >= 8) grantGameReward(4, 'Tower'); }
-
-    function startSudoku() {
-      const b = document.getElementById('sudoku-board'); b.innerHTML = '';
-      for (let i=0; i<16; i++) {
-        const inp = document.createElement('input'); inp.type = 'number'; inp.value = (i%4)+1;
-        inp.style.cssText = 'width:50px;height:50px;text-align:center;font-size:18px;border:2px solid #c8102e;border-radius:8px;';
-        b.appendChild(inp);
-      }
-      showPage('game-sudoku');
-    }
-    function checkSudoku() { grantGameReward(5, 'Sudoku'); }
-
-    // ========== WALLET ==========
-    function openWithdraw(type) {
-      if (!checkGateAccess()) return;
-      if (userId.startsWith('guest_')) {
-        alert('Please open this app from Telegram to withdraw.');
-        return;
-      }
-      currentWithdrawType = type;
-      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank (INR)' : 'USDT TRC20 Address';
-      showPage('withdraw-form');
-    }
-
-    async function submitWithdraw() {
-      const addr = document.getElementById('withdraw-address').value.trim();
-      const amt = Number(document.getElementById('withdraw-amount').value) || 0;
-      if (!addr) return alert('Enter withdrawal address');
-      if (amt < 500) return alert('Minimum withdrawal is 500 Coins');
-      if (balance < amt) return alert('Insufficient balance');
-
-      await recordTx(-amt, 'withdraw', `Withdrawal (${currentWithdrawType.toUpperCase()}) to ${addr}`);
-      if (sb) {
-        await sb.from('withdrawals').insert([{
-          telegram_id: userId,
-          amount: amt,
-          payout_type: currentWithdrawType,
-          address: addr,
-          status: 'pending'
-        }]);
-      }
-      alert('✅ Withdrawal request submitted! Admin will process within 24 hours.');
-      showPage('wallet');
-    }
-
-    async function openWalletHistory(type) {
-      const cont = document.getElementById('history-container');
-      const list = document.getElementById('history-list');
-      cont.style.display = 'block';
-      list.innerHTML = '<div class="card" style="text-align:center;">Loading...</div>';
-
-      if (!sb) return;
-      const { data } = await sb.from('transactions').select('*').eq('telegram_id', userId).order('id', {ascending:false});
-      const filtered = (data || []).filter(item => type === 'task' ? (item.type === 'task' || item.type === 'official' || item.type === 'auto_earn' || item.type === 'daily' || item.type === 'signup') : (item.type !== 'task' && item.type !== 'auto_earn'));
-
-      if (!filtered.length) {
-        list.innerHTML = '<div class="card" style="text-align:center;color:#888;">No history yet.</div>';
-        return;
-      }
-      let html = '';
-      filtered.forEach(it => {
-        const isPos = it.amount > 0;
-        html += `
-          <div class="list-item" style="border-left:4px solid ${isPos?'#4CAF50':'#c8102e'};">
-            <div class="info"><h4>${it.description}</h4><p>${it.created_at ? new Date(it.created_at).toLocaleString() : ''}</p></div>
-            <div style="font-weight:900;color:${isPos?'#2E7D32':'#c8102e'};">${isPos?'+':''}${it.amount}</div>
-          </div>`;
-      });
-      list.innerHTML = html;
-    }
-    function closeWalletHistory() { document.getElementById('history-container').style.display = 'none'; }
-
-    // ========== STRONGER ADMIN PANEL ==========
-    function promptAdminPin() {
-      // Strong check: must be allowed Telegram ID + correct PIN
-      if (!ALLOWED_ADMIN_IDS.includes(String(userId))) {
-        alert('❌ Access Denied. This panel is restricted.');
-        return;
-      }
-      const pin = prompt('Enter Master Admin PIN:');
-      if (pin === adminPin) {
-        showPage('admin');
-        loadAdminPanel();
+      // Screen Camera Shake decay
+      if (cameraShake > 0) {
+        camera.position.x = (Math.random() - 0.5) * cameraShake;
+        camera.position.y = (Math.random() - 0.5) * cameraShake;
+        cameraShake = Math.max(0, cameraShake - dt * 2.5);
       } else {
-        alert('❌ Incorrect PIN. Access denied.');
+        camera.position.x = 0;
+        camera.position.y = 0;
       }
+
+      renderer.render(scene, camera);
     }
 
-    async function loadAdminPanel() {
-      document.getElementById('admin-bot-input').value = botUsername;
-      document.getElementById('admin-channel-link-input').value = officialChannelLink;
-      document.getElementById('admin-gate-required').value = gateRequired ? 'true' : 'false';
-      document.getElementById('admin-pin-input').value = adminPin;
-      document.getElementById('admin-signup-bonus').value = signupBonus;
-
-      // Load prices
-      document.getElementById('price-channel').value = prices.channel || 200;
-      document.getElementById('price-bot').value = prices.bot || 150;
-      document.getElementById('price-views').value = prices.views || 50;
-      document.getElementById('price-watch').value = prices.watch || 70;
-      document.getElementById('price-install').value = prices.install || 300;
-      document.getElementById('price-website').value = prices.website || 80;
-      document.getElementById('price-affiliate').value = prices.affiliate || 40;
-      document.getElementById('price-products').value = prices.products || 50;
-      document.getElementById('price-banner').value = prices.banner || 500;
-
-      // Load App Status & Category Pauses
-      document.getElementById('admin-app-status').value = appStatus || 'live';
-      document.getElementById('admin-pause-msg').value = pauseMessage || '';
-      if (pauseUntil) {
-        try {
-          const d = new Date(pauseUntil);
-          document.getElementById('admin-pause-until').value = d.toISOString().slice(0, 16);
-        } catch(e) {}
-      } else {
-        document.getElementById('admin-pause-until').value = '';
-      }
-      // Checkboxes
-      const cats = ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'];
-      cats.forEach(c => {
-        const el = document.getElementById('pause-' + c);
-        if (el) el.checked = !!categoryPauses[c];
-      });
-
-      loadMasterStats();
-      loadAdminAdsList();
-      loadAdminPayouts();
-      loadAdminTaskList();
+    /* ================= RESIZE & REORIENT ================= */
+    function onWindowResize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
     }
+    window.addEventListener('resize', onWindowResize);
 
-    async function saveAppStatus() {
-      appStatus = document.getElementById('admin-app-status').value;
-      pauseMessage = document.getElementById('admin-pause-msg').value.trim() || 'App is under maintenance. Please check back later.';
-      const untilVal = document.getElementById('admin-pause-until').value;
-      pauseUntil = untilVal ? new Date(untilVal).toISOString() : null;
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('restart-btn').addEventListener('click', startGame);
 
-      if (sb) {
-        await sb.from('app_settings').upsert([
-          { setting_key: 'app_status', setting_value: appStatus },
-          { setting_key: 'pause_message', setting_value: pauseMessage },
-          { setting_key: 'pause_until', setting_value: pauseUntil || '' }
-        ]);
-      }
-      alert(appStatus === 'paused' ? '🔴 App is now PAUSED. Users will see the maintenance message.' : '🟢 App is now LIVE.');
-    }
-
-    async function saveCategoryPauses() {
-      const cats = ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'];
-      cats.forEach(c => {
-        const el = document.getElementById('pause-' + c);
-        categoryPauses[c] = el ? el.checked : false;
-      });
-      if (sb) {
-        await sb.from('app_settings').upsert([
-          { setting_key: 'category_pauses', setting_value: JSON.stringify(categoryPauses) }
-        ]);
-      }
-      alert('✅ Category pause settings saved!');
-    }
-
-    async function loadMasterStats() {
-      if (!sb) return;
-      try {
-        const { count: userCount, data: users } = await sb.from('users').select('balance', { count: 'exact' });
-        const totalBal = (users || []).reduce((acc, u) => acc + (Number(u.balance) || 0), 0);
-        document.getElementById('stat-total-users').innerText = userCount || 0;
-        document.getElementById('stat-total-liability').innerText = totalBal.toLocaleString();
-
-        const { count: pendingCount } = await sb.from('withdrawals').select('*', { count: 'exact', head: true }).eq('status', 'pending');
-        document.getElementById('stat-pending-withdraws').innerText = pendingCount || 0;
-
-        const { count: taskCount } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true });
-        document.getElementById('stat-completed-tasks').innerText = taskCount || 0;
-      } catch(e) {}
-    }
-
-    function loadAdminAdsList() {
-      const cont = document.getElementById('admin-ads-list');
-      if (!sponsorAds || sponsorAds.length === 0) {
-        cont.innerHTML = '<div style="color:#888;font-size:12px;">No custom sponsor ads yet.</div>';
-        return;
-      }
-      let html = '';
-      sponsorAds.forEach((ad, idx) => {
-        html += `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:12px;">
-            <div><b>${ad.title}</b><br><span style="color:#666;font-size:10px;">${ad.url}</span></div>
-            <button class="start-btn" style="background:#c8102e;padding:4px 8px;font-size:10px;" onclick="adminDeleteAd(${idx})">Delete</button>
-          </div>`;
-      });
-      cont.innerHTML = html;
-    }
-
-    async function adminAddAd() {
-      const title = document.getElementById('admin-ad-title').value.trim();
-      const url = document.getElementById('admin-ad-url').value.trim();
-      if (!title || !url) return alert('Enter title & URL');
-      sponsorAds.push({ id: Date.now(), title, url });
-      if (sb) await sb.from('app_settings').upsert([{ setting_key: 'sponsor_ads', setting_value: JSON.stringify(sponsorAds) }]);
-      document.getElementById('admin-ad-title').value = '';
-      document.getElementById('admin-ad-url').value = '';
-      loadAdminAdsList();
-      alert('✅ Sponsor ad saved!');
-    }
-
-    async function adminDeleteAd(index) {
-      sponsorAds.splice(index, 1);
-      if (sb) await sb.from('app_settings').upsert([{ setting_key: 'sponsor_ads', setting_value: JSON.stringify(sponsorAds) }]);
-      loadAdminAdsList();
-    }
-
-    async function adminPublishBroadcast() {
-      const msg = document.getElementById('admin-broadcast-msg').value.trim();
-      if (!msg) return alert('Enter message');
-      if (sb) {
-        await sb.from('announcements').update({ is_active: false }).neq('id', 0);
-        await sb.from('announcements').insert([{ message: msg, is_active: true }]);
-        alert('📢 Broadcast published!');
-        listenBroadcast();
-      }
-    }
-
-    async function adminClearBroadcast() {
-      if (sb) {
-        await sb.from('announcements').update({ is_active: false }).neq('id', 0);
-        document.getElementById('shoutcast-bar').style.display = 'none';
-        alert('Broadcast cleared.');
-      }
-    }
-
-    async function loadAdminPayouts() {
-      const cont = document.getElementById('admin-withdrawals-list');
-      if (!sb) return;
-      const { data } = await sb.from('withdrawals').select('*').eq('status', 'pending').order('id', {ascending:false});
-      if (!data || !data.length) { cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending requests</div>'; return; }
-      let html = '';
-      data.forEach(w => {
-        html += `
-          <div class="list-item" style="border-left:4px solid #FF9800;">
-            <div class="info"><h4>${w.payout_type.toUpperCase()}: ${w.amount} Coins</h4><p>User: ${w.telegram_id}<br>Addr: <b>${w.address}</b></p></div>
-            <div>
-              <button class="start-btn" style="background:#4CAF50;margin-bottom:4px;" onclick="approvePayout(${w.id})">Approve</button><br>
-              <button class="start-btn" style="background:#c8102e;" onclick="rejectPayout(${w.id}, '${w.telegram_id}', ${w.amount})">Reject</button>
-            </div>
-          </div>`;
-      });
-      cont.innerHTML = html;
-    }
-
-    async function approvePayout(id) {
-      if (!confirm('Mark as Paid?')) return;
-      await sb.from('withdrawals').update({ status: 'approved' }).eq('id', id);
-      alert('Approved'); loadAdminPayouts(); loadMasterStats();
-    }
-
-    async function rejectPayout(id, uid, amt) {
-      if (!confirm('Reject and refund coins?')) return;
-      await sb.from('withdrawals').update({ status: 'rejected' }).eq('id', id);
-      const { data } = await sb.from('users').select('balance').eq('telegram_id', uid).maybeSingle();
-      if (data) {
-        await sb.from('users').update({ balance: (Number(data.balance)||0) + Number(amt) }).eq('telegram_id', uid);
-      }
-      alert('Rejected & Refunded'); loadAdminPayouts(); loadMasterStats();
-    }
-
-    async function saveAdminSettings() {
-      const bName = document.getElementById('admin-bot-input').value.trim().replace('@', '');
-      const pin = document.getElementById('admin-pin-input').value.trim();
-      const chLink = document.getElementById('admin-channel-link-input').value.trim();
-      const reqGate = document.getElementById('admin-gate-required').value;
-      const sBonus = Number(document.getElementById('admin-signup-bonus').value) || 30;
-
-      if (bName) botUsername = bName;
-      if (pin) adminPin = pin;
-      if (chLink) officialChannelLink = chLink;
-      gateRequired = (reqGate === 'true');
-      signupBonus = sBonus;
-
-      if (sb) {
-        await sb.from('app_settings').upsert([
-          { setting_key: 'bot_username', setting_value: bName },
-          { setting_key: 'admin_pin', setting_value: pin },
-          { setting_key: 'channel_link', setting_value: chLink },
-          { setting_key: 'gate_required', setting_value: reqGate },
-          { setting_key: 'signup_bonus', setting_value: String(sBonus) }
-        ]);
-      }
-      generateInviteLink();
-      alert('✅ Settings saved!');
-    }
-
-    async function savePriceSettings() {
-      prices.channel = Number(document.getElementById('price-channel').value) || 200;
-      prices.bot = Number(document.getElementById('price-bot').value) || 150;
-      prices.views = Number(document.getElementById('price-views').value) || 50;
-      prices.watch = Number(document.getElementById('price-watch').value) || 70;
-      prices.install = Number(document.getElementById('price-install').value) || 300;
-      prices.website = Number(document.getElementById('price-website').value) || 80;
-      prices.affiliate = Number(document.getElementById('price-affiliate').value) || 40;
-      prices.products = Number(document.getElementById('price-products').value) || 50;
-      prices.banner = Number(document.getElementById('price-banner').value) || 500;
-
-      if (sb) {
-        await sb.from('app_settings').upsert([{ setting_key: 'prices', setting_value: JSON.stringify(prices) }]);
-      }
-      alert('✅ Prices saved!');
-    }
-
-    async function adminModifyCoins(action) {
-      const uid = document.getElementById('admin-target-uid').value.trim();
-      const val = Number(document.getElementById('admin-coin-val').value) || 0;
-      if (!uid || val <= 0) return alert('Enter valid ID and amount');
-      const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
-      if (!data) return alert('User not found');
-      const newBal = action === 'add' ? (Number(data.balance)||0)+val : Math.max(0, (Number(data.balance)||0)-val);
-      await sb.from('users').update({ balance: newBal }).eq('telegram_id', uid);
-      await sb.from('transactions').insert([{ telegram_id: uid, amount: action==='add'?val:-val, type: 'admin', description: 'Admin adjustment' }]);
-      alert(`✅ User ${uid} now has ${newBal} Coins.`);
-      loadMasterStats();
-    }
-
-    async function adminInspectUser() {
-      const uid = document.getElementById('admin-target-uid').value.trim();
-      if (!uid) return alert('Enter Telegram User ID');
-      const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
-      if (!data) return alert('User not found');
-      document.getElementById('admin-user-stat').innerHTML = `
-        <b>Name:</b> ${data.first_name || 'N/A'} | <b>Balance:</b> ${data.balance}<br>
-        <b>Invites:</b> ${data.referral_count} | <b>Ref Earnings:</b> ${data.referral_earnings}<br>
-        <b>Status:</b> ${data.is_blocked?'BLOCKED':'ACTIVE'} | <b>Gate:</b> ${data.official_verified?'YES':'NO'}
-      `;
-    }
-
-    async function adminToggleUserBlock() {
-      const uid = document.getElementById('admin-target-uid').value.trim();
-      if (!uid) return alert('Enter User ID');
-      const { data } = await sb.from('users').select('*').eq('telegram_id', uid).maybeSingle();
-      if (!data) return alert('User not found');
-      const newStatus = !data.is_blocked;
-      await sb.from('users').update({ is_blocked: newStatus }).eq('telegram_id', uid);
-      alert(`User ${uid} is now ${newStatus?'BLOCKED':'UNBLOCKED'}`);
-    }
-
-    async function adminCreateTask() {
-      const title = document.getElementById('admin-task-title').value.trim();
-      const category = document.getElementById('admin-task-cat').value;
-      const reward = Number(document.getElementById('admin-task-reward').value) || 10;
-      const link = document.getElementById('admin-task-link').value.trim();
-      const wait = Number(document.getElementById('admin-task-wait').value) || 10;
-      const maxUsers = Number(document.getElementById('admin-task-max').value) || 0;
-      if (!title) return alert('Enter title');
-      await sb.from('tasks').insert([{ title, category, reward, link, wait_seconds: wait, max_users: maxUsers, is_active: true }]);
-      alert('✅ Task Published');
-      document.getElementById('admin-task-title').value = '';
-      loadAdminTaskList();
-    }
-
-    async function loadAdminTaskList() {
-      const cont = document.getElementById('admin-task-list');
-      const { data } = await sb.from('tasks').select('*').order('id', {ascending:false});
-      cont.innerHTML = '';
-      (data || []).forEach(t => {
-        cont.innerHTML += `<div class="list-item"><div class="info"><h4>${t.title}</h4><p>${t.category} • +${t.reward} • Max: ${t.max_users||'∞'}</p></div><button class="start-btn" style="background:#c8102e;" onclick="deleteDbTask(${t.id})">Del</button></div>`;
-      });
-    }
-
-    async function deleteDbTask(id) {
-      if (!confirm('Delete task?')) return;
-      await sb.from('tasks').delete().eq('id', id);
-      loadAdminTaskList();
-    }
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById(id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const map = { home:0, earn:1, promote:2, fun:3, profile:4, wallet:0, refer:4, admin:4, 'category-tasks':1, 'chat-page':3, 'promote-form':2, 'withdraw-form':0 };
-      if (map[id] !== undefined) document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
-    }
-
-    initApp();
+    // Initial render call
+    requestAnimationFrame(animate);
   </script>
 </body>
 </html>
