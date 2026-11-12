@@ -774,11 +774,39 @@
         <div class="form-group"><label>Link</label><input type="text" id="admin-task-link" placeholder="https://t.me/..."></div>
         <div class="form-group"><label>Wait Seconds</label><input type="number" id="admin-task-wait" value="10"></div>
         <div class="form-group"><label>Max Completions (0 = unlimited)</label><input type="number" id="admin-task-max" value="0"></div>
+        <div class="form-group"><label>Require Proof before paying?</label>
+          <select id="admin-task-proof">
+            <option value="none">No – pay after timer</option>
+            <option value="text">Yes – Text / UID / Order ID</option>
+            <option value="ss">Yes – Screenshot link / description</option>
+          </select>
+        </div>
         <button class="gold-btn" style="width:100%;" onclick="adminCreateTask()">+ Publish Task</button>
       </div>
 
-      <div class="section-title">Active Database Tasks</div>
-      <div id="admin-task-list"><div class="card">Loading...</div></div>
+      <div class="section-title">Pending Proofs (Approve = Pay User)</div>
+      <div id="admin-proofs-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+
+      <div class="section-title">All Tasks (filter & delete)</div>
+      <div class="card" style="padding:12px;">
+        <select id="admin-task-filter" onchange="loadAdminTaskList()" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #e2e8f0;margin-bottom:10px;">
+          <option value="all">All Categories</option>
+          <option value="join">Join</option>
+          <option value="bot">Bot</option>
+          <option value="watch">Watch</option>
+          <option value="views">Views</option>
+          <option value="install">Install</option>
+          <option value="website">Website</option>
+          <option value="affiliate">Affiliate</option>
+          <option value="products">Products</option>
+          <option value="other">Other / Promo</option>
+        </select>
+        <div id="admin-task-list"><div style="text-align:center;color:#888;">Loading...</div></div>
+      </div>
+
+      <div class="section-title">Recent Task Completions (History)</div>
+      <div id="admin-completion-history"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Exit Admin</button></div>
     </div>
 
@@ -794,6 +822,10 @@
         <div class="progress-bar-fill" id="tm-progress"></div>
       </div>
       <div style="font-weight:800;font-size:14px;color:#c8102e;margin-bottom:14px;" id="tm-countdown">Please wait...</div>
+      <div id="tm-proof-box" style="display:none;text-align:left;margin-bottom:10px;">
+        <label style="font-size:12px;font-weight:700;color:#555;" id="tm-proof-label">Submit proof</label>
+        <input type="text" id="tm-proof-input" placeholder="UID / Order ID / Screenshot link" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;margin-top:4px;font-size:14px;">
+      </div>
       <button class="gold-btn" id="tm-claim-btn" style="width:100%;margin-bottom:8px;" disabled onclick="confirmActiveTask()">Wait for Timer...</button>
       <button class="start-btn" style="width:100%;background:#666;" onclick="cancelActiveTask()">Cancel Task</button>
     </div>
@@ -1767,9 +1799,25 @@
       const claimBtn = document.getElementById('tm-claim-btn');
       const prog = document.getElementById('tm-progress');
       const countdown = document.getElementById('tm-countdown');
+      const proofBox = document.getElementById('tm-proof-box');
+      const proofInput = document.getElementById('tm-proof-input');
+      const proofLabel = document.getElementById('tm-proof-label');
 
       document.getElementById('tm-title').innerText = task.title;
       document.getElementById('tm-reward-desc').innerText = `Reward: +${task.reward} Coins`;
+      if (proofInput) proofInput.value = '';
+
+      const needsProof = task.require_proof && task.require_proof !== 'none';
+      if (proofBox) {
+        if (needsProof) {
+          proofBox.style.display = 'block';
+          if (proofLabel) proofLabel.innerText = task.require_proof === 'ss'
+            ? 'Paste screenshot link or describe proof'
+            : 'Enter UID / Order ID / Text proof';
+        } else {
+          proofBox.style.display = 'none';
+        }
+      }
 
       modal.style.display = 'flex';
       claimBtn.disabled = true;
@@ -1777,12 +1825,10 @@
       prog.style.width = '0%';
 
       if (task.link) {
-        if (tg?.openLink && !task.link.includes('t.me')) tg.openLink(task.link);
-        else if (tg?.openTelegramLink && task.link.includes('t.me')) tg.openTelegramLink(task.link);
-        else window.open(task.link, '_blank');
+        openLinkInTelegram(task.link);
       }
 
-      let totalSecs = task.wait_seconds || 10;
+      let totalSecs = Math.max(3, Number(task.wait_seconds) || 10);
       let remain = totalSecs;
 
       if (activeTaskInterval) clearInterval(activeTaskInterval);
@@ -1793,9 +1839,11 @@
         countdown.innerText = `Please wait ${remain}s...`;
         if (remain <= 0) {
           clearInterval(activeTaskInterval);
-          countdown.innerText = '✅ Timer Complete!';
+          countdown.innerText = needsProof ? '✅ Timer done – submit proof' : '✅ Timer Complete!';
           claimBtn.disabled = false;
-          claimBtn.innerText = `Claim +${task.reward} Coins`;
+          claimBtn.innerText = needsProof
+            ? 'Submit Proof for Review'
+            : `Claim +${task.reward} Coins`;
         }
       }, 1000);
     }
@@ -1808,32 +1856,85 @@
 
     async function confirmActiveTask() {
       if (!activeExecutingTask) return;
+      if (!isRealTelegramUser()) {
+        alert('Open from official Telegram bot to earn.');
+        return;
+      }
       const t = activeExecutingTask;
-      document.getElementById('task-modal').style.display = 'none';
+      const needsProof = t.require_proof && t.require_proof !== 'none';
+      const proofVal = (document.getElementById('tm-proof-input')?.value || '').trim();
+
+      if (needsProof && !proofVal) {
+        alert('Please enter your proof before submitting.');
+        return;
+      }
+
+      // Disable button to avoid double click
+      const claimBtn = document.getElementById('tm-claim-btn');
+      if (claimBtn) claimBtn.disabled = true;
 
       try {
         if (!t.is_dynamic_ad && sb) {
-          // Check max_users again
           if (t.max_users && t.max_users > 0) {
             const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
             if (count >= t.max_users) {
               alert('This task has reached its maximum completions.');
+              document.getElementById('task-modal').style.display = 'none';
+              activeExecutingTask = null;
               return;
             }
           }
+
+          // Mark as completed attempt (blocks double claim)
           const { error } = await sb.from('completed_tasks').insert([{ telegram_id: userId, task_id: String(t.id) }]);
           if (error) {
-            alert('⚠️ You already claimed this task!');
+            alert('⚠️ You already claimed / submitted this task!');
+            document.getElementById('task-modal').style.display = 'none';
+            activeExecutingTask = null;
+            return;
+          }
+
+          // Proof required → pending admin approval (no instant coins)
+          if (needsProof) {
+            await sb.from('task_proofs').insert([{
+              telegram_id: userId,
+              task_id: String(t.id),
+              task_title: t.title || '',
+              reward: Number(t.reward) || 0,
+              proof_type: t.require_proof,
+              proof_text: proofVal,
+              status: 'pending'
+            }]);
+            document.getElementById('task-modal').style.display = 'none';
+            activeExecutingTask = null;
+            alert('📤 Proof submitted!\nAdmin will review and credit +' + t.reward + ' coins if approved.\nThis stays in your history as pending.');
+            // Log pending in transactions as 0 amount note is optional – use type for history
+            await sb.from('transactions').insert([{
+              telegram_id: userId,
+              amount: 0,
+              type: 'task_pending',
+              description: 'Proof submitted (pending): ' + t.title
+            }]);
+            loadCategoryTasks(currentCategory);
             return;
           }
         }
-        await recordTx(Number(t.reward), 'task', 'Completed: ' + t.title);
-        alert(`✅ Verified! +${t.reward} Coins credited.`);
+
+        // Instant pay path
+        const ok = await recordTx(Number(t.reward) || 0, 'task', 'Completed: ' + (t.title || 'Task'));
+        document.getElementById('task-modal').style.display = 'none';
+        activeExecutingTask = null;
+        if (ok) {
+          alert('✅ Verified! +' + t.reward + ' Coins credited.');
+        } else {
+          alert('Task recorded but coins could not be added (limit or error). Check history / try later.');
+        }
         loadCategoryTasks(currentCategory);
       } catch(e) {
         console.error('Error claiming task', e);
+        alert('Error submitting task. Please try again.');
+        if (claimBtn) claimBtn.disabled = false;
       }
-      activeExecutingTask = null;
     }
 
     // ========== PROMOTE ==========
@@ -2198,6 +2299,8 @@
       loadAdminPayouts();
       loadAdminTaskList();
       loadAutoEarnAdminUI();
+      loadAdminProofs();
+      loadAdminCompletionHistory();
     }
 
     async function saveAppStatus() {
@@ -2510,32 +2613,137 @@
     }
 
     async function adminCreateTask() {
+      if (!isAdminUser()) return;
       const title = document.getElementById('admin-task-title').value.trim();
       const category = document.getElementById('admin-task-cat').value;
       const reward = Number(document.getElementById('admin-task-reward').value) || 10;
       const link = document.getElementById('admin-task-link').value.trim();
       const wait = Number(document.getElementById('admin-task-wait').value) || 10;
       const maxUsers = Number(document.getElementById('admin-task-max').value) || 0;
+      const proof = document.getElementById('admin-task-proof').value || 'none';
       if (!title) return alert('Enter title');
-      await sb.from('tasks').insert([{ title, category, reward, link, wait_seconds: wait, max_users: maxUsers, is_active: true }]);
-      alert('✅ Task Published');
+      await sb.from('tasks').insert([{
+        title, category, reward, link,
+        wait_seconds: wait,
+        max_users: maxUsers,
+        is_active: true,
+        require_proof: proof
+      }]);
+      alert('✅ Task Published' + (proof !== 'none' ? ' (Proof required)' : ''));
       document.getElementById('admin-task-title').value = '';
       loadAdminTaskList();
     }
 
     async function loadAdminTaskList() {
       const cont = document.getElementById('admin-task-list');
-      const { data } = await sb.from('tasks').select('*').order('id', {ascending:false});
+      if (!cont) return;
+      const filter = document.getElementById('admin-task-filter')?.value || 'all';
+      let q = sb.from('tasks').select('*').order('id', { ascending: false });
+      if (filter && filter !== 'all') q = q.eq('category', filter);
+      const { data } = await q;
       cont.innerHTML = '';
-      (data || []).forEach(t => {
-        cont.innerHTML += `<div class="list-item"><div class="info"><h4>${t.title}</h4><p>${t.category} • +${t.reward} • Max: ${t.max_users||'∞'}</p></div><button class="start-btn" style="background:#c8102e;" onclick="deleteDbTask(${t.id})">Del</button></div>`;
+      if (!data || !data.length) {
+        cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">No tasks in this category</div>';
+        return;
+      }
+      data.forEach(t => {
+        const proofTag = (t.require_proof && t.require_proof !== 'none') ? ' • 🔒 Proof' : '';
+        cont.innerHTML += `<div class="list-item" style="margin:0 0 8px 0;">
+          <div class="info"><h4>${t.title}</h4>
+          <p>${t.category} • +${t.reward} • Max: ${t.max_users || '∞'}${proofTag}<br>
+          <span style="font-size:10px;color:#888;">ID: ${t.id} • ${t.link ? t.link.substring(0, 40) : 'no link'}</span></p></div>
+          <div>
+            <button class="start-btn" style="background:#666;margin-bottom:4px;" onclick="toggleTaskActive(${t.id}, ${!t.is_active})">${t.is_active ? 'Off' : 'On'}</button><br>
+            <button class="start-btn" style="background:#c8102e;" onclick="deleteDbTask(${t.id})">Del</button>
+          </div>
+        </div>`;
       });
     }
 
+    async function toggleTaskActive(id, newStatus) {
+      if (!isAdminUser()) return;
+      await sb.from('tasks').update({ is_active: newStatus }).eq('id', id);
+      loadAdminTaskList();
+    }
+
     async function deleteDbTask(id) {
-      if (!confirm('Delete task?')) return;
+      if (!isAdminUser()) return;
+      if (!confirm('Delete this task permanently?')) return;
       await sb.from('tasks').delete().eq('id', id);
       loadAdminTaskList();
+      loadAdminCompletionHistory();
+    }
+
+    async function loadAdminProofs() {
+      const cont = document.getElementById('admin-proofs-list');
+      if (!cont || !sb) return;
+      const { data } = await sb.from('task_proofs').select('*').eq('status', 'pending').order('id', { ascending: false }).limit(50);
+      if (!data || !data.length) {
+        cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending proofs</div>';
+        return;
+      }
+      let html = '';
+      data.forEach(p => {
+        html += `<div class="list-item" style="border-left:4px solid #FF9800;">
+          <div class="info">
+            <h4>${p.task_title || 'Task'} (+${p.reward})</h4>
+            <p>User: ${p.telegram_id}<br>
+            Proof (${p.proof_type}): <b>${p.proof_text || '-'}</b></p>
+          </div>
+          <div>
+            <button class="start-btn" style="background:#4CAF50;margin-bottom:4px;" onclick="approveProof(${p.id}, '${p.telegram_id}', ${p.reward}, '${(p.task_title || '').replace(/'/g, '')}')">Pay</button><br>
+            <button class="start-btn" style="background:#c8102e;" onclick="rejectProof(${p.id})">Reject</button>
+          </div>
+        </div>`;
+      });
+      cont.innerHTML = html;
+    }
+
+    async function approveProof(id, uid, reward, title) {
+      if (!isAdminUser()) return;
+      if (!confirm('Approve and pay ' + reward + ' coins to user ' + uid + '?')) return;
+      await sb.from('task_proofs').update({ status: 'approved' }).eq('id', id);
+      const { data: u } = await sb.from('users').select('balance').eq('telegram_id', String(uid)).maybeSingle();
+      if (u) {
+        const newBal = (Number(u.balance) || 0) + Number(reward);
+        await sb.from('users').update({ balance: newBal }).eq('telegram_id', String(uid));
+        await sb.from('transactions').insert([{
+          telegram_id: String(uid),
+          amount: Number(reward),
+          type: 'task',
+          description: 'Approved proof: ' + (title || 'Task')
+        }]);
+      }
+      alert('Paid!');
+      loadAdminProofs();
+      loadMasterStats();
+    }
+
+    async function rejectProof(id) {
+      if (!isAdminUser()) return;
+      if (!confirm('Reject this proof?')) return;
+      await sb.from('task_proofs').update({ status: 'rejected' }).eq('id', id);
+      loadAdminProofs();
+    }
+
+    async function loadAdminCompletionHistory() {
+      const cont = document.getElementById('admin-completion-history');
+      if (!cont || !sb) return;
+      const { data } = await sb.from('transactions').select('*').in('type', ['task', 'task_pending', 'auto_earn', 'official']).order('id', { ascending: false }).limit(40);
+      if (!data || !data.length) {
+        cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No completions yet</div>';
+        return;
+      }
+      let html = '';
+      data.forEach(tx => {
+        const color = tx.amount > 0 ? '#4CAF50' : '#FF9800';
+        html += `<div class="list-item" style="border-left:4px solid ${color};margin:0 14px 8px;">
+          <div class="info"><h4>${tx.description || tx.type}</h4>
+          <p>User: ${tx.telegram_id} • ${tx.created_at ? new Date(tx.created_at).toLocaleString() : ''}</p></div>
+          <div style="font-weight:900;color:${color};">${tx.amount > 0 ? '+' : ''}${tx.amount}</div>
+        </div>`;
+      });
+      cont.innerHTML = html;
     }
 
     function showPage(id) {
