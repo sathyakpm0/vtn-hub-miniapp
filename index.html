@@ -583,7 +583,8 @@
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
       </div>
       <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Support @Vtnhub0</h4></div><div>›</div></div>
-      <div class="list-item" id="admin-entry-btn" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel (Locked)</h4><p>Master controls, ads & payouts</p></div><div>🔒</div></div>
+      <!-- Admin entry is HIDDEN for everyone except allowed Telegram IDs -->
+      <div class="list-item" id="admin-entry-btn" style="display:none;" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4><p>Master controls only</p></div><div>🔒</div></div>
     </div>
 
     <!-- MASTER ADMIN PANEL (STRENGTHENED) -->
@@ -733,7 +734,10 @@
           </select>
         </div>
         <div class="form-group"><label>Admin PIN Code (change often)</label><input type="password" id="admin-pin-input"></div>
-        <div class="form-group"><label>Signup Bonus Coins</label><input type="number" id="admin-signup-bonus" value="30"></div>
+        <div class="form-group"><label>Signup Bonus Coins (new user)</label><input type="number" id="admin-signup-bonus" value="30"></div>
+        <div class="form-group"><label>Referral Reward (to YOU when friend joins)</label><input type="number" id="admin-ref-reward" value="50"></div>
+        <div class="form-group"><label>Referral Welcome Bonus (extra to new user who used code)</label><input type="number" id="admin-ref-welcome" value="20"></div>
+        <div class="form-group"><label>Max Coins a user can earn per day (0 = no limit)</label><input type="number" id="admin-daily-cap" value="500"></div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
       </div>
 
@@ -870,9 +874,23 @@
     let gateRequired = true;
     let adminPin = '778899';
     let signupBonus = 30;
+    let referralReward = 50;       // coins to referrer
+    let referralWelcomeBonus = 20; // extra coins to new user who used invite
+    let dailyEarnCap = 500;        // max positive coins per day per user
 
-    // Only these Telegram IDs can open Admin (add your ID here)
+    // Only these Telegram IDs can open Admin (add your real ID here)
     const ALLOWED_ADMIN_IDS = ['8150531247'];
+
+    function isRealTelegramUser() {
+      // Block guests / cloned browser without Telegram WebApp user
+      if (!user || !user.id) return false;
+      if (String(userId).startsWith('guest_')) return false;
+      return true;
+    }
+
+    function isAdminUser() {
+      return ALLOWED_ADMIN_IDS.includes(String(userId));
+    }
 
     let sponsorAds = [
       { id: 1, title: 'VTN Official News', url: 'https://t.me/vtnhub' },
@@ -948,6 +966,10 @@
         document.getElementById('username').innerText = 'Guest User';
         document.getElementById('userid').innerText = 'ID: ' + userId;
       }
+      // Admin button ONLY visible to allowed Telegram IDs
+      const adminBtn = document.getElementById('admin-entry-btn');
+      if (adminBtn) adminBtn.style.display = isAdminUser() ? 'flex' : 'none';
+
       await loadAppSettings();
       await syncUser();
       listenBroadcast();
@@ -965,6 +987,9 @@
             if (item.setting_key === 'channel_link') officialChannelLink = item.setting_value;
             if (item.setting_key === 'gate_required') gateRequired = (item.setting_value === 'true');
             if (item.setting_key === 'signup_bonus') signupBonus = Number(item.setting_value) || 30;
+            if (item.setting_key === 'referral_reward') referralReward = Number(item.setting_value) || 50;
+            if (item.setting_key === 'referral_welcome') referralWelcomeBonus = Number(item.setting_value) || 20;
+            if (item.setting_key === 'daily_earn_cap') dailyEarnCap = Number(item.setting_value) || 500;
             if (item.setting_key === 'sponsor_ads') {
               try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
             }
@@ -1131,18 +1156,24 @@
           updateUI();
         } else {
           // ========== NEW USER + SIGNUP BONUS ==========
+          if (!isRealTelegramUser()) {
+            balance = 0;
+            updateUI();
+            return;
+          }
           let refCode = tg?.initDataUnsafe?.start_param || null;
-          if (refCode) refCode = refCode.replace(/^ref_/, '').replace(/^VTN/, '').trim();
+          if (refCode) refCode = String(refCode).replace(/^ref_/, '').replace(/^VTN/, '').trim();
+          if (refCode === userId) refCode = null;
 
-          let startCoins = signupBonus; // Main signup bonus
-          if (refCode && refCode !== userId) startCoins += 20; // Extra if referred
+          let startCoins = Number(signupBonus) || 0;
+          if (refCode) startCoins += Number(referralWelcomeBonus) || 0;
 
           await sb.from('users').insert([{
             telegram_id: userId,
             first_name: user?.first_name || 'User',
             username: user?.username || '',
             balance: startCoins,
-            referred_by: (refCode && refCode !== userId) ? refCode : null,
+            referred_by: refCode || null,
             referral_count: 0,
             referral_earnings: 0,
             official_verified: false,
@@ -1152,9 +1183,16 @@
           }]);
 
           balance = startCoins;
-          await recordTx(startCoins, 'signup', 'Welcome Signup Bonus' + (refCode ? ' + Referral Bonus' : ''));
+          // Log signup for new user only (do NOT credit referrer here)
+          await sb.from('transactions').insert([{
+            telegram_id: userId,
+            amount: startCoins,
+            type: 'signup',
+            description: refCode ? 'Welcome + Invite bonus' : 'Welcome Signup Bonus'
+          }]);
 
-          if (refCode && refCode !== userId) {
+          // Credit REFERRER only (not the new user)
+          if (refCode) {
             await rewardReferrer(refCode);
           }
           updateUI();
@@ -1164,29 +1202,88 @@
     }
 
     async function rewardReferrer(refId) {
+      // Credits the PERSON WHO INVITED (referrer), never the new user
+      if (!refId || refId === userId) return;
       try {
-        const { data } = await sb.from('users').select('*').eq('telegram_id', refId).maybeSingle();
-        if (data) {
-          const newBal = (Number(data.balance)||0) + 50;
-          const newCnt = (Number(data.referral_count)||0) + 1;
-          const newEarn = (Number(data.referral_earnings)||0) + 50;
-          await sb.from('users').update({ balance: newBal, referral_count: newCnt, referral_earnings: newEarn }).eq('telegram_id', refId);
-          await sb.from('transactions').insert([{ telegram_id: refId, amount: 50, type: 'referral', description: 'Referral reward from ID ' + userId }]);
-        }
-      } catch(e) {}
+        const { data } = await sb.from('users').select('*').eq('telegram_id', String(refId)).maybeSingle();
+        if (!data) return;
+        const reward = Number(referralReward) || 50;
+        const newBal = (Number(data.balance) || 0) + reward;
+        const newCnt = (Number(data.referral_count) || 0) + 1;
+        const newEarn = (Number(data.referral_earnings) || 0) + reward;
+        await sb.from('users').update({
+          balance: newBal,
+          referral_count: newCnt,
+          referral_earnings: newEarn
+        }).eq('telegram_id', String(refId));
+        await sb.from('transactions').insert([{
+          telegram_id: String(refId),
+          amount: reward,
+          type: 'referral',
+          description: 'Referral reward – friend joined (ID ' + userId + ')'
+        }]);
+      } catch(e) { console.error('rewardReferrer', e); }
+    }
+
+    async function getTodayEarned() {
+      if (!sb || !isRealTelegramUser()) return 0;
+      try {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        const { data } = await sb.from('transactions')
+          .select('amount')
+          .eq('telegram_id', userId)
+          .gte('created_at', start.toISOString());
+        let sum = 0;
+        (data || []).forEach(t => { if (Number(t.amount) > 0) sum += Number(t.amount); });
+        return sum;
+      } catch(e) { return 0; }
     }
 
     async function recordTx(amount, type, desc) {
-      balance += amount;
-      updateUI();
-      if (!sb) return;
+      // Block guests / cloned apps without real Telegram user
+      if (!isRealTelegramUser()) {
+        alert('Open this app from official Telegram bot to earn.');
+        return false;
+      }
+      if (!sb) return false;
+
+      // Daily earn cap (only on positive amounts)
+      if (amount > 0 && dailyEarnCap > 0) {
+        const earned = await getTodayEarned();
+        if (earned + amount > dailyEarnCap) {
+          alert('Daily earn limit reached (' + dailyEarnCap + ' coins). Try tomorrow.');
+          return false;
+        }
+      }
+
       try {
-        await sb.from('users').update({ balance }).eq('telegram_id', userId);
+        // Always re-read balance from server (anti-tamper)
+        const { data: u } = await sb.from('users').select('balance, is_blocked').eq('telegram_id', userId).maybeSingle();
+        if (!u) return false;
+        if (u.is_blocked) {
+          alert('Account blocked.');
+          return false;
+        }
+        const serverBal = Number(u.balance) || 0;
+        const newBal = serverBal + amount;
+        if (newBal < 0) {
+          alert('Insufficient balance');
+          return false;
+        }
+        await sb.from('users').update({ balance: newBal }).eq('telegram_id', userId);
         await sb.from('transactions').insert([{ telegram_id: userId, amount, type, description: desc }]);
-      } catch(e) { console.error('recordTx err', e); }
+        balance = newBal;
+        updateUI();
+        return true;
+      } catch(e) {
+        console.error('recordTx err', e);
+        return false;
+      }
     }
 
     function grantGameReward(coins, gameTitle) {
+      if (!isRealTelegramUser()) return alert('Open from official Telegram bot to earn.');
       // Cooldown: 1 reward per game type every 45 minutes
       const key = 'game_' + gameTitle;
       const now = Date.now();
@@ -1881,6 +1978,7 @@
     }
 
     async function submitManualRef() {
+      if (!isRealTelegramUser()) return alert('Open from official Telegram bot.');
       const code = document.getElementById('manual-ref-code').value.trim().replace(/^ref_/, '');
       if (!code) return alert('Enter a valid ID');
       if (code === userId) return alert('Cannot refer yourself!');
@@ -1889,9 +1987,11 @@
       if (data && data.referred_by) return alert('You have already claimed an invite code!');
 
       await sb.from('users').update({ referred_by: code }).eq('telegram_id', userId);
-      await recordTx(20, 'referral_welcome', 'Manual referral code bonus');
+      // Welcome bonus to the person who entered the code
+      await recordTx(Number(referralWelcomeBonus) || 20, 'referral_welcome', 'Manual referral code bonus');
+      // Reward goes to the INVITER (referrer), not to this user
       await rewardReferrer(code);
-      alert('🎉 +20 Coins to you & +50 Coins to your friend!');
+      alert('🎉 +' + referralWelcomeBonus + ' Coins to you!\n+' + referralReward + ' Coins sent to your friend (inviter)!');
     }
 
     // ========== GAMES ==========
@@ -2040,13 +2140,13 @@
 
     // ========== STRONGER ADMIN PANEL ==========
     function promptAdminPin() {
-      // Strong check: must be allowed Telegram ID + correct PIN
-      if (!ALLOWED_ADMIN_IDS.includes(String(userId))) {
-        alert('❌ Access Denied. This panel is restricted.');
+      // Hard block: only listed Telegram IDs can even attempt PIN
+      if (!isAdminUser()) {
+        alert('❌ Access Denied.');
         return;
       }
       const pin = prompt('Enter Master Admin PIN:');
-      if (pin === adminPin) {
+      if (pin && pin === adminPin) {
         showPage('admin');
         loadAdminPanel();
       } else {
@@ -2060,6 +2160,9 @@
       document.getElementById('admin-gate-required').value = gateRequired ? 'true' : 'false';
       document.getElementById('admin-pin-input').value = adminPin;
       document.getElementById('admin-signup-bonus').value = signupBonus;
+      document.getElementById('admin-ref-reward').value = referralReward;
+      document.getElementById('admin-ref-welcome').value = referralWelcomeBonus;
+      document.getElementById('admin-daily-cap').value = dailyEarnCap;
 
       // Load prices
       document.getElementById('price-channel').value = prices.channel || 200;
@@ -2319,17 +2422,24 @@
     }
 
     async function saveAdminSettings() {
+      if (!isAdminUser()) return alert('Access denied');
       const bName = document.getElementById('admin-bot-input').value.trim().replace('@', '');
       const pin = document.getElementById('admin-pin-input').value.trim();
       const chLink = document.getElementById('admin-channel-link-input').value.trim();
       const reqGate = document.getElementById('admin-gate-required').value;
       const sBonus = Number(document.getElementById('admin-signup-bonus').value) || 30;
+      const rReward = Number(document.getElementById('admin-ref-reward').value) || 50;
+      const rWelcome = Number(document.getElementById('admin-ref-welcome').value) || 20;
+      const dCap = Number(document.getElementById('admin-daily-cap').value) || 0;
 
       if (bName) botUsername = bName;
       if (pin) adminPin = pin;
       if (chLink) officialChannelLink = chLink;
       gateRequired = (reqGate === 'true');
       signupBonus = sBonus;
+      referralReward = rReward;
+      referralWelcomeBonus = rWelcome;
+      dailyEarnCap = dCap;
 
       if (sb) {
         await sb.from('app_settings').upsert([
@@ -2337,11 +2447,14 @@
           { setting_key: 'admin_pin', setting_value: pin },
           { setting_key: 'channel_link', setting_value: chLink },
           { setting_key: 'gate_required', setting_value: reqGate },
-          { setting_key: 'signup_bonus', setting_value: String(sBonus) }
+          { setting_key: 'signup_bonus', setting_value: String(sBonus) },
+          { setting_key: 'referral_reward', setting_value: String(rReward) },
+          { setting_key: 'referral_welcome', setting_value: String(rWelcome) },
+          { setting_key: 'daily_earn_cap', setting_value: String(dCap) }
         ]);
       }
       generateInviteLink();
-      alert('✅ Settings saved!');
+      alert('✅ Settings saved!\nReferral to inviter: ' + rReward + ' | Welcome extra: ' + rWelcome + ' | Daily cap: ' + dCap);
     }
 
     async function savePriceSettings() {
@@ -2429,6 +2542,11 @@
       // Stop Auto Earn if user leaves Earn page
       if (autoEarnActive && id !== 'earn') {
         stopAutoEarn();
+      }
+      // Hard block admin page for non-admins
+      if (id === 'admin' && !isAdminUser()) {
+        alert('❌ Access Denied.');
+        id = 'profile';
       }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const target = document.getElementById(id);
