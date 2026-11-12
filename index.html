@@ -817,7 +817,7 @@
 
       <div class="section-title">All Tasks (filter & delete)</div>
       <div class="card" style="padding:12px;">
-        <select id="admin-task-filter" onchange="loadAdminTaskList()" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #e2e8f0;margin-bottom:10px;">
+        <select id="admin-task-filter" onchange="loadAdminTaskList()" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #e2e8f0;margin-bottom:8px;">
           <option value="all">All Categories</option>
           <option value="join">Join</option>
           <option value="bot">Bot</option>
@@ -827,13 +827,21 @@
           <option value="website">Website</option>
           <option value="affiliate">Affiliate</option>
           <option value="products">Products</option>
-          <option value="other">Other / Promo</option>
+          <option value="other">Other</option>
+        </select>
+        <select id="admin-task-source" onchange="loadAdminTaskList()" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #e2e8f0;margin-bottom:10px;">
+          <option value="all">All sources</option>
+          <option value="promo">Promoter orders only</option>
+          <option value="admin">Admin-created only</option>
         </select>
         <div id="admin-task-list"><div style="text-align:center;color:#888;">Loading...</div></div>
       </div>
 
       <div class="section-title">Recent Task Completions (History)</div>
-      <div id="admin-completion-history"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+      <div class="card" style="padding:12px;">
+        <button class="gold-btn" style="width:100%;margin-bottom:10px;font-size:12px;" onclick="loadAdminCompletionHistory()">📋 Load / Refresh History</button>
+        <div id="admin-completion-history"><div style="text-align:center;color:#888;font-size:12px;">Click button above to load history</div></div>
+      </div>
 
       <div style="padding:14px;"><button class="btn" style="width:100%;background:#666;" onclick="showPage('profile')">← Exit Admin</button></div>
     </div>
@@ -1249,7 +1257,6 @@
             referral_count: 0,
             referral_earnings: 0,
             official_verified: false,
-            is_blocked: false,
             last_daily_claim: '',
             signup_bonus_given: true
           }]);
@@ -1335,34 +1342,30 @@
       }
 
       try {
-        const { data: u, error: readErr } = await sb.from('users').select('balance, is_blocked').eq('telegram_id', uid).maybeSingle();
+        // Do NOT select is_blocked – column may not exist on older tables
+        const { data: u, error: readErr } = await sb.from('users').select('balance').eq('telegram_id', uid).maybeSingle();
         if (readErr) {
           console.error('read user', readErr);
           alert('Could not read balance: ' + (readErr.message || 'DB error'));
           return false;
         }
         if (!u) {
-          // Auto-create user row if missing (fixes some claim failures)
-          await sb.from('users').insert([{
+          const { error: insErr } = await sb.from('users').insert([{
             telegram_id: uid,
             first_name: user?.first_name || 'User',
             username: user?.username || '',
-            balance: Math.max(0, amount),
-            official_verified: false,
-            is_blocked: false
+            balance: Math.max(0, amount)
           }]);
-          if (amount > 0) {
-            await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
-            balance = Math.max(0, amount);
-            updateUI();
-            return true;
+          if (insErr) {
+            alert('Could not create user: ' + (insErr.message || ''));
+            return false;
           }
-          alert('User account missing. Close app and open again from bot.');
-          return false;
-        }
-        if (u.is_blocked) {
-          alert('Account blocked.');
-          return false;
+          if (amount !== 0) {
+            await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
+          }
+          balance = Math.max(0, amount);
+          updateUI();
+          return true;
         }
         const serverBal = Number(u.balance) || 0;
         const newBal = serverBal + amount;
@@ -1379,10 +1382,7 @@
         }
 
         const { error: txErr } = await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
-        if (txErr) {
-          console.error('insert tx', txErr);
-          // Balance already updated – still treat as success for user, log error
-        }
+        if (txErr) console.error('insert tx', txErr);
 
         balance = newBal;
         updateUI();
@@ -2453,7 +2453,7 @@
       loadAdminTaskList();
       loadAutoEarnAdminUI();
       loadAdminProofs();
-      loadAdminCompletionHistory();
+      // History loads only when admin clicks the button
     }
 
     async function saveAppStatus() {
@@ -2801,22 +2801,46 @@
 
     async function loadAdminTaskList() {
       const cont = document.getElementById('admin-task-list');
-      if (!cont) return;
+      if (!cont || !sb) return;
+      cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">Loading...</div>';
       const filter = document.getElementById('admin-task-filter')?.value || 'all';
+      const source = document.getElementById('admin-task-source')?.value || 'all';
       let q = sb.from('tasks').select('*').order('id', { ascending: false });
       if (filter && filter !== 'all') q = q.eq('category', filter);
       const { data } = await q;
-      cont.innerHTML = '';
-      if (!data || !data.length) {
-        cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">No tasks in this category</div>';
+      let list = data || [];
+      if (source === 'promo') list = list.filter(t => !!t.from_promo);
+      if (source === 'admin') list = list.filter(t => !t.from_promo);
+
+      if (!list.length) {
+        cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">No tasks in this filter</div>';
         return;
       }
-      data.forEach(t => {
+
+      // Load completion counts for these tasks
+      const ids = list.map(t => String(t.id));
+      const countMap = {};
+      try {
+        const { data: comps } = await sb.from('completed_tasks').select('task_id').in('task_id', ids);
+        (comps || []).forEach(c => {
+          const k = String(c.task_id);
+          countMap[k] = (countMap[k] || 0) + 1;
+        });
+      } catch(e) {}
+
+      cont.innerHTML = '';
+      list.forEach(t => {
+        const done = countMap[String(t.id)] || 0;
+        const max = Number(t.max_users) || 0;
+        const left = max > 0 ? Math.max(0, max - done) : '∞';
+        const src = t.from_promo ? '📢 Promo' : '👑 Admin';
         const proofTag = (t.require_proof && t.require_proof !== 'none') ? ' • 🔒 Proof' : '';
+        const activeTag = t.is_active ? '🟢' : '🔴';
         cont.innerHTML += `<div class="list-item" style="margin:0 0 8px 0;">
-          <div class="info"><h4>${t.title}</h4>
-          <p>${t.category} • +${t.reward} • Max: ${t.max_users || '∞'}${proofTag}<br>
-          <span style="font-size:10px;color:#888;">ID: ${t.id} • ${t.link ? t.link.substring(0, 40) : 'no link'}</span></p></div>
+          <div class="info"><h4>${activeTag} ${t.title}</h4>
+          <p>${src} • ${t.category} • +${t.reward}${proofTag}<br>
+          Done: <b>${done}</b> • Left: <b>${left}</b> • Max: ${max || '∞'}<br>
+          <span style="font-size:10px;color:#888;">ID: ${t.id} • ${(t.link || '').substring(0, 36)}</span></p></div>
           <div>
             <button class="start-btn" style="background:#666;margin-bottom:4px;" onclick="toggleTaskActive(${t.id}, ${!t.is_active})">${t.is_active ? 'Off' : 'On'}</button><br>
             <button class="start-btn" style="background:#c8102e;" onclick="deleteDbTask(${t.id})">Del</button>
