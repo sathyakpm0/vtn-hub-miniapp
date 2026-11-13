@@ -984,10 +984,8 @@
     const ALLOWED_ADMIN_IDS = ['8150531247'];
 
     function isRealTelegramUser() {
-      // Allow if we have a numeric Telegram ID from WebApp OR a non-guest stored id
       if (String(userId).startsWith('guest_')) return false;
       if (user && user.id) return true;
-      // Fallback: numeric telegram id string still counts as real account in DB
       if (userId && /^\d+$/.test(String(userId))) return true;
       return false;
     }
@@ -1001,7 +999,6 @@
       { id: 2, title: 'VTN Support Desk', url: 'https://t.me/Vtnhub0' }
     ];
 
-    // Auto Earn specific
     let autoEarnAds = [];
     let autoEarnReward = 5;
     let autoEarnTimerSec = 15;
@@ -1011,7 +1008,6 @@
     let autoEarnLoopTimer = null;
     let autoEarnProgressTimer = null;
 
-    // Ad networks
     let monetagZone = '';
     let monetagScriptUrl = '';
     let adsgramBlockId = '';
@@ -1033,14 +1029,13 @@
 
     let activeExecutingTask = null;
     let activeTaskInterval = null;
-    let taskEndAt = 0; // wall-clock time when claim is allowed
+    let taskEndAt = 0;
     let taskTimerFinished = false;
-    let proofImageData = ''; // base64 screenshot
+    let proofImageData = '';
 
     let prices = { channel:200, bot:150, views:50, watch:70, install:300, website:80, affiliate:40, products:50, banner:500 };
 
-    // App & Category Pause Controls
-    let appStatus = 'live';          // 'live' or 'paused'
+    let appStatus = 'live';
     let pauseMessage = 'App is under maintenance. Please check back later.';
     let pauseUntil = null;
     let categoryPauses = {
@@ -1062,7 +1057,6 @@
       }
     }
 
-    // ========== INITIALIZATION ==========
     async function initApp() {
       if (user) {
         document.getElementById('username').innerText = user.first_name || 'User';
@@ -1073,7 +1067,6 @@
         document.getElementById('username').innerText = 'Guest User';
         document.getElementById('userid').innerText = 'ID: ' + userId;
       }
-      // Admin button ONLY visible to allowed Telegram IDs
       const adminBtn = document.getElementById('admin-entry-btn');
       if (adminBtn) adminBtn.style.display = isAdminUser() ? 'flex' : 'none';
 
@@ -1129,10 +1122,8 @@
             if (item.setting_key === 'adsgram_block') adsgramBlockId = item.setting_value || '';
           });
         }
-        // Load ad network SDKs after settings
         loadAdNetworkSDKs();
         updateDepositUI();
-        // Auto resume if pause time has passed
         if (appStatus === 'paused' && pauseUntil) {
           if (new Date(pauseUntil) < new Date()) {
             appStatus = 'live';
@@ -1154,7 +1145,6 @@
       return true;
     }
 
-    // Open any link inside Telegram when possible
     function openLinkInTelegram(url) {
       if (!url) return;
       try {
@@ -1172,24 +1162,22 @@
     }
 
     function loadAdNetworkSDKs() {
-      // Monetag
       if (monetagZone) {
         const existing = document.getElementById('monetag-sdk-script');
         if (!existing) {
           const s = document.createElement('script');
           s.id = 'monetag-sdk-script';
-          s.src = monetagScriptUrl || ('https://libtl.com/sdk.js'); // fallback; user should paste real script URL from dashboard
+          s.src = monetagScriptUrl || ('https://libtl.com/sdk.js');
           s.setAttribute('data-zone', monetagZone);
           s.setAttribute('data-sdk', 'show_' + monetagZone);
           s.async = true;
           s.onload = () => { monetagReady = true; console.log('Monetag SDK loaded'); };
-          s.onerror = () => { console.warn('Monetag script failed – paste exact script URL from Monetag dashboard'); };
+          s.onerror = () => { console.warn('Monetag script failed'); };
           document.head.appendChild(s);
         } else {
           monetagReady = typeof window['show_' + monetagZone] === 'function';
         }
       }
-      // AdsGram
       if (adsgramBlockId) {
         const existing = document.getElementById('adsgram-sdk-script');
         if (!existing) {
@@ -1201,9 +1189,8 @@
             try {
               if (window.Adsgram) {
                 adsgramController = window.Adsgram.init({ blockId: String(adsgramBlockId) });
-                console.log('AdsGram SDK ready');
               }
-            } catch(e) { console.warn('AdsGram init error', e); }
+            } catch(e) {}
           };
           document.head.appendChild(s);
         } else if (window.Adsgram && !adsgramController) {
@@ -1225,7 +1212,6 @@
           if (result && typeof result.then === 'function') {
             result.then(resolve).catch(reject);
           } else {
-            // Some older tags resolve differently – wait timer as fallback
             setTimeout(resolve, Math.max(autoEarnTimerSec, 15) * 1000);
           }
         } catch(e) { reject(e); }
@@ -1272,7 +1258,6 @@
           updateAutoEarnBtn();
           updateUI();
         } else {
-          // ========== NEW USER + SIGNUP BONUS ==========
           if (!isRealTelegramUser()) {
             balance = 0;
             updateUI();
@@ -1299,7 +1284,6 @@
           }]);
 
           balance = startCoins;
-          // Log signup for new user only (do NOT credit referrer here)
           await sb.from('transactions').insert([{
             telegram_id: userId,
             amount: startCoins,
@@ -1307,7 +1291,6 @@
             description: refCode ? 'Welcome + Invite bonus' : 'Welcome Signup Bonus'
           }]);
 
-          // Credit REFERRER only (not the new user)
           if (refCode) {
             await rewardReferrer(refCode);
           }
@@ -1318,7 +1301,6 @@
     }
 
     async function rewardReferrer(refId) {
-      // Credits the PERSON WHO INVITED (referrer), never the new user
       if (!refId || refId === userId) return;
       try {
         const { data } = await sb.from('users').select('*').eq('telegram_id', String(refId)).maybeSingle();
@@ -1369,7 +1351,6 @@
 
       const uid = String(userId);
 
-      // Daily earn cap (only when admin set > 0)
       if (amount > 0 && dailyEarnCap > 0) {
         const earned = await getTodayEarned();
         if (earned + amount > dailyEarnCap) {
@@ -1379,10 +1360,8 @@
       }
 
       try {
-        // Do NOT select is_blocked – column may not exist on older tables
         const { data: u, error: readErr } = await sb.from('users').select('balance').eq('telegram_id', uid).maybeSingle();
         if (readErr) {
-          console.error('read user', readErr);
           alert('Could not read balance: ' + (readErr.message || 'DB error'));
           return false;
         }
@@ -1413,19 +1392,16 @@
 
         const { error: upErr } = await sb.from('users').update({ balance: newBal }).eq('telegram_id', uid);
         if (upErr) {
-          console.error('update bal', upErr);
           alert('Balance update failed: ' + (upErr.message || 'permission/RLS?'));
           return false;
         }
 
-        const { error: txErr } = await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
-        if (txErr) console.error('insert tx', txErr);
+        await sb.from('transactions').insert([{ telegram_id: uid, amount, type, description: desc }]);
 
         balance = newBal;
         updateUI();
         return true;
       } catch(e) {
-        console.error('recordTx err', e);
         alert('Coin error: ' + (e.message || e));
         return false;
       }
@@ -1433,7 +1409,6 @@
 
     function grantGameReward(coins, gameTitle) {
       if (!isRealTelegramUser()) return alert('Open from official Telegram bot to earn.');
-      // No long cooldown – but must watch ad if admin requires it
       if (requireGameAd) {
         pendingGameReward = { coins, title: gameTitle };
         watchAdThen('game', () => {
@@ -1452,12 +1427,10 @@
       showPage('fun');
     }
 
-    // Unified ad watcher: tries Monetag → AdsGram → sponsor link
     async function watchAdThen(reason, onDone) {
       const msg = reason === 'checkin' ? 'Watch an ad to claim Daily Bonus' : 'Watch an ad to claim your game reward';
       alert(msg);
 
-      // Try Monetag first
       if (monetagZone) {
         try {
           await showMonetagAd();
@@ -1465,7 +1438,6 @@
           return;
         } catch(e) { console.warn('Monetag skip', e); }
       }
-      // Try AdsGram
       if (adsgramBlockId) {
         try {
           await showAdsgramAd();
@@ -1473,10 +1445,8 @@
           return;
         } catch(e) { console.warn('AdsGram skip', e); }
       }
-      // Fallback: open sponsor / random ad link
       const ad = getRandomAd();
       openLinkInTelegram(ad.url);
-      // Short confirm after open
       setTimeout(() => {
         if (confirm('Did you finish watching the ad?\nOK = claim reward')) {
           onDone && onDone();
@@ -1507,7 +1477,6 @@
       } catch(e) {}
     }
 
-    // ========== OFFICIAL GATE ==========
     function openOfficialChannel() {
       if (tg?.openTelegramLink) tg.openTelegramLink(officialChannelLink);
       else window.open(officialChannelLink, '_blank');
@@ -1547,7 +1516,6 @@
       return true;
     }
 
-    // ========== DAILY CHECK-IN (FIXED - ONCE PER DAY) ==========
     async function dailyCheckIn() {
       if (isAppPaused()) return showPausedMessage();
       if (!checkGateAccess()) return;
@@ -1573,7 +1541,6 @@
       }
     }
 
-    // ========== AUTO EARN (Admin Ads Loop) ==========
     function updateAutoEarnBtn() {
       const btn = document.getElementById('auto-earn-toggle');
       const status = document.getElementById('auto-earn-status-text');
@@ -1599,13 +1566,11 @@
       if (!checkGateAccess()) return;
 
       if (autoEarnActive) {
-        // Turn OFF
         stopAutoEarn();
         alert('Auto Earn stopped.');
         return;
       }
 
-      // Turn ON
       if (!autoEarnAds || autoEarnAds.length === 0) {
         alert('No Auto Earn ads configured yet.\nAdmin must add ads first.');
         return;
@@ -1658,7 +1623,6 @@
     }
 
     function skipOrCloseVideo() {
-      // User closed early - just close player, do not give reward, continue wait then next
       if (autoEarnProgressTimer) { clearInterval(autoEarnProgressTimer); autoEarnProgressTimer = null; }
       closeVideoPlayer();
       const msg = document.getElementById('auto-earn-msg');
@@ -1733,7 +1697,6 @@
       const type = ad.type || 'link';
       const url = ad.url || '';
 
-      // ===== Monetag SDK =====
       if (type === 'monetag') {
         if (msg) msg.innerText = 'Loading Monetag ad...';
         try {
@@ -1741,14 +1704,12 @@
           if (!autoEarnActive) return;
           finishAutoAd(ad);
         } catch (e) {
-          console.warn('Monetag error', e);
           if (msg) msg.innerText = 'Monetag failed – trying next. ' + (e.message || '');
           autoEarnLoopTimer = setTimeout(() => { if (autoEarnActive) runAutoEarnCycle(); }, 5000);
         }
         return;
       }
 
-      // ===== AdsGram SDK =====
       if (type === 'adsgram') {
         if (msg) msg.innerText = 'Loading AdsGram ad...';
         try {
@@ -1756,15 +1717,12 @@
           if (!autoEarnActive) return;
           finishAutoAd(ad);
         } catch (e) {
-          console.warn('AdsGram error', e);
           if (msg) msg.innerText = 'AdsGram failed / skipped – next ad soon.';
           autoEarnLoopTimer = setTimeout(() => { if (autoEarnActive) runAutoEarnCycle(); }, 5000);
         }
         return;
       }
 
-      // ===== Link type (any URL) =====
-      // 1) Direct video → in-app player
       if (isDirectVideo(url)) {
         const modal = document.getElementById('video-player-modal');
         const video = document.getElementById('auto-earn-video');
@@ -1781,7 +1739,6 @@
         return;
       }
 
-      // 2) YouTube → in-app embed
       if (isYouTube(url)) {
         const embed = getYouTubeEmbed(url);
         if (embed) {
@@ -1797,23 +1754,19 @@
         }
       }
 
-      // 3) Any other link → ALWAYS open (every cycle, even same URL)
       if (!url) {
         if (msg) msg.innerText = 'No URL on this ad – skipping...';
         autoEarnLoopTimer = setTimeout(() => { if (autoEarnActive) runAutoEarnCycle(); }, 3000);
         return;
       }
-      // Force open every time (Telegram may ignore rapid same-link; slight delay helps)
       setTimeout(() => {
         if (!autoEarnActive) return;
         openLinkInTelegram(url);
-        // Second attempt after 400ms if first was blocked
         setTimeout(() => { if (autoEarnActive) openLinkInTelegram(url); }, 400);
       }, 50);
       startAdTimer(ad, false);
     }
 
-    // ========== COMMUNITY CHAT ==========
     function enterCommunityChat() {
       if (isAppPaused()) return showPausedMessage();
       if (isCategoryPaused('chat')) return showPausedMessage('Chat is temporarily paused by admin.');
@@ -1891,7 +1844,6 @@
       }
     }
 
-    // ========== TASKS ==========
     function openCategory(cat) {
       if (isAppPaused()) return showPausedMessage();
       if (!checkGateAccess()) return;
@@ -2059,7 +2011,6 @@
         }
       }, 200);
 
-      // If user returns from ad early, still enforce wall clock
       document.addEventListener('visibilitychange', onTaskVisibility);
     }
 
@@ -2093,7 +2044,6 @@
         alert('Open from official Telegram bot to earn.');
         return;
       }
-      // STRICT: no pay if timer not finished (even if button was forced)
       if (!taskTimerFinished || Date.now() < taskEndAt) {
         const remain = Math.ceil((taskEndAt - Date.now()) / 1000);
         alert('⏳ Please wait full timer (' + Math.max(1, remain) + 's left). Leaving early will not pay.');
@@ -2142,11 +2092,9 @@
               proof_text: proofVal || (proofImageData ? '[screenshot uploaded]' : ''),
               status: 'pending'
             };
-            // Store image if column exists; also keep short marker in text
             if (proofImageData) proofPayload.proof_image = proofImageData.substring(0, 500000);
             const { error: pErr } = await sb.from('task_proofs').insert([proofPayload]);
             if (pErr) {
-              // Retry without image column
               delete proofPayload.proof_image;
               await sb.from('task_proofs').insert([proofPayload]);
             }
@@ -2173,21 +2121,18 @@
         }
 
         if (!t.is_dynamic_ad && sb) {
-          const { error: cErr } = await sb.from('completed_tasks').insert([{ telegram_id: uid, task_id: String(t.id) }]);
-          if (cErr) console.warn('completed_tasks', cErr);
+          await sb.from('completed_tasks').insert([{ telegram_id: uid, task_id: String(t.id) }]);
         }
 
         cancelActiveTask();
         alert('✅ Verified! +' + rewardAmt + ' Coins credited.');
         loadCategoryTasks(currentCategory);
       } catch(e) {
-        console.error('Error claiming task', e);
         alert('Error submitting task. Please try again.');
         if (claimBtn) claimBtn.disabled = false;
       }
     }
 
-    // ========== PROMOTE ==========
     function openPromoteForm(type) {
       if (isAppPaused()) return showPausedMessage();
       if (isCategoryPaused('promote')) return showPausedMessage('Promote is temporarily paused by admin.');
@@ -2260,7 +2205,6 @@
 
       await recordTx(-total, 'promo', 'Promote Order: ' + currentPromoType);
 
-      // 50% of cost goes to user rewards
       const userShare = Math.floor(total * 0.5);
       const perUserReward = Math.max(3, Math.floor(userShare / Math.max(qty, 1)));
 
@@ -2280,7 +2224,6 @@
       showPage('promote');
     }
 
-    // ========== CROSS PROMOTION ==========
     async function startCrossPromo() {
       if (!checkGateAccess()) return;
       const today = new Date().toDateString();
@@ -2305,7 +2248,6 @@
       alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\nAdmin will review.');
     }
 
-    // ========== REFERRAL ==========
     function getInviteLink() {
       return `https://t.me/${botUsername}?startapp=ref_${userId}`;
     }
@@ -2338,25 +2280,15 @@
       if (data && data.referred_by) return alert('You have already claimed an invite code!');
 
       await sb.from('users').update({ referred_by: code }).eq('telegram_id', userId);
-      // Welcome bonus to the person who entered the code
       await recordTx(Number(referralWelcomeBonus) || 20, 'referral_welcome', 'Manual referral code bonus');
-      // Reward goes to the INVITER (referrer), not to this user
       await rewardReferrer(code);
       alert('🎉 +' + referralWelcomeBonus + ' Coins to you!\n+' + referralReward + ' Coins sent to your friend (inviter)!');
     }
 
-    // ========== GAMES ==========
     function enterGame(g) {
       if (isAppPaused()) return showPausedMessage();
       if (isCategoryPaused('games')) return showPausedMessage('Games are temporarily paused by admin.');
       if (!checkGateAccess()) return;
-      // Optional: force ad every X minutes before starting another game
-      if (gameAdEveryMins > 0 && lastGameAdTime > 0) {
-        const mins = (Date.now() - lastGameAdTime) / 60000;
-        if (mins < gameAdEveryMins && requireGameAd) {
-          // Allow play but claim still needs ad; optional soft message
-        }
-      }
       if (g === 'TicTacToe') startTTT();
       else if (g === 'Spin') showPage('game-spin');
       else if (g === 'Quiz') startQuiz();
@@ -2436,7 +2368,6 @@
     }
     function checkSudoku() { grantGameReward(5, 'Sudoku'); }
 
-    // ========== WALLET ==========
     function updateDepositUI() {
       const upiEl = document.getElementById('deposit-upi-text');
       const cryEl = document.getElementById('deposit-crypto-text');
@@ -2539,9 +2470,7 @@
     }
     function closeWalletHistory() { document.getElementById('history-container').style.display = 'none'; }
 
-    // ========== STRONGER ADMIN PANEL ==========
     function promptAdminPin() {
-      // Hard block: only listed Telegram IDs can even attempt PIN
       if (!isAdminUser()) {
         alert('❌ Access Denied.');
         return;
@@ -2574,7 +2503,6 @@
       document.getElementById('admin-deposit-crypto').value = depositCrypto || '';
       document.getElementById('admin-deposit-qr').value = depositQrUrl || '';
 
-      // Load prices
       document.getElementById('price-channel').value = prices.channel || 200;
       document.getElementById('price-bot').value = prices.bot || 150;
       document.getElementById('price-views').value = prices.views || 50;
@@ -2585,7 +2513,6 @@
       document.getElementById('price-products').value = prices.products || 50;
       document.getElementById('price-banner').value = prices.banner || 500;
 
-      // Load App Status & Category Pauses
       document.getElementById('admin-app-status').value = appStatus || 'live';
       document.getElementById('admin-pause-msg').value = pauseMessage || '';
       if (pauseUntil) {
@@ -2596,7 +2523,6 @@
       } else {
         document.getElementById('admin-pause-until').value = '';
       }
-      // Checkboxes
       const cats = ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'];
       cats.forEach(c => {
         const el = document.getElementById('pause-' + c);
@@ -2609,7 +2535,6 @@
       loadAdminTaskList();
       loadAutoEarnAdminUI();
       loadAdminProofs();
-      // History loads only when admin clicks the button
     }
 
     async function saveAppStatus() {
@@ -2642,7 +2567,6 @@
       alert('✅ Category pause settings saved!');
     }
 
-    // Auto Earn Admin helpers
     function loadAutoEarnAdminUI() {
       document.getElementById('auto-reward').value = autoEarnReward;
       document.getElementById('auto-timer').value = autoEarnTimerSec;
@@ -2803,21 +2727,15 @@
       if (!cont || !sb) return;
       cont.innerHTML = '<div class="card" style="text-align:center;">Loading withdrawals...</div>';
       try {
-        // Pending first
         let { data, error } = await sb.from('withdrawals').select('*').eq('status', 'pending').order('id', { ascending: false }).limit(30);
         if (error) {
-          cont.innerHTML = '<div class="card" style="color:#c8102e;font-size:12px;">Error loading withdrawals: ' + (error.message || '') + '<br>Check table "withdrawals" exists in Supabase.</div>';
+          cont.innerHTML = '<div class="card" style="color:#c8102e;font-size:12px;">Error loading withdrawals: ' + (error.message || '') + '</div>';
           return;
         }
         if (!data || !data.length) {
-          // Show recent any status so admin can verify inserts work
           const all = await sb.from('withdrawals').select('*').order('id', { ascending: false }).limit(10);
-          if (all.error) {
-            cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending requests<br><span style="font-size:11px;">(table error: ' + all.error.message + ')</span></div>';
-            return;
-          }
-          if (!all.data || !all.data.length) {
-            cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending requests<br><span style="font-size:11px;">No rows in withdrawals table yet</span></div>';
+          if (all.error || !all.data || !all.data.length) {
+            cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending requests</div>';
             return;
           }
           let html = '<div style="font-size:11px;color:#888;margin-bottom:8px;">No pending – recent history:</div>';
@@ -3019,7 +2937,6 @@
         return;
       }
 
-      // Load completion counts for these tasks
       const ids = list.map(t => String(t.id));
       const countMap = {};
       try {
@@ -3181,11 +3098,9 @@
     }
 
     function showPage(id) {
-      // Stop Auto Earn if user leaves Earn page
       if (autoEarnActive && id !== 'earn') {
         stopAutoEarn();
       }
-      // Hard block admin page for non-admins
       if (id === 'admin' && !isAdminUser()) {
         alert('❌ Access Denied.');
         id = 'profile';
