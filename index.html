@@ -546,9 +546,22 @@
         <div id="history-list"></div>
       </div>
 
+      <div class="section-title">Deposit (Add Coins)</div>
+      <div class="card" id="deposit-box">
+        <p style="font-size:12px;color:#666;margin-bottom:10px;">Pay to the details below, then contact admin with payment screenshot for credit.</p>
+        <div id="deposit-qr-wrap" style="text-align:center;display:none;margin-bottom:12px;">
+          <img id="deposit-qr-img" src="" alt="QR" style="max-width:180px;border-radius:12px;border:2px solid #eee;">
+        </div>
+        <div style="font-size:13px;line-height:1.6;">
+          <div><b>UPI:</b> <span id="deposit-upi-text">Not set</span></div>
+          <div><b>Crypto:</b> <span id="deposit-crypto-text">Not set</span></div>
+        </div>
+        <button class="gold-btn" style="width:100%;margin-top:12px;font-size:12px;" onclick="copyDepositDetails()">📋 Copy Deposit Details</button>
+      </div>
+
       <div class="section-title">Withdrawal Options</div>
-      <div class="list-item" onclick="openWithdraw('upi')"><div class="icon" style="background:#FF9800;">🇮🇳</div><div class="info"><h4>India - UPI / Bank</h4><p>Min. 500 Coins</p></div><button class="start-btn">Withdraw</button></div>
-      <div class="list-item" onclick="openWithdraw('usdt')"><div class="icon" style="background:#26A17B;">₮</div><div class="info"><h4>USDT Crypto</h4><p>TRC20 / BEP20 (Min. 500)</p></div><button class="start-btn">Withdraw</button></div>
+      <div class="list-item" onclick="openWithdraw('upi')"><div class="icon" style="background:#FF9800;">🇮🇳</div><div class="info"><h4>India - UPI / Bank</h4><p id="wd-min-upi">Min–Max set by admin</p></div><button class="start-btn">Withdraw</button></div>
+      <div class="list-item" onclick="openWithdraw('usdt')"><div class="icon" style="background:#26A17B;">₮</div><div class="info"><h4>USDT Crypto</h4><p id="wd-min-usdt">Min–Max set by admin</p></div><button class="start-btn">Withdraw</button></div>
     </div>
 
     <!-- WITHDRAW FORM -->
@@ -556,7 +569,8 @@
       <div class="header">Request Withdrawal</div>
       <div class="card">
         <div class="form-group"><label id="withdraw-label">UPI ID / USDT Address</label><input type="text" id="withdraw-address" placeholder="Enter recipient details"></div>
-        <div class="form-group"><label>Amount (Coins)</label><input type="number" id="withdraw-amount" value="500" min="500"></div>
+        <div class="form-group"><label id="withdraw-amount-label">Amount (Coins)</label><input type="number" id="withdraw-amount" value="500" min="1"></div>
+        <p style="font-size:11px;color:#888;margin-bottom:10px;" id="withdraw-limits-hint">Limits set by admin</p>
         <button class="gold-btn" style="width:100%;" onclick="submitWithdraw()">Submit Request</button>
         <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
       </div>
@@ -766,6 +780,11 @@
         </div>
         <div class="form-group"><label>Force ad every X minutes while playing (0 = off)</label><input type="number" id="admin-game-ad-mins" value="3" min="0"></div>
         <div class="form-group"><label>Daily Check-in Reward Coins</label><input type="number" id="admin-daily-reward" value="10"></div>
+        <div class="form-group"><label>Withdraw Min Coins</label><input type="number" id="admin-wd-min" value="500"></div>
+        <div class="form-group"><label>Withdraw Max Coins (0 = no max)</label><input type="number" id="admin-wd-max" value="0"></div>
+        <div class="form-group"><label>Deposit UPI ID</label><input type="text" id="admin-deposit-upi" placeholder="yourname@upi"></div>
+        <div class="form-group"><label>Deposit Crypto Address</label><input type="text" id="admin-deposit-crypto" placeholder="USDT TRC20 / BEP20"></div>
+        <div class="form-group"><label>Deposit QR Image URL (optional)</label><input type="text" id="admin-deposit-qr" placeholder="https://.../qr.png"></div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
       </div>
 
@@ -951,6 +970,11 @@
     let dailyCheckinReward = 10;
     let pendingGameReward = null;
     let lastGameAdTime = 0;
+    let withdrawMin = 500;
+    let withdrawMax = 0; // 0 = no max
+    let depositUpi = '';
+    let depositCrypto = '';
+    let depositQrUrl = '';
 
     // Only these Telegram IDs can open Admin (add your real ID here)
     const ALLOWED_ADMIN_IDS = ['8150531247'];
@@ -1070,6 +1094,11 @@
             if (item.setting_key === 'require_game_ad') requireGameAd = item.setting_value !== 'false';
             if (item.setting_key === 'game_ad_mins') gameAdEveryMins = Number(item.setting_value) || 0;
             if (item.setting_key === 'daily_checkin_reward') dailyCheckinReward = Number(item.setting_value) || 10;
+            if (item.setting_key === 'withdraw_min') withdrawMin = Number(item.setting_value) || 500;
+            if (item.setting_key === 'withdraw_max') withdrawMax = Number(item.setting_value) || 0;
+            if (item.setting_key === 'deposit_upi') depositUpi = item.setting_value || '';
+            if (item.setting_key === 'deposit_crypto') depositCrypto = item.setting_value || '';
+            if (item.setting_key === 'deposit_qr') depositQrUrl = item.setting_value || '';
             if (item.setting_key === 'sponsor_ads') {
               try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
             }
@@ -1095,6 +1124,7 @@
         }
         // Load ad network SDKs after settings
         loadAdNetworkSDKs();
+        updateDepositUI();
         // Auto resume if pause time has passed
         if (appStatus === 'paused' && pauseUntil) {
           if (new Date(pauseUntil) < new Date()) {
@@ -1760,8 +1790,19 @@
         }
       }
 
-      // 3) Any other link → open inside Telegram when possible
-      openLinkInTelegram(url);
+      // 3) Any other link → ALWAYS open (every cycle, even same URL)
+      if (!url) {
+        if (msg) msg.innerText = 'No URL on this ad – skipping...';
+        autoEarnLoopTimer = setTimeout(() => { if (autoEarnActive) runAutoEarnCycle(); }, 3000);
+        return;
+      }
+      // Force open every time (Telegram may ignore rapid same-link; slight delay helps)
+      setTimeout(() => {
+        if (!autoEarnActive) return;
+        openLinkInTelegram(url);
+        // Second attempt after 400ms if first was blocked
+        setTimeout(() => { if (autoEarnActive) openLinkInTelegram(url); }, 400);
+      }, 50);
       startAdTimer(ad, false);
     }
 
@@ -2329,14 +2370,50 @@
     function checkSudoku() { grantGameReward(5, 'Sudoku'); }
 
     // ========== WALLET ==========
+    function updateDepositUI() {
+      const upiEl = document.getElementById('deposit-upi-text');
+      const cryEl = document.getElementById('deposit-crypto-text');
+      const qrWrap = document.getElementById('deposit-qr-wrap');
+      const qrImg = document.getElementById('deposit-qr-img');
+      if (upiEl) upiEl.innerText = depositUpi || 'Not set by admin';
+      if (cryEl) cryEl.innerText = depositCrypto || 'Not set by admin';
+      if (qrWrap && qrImg) {
+        if (depositQrUrl) {
+          qrImg.src = depositQrUrl;
+          qrWrap.style.display = 'block';
+        } else {
+          qrWrap.style.display = 'none';
+        }
+      }
+      const lim = 'Min ' + withdrawMin + (withdrawMax > 0 ? ' – Max ' + withdrawMax : '') + ' Coins';
+      const u = document.getElementById('wd-min-upi');
+      const c = document.getElementById('wd-min-usdt');
+      if (u) u.innerText = lim;
+      if (c) c.innerText = lim;
+    }
+
+    function copyDepositDetails() {
+      const t = 'UPI: ' + (depositUpi || '-') + '\nCrypto: ' + (depositCrypto || '-');
+      if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => alert('Copied!')).catch(() => alert(t));
+      else alert(t);
+    }
+
     function openWithdraw(type) {
       if (!checkGateAccess()) return;
-      if (userId.startsWith('guest_')) {
+      if (!isRealTelegramUser()) {
         alert('Please open this app from Telegram to withdraw.');
         return;
       }
       currentWithdrawType = type;
-      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank (INR)' : 'USDT TRC20 Address';
+      document.getElementById('withdraw-label').innerText = type === 'upi' ? 'UPI ID / Bank (INR)' : 'USDT TRC20 / BEP20 Address';
+      const hint = document.getElementById('withdraw-limits-hint');
+      if (hint) hint.innerText = 'Min: ' + withdrawMin + ' coins' + (withdrawMax > 0 ? ' | Max: ' + withdrawMax + ' coins' : '');
+      const amt = document.getElementById('withdraw-amount');
+      if (amt) {
+        amt.min = withdrawMin;
+        amt.value = withdrawMin;
+        if (withdrawMax > 0) amt.max = withdrawMax;
+      }
       showPage('withdraw-form');
     }
 
@@ -2344,13 +2421,15 @@
       const addr = document.getElementById('withdraw-address').value.trim();
       const amt = Number(document.getElementById('withdraw-amount').value) || 0;
       if (!addr) return alert('Enter withdrawal address');
-      if (amt < 500) return alert('Minimum withdrawal is 500 Coins');
+      if (amt < withdrawMin) return alert('Minimum withdrawal is ' + withdrawMin + ' Coins');
+      if (withdrawMax > 0 && amt > withdrawMax) return alert('Maximum withdrawal is ' + withdrawMax + ' Coins');
       if (balance < amt) return alert('Insufficient balance');
 
-      await recordTx(-amt, 'withdraw', `Withdrawal (${currentWithdrawType.toUpperCase()}) to ${addr}`);
+      const ok = await recordTx(-amt, 'withdraw', 'Withdrawal (' + currentWithdrawType.toUpperCase() + ') to ' + addr);
+      if (!ok) return;
       if (sb) {
         await sb.from('withdrawals').insert([{
-          telegram_id: userId,
+          telegram_id: String(userId),
           amount: amt,
           payout_type: currentWithdrawType,
           address: addr,
@@ -2417,6 +2496,11 @@
       document.getElementById('admin-game-ad').value = requireGameAd ? 'true' : 'false';
       document.getElementById('admin-game-ad-mins').value = gameAdEveryMins;
       document.getElementById('admin-daily-reward').value = dailyCheckinReward;
+      document.getElementById('admin-wd-min').value = withdrawMin;
+      document.getElementById('admin-wd-max').value = withdrawMax;
+      document.getElementById('admin-deposit-upi').value = depositUpi || '';
+      document.getElementById('admin-deposit-crypto').value = depositCrypto || '';
+      document.getElementById('admin-deposit-qr').value = depositQrUrl || '';
 
       // Load prices
       document.getElementById('price-channel').value = prices.channel || 200;
@@ -2691,6 +2775,11 @@
       const gAd = document.getElementById('admin-game-ad').value;
       const gMins = Number(document.getElementById('admin-game-ad-mins').value) || 0;
       const dRew = Number(document.getElementById('admin-daily-reward').value) || 10;
+      const wMin = Number(document.getElementById('admin-wd-min').value) || 500;
+      const wMax = Number(document.getElementById('admin-wd-max').value) || 0;
+      const dUpi = document.getElementById('admin-deposit-upi').value.trim();
+      const dCry = document.getElementById('admin-deposit-crypto').value.trim();
+      const dQr = document.getElementById('admin-deposit-qr').value.trim();
 
       if (bName) botUsername = bName;
       if (pin) adminPin = pin;
@@ -2704,6 +2793,11 @@
       requireGameAd = (gAd === 'true');
       gameAdEveryMins = gMins;
       dailyCheckinReward = dRew;
+      withdrawMin = wMin;
+      withdrawMax = wMax;
+      depositUpi = dUpi;
+      depositCrypto = dCry;
+      depositQrUrl = dQr;
 
       if (sb) {
         await sb.from('app_settings').upsert([
@@ -2718,10 +2812,16 @@
           { setting_key: 'require_checkin_ad', setting_value: cAd },
           { setting_key: 'require_game_ad', setting_value: gAd },
           { setting_key: 'game_ad_mins', setting_value: String(gMins) },
-          { setting_key: 'daily_checkin_reward', setting_value: String(dRew) }
+          { setting_key: 'daily_checkin_reward', setting_value: String(dRew) },
+          { setting_key: 'withdraw_min', setting_value: String(wMin) },
+          { setting_key: 'withdraw_max', setting_value: String(wMax) },
+          { setting_key: 'deposit_upi', setting_value: dUpi },
+          { setting_key: 'deposit_crypto', setting_value: dCry },
+          { setting_key: 'deposit_qr', setting_value: dQr }
         ]);
       }
       generateInviteLink();
+      updateDepositUI();
       alert('✅ Settings saved!');
     }
 
