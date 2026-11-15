@@ -396,8 +396,8 @@
         <div class="form-group"><label>Your Link / Username</label><input type="text" id="promo-link" placeholder="https://t.me/... or URL"></div>
         <div class="form-group"><label>Target Users</label><input type="number" id="promo-qty" value="100" min="10" oninput="updatePromoCost()"></div>
         <div class="form-group"><label>Task Description / Title</label><input type="text" id="promo-title" placeholder="e.g. Join my official channel"></div>
-        <div class="form-group"><label>Wait Seconds per User</label><input type="number" id="promo-wait" value="15" min="5"></div>
-        <div style="font-size:16px;margin:14px 0;color:#c8102e;font-weight:900;" id="promo-cost">Cost: 0 Coins (Users get ~50%)</div>
+        <div style="font-size:16px;margin:14px 0;color:#c8102e;font-weight:900;" id="promo-cost">Cost: 0 Coins</div>
+        <p style="font-size:11px;color:#888;margin-bottom:10px;">Timer & user rewards are fixed by admin. You only pay the cost shown.</p>
         <button class="gold-btn" style="width:100%;" onclick="submitPromoteOrder()">Confirm & Publish Task</button>
         <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('promote')">← Cancel</button>
       </div>
@@ -580,7 +580,7 @@
     <div id="refer" class="page">
       <div class="header">Refer & Earn</div>
       <div class="banner">
-        <div><div style="font-weight:800;">Invite Friends</div><div style="font-size:12px;">Earn +50 Coins per friend!</div></div>
+        <div><div style="font-weight:800;">Invite Friends</div><div style="font-size:12px;">Signup bonus + Level 1: 5% · Level 2: 2% of their task earns</div></div>
         <div style="font-size:28px;">🎁</div>
       </div>
       <div class="card" style="text-align:center;">
@@ -616,9 +616,46 @@
         <div style="font-weight:800;font-size:18px;" id="profile-name">User</div>
         <div style="font-size:13px;color:#777;" id="profile-id">ID: --</div>
       </div>
-      <div class="list-item" onclick="window.open('https://t.me/Vtnhub0','_blank')"><div class="icon" style="background:#009688;">💬</div><div class="info"><h4>Support @Vtnhub0</h4></div><div>›</div></div>
+      <div class="card" id="vip-status-card" style="text-align:center;">
+        <div style="font-weight:800;color:#c8102e;">⭐ VIP Status</div>
+        <div id="vip-status-text" style="font-size:13px;margin:8px 0;color:#555;">Not VIP</div>
+        <button class="gold-btn" style="width:100%;font-size:12px;" onclick="buyVipWeekly()">Activate VIP (Coins)</button>
+        <p style="font-size:11px;color:#888;margin-top:8px;">Or complete enough tasks daily (set by admin) to stay VIP.</p>
+      </div>
+
+      <div class="section-title">Support & Feedback</div>
+      <div class="list-item" onclick="openSupportTg()"><div class="icon" style="background:#0088cc;">💬</div><div class="info"><h4>Telegram Support</h4><p>@vtnhub0 • Suggestions & help</p></div><div>›</div></div>
+      <div class="list-item" onclick="openSupportEmail()"><div class="icon" style="background:#EA4335;">✉️</div><div class="info"><h4>Email</h4><p>vtnhun0@gmail.com</p></div><div>›</div></div>
+
+      <div class="section-title">Legal</div>
+      <div class="list-item" onclick="showTerms()"><div class="icon" style="background:#5c3d00;">📜</div><div class="info"><h4>Terms & Conditions</h4><p>Rules, liability, deposits</p></div><div>›</div></div>
+
       <!-- Admin entry is HIDDEN for everyone except allowed Telegram IDs -->
       <div class="list-item" id="admin-entry-btn" style="display:none;" onclick="promptAdminPin()"><div class="icon" style="background:#c8102e;">👑</div><div class="info"><h4>Admin Panel</h4><p>Master controls only</p></div><div>🔒</div></div>
+    </div>
+
+    <!-- TERMS MODAL -->
+    <div class="gate-overlay" id="terms-modal" style="display:none;">
+      <div class="gate-modal" style="max-height:80vh;overflow-y:auto;text-align:left;">
+        <h3 style="color:#c8102e;text-align:center;margin-bottom:10px;">📜 Terms & Conditions</h3>
+        <div style="font-size:12px;line-height:1.55;color:#333;" id="terms-body">
+          <p><b>1. Acceptance.</b> By using VTN HUB Mini App you agree to these Terms. If you do not agree, stop using the app immediately.</p>
+          <p><b>2. Nature of service.</b> VTN HUB is a task / promotion platform operated for educational and promotional purposes. Coins are in-app units only. They are not legal tender, securities, or guaranteed cash.</p>
+          <p><b>3. No illegal activity.</b> We strictly prohibit promoting, posting, or earning from illegal content: drugs, weapons, fraud, scams, adult content involving minors, hate, terrorism, piracy, or any activity banned under Indian law or Telegram rules. Violators will be blocked and reported.</p>
+          <p><b>4. No responsibility for money loss.</b> We are <b>not responsible</b> for any loss of coins, failed withdrawals, third-party ads, promoter campaigns, payment delays, or technical errors. Use the app at your own risk.</p>
+          <p><b>5. Deposits.</b> We <b>do not insist</b> that you deposit money anywhere. Optional deposits (if shown) are voluntary. Never send money to unofficial accounts. Always verify UPI/crypto details inside the official app only.</p>
+          <p><b>6. Withdrawals.</b> Withdrawals are subject to admin review, minimum/maximum limits, and available funds. Processing may take time. Fake or abusive claims will be rejected.</p>
+          <p><b>7. Tasks & proofs.</b> Completing a timer does not guarantee payment. Proof tasks are paid only after admin approval. Leaving early or cheating voids reward.</p>
+          <p><b>8. Referrals & VIP.</b> Referral rewards and VIP benefits may change. Multi-level referral is limited to levels shown in the app. Abuse (fake accounts, self-referral) may result in ban.</p>
+          <p><b>9. Promoters.</b> You are solely responsible for the legality of links you promote. VTN HUB does not endorse external channels or products.</p>
+          <p><b>10. Ads.</b> Third-party ad networks (e.g. Monetag, AdsGram) have their own policies. We are not liable for ad content or revenue changes.</p>
+          <p><b>11. Account.</b> We may suspend accounts for fraud, multi-accounting, abuse, or guideline violations without notice.</p>
+          <p><b>12. Contact.</b> Support: Telegram <b>@vtnhub0</b> · Email <b>vtnhun0@gmail.com</b>. Feedback and suggestions are welcome.</p>
+          <p><b>13. Changes.</b> Terms may be updated at any time. Continued use means acceptance of the latest version.</p>
+          <p style="margin-top:10px;"><b>By continuing you confirm you are 18+ (or legal age in your region), will not use the app for illegal activity, and understand coins have no guaranteed cash value.</b></p>
+        </div>
+        <button class="gold-btn" style="width:100%;margin-top:14px;" onclick="document.getElementById('terms-modal').style.display='none'">I Understand</button>
+      </div>
     </div>
 
     <!-- MASTER ADMIN PANEL (STRENGTHENED) -->
@@ -786,6 +823,10 @@
         <div class="form-group"><label>Deposit UPI ID</label><input type="text" id="admin-deposit-upi" placeholder="yourname@upi"></div>
         <div class="form-group"><label>Deposit Crypto Address</label><input type="text" id="admin-deposit-crypto" placeholder="USDT TRC20 / BEP20"></div>
         <div class="form-group"><label>Deposit QR Image URL (optional)</label><input type="text" id="admin-deposit-qr" placeholder="https://.../qr.png"></div>
+        <div class="form-group"><label>Referral Level 1 % (of friend's task earn)</label><input type="number" id="admin-ref-l1" value="5"></div>
+        <div class="form-group"><label>Referral Level 2 %</label><input type="number" id="admin-ref-l2" value="2"></div>
+        <div class="form-group"><label>VIP weekly cost (coins)</label><input type="number" id="admin-vip-cost" value="500"></div>
+        <div class="form-group"><label>VIP free if daily tasks ≥</label><input type="number" id="admin-vip-tasks" value="10"></div>
         <button class="gold-btn" style="width:100%;" onclick="saveAdminSettings()">Save Configuration</button>
       </div>
 
@@ -829,11 +870,21 @@
             <option value="ss">Yes – Screenshot link / description</option>
           </select>
         </div>
+        <div class="form-group"><label>VIP only task?</label>
+          <select id="admin-task-vip">
+            <option value="false">No – all users</option>
+            <option value="true">Yes – VIP users only</option>
+          </select>
+        </div>
         <button class="gold-btn" style="width:100%;" onclick="adminCreateTask()">+ Publish Task</button>
       </div>
 
       <div class="section-title">Pending Proofs (Approve = Pay User)</div>
       <div id="admin-proofs-list"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+
+      <div class="section-title">Cross Promo Requests</div>
+      <div style="padding:0 14px 8px;"><button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadAdminCrossPromos()">🔄 Refresh Cross Promos</button></div>
+      <div id="admin-cross-list"><div class="card" style="text-align:center;color:#888;">Click refresh</div></div>
 
       <div class="section-title">All Tasks (filter & delete)</div>
       <div class="card" style="padding:12px;">
@@ -979,6 +1030,13 @@
     let depositUpi = '';
     let depositCrypto = '';
     let depositQrUrl = '';
+    let refLevel1Pct = 5;  // % of task rewards to direct referrer
+    let refLevel2Pct = 2;  // % to level-2
+    let vipWeeklyCost = 500;
+    let vipDailyTasks = 10;
+    let userIsVip = false;
+    let vipUntil = '';
+    let tasksDoneToday = 0;
 
     // Only these Telegram IDs can open Admin (add your real ID here)
     const ALLOWED_ADMIN_IDS = ['8150531247'];
@@ -1107,6 +1165,10 @@
             if (item.setting_key === 'deposit_upi') depositUpi = item.setting_value || '';
             if (item.setting_key === 'deposit_crypto') depositCrypto = item.setting_value || '';
             if (item.setting_key === 'deposit_qr') depositQrUrl = item.setting_value || '';
+            if (item.setting_key === 'ref_level1_pct') refLevel1Pct = Number(item.setting_value) || 5;
+            if (item.setting_key === 'ref_level2_pct') refLevel2Pct = Number(item.setting_value) || 2;
+            if (item.setting_key === 'vip_weekly_cost') vipWeeklyCost = Number(item.setting_value) || 500;
+            if (item.setting_key === 'vip_daily_tasks') vipDailyTasks = Number(item.setting_value) || 10;
             if (item.setting_key === 'sponsor_ads') {
               try { sponsorAds = JSON.parse(item.setting_value); } catch(e) {}
             }
@@ -1286,9 +1348,11 @@
           referralCount = Number(data.referral_count) || 0;
           referralEarnings = Number(data.referral_earnings) || 0;
           lastDailyClaim = data.last_daily_claim || '';
+          vipUntil = data.vip_until || '';
 
           updateAutoEarnBtn();
           updateUI();
+          refreshVipStatus();
         } else {
           // ========== NEW USER + SIGNUP BONUS ==========
           if (!isRealTelegramUser()) {
@@ -1452,12 +1516,114 @@
 
         balance = newBal;
         updateUI();
+
+        // Multi-level referral on positive task-like earnings (not on referral payouts themselves)
+        if (amount > 0 && ['task', 'auto_earn', 'daily', 'game', 'official'].includes(type)) {
+          payReferralCommission(uid, amount).catch(()=>{});
+          if (type === 'task' || type === 'official' || type === 'auto_earn') {
+            bumpTasksDoneToday();
+          }
+        }
         return true;
       } catch(e) {
         console.error('recordTx err', e);
         alert('Coin error: ' + (e.message || e));
         return false;
       }
+    }
+
+    async function payReferralCommission(earnerId, earnAmount) {
+      if (!sb || !earnAmount || earnAmount <= 0) return;
+      try {
+        const { data: earner } = await sb.from('users').select('referred_by').eq('telegram_id', String(earnerId)).maybeSingle();
+        const l1 = earner && earner.referred_by ? String(earner.referred_by) : '';
+        if (!l1 || l1 === String(earnerId)) return;
+
+        const c1 = Math.floor(earnAmount * (refLevel1Pct / 100));
+        if (c1 > 0) {
+          const { data: u1 } = await sb.from('users').select('balance, referral_earnings').eq('telegram_id', l1).maybeSingle();
+          if (u1) {
+            await sb.from('users').update({
+              balance: (Number(u1.balance) || 0) + c1,
+              referral_earnings: (Number(u1.referral_earnings) || 0) + c1
+            }).eq('telegram_id', l1);
+            await sb.from('transactions').insert([{
+              telegram_id: l1, amount: c1, type: 'referral',
+              description: 'L1 ' + refLevel1Pct + '% of friend earn (ID ' + earnerId + ')'
+            }]);
+          }
+        }
+
+        // Level 2
+        const { data: u1full } = await sb.from('users').select('referred_by').eq('telegram_id', l1).maybeSingle();
+        const l2 = u1full && u1full.referred_by ? String(u1full.referred_by) : '';
+        if (!l2 || l2 === String(earnerId) || l2 === l1) return;
+        const c2 = Math.floor(earnAmount * (refLevel2Pct / 100));
+        if (c2 > 0) {
+          const { data: u2 } = await sb.from('users').select('balance, referral_earnings').eq('telegram_id', l2).maybeSingle();
+          if (u2) {
+            await sb.from('users').update({
+              balance: (Number(u2.balance) || 0) + c2,
+              referral_earnings: (Number(u2.referral_earnings) || 0) + c2
+            }).eq('telegram_id', l2);
+            await sb.from('transactions').insert([{
+              telegram_id: l2, amount: c2, type: 'referral',
+              description: 'L2 ' + refLevel2Pct + '% of network earn (ID ' + earnerId + ')'
+            }]);
+          }
+        }
+      } catch(e) { console.warn('payReferralCommission', e); }
+    }
+
+    function bumpTasksDoneToday() {
+      const key = 'vtn_tasks_today_' + userId + '_' + new Date().toDateString();
+      tasksDoneToday = (Number(localStorage.getItem(key)) || 0) + 1;
+      localStorage.setItem(key, String(tasksDoneToday));
+      refreshVipStatus();
+    }
+
+    function loadTasksDoneToday() {
+      const key = 'vtn_tasks_today_' + userId + '_' + new Date().toDateString();
+      tasksDoneToday = Number(localStorage.getItem(key)) || 0;
+    }
+
+    function refreshVipStatus() {
+      loadTasksDoneToday();
+      const until = vipUntil ? new Date(vipUntil).getTime() : 0;
+      const paidVip = until > Date.now();
+      const taskVip = tasksDoneToday >= vipDailyTasks;
+      userIsVip = paidVip || taskVip;
+      const el = document.getElementById('vip-status-text');
+      if (el) {
+        if (paidVip) el.innerText = 'VIP active until ' + new Date(vipUntil).toLocaleString() + ' · Tasks today: ' + tasksDoneToday;
+        else if (taskVip) el.innerText = 'VIP today (completed ' + tasksDoneToday + '/' + vipDailyTasks + ' tasks)';
+        else el.innerText = 'Not VIP · Tasks today: ' + tasksDoneToday + '/' + vipDailyTasks + ' · Or pay ' + vipWeeklyCost + ' coins / week';
+      }
+    }
+
+    async function buyVipWeekly() {
+      if (!isRealTelegramUser()) return alert('Open from official bot.');
+      if (!confirm('Activate VIP for 7 days for ' + vipWeeklyCost + ' coins?')) return;
+      if (balance < vipWeeklyCost) return alert('Need ' + vipWeeklyCost + ' coins.');
+      const ok = await recordTx(-vipWeeklyCost, 'vip', 'VIP weekly activation');
+      if (!ok) return;
+      const until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      vipUntil = until;
+      if (sb) await sb.from('users').update({ vip_until: until }).eq('telegram_id', String(userId));
+      refreshVipStatus();
+      alert('⭐ VIP activated for 7 days!');
+    }
+
+    function showTerms() {
+      document.getElementById('terms-modal').style.display = 'flex';
+    }
+    function openSupportTg() {
+      const url = 'https://t.me/vtnhub0';
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+      else window.open(url, '_blank');
+    }
+    function openSupportEmail() {
+      window.location.href = 'mailto:vtnhun0@gmail.com?subject=VTN%20HUB%20Support';
     }
 
     function grantGameReward(coins, gameTitle) {
@@ -1942,9 +2108,11 @@
         const { data: claims } = await sb.from('completed_tasks').select('task_id').eq('telegram_id', userId);
         const claimedSet = new Set((claims || []).map(c => String(c.task_id)));
 
+        refreshVipStatus();
         const available = [];
         for (const t of (allTasks || [])) {
           if (claimedSet.has(String(t.id))) continue;
+          if (t.vip_only && !userIsVip) continue; // VIP-only tasks hidden for non-VIP
           if (t.max_users && t.max_users > 0) {
             const { count } = await sb.from('completed_tasks').select('*', { count: 'exact', head: true }).eq('task_id', String(t.id));
             if (count >= t.max_users) continue;
@@ -1969,10 +2137,11 @@
         currentTasks = available;
         let html = '';
         available.forEach((t, i) => {
+          const vipTag = t.vip_only ? ' • ⭐ VIP' : '';
           html += `
             <div class="list-item">
               <div class="icon" style="background:#c8102e;">📋</div>
-              <div class="info"><h4>${t.title}</h4><p>+${t.reward} Coins • Wait ${t.wait_seconds}s</p></div>
+              <div class="info"><h4>${t.title}</h4><p>+${t.reward} Coins • Wait ${t.wait_seconds}s${vipTag}</p></div>
               <button class="start-btn" onclick="openTaskModal(${i})">Start</button>
             </div>`;
         });
@@ -2230,6 +2399,26 @@
     }
 
     // ========== PROMOTE ==========
+    // Map promote type → Earn category (so tasks appear in the right list)
+    function promoCategoryFor(type) {
+      const map = {
+        channel: 'join',
+        bot: 'bot',
+        views: 'views',
+        watch: 'watch',
+        install: 'install',
+        website: 'website',
+        affiliate: 'affiliate',
+        products: 'products',
+        banner: 'other',
+        monetize: 'other'
+      };
+      return map[type] || 'other';
+    }
+
+    // Fixed wait for promo tasks (promoter cannot set this)
+    const PROMO_WAIT_SECONDS = 15;
+
     function openPromoteForm(type) {
       if (isAppPaused()) return showPausedMessage();
       if (isCategoryPaused('promote')) return showPausedMessage('Promote is temporarily paused by admin.');
@@ -2251,7 +2440,6 @@
       document.getElementById('promo-link').value = '';
       document.getElementById('promo-qty').value = type === 'banner' || type === 'monetize' ? 1 : 100;
       document.getElementById('promo-title').value = '';
-      document.getElementById('promo-wait').value = 15;
       updatePromoCost();
       showPage('promote-form');
     }
@@ -2262,29 +2450,34 @@
       if (currentPromoType === 'banner') total = prices.banner || 500;
       else if (currentPromoType === 'monetize') total = 0;
       else {
+        // Admin price = coins per 100 users
         const rate = prices[currentPromoType] || 60;
         total = Math.ceil(qty * (rate / 100));
       }
-      document.getElementById('promo-cost').innerText = total === 0 ? 'Free Application' : `Cost: ${total} Coins (Users get ~50%)`;
+      // Only show cost to promoter – never show user reward %
+      document.getElementById('promo-cost').innerText = total === 0 ? 'Free Application' : ('Cost: ' + total + ' Coins');
     }
 
     async function submitPromoteOrder() {
       const link = document.getElementById('promo-link').value.trim();
-      const title = document.getElementById('promo-title').value.trim() || `Promote: ${link}`;
+      const title = document.getElementById('promo-title').value.trim() || ('Promote: ' + link);
       const qty = Number(document.getElementById('promo-qty').value) || 10;
-      const wait = Number(document.getElementById('promo-wait').value) || 15;
 
       if (currentPromoType === 'monetize') {
         if (!link) return alert('Please enter your channel link');
         if (sb) {
-          await sb.from('monetize_requests').insert([{
-            telegram_id: userId,
+          const { error } = await sb.from('monetize_requests').insert([{
+            telegram_id: String(userId),
             channel_link: link,
             status: 'pending',
             notes: title
           }]);
+          if (error) {
+            // table may not exist – still notify user
+            console.warn(error);
+          }
         }
-        alert('✅ Monetize application submitted!\nAdmin will review within 24-48 hours.');
+        alert('✅ Monetize application submitted!\nAdmin will review within 24-48 hours.\n\nNote: Make our bot admin in your channel for best results (cannot auto-check from Mini App alone).');
         showPage('promote');
         return;
       }
@@ -2298,27 +2491,35 @@
         total = Math.ceil(qty * (rate / 100));
       }
 
-      if (balance < total) return alert(`Insufficient coins! Need ${total} coins.`);
+      if (balance < total) return alert('Insufficient coins! Need ' + total + ' coins.');
 
-      await recordTx(-total, 'promo', 'Promote Order: ' + currentPromoType);
+      const ok = await recordTx(-total, 'promo', 'Promote Order: ' + currentPromoType);
+      if (!ok) return alert('Payment failed. Try again.');
 
-      // 50% of cost goes to user rewards
+      // 50% of total cost shared among target users (internal only – not shown to promoter)
       const userShare = Math.floor(total * 0.5);
-      const perUserReward = Math.max(3, Math.floor(userShare / Math.max(qty, 1)));
+      const perUserReward = Math.max(1, Math.floor(userShare / Math.max(qty, 1)));
+      const category = promoCategoryFor(currentPromoType);
 
       if (sb) {
-        await sb.from('tasks').insert([{
+        const { error } = await sb.from('tasks').insert([{
           title: title,
-          category: currentPromoType === 'banner' ? 'other' : currentPromoType,
+          category: category,
           reward: perUserReward,
           link: link,
-          wait_seconds: wait,
+          wait_seconds: PROMO_WAIT_SECONDS,
           max_users: qty,
           is_active: true,
-          from_promo: true
+          from_promo: true,
+          require_proof: 'none'
         }]);
+        if (error) {
+          alert('Paid but task publish failed: ' + error.message + '\nContact admin.');
+          showPage('promote');
+          return;
+        }
       }
-      alert(`✅ Promotion Published!\nCost: ${total} Coins\nUsers will get ~${perUserReward} coins each (50% share)`);
+      alert('✅ Promotion published!\nCost: ' + total + ' Coins\nIt is now live under Earn → correct category.');
       showPage('promote');
     }
 
@@ -2334,17 +2535,21 @@
       }
       const link = prompt('Enter your Channel / Bot / Post link:');
       if (!link) return;
-      count++;
-      localStorage.setItem(key, count);
 
       if (sb) {
-        await sb.from('cross_promos').insert([{
-          telegram_id: userId,
+        const { error } = await sb.from('cross_promos').insert([{
+          telegram_id: String(userId),
           link: link,
           status: 'pending'
         }]);
+        if (error) {
+          alert('Could not submit: ' + error.message + '\nCreate table cross_promos in Supabase if missing.');
+          return;
+        }
       }
-      alert('✅ Cross promotion submitted!\nRemaining today: ' + (3 - count) + '\nAdmin will review.');
+      count++;
+      localStorage.setItem(key, count);
+      alert('✅ Cross promotion submitted for admin approval.\nRemaining today: ' + (3 - count));
     }
 
     // ========== REFERRAL ==========
@@ -2641,6 +2846,14 @@
       document.getElementById('admin-deposit-upi').value = depositUpi || '';
       document.getElementById('admin-deposit-crypto').value = depositCrypto || '';
       document.getElementById('admin-deposit-qr').value = depositQrUrl || '';
+      const l1 = document.getElementById('admin-ref-l1');
+      const l2 = document.getElementById('admin-ref-l2');
+      const vc = document.getElementById('admin-vip-cost');
+      const vt = document.getElementById('admin-vip-tasks');
+      if (l1) l1.value = refLevel1Pct;
+      if (l2) l2.value = refLevel2Pct;
+      if (vc) vc.value = vipWeeklyCost;
+      if (vt) vt.value = vipDailyTasks;
 
       // Load prices
       document.getElementById('price-channel').value = prices.channel || 200;
@@ -2950,6 +3163,10 @@
       const dUpi = document.getElementById('admin-deposit-upi').value.trim();
       const dCry = document.getElementById('admin-deposit-crypto').value.trim();
       const dQr = document.getElementById('admin-deposit-qr').value.trim();
+      const rL1 = Number(document.getElementById('admin-ref-l1')?.value) || 5;
+      const rL2 = Number(document.getElementById('admin-ref-l2')?.value) || 2;
+      const vCost = Number(document.getElementById('admin-vip-cost')?.value) || 500;
+      const vTasks = Number(document.getElementById('admin-vip-tasks')?.value) || 10;
 
       if (bName) botUsername = bName;
       if (pin) adminPin = pin;
@@ -2968,6 +3185,10 @@
       depositUpi = dUpi;
       depositCrypto = dCry;
       depositQrUrl = dQr;
+      refLevel1Pct = rL1;
+      refLevel2Pct = rL2;
+      vipWeeklyCost = vCost;
+      vipDailyTasks = vTasks;
 
       if (sb) {
         await sb.from('app_settings').upsert([
@@ -2987,7 +3208,11 @@
           { setting_key: 'withdraw_max', setting_value: String(wMax) },
           { setting_key: 'deposit_upi', setting_value: dUpi },
           { setting_key: 'deposit_crypto', setting_value: dCry },
-          { setting_key: 'deposit_qr', setting_value: dQr }
+          { setting_key: 'deposit_qr', setting_value: dQr },
+          { setting_key: 'ref_level1_pct', setting_value: String(rL1) },
+          { setting_key: 'ref_level2_pct', setting_value: String(rL2) },
+          { setting_key: 'vip_weekly_cost', setting_value: String(vCost) },
+          { setting_key: 'vip_daily_tasks', setting_value: String(vTasks) }
         ]);
       }
       generateInviteLink();
@@ -3056,15 +3281,17 @@
       const wait = Number(document.getElementById('admin-task-wait').value) || 10;
       const maxUsers = Number(document.getElementById('admin-task-max').value) || 0;
       const proof = document.getElementById('admin-task-proof').value || 'none';
+      const vipOnly = document.getElementById('admin-task-vip')?.value === 'true';
       if (!title) return alert('Enter title');
       await sb.from('tasks').insert([{
         title, category, reward, link,
         wait_seconds: wait,
         max_users: maxUsers,
         is_active: true,
-        require_proof: proof
+        require_proof: proof,
+        vip_only: vipOnly
       }]);
-      alert('✅ Task Published' + (proof !== 'none' ? ' (Proof required)' : ''));
+      alert('✅ Task Published' + (proof !== 'none' ? ' (Proof required)' : '') + (vipOnly ? ' [VIP only]' : ''));
       document.getElementById('admin-task-title').value = '';
       loadAdminTaskList();
     }
@@ -3131,6 +3358,45 @@
       await sb.from('tasks').delete().eq('id', id);
       loadAdminTaskList();
       loadAdminCompletionHistory();
+    }
+
+    async function loadAdminCrossPromos() {
+      const cont = document.getElementById('admin-cross-list');
+      if (!cont || !sb) return;
+      cont.innerHTML = '<div class="card" style="text-align:center;">Loading...</div>';
+      const { data, error } = await sb.from('cross_promos').select('*').eq('status', 'pending').order('id', { ascending: false }).limit(30);
+      if (error) {
+        cont.innerHTML = '<div class="card" style="font-size:12px;color:#c8102e;">' + error.message + '<br>Create table cross_promos if needed.</div>';
+        return;
+      }
+      if (!data || !data.length) {
+        cont.innerHTML = '<div class="card" style="text-align:center;color:#888;">No pending cross promos</div>';
+        return;
+      }
+      let html = '';
+      data.forEach(c => {
+        html += `<div class="list-item" style="border-left:4px solid #009688;">
+          <div class="info"><h4>User ${c.telegram_id}</h4><p style="word-break:break-all;">${c.link || ''}</p></div>
+          <div>
+            <button class="start-btn" style="background:#4CAF50;margin-bottom:4px;" onclick="approveCrossPromo(${c.id})">OK</button><br>
+            <button class="start-btn" style="background:#c8102e;" onclick="rejectCrossPromo(${c.id})">No</button>
+          </div>
+        </div>`;
+      });
+      cont.innerHTML = html;
+    }
+
+    async function approveCrossPromo(id) {
+      if (!isAdminUser()) return;
+      await sb.from('cross_promos').update({ status: 'approved' }).eq('id', id);
+      alert('Approved (post manually if needed)');
+      loadAdminCrossPromos();
+    }
+
+    async function rejectCrossPromo(id) {
+      if (!isAdminUser()) return;
+      await sb.from('cross_promos').update({ status: 'rejected' }).eq('id', id);
+      loadAdminCrossPromos();
     }
 
     async function loadAdminProofs() {
