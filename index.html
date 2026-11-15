@@ -1278,7 +1278,11 @@
           balance = Number(data.balance) || 0;
           officialVerified = !!data.official_verified || officialVerified;
           localStorage.setItem('vtn_verified_' + userId, officialVerified ? 'true' : 'false');
-          autoEarnActive = !!data.auto_earn_active;
+          // Never auto-start Auto Earn on open – user must turn ON each session
+          autoEarnActive = false;
+          if (data.auto_earn_active && sb) {
+            sb.from('users').update({ auto_earn_active: false }).eq('telegram_id', String(userId));
+          }
           referralCount = Number(data.referral_count) || 0;
           referralEarnings = Number(data.referral_earnings) || 0;
           lastDailyClaim = data.last_daily_claim || '';
@@ -2534,27 +2538,23 @@
       const uid = String(userId);
       const method = currentWithdrawType || 'upi';
 
-      // Try several column shapes (your table may use type / method instead of payout_type)
-      const attempts = [
-        { telegram_id: uid, amount: amt, payout_type: method, address: addr, status: 'pending' },
-        { telegram_id: uid, amount: amt, type: method, address: addr, status: 'pending' },
-        { telegram_id: uid, amount: amt, method: method, address: addr, status: 'pending' },
-        { telegram_id: uid, amount: amt, address: addr, status: 'pending' },
-        { user_id: uid, amount: amt, type: method, address: addr, status: 'pending' }
-      ];
-
-      let inserted = false;
-      let lastErr = null;
-      for (const row of attempts) {
-        const { error } = await sb.from('withdrawals').insert([row]);
-        if (!error) { inserted = true; break; }
-        lastErr = error;
-        // stop early if table missing entirely
-        if (String(error.message || '').toLowerCase().includes('does not exist') && String(error.message || '').includes('relation')) break;
+      // Minimal columns only (matches fixed SQL table) – do NOT use user_id
+      const row = {
+        telegram_id: uid,
+        amount: amt,
+        payout_type: method,
+        address: addr,
+        status: 'pending'
+      };
+      let { error: wErr } = await sb.from('withdrawals').insert([row]);
+      if (wErr) {
+        // Retry without payout_type if schema cache is old
+        const row2 = { telegram_id: uid, amount: amt, address: addr, status: 'pending' };
+        const r2 = await sb.from('withdrawals').insert([row2]);
+        wErr = r2.error;
       }
-
-      if (!inserted) {
-        alert('Could not create withdrawal: ' + (lastErr && lastErr.message ? lastErr.message : 'unknown') + '\nNo coins were deducted.\n\nRun the withdrawals SQL fix in Supabase.');
+      if (wErr) {
+        alert('Could not create withdrawal: ' + (wErr.message || '') + '\nNo coins were deducted.\n\nIn Supabase SQL run:\nNOTIFY pgrst, \'reload schema\';\nand the withdrawals table fix.');
         return;
       }
 
