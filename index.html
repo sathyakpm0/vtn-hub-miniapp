@@ -6,6 +6,9 @@
   <title>VTN HUB - Earning Ecosystem</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Bungee&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -107,6 +110,12 @@
     .master-stat-box { background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; text-align: center; }
     .master-stat-box .val { font-size: 18px; font-weight: 900; color: #c8102e; }
     .master-stat-box .lbl { font-size: 10px; color: #666; font-weight: 700; }
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .filter-pill {
+      flex: 1; min-width: 72px; border: none; border-radius: 12px; padding: 8px 6px;
+      font-size: 11px; font-weight: 800; cursor: pointer; background: #e2e8f0; color: #334155;
+    }
+    .filter-pill.active { background: #c8102e; color: #fff; }
 
     /* FULL SCREEN GAME SHELL */
     .fs-game-shell {
@@ -170,6 +179,136 @@
       background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; margin: 0 14px 12px; padding: 12px 14px;
       border-radius: 14px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid #ffd700; font-size: 12px;
     }
+
+    /* SCOPED TOON CRICKET 3-OVERS STYLES */
+    #tc-root {
+      width: 100%; height: 100%; background-color: #022c22;
+      font-family: 'Fredoka', system-ui, -apple-system, sans-serif;
+      color: #ffffff; touch-action: manipulation; display: flex; justify-content: center;
+    }
+    #tc-root #app-container {
+      position: relative; width: 100%; height: 100%; max-width: 440px; margin: 0 auto;
+      background: #0f172a; display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+    #tc-root #hud {
+      flex: 0 0 auto; background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+      padding: 8px 12px 7px; border-bottom: 1px solid rgba(16, 185, 129, 0.3); z-index: 10;
+    }
+    #tc-root .hud-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    #tc-root .score-container { display: flex; align-items: baseline; gap: 6px; }
+    #tc-root .score-runs { font-family: 'Bungee', Impact, sans-serif; font-size: 28px; color: #facc15; line-height: 1; }
+    #tc-root .score-wickets { font-size: 14px; font-weight: 700; color: #94a3b8; }
+    #tc-root .score-overs { font-size: 11px; font-weight: 700; color: #64748b; margin-left: 2px; }
+    #tc-root .hud-right { display: flex; align-items: center; gap: 8px; }
+    #tc-root .wicket-sockets { display: flex; gap: 5px; }
+    #tc-root .wicket-pill {
+      width: 14px; height: 24px; border-radius: 3px; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 800; transition: all 0.2s ease;
+    }
+    #tc-root .wicket-live { background: #d97706; border: 1px solid #fbbf24; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+    #tc-root .wicket-out { background: rgba(153, 27, 27, 0.8); border: 1px solid #ef4444; color: #ef4444; }
+    #tc-root .icon-btn {
+      background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; color: #94a3b8;
+      border-radius: 8px; padding: 5px 8px; cursor: pointer; font-size: 14px;
+    }
+    #tc-root .players-bar {
+      display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700;
+      background: rgba(2, 6, 23, 0.6); border: 1px solid #1e293b; padding: 3px 8px; border-radius: 6px; margin-bottom: 5px;
+    }
+    #tc-root .player-bat { color: #38bdf8; }
+    #tc-root .player-bowl { color: #fde047; }
+    #tc-root .hud-bottom-row { display: flex; justify-content: space-between; align-items: center; }
+    #tc-root .over-balls-wrap { display: flex; align-items: center; gap: 5px; }
+    #tc-root .over-label { font-size: 10px; font-weight: 800; color: #34d399; text-transform: uppercase; }
+    #tc-root .ball-dots { display: flex; gap: 4px; }
+    #tc-root .ball-badge {
+      width: 21px; height: 21px; border-radius: 50%; background: #1e293b; border: 1px solid #334155;
+      color: #64748b; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    }
+    #tc-root .ball-badge.six { background: #facc15; color: #020617; border-color: #fef08a; }
+    #tc-root .ball-badge.four { background: #38bdf8; color: #020617; border-color: #bae6fd; }
+    #tc-root .ball-badge.wicket { background: #dc2626; color: #ffffff; border-color: #fca5a5; }
+    #tc-root .ball-badge.single { background: #22c55e; color: #020617; border-color: #86efac; }
+    #tc-root .ball-badge.dot { background: #475569; color: #cbd5e1; }
+    #tc-root .ball-type-title {
+      font-size: 11px; font-weight: 700; color: #fde047; max-width: 140px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #tc-root #canvas-container { position: relative; flex: 1 1 auto; width: 100%; background: #14532d; overflow: hidden; }
+    #tc-root #game-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+    #tc-root #controls {
+      flex: 0 0 auto; padding: 12px 14px 16px;
+      background: linear-gradient(0deg, #020617 0%, #0f172a 100%); border-top: 1px solid #1e293b; z-index: 10;
+    }
+    #tc-root #hit-button {
+      width: 100%; padding: 15px 18px; border-radius: 18px; font-family: 'Bungee', Impact, sans-serif;
+      font-size: 22px; letter-spacing: 1px; display: flex; align-items: center; justify-content: center;
+      gap: 12px; cursor: pointer; outline: none; transition: transform 0.08s ease, filter 0.15s ease;
+      box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+    }
+    #tc-root #hit-button.ready {
+      background: linear-gradient(90deg, #facc15 0%, #fbbf24 50%, #f59e0b 100%);
+      color: #020617; border: 3px solid #fef08a; animation: tcPulseBtn 1.2s infinite alternate ease-in-out;
+    }
+    #tc-root #hit-button.waiting { background: #16a34a; color: #ffffff; border: 3px solid #4ade80; }
+    #tc-root #hit-button.swung { background: #1e293b; color: #64748b; border: 2px solid #334155; box-shadow: none; cursor: not-allowed; }
+    #tc-root #hit-button:active:not(.swung) { transform: scale(0.96); }
+    @keyframes tcPulseBtn {
+      from { transform: scale(1); filter: brightness(1); }
+      to { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 10px 30px rgba(250, 204, 21, 0.6); }
+    }
+    #tc-root .hint-subtext { text-align: center; font-size: 11px; color: #64748b; margin-top: 6px; font-weight: 600; }
+    #tc-root .modal-overlay {
+      position: absolute; inset: 0; background: rgba(2, 6, 23, 0.88); backdrop-filter: blur(4px);
+      z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;
+    }
+    #tc-root .modal-overlay.hidden { display: none; }
+    #tc-root .modal-card {
+      width: 100%; max-width: 350px; background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+      border: 2px solid #f59e0b; border-radius: 24px; padding: 20px 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9); animation: tcPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes tcPopIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    #tc-root .title-badge {
+      display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+      color: #6ee7b7; background: rgba(6, 78, 59, 0.8); border: 1px solid #10b981;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+    }
+    #tc-root .title-h1 {
+      font-family: 'Bungee', Impact, sans-serif; font-size: 34px; color: #facc15;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.8); margin-bottom: 6px; line-height: 1.1;
+    }
+    #tc-root .title-sub { font-size: 13px; color: #a7f3d0; font-weight: 600; margin-bottom: 16px; }
+    #tc-root .rules-box {
+      background: rgba(2, 6, 23, 0.7); border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 16px; padding: 12px; text-align: left; font-size: 12px; color: #e2e8f0; margin-bottom: 16px;
+    }
+    #tc-root .rules-box h3 { font-size: 11px; font-weight: 800; color: #facc15; text-transform: uppercase; margin-bottom: 6px; }
+    #tc-root .rules-box li { list-style: none; margin-bottom: 5px; display: flex; gap: 6px; }
+    #tc-root .rules-box li span.num { color: #34d399; font-weight: 800; }
+    #tc-root .action-btn {
+      width: 100%; padding: 14px; border-radius: 16px; font-family: 'Bungee', Impact, sans-serif;
+      font-size: 17px; background: linear-gradient(90deg, #facc15, #f59e0b); color: #020617;
+      border: 2px solid #fef08a; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s ease;
+    }
+    #tc-root .action-btn:active { transform: scale(0.97); }
+    #tc-root .scorecard-grid {
+      display: flex; justify-content: space-around; background: rgba(2, 6, 23, 0.85);
+      border: 1px solid #1e293b; border-radius: 16px; padding: 12px 8px; margin: 12px 0;
+    }
+    #tc-root .scorecard-item { display: flex; flex-direction: column; align-items: center; }
+    #tc-root .scorecard-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+    #tc-root .scorecard-val { font-family: 'Bungee', Impact, sans-serif; font-size: 26px; line-height: 1.1; margin-top: 4px; }
+    #tc-root .val-yellow { color: #facc15; }
+    #tc-root .val-red { color: #ef4444; }
+    #tc-root .val-white { font-family: 'Fredoka', sans-serif; font-size: 20px; font-weight: 800; color: #f8fafc; }
+    #tc-root .stats-footer { display: flex; justify-content: space-between; font-size: 12px; color: #cbd5e1; margin-bottom: 14px; padding: 0 4px; }
+    #tc-root .stats-footer strong { color: #facc15; }
   </style>
 </head>
 <body>
@@ -338,8 +477,8 @@
     <div class="section-title">Full-Screen Games (Play & Earn)</div>
     <div class="game-pass-banner">
       <div>
-        <div style="font-weight:800;color:#ffd700;">🎫 3-Min Game Pass</div>
-        <div style="font-size:11px;opacity:0.85;" id="fun-pass-status">Watch 1 quick ad every 3 min to unlock all games</div>
+        <div style="font-weight:800;color:#ffd700;">🎫 Game Ad Pass</div>
+        <div style="font-size:11px;opacity:0.85;" id="fun-pass-status">Watch 1 quick ad to unlock all games</div>
       </div>
       <div style="font-weight:900;font-size:13px;color:#38bdf8;" id="fun-pass-timer">Locked</div>
     </div>
@@ -421,8 +560,8 @@
       <div class="form-group"><label id="withdraw-label">UPI ID / USDT Address</label><input type="text" id="withdraw-address" placeholder="Enter recipient details"></div>
       <div class="form-group"><label id="withdraw-amount-label">Amount (Coins)</label><input type="number" id="withdraw-amount" value="500" min="1"></div>
       <p style="font-size:11px;color:#888;margin-bottom:6px;" id="withdraw-limits-hint">Limits set by admin</p>
-      <p style="font-size:11px;color:#c8102e;font-weight:700;margin-bottom:12px;">🎬 A short sponsor ad is required to confirm your final withdrawal request.</p>
-      <button class="gold-btn" id="withdraw-submit-btn" style="width:100%;" onclick="submitWithdraw()">🎬 Watch Ad & Submit Request</button>
+      <p style="font-size:11px;color:#c8102e;font-weight:700;margin-bottom:12px;">🎬 A short sponsor ad may be required to confirm your withdrawal request.</p>
+      <button class="gold-btn" id="withdraw-submit-btn" style="width:100%;" onclick="submitWithdraw()">💳 Submit Withdrawal</button>
       <button class="start-btn" style="width:100%;margin-top:10px;background:#666;" onclick="showPage('wallet')">← Back</button>
     </div>
   </div>
@@ -553,14 +692,26 @@
       <div id="admin-ads-list"><div style="text-align:center;color:#888;font-size:12px;">Loading ads...</div></div>
     </div>
 
-    <div class="section-title">Monetag & AdsGram (SDK Ads)</div>
+    <div class="section-title">Ad Networks (Monetag / AdsGram / Adsterra / Telebot)</div>
     <div class="card">
-      <p style="font-size:12px;color:#666;margin-bottom:10px;">Official ad networks. Paste IDs from your publisher dashboard.</p>
+      <p style="font-size:12px;color:#666;margin-bottom:10px;">Configure any ad network or direct/bot ad link and choose priority.</p>
+      <div class="form-group"><label>Ad Priority / Mode</label>
+        <select id="ad-network-mode">
+          <option value="auto">Auto (Monetag → AdsGram → Adsterra/Direct → Sponsor Card)</option>
+          <option value="adsterra">Adsterra / Direct / Telebot Ad Link Only</option>
+          <option value="monetag">Monetag Only (with Sponsor fallback)</option>
+          <option value="adsgram">AdsGram Only (with Sponsor fallback)</option>
+          <option value="sponsor">Sponsor Card Only</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Adsterra / Telebot / Custom Direct Link URL</label><input type="text" id="adsterra-direct" placeholder="https://... (Adsterra Direct Link or https://t.me/Vtnhubbot?start=ad)"></div>
+      <div class="form-group"><label>Adsterra / Custom Script URL (Social Bar / Banner, optional)</label><input type="text" id="adsterra-script" placeholder="https://.../invoke.js"></div>
       <div class="form-group"><label>Monetag Zone ID (number only)</label><input type="text" id="monetag-zone" placeholder="e.g. 123456"></div>
       <div class="form-group"><label>Monetag SDK Script URL (optional)</label><input type="text" id="monetag-script" placeholder="https://.../vignette.min.js"></div>
       <div class="form-group"><label>AdsGram Block ID</label><input type="text" id="adsgram-block" placeholder="e.g. 1234-block-id"></div>
-      <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="saveAdNetworkSettings()">Save Network IDs</button>
-      <div style="font-size:11px;color:#888;">After saving, reload the Mini App once so SDK scripts load.</div>
+      <div class="form-group"><label>Ad Countdown Wait (seconds, for Direct / Sponsor Ads)</label><input type="number" id="admin-ad-wait" value="6" min="3"></div>
+      <button class="gold-btn" style="width:100%;margin-bottom:8px;" onclick="saveAdNetworkSettings()">Save Ad Network Settings</button>
+      <div style="font-size:11px;color:#888;">After changing Script URLs or IDs, reload the Mini App once so scripts load.</div>
     </div>
 
     <div class="section-title">Auto Earn Ads & Timing</div>
@@ -573,13 +724,13 @@
       <div class="form-group"><label>Wait between Ads (seconds)</label><input type="number" id="auto-wait" value="60" min="10"></div>
       <div class="form-group"><label>Ad Type</label>
         <select id="auto-ad-type">
-          <option value="link">Any Link (t.me / video / website)</option>
+          <option value="link">Any Link (t.me / video / Adsterra / website)</option>
           <option value="monetag">Monetag SDK Ad</option>
           <option value="adsgram">AdsGram SDK Ad</option>
         </select>
       </div>
       <div class="form-group"><label>Ad Title</label><input type="text" id="auto-ad-title" placeholder="e.g. Channel Promo / Monetag Slot 1"></div>
-      <div class="form-group"><label>Ad URL (only for Link type)</label><input type="text" id="auto-ad-url" placeholder="https://t.me/... or video URL"></div>
+      <div class="form-group"><label>Ad URL (only for Link type)</label><input type="text" id="auto-ad-url" placeholder="https://t.me/... or Adsterra URL"></div>
       <button class="gold-btn" style="width:100%;margin-bottom:10px;" onclick="adminAddAutoAd()">+ Add to Auto Earn List</button>
       <button class="start-btn" style="width:100%;background:#3F51B5;margin-bottom:12px;" onclick="saveAutoEarnSettings()">Save Timing & Reward</button>
       <div style="font-size:12px;font-weight:800;color:#c8102e;margin-bottom:6px;">Auto Earn Ad List:</div>
@@ -611,14 +762,28 @@
       <button class="gold-btn" style="width:100%;" onclick="savePriceSettings()">Save Prices</button>
     </div>
 
-    <div class="section-title">Pending Payouts (Latest 10)</div>
-    <div style="padding:0 14px 8px;"><button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadAdminPayouts()">🔄 Refresh Withdrawals</button></div>
-    <div id="admin-withdrawals-list" style="max-height: 350px; overflow-y: auto; padding-bottom: 10px;"><div class="card" style="text-align:center;">Loading...</div></div>
+    <div class="section-title">Pending Payouts & Withdrawal History</div>
+    <div style="padding:0 14px 8px;">
+      <button class="gold-btn" style="width:100%;font-size:12px;margin-bottom:8px;" onclick="loadAdminPayouts()">🔄 Refresh Pending Payouts</button>
+    </div>
+    <div id="admin-withdrawals-list" style="max-height: 320px; overflow-y: auto; padding-bottom: 10px;"><div class="card" style="text-align:center;">Loading...</div></div>
+    <div class="card" style="padding:12px;">
+      <div style="font-size:12px;font-weight:800;color:#c8102e;margin-bottom:8px;">💳 Withdrawal History (Unpaid / Paid)</div>
+      <div class="filter-row">
+        <button class="filter-pill active" id="wd-tab-pending" onclick="loadAdminWithdrawHistory('pending')">⏳ Unpaid</button>
+        <button class="filter-pill" id="wd-tab-approved" onclick="loadAdminWithdrawHistory('approved')">✅ Paid</button>
+        <button class="filter-pill" id="wd-tab-rejected" onclick="loadAdminWithdrawHistory('rejected')">❌ Rejected</button>
+        <button class="filter-pill" id="wd-tab-all" onclick="loadAdminWithdrawHistory('all')">📋 All</button>
+      </div>
+      <div id="admin-withdraw-history-list" style="max-height:300px;overflow-y:auto;"><div style="text-align:center;color:#888;font-size:12px;">Tap a filter above to load history</div></div>
+    </div>
 
-    <div class="section-title">Bot & Official Channel Settings</div>
+    <div class="section-title">Game Coins, Ad Pass & Channel Settings</div>
     <div class="card">
       <div class="form-group"><label>Bot Username (without @)</label><input type="text" id="admin-bot-input"></div>
       <div class="form-group"><label>Official Channel Link</label><input type="text" id="admin-channel-link-input" placeholder="https://t.me/vtnhub"></div>
+      <div class="form-group"><label>Official Channel @Username / ID (for real check)</label><input type="text" id="admin-channel-username" placeholder="@vtnhub"></div>
+      <div class="form-group"><label>Channel Verify API URL (Cloudflare Worker / Edge Fn)</label><input type="text" id="admin-channel-verify-api" placeholder="https://your-worker.workers.dev"></div>
       <div class="form-group"><label>Mandatory Channel Gate Active?</label>
         <select id="admin-gate-required"><option value="true">YES (Gate Active)</option><option value="false">NO (Skip Gate)</option></select>
       </div>
@@ -627,9 +792,32 @@
       <div class="form-group"><label>Referral Reward (to YOU when friend joins)</label><input type="number" id="admin-ref-reward" value="50"></div>
       <div class="form-group"><label>Referral Welcome Bonus (extra to new user who used code)</label><input type="number" id="admin-ref-welcome" value="20"></div>
       <div class="form-group"><label>Max Coins a user can earn per day (0 = no limit)</label><input type="number" id="admin-daily-cap" value="0"></div>
-      <div class="form-group"><label>Daily Check-in requires Watch Ad?</label><select id="admin-checkin-ad"><option value="true">YES</option><option value="false">NO</option></select></div>
-      <div class="form-group"><label>Game claim requires Watch Ad?</label><select id="admin-game-ad"><option value="true">YES</option><option value="false">NO</option></select></div>
-      <div class="form-group"><label>Game Entry Pass duration (minutes, 0 = off)</label><input type="number" id="admin-game-ad-mins" value="3" min="0"></div>
+
+      <div style="font-size:12px;font-weight:800;color:#c8102e;margin:10px 0 6px;">🎮 Game Coins & Spin Settings</div>
+      <div class="form-row">
+        <div class="form-group"><label>Game Win Reward (Coins)</label><input type="number" id="admin-game-reward" value="2" min="0"></div>
+        <div class="form-group"><label>Spins Allowed Per Day</label><input type="number" id="admin-spin-limit" value="10" min="1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Spin Min Coins</label><input type="number" id="admin-spin-min" value="1" min="1"></div>
+        <div class="form-group"><label>Spin Max Coins</label><input type="number" id="admin-spin-max" value="3" min="1"></div>
+      </div>
+
+      <div style="font-size:12px;font-weight:800;color:#c8102e;margin:10px 0 6px;">🎬 Ad / Pass Switches (YES = Watch Ad, NO = Free Pass)</div>
+      <div class="form-row">
+        <div class="form-group"><label>Daily Check-in Ad?</label><select id="admin-checkin-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+        <div class="form-group"><label>Game Entry Ad?</label><select id="admin-game-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Game Continue Ad (after timer)?</label><select id="admin-game-continue-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+        <div class="form-group"><label>Game Exit Ad (after long play)?</label><select id="admin-game-exit-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Chat Entry Ad?</label><select id="admin-chat-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+        <div class="form-group"><label>Withdraw Ad?</label><select id="admin-withdraw-ad"><option value="true">YES (Ad)</option><option value="false">NO (Pass)</option></select></div>
+      </div>
+      <div class="form-group"><label>Game Ad Pass Timer (minutes before next ad, 0 = off)</label><input type="number" id="admin-game-ad-mins" value="5" min="0"></div>
+
       <div class="form-group"><label>Daily Check-in Reward Coins</label><input type="number" id="admin-daily-reward" value="10"></div>
       <div class="form-group"><label>Withdraw Min Coins</label><input type="number" id="admin-wd-min" value="500"></div>
       <div class="form-group"><label>Withdraw Max Coins (0 = no max)</label><input type="number" id="admin-wd-max" value="0"></div>
@@ -677,9 +865,19 @@
       <button class="gold-btn" style="width:100%;" onclick="adminCreateTask()">+ Publish Task</button>
     </div>
 
-    <div class="section-title">Pending Proofs (Latest 10)</div>
-    <div style="padding:0 14px 8px;"><button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadAdminProofs()">🔄 Refresh Proofs</button></div>
-    <div id="admin-proofs-list" style="max-height: 350px; overflow-y: auto; padding-bottom: 10px;"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+    <div class="section-title">Pending Proofs & Verified Proof History</div>
+    <div style="padding:0 14px 8px;"><button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadAdminProofs()">🔄 Refresh Pending Proofs</button></div>
+    <div id="admin-proofs-list" style="max-height: 320px; overflow-y: auto; padding-bottom: 10px;"><div class="card" style="text-align:center;color:#888;">Loading...</div></div>
+    <div class="card" style="padding:12px;">
+      <div style="font-size:12px;font-weight:800;color:#c8102e;margin-bottom:8px;">📸 Proof Verification History</div>
+      <div class="filter-row">
+        <button class="filter-pill active" id="pf-tab-approved" onclick="loadAdminProofHistory('approved')">✅ Verified</button>
+        <button class="filter-pill" id="pf-tab-pending" onclick="loadAdminProofHistory('pending')">⏳ Pending</button>
+        <button class="filter-pill" id="pf-tab-rejected" onclick="loadAdminProofHistory('rejected')">❌ Rejected</button>
+        <button class="filter-pill" id="pf-tab-all" onclick="loadAdminProofHistory('all')">📋 All</button>
+      </div>
+      <div id="admin-proof-history-list" style="max-height:300px;overflow-y:auto;"><div style="text-align:center;color:#888;font-size:12px;">Tap a filter above to load proof history</div></div>
+    </div>
 
     <div class="section-title">Cross Promo Requests</div>
     <div style="padding:0 14px 8px;"><button class="gold-btn" style="width:100%;font-size:12px;" onclick="loadAdminCrossPromos()">🔄 Refresh Cross Promos</button></div>
@@ -708,7 +906,6 @@
   </div>
 
 </div>
-
 <!-- FULL-SCREEN GAME SHELL -->
 <div id="fullscreen-game-shell" class="fs-game-shell">
   <div class="fs-hud">
@@ -725,7 +922,7 @@
       <div id="fs-res-icon" style="font-size:54px;margin-bottom:8px;">🏆</div>
       <h2 id="fs-res-title" style="color:#ffd700;margin-bottom:6px;font-size:22px;">YOU WON!</h2>
       <p id="fs-res-desc" style="color:#cbd5e1;font-size:13px;line-height:1.5;margin-bottom:18px;">Awesome play!</p>
-      <button class="gold-btn" id="fs-res-continue-btn" style="width:100%;margin-bottom:10px;padding:13px 16px;" onclick="handleResultContinue()">🎬 Watch Ad & Continue</button>
+      <button class="gold-btn" id="fs-res-continue-btn" style="width:100%;margin-bottom:10px;padding:13px 16px;" onclick="handleResultContinue()">▶ Continue</button>
       <button class="start-btn" id="fs-res-exit-btn" style="width:100%;padding:12px;background:#334155;" onclick="handleResultExit()">🏠 Back to Fun Zone</button>
     </div>
   </div>
@@ -763,7 +960,7 @@
       <p><b>7. Tasks & proofs.</b> Completing a timer does not guarantee payment. Proof tasks are paid only after admin approval. Leaving early or cheating voids reward.</p>
       <p><b>8. Referrals & VIP.</b> Referral rewards and VIP benefits may change. Multi-level referral is limited to levels shown in the app. Abuse (fake accounts, self-referral) may result in ban.</p>
       <p><b>9. Promoters.</b> You are solely responsible for the legality of links you promote. VTN HUB does not endorse external channels or products.</p>
-      <p><b>10. Ads.</b> Third-party ad networks (e.g. Monetag, AdsGram) have their own policies. We are not liable for ad content or revenue changes.</p>
+      <p><b>10. Ads.</b> Third-party ad networks (e.g. Monetag, AdsGram, Adsterra) have their own policies. We are not liable for ad content or revenue changes.</p>
       <p><b>11. Account.</b> We may suspend accounts for fraud, multi-accounting, abuse, or guideline violations without notice.</p>
       <p><b>12. Contact.</b> Support: Telegram <b>@vtnhub0</b> · Email <b>vtnhun0@gmail.com</b>. Feedback and suggestions are welcome.</p>
       <p><b>13. Changes.</b> Terms may be updated at any time. Continued use means acceptance of the latest version.</p>
@@ -917,17 +1114,33 @@
   const initialRefCode = getReferralParamFromLaunch();
 
   // ========== GLOBAL CONFIGURATION ==========
-  let botUsername = 'VTNPromoAssistant_bot';
+  let botUsername = 'Vtnhubbot';
   let officialChannelLink = 'https://t.me/vtnhub';
+  let officialChannelUsername = '@vtnhub';
+  let channelVerifyApiUrl = '';
   let gateRequired = true;
   let adminPin = '778899';
   let signupBonus = 30;
   let referralReward = 50;
   let referralWelcomeBonus = 20;
   let dailyEarnCap = 0;
+
+  // Game & Spin reward controls
+  let gameWinReward = 2;
+  let spinMinCoins = 1;
+  let spinMaxCoins = 3;
+  let spinDailyLimit = 10;
+
+  // Per-feature Ad / Pass controls
   let requireCheckinAd = true;
   let requireGameAd = true;
-  let gameAdEveryMins = 3;
+  let requireGameContinueAd = true;
+  let requireGameExitAd = true;
+  let requireChatAd = true;
+  let requireWithdrawAd = true;
+  let gameAdEveryMins = 5;
+  let adWaitSeconds = 6;
+
   let dailyCheckinReward = 10;
   let withdrawMin = 500;
   let withdrawMax = 0;
@@ -975,6 +1188,7 @@
   let autoEarnAds = [], autoEarnReward = 5, autoEarnTimerSec = 15, autoEarnWaitSec = 60;
   let autoEarnActive = false, autoEarnIndex = 0, autoEarnLoopTimer = null, autoEarnProgressTimer = null, autoEarnFailCount = 0;
   let monetagZone = '', monetagScriptUrl = '', adsgramBlockId = '', monetagReady = false, adsgramController = null;
+  let adNetworkMode = 'auto', adsterraDirectUrl = '', adsterraScriptUrl = '';
 
   // Game Pass
   let gamePassExpiresAt = Number(localStorage.getItem('vtn_game_pass_' + userId) || 0);
@@ -1071,7 +1285,7 @@
 
   async function confirmChannelJoined() {
     if (isVerifyingGate) return;
-    if (!gateLinkOpenedAt) {
+    if (!gateLinkOpenedAt && !channelVerifyApiUrl) {
       alert('Please tap "1. Join Official Channel" first, join the channel, then tap Verify.');
       return;
     }
@@ -1080,6 +1294,22 @@
     if (btn) { btn.disabled = true; btn.innerText = 'Verifying...'; }
 
     try {
+      // Real Telegram getChatMember check if Verify API URL is configured in Admin Panel
+      if (channelVerifyApiUrl && isRealTelegramUser()) {
+        const cleanApi = safeUrl(channelVerifyApiUrl);
+        if (cleanApi) {
+          const sep = cleanApi.includes('?') ? '&' : '?';
+          const checkUrl = `${cleanApi}${sep}user_id=${encodeURIComponent(String(userId))}&channel=${encodeURIComponent(officialChannelUsername || '')}`;
+          const resp = await fetch(checkUrl, { method: 'GET' });
+          if (!resp.ok) throw new Error('Verify API returned ' + resp.status);
+          const resJson = await resp.json();
+          if (!resJson || !resJson.joined) {
+            alert('❌ You have not joined the official channel yet!\nPlease join ' + (officialChannelUsername || 'our channel') + ' first, then tap Verify.');
+            return;
+          }
+        }
+      }
+
       let alreadyVerifiedInDb = false;
       if (sb && isRealTelegramUser()) {
         const { data: uRow } = await sb.from('users').select('official_verified').eq('telegram_id', String(userId)).maybeSingle();
@@ -1099,7 +1329,7 @@
       }
       updateUI();
     } catch (e) {
-      alert('Verification error. Please try again.');
+      alert('Verification error: ' + (e.message || 'Please check connection and try again.'));
     } finally {
       isVerifyingGate = false;
       if (btn) { btn.disabled = false; btn.innerText = '2. I Have Joined (Verify)'; }
@@ -1169,14 +1399,28 @@
           if (item.setting_key === 'bot_username') botUsername = item.setting_value;
           if (item.setting_key === 'admin_pin') adminPin = item.setting_value;
           if (item.setting_key === 'channel_link') officialChannelLink = item.setting_value;
+          if (item.setting_key === 'official_channel_username') officialChannelUsername = item.setting_value || '@vtnhub';
+          if (item.setting_key === 'channel_verify_api') channelVerifyApiUrl = item.setting_value || '';
           if (item.setting_key === 'gate_required') gateRequired = (item.setting_value === 'true');
           if (item.setting_key === 'signup_bonus') signupBonus = Number(item.setting_value) || 30;
           if (item.setting_key === 'referral_reward') referralReward = Number(item.setting_value) || 50;
           if (item.setting_key === 'referral_welcome') referralWelcomeBonus = Number(item.setting_value) || 20;
           if (item.setting_key === 'daily_earn_cap') dailyEarnCap = Number(item.setting_value) || 0;
+
+          if (item.setting_key === 'game_win_reward') { const v = Number(item.setting_value); if (!isNaN(v)) gameWinReward = v; }
+          if (item.setting_key === 'spin_min_coins') spinMinCoins = Math.max(1, Number(item.setting_value) || 1);
+          if (item.setting_key === 'spin_max_coins') spinMaxCoins = Math.max(1, Number(item.setting_value) || 3);
+          if (item.setting_key === 'spin_daily_limit') spinDailyLimit = Math.max(1, Number(item.setting_value) || 10);
+
           if (item.setting_key === 'require_checkin_ad') requireCheckinAd = item.setting_value !== 'false';
           if (item.setting_key === 'require_game_ad') requireGameAd = item.setting_value !== 'false';
+          if (item.setting_key === 'require_game_continue_ad') requireGameContinueAd = item.setting_value !== 'false';
+          if (item.setting_key === 'require_game_exit_ad') requireGameExitAd = item.setting_value !== 'false';
+          if (item.setting_key === 'require_chat_ad') requireChatAd = item.setting_value !== 'false';
+          if (item.setting_key === 'require_withdraw_ad') requireWithdrawAd = item.setting_value !== 'false';
           if (item.setting_key === 'game_ad_mins') gameAdEveryMins = Number(item.setting_value) || 0;
+          if (item.setting_key === 'ad_wait_seconds') adWaitSeconds = Math.max(3, Number(item.setting_value) || 6);
+
           if (item.setting_key === 'daily_checkin_reward') dailyCheckinReward = Number(item.setting_value) || 10;
           if (item.setting_key === 'withdraw_min') withdrawMin = Number(item.setting_value) || 500;
           if (item.setting_key === 'withdraw_max') withdrawMax = Number(item.setting_value) || 0;
@@ -1200,8 +1444,12 @@
           if (item.setting_key === 'monetag_zone') monetagZone = item.setting_value || '';
           if (item.setting_key === 'monetag_script') monetagScriptUrl = item.setting_value || '';
           if (item.setting_key === 'adsgram_block') adsgramBlockId = item.setting_value || '';
+          if (item.setting_key === 'ad_network_mode') adNetworkMode = item.setting_value || 'auto';
+          if (item.setting_key === 'adsterra_direct_url') adsterraDirectUrl = item.setting_value || '';
+          if (item.setting_key === 'adsterra_script_url') adsterraScriptUrl = item.setting_value || '';
         });
       }
+      if (spinMaxCoins < spinMinCoins) spinMaxCoins = spinMinCoins;
       loadAdNetworkSDKs();
       updateDepositUI();
       if (appStatus === 'paused' && pauseUntil && new Date(pauseUntil) < new Date()) {
@@ -1252,6 +1500,16 @@
         try { adsgramController = window.Adsgram.init({ blockId: String(adsgramBlockId) }); } catch(e) {}
       }
     }
+    if (adsterraScriptUrl) {
+      const cleanAdsterra = safeUrl(adsterraScriptUrl);
+      if (cleanAdsterra && !document.getElementById('adsterra-sdk-script')) {
+        const s = document.createElement('script');
+        s.id = 'adsterra-sdk-script';
+        s.src = cleanAdsterra;
+        s.async = true;
+        document.head.appendChild(s);
+      }
+    }
   }
 
   function showMonetagAd() {
@@ -1294,10 +1552,11 @@
 
     if (smoothAdTimer) { clearInterval(smoothAdTimer); smoothAdTimer = null; }
 
+    const minsLabel = gameAdEveryMins || 5;
     const copy = {
-      game_entry: { icon: '🎫', title: 'Unlock 3-Min Game Pass', sub: 'Watch 1 quick ad to play ALL full-screen games freely for ' + (gameAdEveryMins || 3) + ' minutes!' },
-      game_continue: { icon: '🎮', title: 'Continue Playing', sub: 'Watch a short sponsor ad to claim your reward & start the next round.' },
-      game_claim_exit: { icon: '🏆', title: 'Claim Reward', sub: 'Watch a short sponsor ad to claim your coins before exiting.' },
+      game_entry: { icon: '🎫', title: 'Unlock ' + minsLabel + '-Min Game Pass', sub: 'Watch 1 quick ad to play ALL games freely for ' + minsLabel + ' minutes!' },
+      game_continue: { icon: '🎮', title: 'Renew Game Pass', sub: 'Your pass timer ended. Watch 1 short ad to claim & keep playing!' },
+      game_claim_exit: { icon: '🏆', title: 'Claim Reward', sub: 'Your long-play timer ended. Watch 1 short ad to claim coins & exit.' },
       withdraw: { icon: '💳', title: 'Confirm Withdrawal Request', sub: 'Final step: watch 1 quick sponsor ad to submit your withdrawal.' },
       checkin: { icon: '🎁', title: 'Daily Check-in Bonus', sub: 'Watch 1 quick sponsor ad to claim your daily bonus coins!' }
     };
@@ -1312,14 +1571,14 @@
     cancelBtn.onclick = () => { cleanup(); if (onCancel) onCancel(); };
     const completeAd = () => { if (closed) return; cleanup(); if (onSuccess) onSuccess(); };
 
-    const startSponsorFallback = () => {
+    const startCardCountdown = (customTitle, customUrl) => {
       if (closed) return;
-      const ad = getRandomAd();
+      const ad = customUrl ? { title: customTitle || 'Sponsored Partner Ad', url: customUrl } : getRandomAd();
       sponsorCard.style.display = 'block';
       sponsorName.innerText = ad.title || 'VTN Official Sponsor';
       visitBtn.onclick = () => openLinkInTelegram(ad.url);
 
-      const waitSecs = 6;
+      const waitSecs = Math.max(3, Number(adWaitSeconds) || 6);
       let remain = waitSecs;
       timerTxt.innerText = `Sponsor pass ready in ${remain}s...`;
       bar.style.width = '5%';
@@ -1341,13 +1600,34 @@
     };
 
     (async () => {
-      if (monetagZone) {
+      const mode = adNetworkMode || 'auto';
+      const cleanDirect = safeUrl(adsterraDirectUrl);
+
+      if (mode === 'sponsor') {
+        startCardCountdown();
+        return;
+      }
+      if (mode === 'adsterra') {
+        if (cleanDirect) {
+          openLinkInTelegram(cleanDirect);
+          startCardCountdown('Sponsored Partner Ad', cleanDirect);
+        } else {
+          startCardCountdown();
+        }
+        return;
+      }
+      if ((mode === 'auto' || mode === 'monetag') && monetagZone) {
         try { timerTxt.innerText = 'Showing Monetag ad...'; bar.style.width = '50%'; await showMonetagAd(); completeAd(); return; } catch(e) {}
       }
-      if (adsgramBlockId) {
+      if ((mode === 'auto' || mode === 'adsgram') && adsgramBlockId) {
         try { timerTxt.innerText = 'Showing AdsGram ad...'; bar.style.width = '50%'; await showAdsgramAd(); completeAd(); return; } catch(e) {}
       }
-      startSponsorFallback();
+      if (mode === 'auto' && cleanDirect) {
+        openLinkInTelegram(cleanDirect);
+        startCardCountdown('Sponsored Partner Ad', cleanDirect);
+        return;
+      }
+      startCardCountdown();
     })();
   }
 
@@ -1369,8 +1649,9 @@
     const hudPill = document.getElementById('fs-pass-pill');
     const now = Date.now(), minsSetting = Number(gameAdEveryMins) || 0;
 
-    if (minsSetting <= 0) {
-      if (timerEl) timerEl.innerText = 'Free';
+    if (!requireGameAd || minsSetting <= 0) {
+      if (timerEl) { timerEl.innerText = 'Free'; timerEl.style.color = '#4ade80'; }
+      if (statusEl) statusEl.innerText = 'Play all games freely!';
       if (hudPill) hudPill.innerText = '🎮 Free Play';
       return;
     }
@@ -1383,7 +1664,7 @@
     } else {
       if (timerEl) { timerEl.innerText = 'Watch Ad'; timerEl.style.color = '#fbbf24'; }
       if (statusEl) statusEl.innerText = `Watch 1 quick ad every ${minsSetting} min to unlock all games`;
-      if (hudPill) hudPill.innerText = '🎫 Pass Expired (renew on next round)';
+      if (hudPill) hudPill.innerText = '🎫 Pass Ended (after game)';
     }
   }
 
@@ -1419,7 +1700,6 @@
           return;
         }
 
-        // Handle case where bot backend created user row moments ago without referred_by
         const ageMs = data.created_at ? (Date.now() - new Date(data.created_at).getTime()) : Infinity;
         if (refCode && !data.referred_by && isRealTelegramUser() && ageMs < 5 * 60 * 1000) {
           const { data: refExists } = await sb.from('users').select('telegram_id').eq('telegram_id', refCode).maybeSingle();
@@ -1516,6 +1796,7 @@
 
   async function recordTx(amount, type, desc) {
     amount = Number(amount) || 0;
+    if (amount === 0) return true;
     if (!sb) { alert('Database not connected.'); return false; }
     if (!isRealTelegramUser()) { alert('Open from official Telegram bot to earn.'); return false; }
     const uid = String(userId);
@@ -1767,6 +2048,11 @@
     if (isAppPaused()) return showPausedMessage();
     if (isCategoryPaused('chat')) return showPausedMessage('Chat is temporarily paused by admin.');
     if (!checkGateAccess()) return;
+    if (!requireChatAd) {
+      chatPassExpiry = Date.now() + (15 * 60 * 1000);
+      openChatScreen(); startChatTimer();
+      return;
+    }
     if (Date.now() > chatPassExpiry) document.getElementById('chat-ad-modal').style.display = 'flex';
     else openChatScreen();
   }
@@ -1787,7 +2073,11 @@
       const remain = Math.max(0, chatPassExpiry - Date.now());
       const mins = Math.floor(remain / 60000), secs = Math.floor((remain % 60000) / 1000);
       document.getElementById('chat-timer-badge').innerText = `Session: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-      if (remain <= 0) { clearInterval(chatTimerInterval); document.getElementById('chat-ad-modal').style.display = 'flex'; }
+      if (remain <= 0) {
+        clearInterval(chatTimerInterval);
+        if (requireChatAd) document.getElementById('chat-ad-modal').style.display = 'flex';
+        else { chatPassExpiry = Date.now() + (15 * 60 * 1000); startChatTimer(); }
+      }
     }, 1000);
   }
 
@@ -2109,7 +2399,6 @@
     if (!cont || !sb) return;
     cont.innerHTML = '<div class="card" style="text-align:center;">Loading...</div>';
 
-    // Refresh live referral count & earnings from DB
     const { data: me } = await sb.from('users').select('balance, referral_count, referral_earnings').eq('telegram_id', String(userId)).maybeSingle();
     const { data: friends, count: actualFriendsCount } = await sb.from('users')
       .select('first_name, telegram_id, created_at', { count: 'exact' })
@@ -2140,13 +2429,17 @@
   // ========== FULL-SCREEN GAME SHELL CONTROLLER ==========
   let currentGameId = null, gameCleanupFn = null, gameResultState = null;
 
+  function isGamePassExpired() {
+    const mins = Number(gameAdEveryMins) || 0;
+    return requireGameAd && mins > 0 && Date.now() > gamePassExpiresAt;
+  }
+
   function enterGame(g) {
     if (isAppPaused()) return showPausedMessage();
     if (isCategoryPaused('games')) return showPausedMessage('Games are temporarily paused by admin.');
     if (!checkGateAccess()) return;
 
-    const mins = Number(gameAdEveryMins) || 0;
-    if (mins > 0 && Date.now() > gamePassExpiresAt) {
+    if (isGamePassExpired()) {
       showSmoothAd('game_entry', () => {
         refreshGamePass();
         launchFullScreenGame(g);
@@ -2174,20 +2467,24 @@
   function showGameResult({ won, coins, title, desc }) {
     stopActiveGameEngine();
     haptic(won ? 'success' : 'warning');
-    gameResultState = { won, coins: Number(coins) || 0, title, desc, claimed: false };
+    const winCoins = won ? Math.max(0, Number(coins) || 0) : 0;
+    gameResultState = { won, coins: winCoins, title, desc, claimed: false };
 
     document.getElementById('fs-res-icon').innerText = won ? '🏆' : '💥';
     const titleEl = document.getElementById('fs-res-title');
     titleEl.innerText = won ? (title || 'YOU WON!') : (title || 'GAME OVER');
     titleEl.style.color = won ? '#ffd700' : '#f87171';
-    document.getElementById('fs-res-desc').innerText = desc || (won ? `Reward: +${coins} Coins` : 'Better luck next round!');
+    document.getElementById('fs-res-desc').innerText = desc || (won && winCoins > 0 ? `Reward: +${winCoins} Coins` : 'Better luck next round!');
+
+    const needContAd = requireGameContinueAd && isGamePassExpired();
+    const needExitAd = won && winCoins > 0 && requireGameExitAd && isGamePassExpired();
 
     const contBtn = document.getElementById('fs-res-continue-btn'), exitBtn = document.getElementById('fs-res-exit-btn');
-    if (won && coins > 0) {
-      contBtn.innerText = `🎬 Watch Ad, Claim +${coins} & Continue`;
-      exitBtn.innerText = requireGameAd ? `🎁 Watch Ad, Claim +${coins} & Exit` : `✅ Claim +${coins} & Exit`;
+    if (won && winCoins > 0) {
+      contBtn.innerText = needContAd ? `🎬 Watch Ad, Claim +${winCoins} & Continue` : `▶ Claim +${winCoins} & Continue`;
+      exitBtn.innerText = needExitAd ? `🎁 Watch Ad, Claim +${winCoins} & Exit` : `✅ Claim +${winCoins} & Exit`;
     } else {
-      contBtn.innerText = '🎬 Watch Ad to Continue Playing';
+      contBtn.innerText = needContAd ? '🎬 Watch Ad to Continue Playing' : '▶ Play Again';
       exitBtn.innerText = '🏠 Back to Fun Zone';
     }
     document.getElementById('fs-result-overlay').style.display = 'flex';
@@ -2196,22 +2493,32 @@
   async function handleResultContinue() {
     if (!gameResultState) return;
     const gId = currentGameId, state = { ...gameResultState };
-    showSmoothAd('game_continue', async () => {
+    const needContAd = requireGameContinueAd && isGamePassExpired();
+
+    const proceed = async () => {
       if (state.won && state.coins > 0 && !state.claimed && isRealTelegramUser()) {
         const ok = await recordTx(state.coins, 'game', `${gId} Game Reward`);
         if (!ok) return;
       }
-      refreshGamePass();
       launchFullScreenGame(gId);
-    });
+    };
+
+    if (needContAd) {
+      showSmoothAd('game_continue', async () => {
+        refreshGamePass();
+        await proceed();
+      });
+    } else {
+      await proceed();
+    }
   }
 
   async function handleResultExit() {
     if (!gameResultState) { exitFullScreenGame(); return; }
     const gId = currentGameId, state = { ...gameResultState };
-    if (state.won && state.coins > 0 && !state.claimed) {
-      if (!isRealTelegramUser()) { exitFullScreenGame(); return; }
-      if (requireGameAd) {
+    if (state.won && state.coins > 0 && !state.claimed && isRealTelegramUser()) {
+      const needExitAd = requireGameExitAd && isGamePassExpired();
+      if (needExitAd) {
         showSmoothAd('game_claim_exit', async () => {
           await recordTx(state.coins, 'game', `${gId} Game Reward`);
           refreshGamePass(); exitFullScreenGame();
@@ -2283,16 +2590,13 @@
       ctx.translate(x, y);
       const hw = carW / 2, hh = carH / 2;
 
-      // Ground drop shadow
       ctx.fillStyle = 'rgba(0,0,0,0.38)';
       ctx.beginPath();
       ctx.ellipse(3, 4, hw + 2, hh + 2, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Flip oncoming enemy cars so they face downward
       if (!isPlayer) ctx.scale(1, -1);
 
-      // Soft headlight glow beams
       if (isPlayer) {
         const beam = ctx.createLinearGradient(0, -hh, 0, -hh - 46);
         beam.addColorStop(0, 'rgba(254, 240, 138, 0.35)');
@@ -2307,7 +2611,6 @@
         ctx.fill();
       }
 
-      // 4 rubber tires with alloy rims
       const wheelW = 6, wheelH = 15;
       [
         [-hw - 2, -hh + 10],
@@ -2321,12 +2624,10 @@
         ctx.fillRect(wx + 2, wy + 4, 2, wheelH - 8);
       });
 
-      // Side mirrors
       ctx.fillStyle = color;
       ctx.beginPath(); ctx.roundRect(-hw - 4, -8, 5, 6, 2); ctx.fill();
       ctx.beginPath(); ctx.roundRect(hw - 1, -8, 5, 6, 2); ctx.fill();
 
-      // Sculpted aerodynamic car body (tapered nose, flared fenders, contoured waist)
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(-hw + 7, -hh + 2);
@@ -2343,12 +2644,10 @@
       ctx.closePath();
       ctx.fill();
 
-      // Subtle body contour outline
       ctx.strokeStyle = 'rgba(255,255,255,0.22)';
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Racing stripes / hood detail
       if (isPlayer) {
         ctx.fillStyle = '#ffd700';
         ctx.fillRect(-4.5, -hh + 1, 3.5, carH - 3);
@@ -2358,7 +2657,6 @@
         ctx.beginPath(); ctx.roundRect(-6, -hh + 8, 12, 14, 3); ctx.fill();
       }
 
-      // Sleek wrap-around cockpit & windows
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
       ctx.moveTo(-hw + 8, -14);
@@ -2368,7 +2666,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Roof panel inside cockpit
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.roundRect(-hw + 10, -4, carW - 20, 16, 4);
@@ -2379,7 +2676,6 @@
         ctx.fillRect(1, -4, 3.5, 16);
       }
 
-      // Windshield gloss reflection
       ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -2387,17 +2683,14 @@
       ctx.quadraticCurveTo(0, -16, hw - 10, -11);
       ctx.stroke();
 
-      // Front LED headlights
       ctx.fillStyle = '#fef08a';
       ctx.beginPath(); ctx.ellipse(-hw + 8, -hh + 4, 4, 2.2, -0.35, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.ellipse(hw - 8, -hh + 4, 4, 2.2, 0.35, 0, Math.PI * 2); ctx.fill();
 
-      // Rear taillights
       ctx.fillStyle = '#ef4444';
       ctx.fillRect(-hw + 5, hh - 4, 7, 2.8);
       ctx.fillRect(hw - 12, hh - 4, 7, 2.8);
 
-      // Rear racing wing / spoiler (player car)
       if (isPlayer) {
         ctx.fillStyle = '#1e293b';
         ctx.beginPath(); ctx.roundRect(-hw + 1, hh - 7, carW - 2, 5, 2); ctx.fill();
@@ -2416,7 +2709,7 @@
       progress += dt * 4.2; speed = 5.5 + (progress / 100) * 5.2; stripeOffset = (stripeOffset + speed * 1.4) % 60;
       setFsStat(`🏁 ${Math.min(100, Math.floor(progress))}%`);
       if (progress >= 100) {
-        alive = false; const reward = 5 + Math.min(3, Math.floor(bonusCoins / 3));
+        alive = false; const reward = Math.max(0, Number(gameWinReward) || 0);
         showGameResult({ won: true, coins: reward, title: '🏁 FINISH LINE!', desc: `Finished the highway race & collected ${bonusCoins} turbos!\nReward: +${reward} Coins` });
         return;
       }
@@ -2446,7 +2739,7 @@
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const ob = obstacles[i]; ob.y += speed * 0.85; drawCar(ob.x, ob.y, ob.color, false);
         if (Math.abs(ob.x - playerX) < carW * 0.78 && Math.abs(ob.y - playerY) < carH * 0.78) {
-          alive = false; showGameResult({ won: false, coins: 0, title: '💥 CRASHED!', desc: `Reached ${Math.floor(progress)}% of the race. Watch an ad to try again!` }); return;
+          alive = false; showGameResult({ won: false, coins: 0, title: '💥 CRASHED!', desc: `Reached ${Math.floor(progress)}% of the race. Play again!` }); return;
         }
         if (ob.y > h + 80) obstacles.splice(i, 1);
       }
@@ -2461,102 +2754,717 @@
     gameCleanupFn = () => { alive = false; if (rafId) cancelAnimationFrame(rafId); canvas.removeEventListener('pointerdown', onPointerDown); window.removeEventListener('keydown', onKey); };
   }
 
-  // ========== GAME 2: TOON CRICKET ==========
+  // ========== GAME 2: TOON CRICKET 3-OVERS ==========
   function startToonCricketFS(stage) {
-    const { canvas, ctx, w, h } = createFullCanvas(stage);
-    const targetRuns = 18, totalBalls = 12, maxWickets = 2;
-    let runs = 0, ballsLeft = totalBalls, wickets = 0, phase = 'ready', ballProgress = 0, ballSpeed = 0.75, ballCurve = 0, batSwing = 0;
-    let flyBall = null, bannerTxt = 'TAP TO PLAY BALL!', bannerTimer = 1.2, alive = true, rafId = null;
-    const batsmanX = w / 2, batsmanY = h - 135, bowlerX = w / 2, bowlerY = Math.max(115, h * 0.24);
+    stage.innerHTML = `
+      <div id="tc-root">
+        <div id="app-container">
+          <div id="hud">
+            <div class="hud-top-row">
+              <div class="score-container">
+                <span class="score-runs" id="hud-runs">0</span>
+                <span class="score-wickets">/ <span id="hud-wickets">0</span></span>
+                <span class="score-overs">(<span id="hud-overs">0.0</span> / 3.0 Ov)</span>
+              </div>
+              <div class="hud-right">
+                <div class="wicket-sockets" id="wicket-sockets">
+                  <div class="wicket-pill wicket-live" id="w-sock-0"></div>
+                  <div class="wicket-pill wicket-live" id="w-sock-1"></div>
+                  <div class="wicket-pill wicket-live" id="w-sock-2"></div>
+                </div>
+                <button class="icon-btn" id="btn-sound" title="Toggle Sound">🔊</button>
+              </div>
+            </div>
+            <div class="players-bar">
+              <div class="player-bat" id="hud-batsman-name">🏏 Chintu Blaster (#18)</div>
+              <div class="player-bowl" id="hud-bowler-name">⚾ Speedy Bunty</div>
+            </div>
+            <div class="hud-bottom-row">
+              <div class="over-balls-wrap">
+                <span class="over-label" id="hud-over-idx">Ov 1:</span>
+                <div class="ball-dots" id="hud-ball-dots">
+                  <div class="ball-badge"></div><div class="ball-badge"></div><div class="ball-badge"></div>
+                  <div class="ball-badge"></div><div class="ball-badge"></div><div class="ball-badge"></div>
+                </div>
+              </div>
+              <div class="ball-type-title" id="hud-ball-name">Straight Seamer</div>
+            </div>
+          </div>
+          <div id="canvas-container"><canvas id="game-canvas"></canvas></div>
+          <div id="controls">
+            <button id="hit-button" class="waiting" aria-label="Hit Ball"><span>🏏</span><span id="hit-button-text">GET READY...</span></button>
+            <div class="hint-subtext">Tap anywhere or press Space/Enter to swing · Score 10+ to win Coins!</div>
+          </div>
+          <div id="modal-title" class="modal-overlay">
+            <div class="modal-card">
+              <div class="title-badge">VTN Hub Cricket</div>
+              <div style="font-size: 54px; line-height: 1; margin-bottom: 6px;">🏏</div>
+              <h1 class="title-h1">TOON CRICKET</h1>
+              <p class="title-sub">Funny Characters · 3 Overs · 3 Wickets Knockout!</p>
+              <div class="rules-box">
+                <h3>⚡ How To Play (1 Button Only!)</h3>
+                <ul>
+                  <li><span class="num">1.</span> Bowler delivers the ball down the pitch.</li>
+                  <li><span class="num">2.</span> Watch ball bounce and enter the green strike zone!</li>
+                  <li><span class="num">3.</span> Tap the big <strong style="color: #facc15;">HIT</strong> button to smash runs!</li>
+                  <li><span class="num">4.</span> Score 10+ runs in 3 Overs to win +${Math.max(0, Number(gameWinReward) || 0)} Coins!</li>
+                </ul>
+              </div>
+              <button id="btn-start-game" class="action-btn"><span>🏏</span> START MATCH!</button>
+            </div>
+          </div>
+          <div id="modal-gameover" class="modal-overlay hidden">
+            <div class="modal-card">
+              <div id="go-icon" style="font-size: 46px; margin-bottom: 4px;">💥</div>
+              <h2 id="go-title" style="font-family: 'Bungee', Impact, sans-serif; font-size: 22px; color: #facc15; margin-bottom: 4px;">ALL OUT!</h2>
+              <div id="go-perf-title" style="font-size: 14px; font-weight: 800; color: #34d399;">DUCK SUPREME! 🦆</div>
+              <div id="go-perf-sub" style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Stumps cried for mercy!</div>
+              <div class="scorecard-grid">
+                <div class="scorecard-item"><span class="scorecard-label">Runs</span><span class="scorecard-val val-yellow" id="go-runs">0</span></div>
+                <div class="scorecard-item"><span class="scorecard-label">Wickets</span><span class="scorecard-val val-red" id="go-wickets">3 / 3</span></div>
+                <div class="scorecard-item"><span class="scorecard-label">Overs</span><span class="scorecard-val val-white" id="go-overs">0.3</span></div>
+              </div>
+              <div class="stats-footer">
+                <span>🚀 Sixes: <strong id="go-sixes">0</strong></span>
+                <span>⚡ Fours: <strong id="go-fours">0</strong></span>
+                <span>👑 High Score: <strong id="go-best">0</strong></span>
+              </div>
+              <button id="btn-restart-game" class="action-btn" style="margin-bottom:8px;"><span>🔄</span> START NEW GAME!</button>
+              <button id="btn-tc-exit" class="start-btn" style="width:100%;padding:11px;background:#334155;">🏠 Back to Fun Zone</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
 
-    function updateHud() { setFsStat(`🏏 ${runs}/${targetRuns} • ${ballsLeft}b • W:${wickets}/${maxWickets}`); }
-    updateHud();
+    let alive = true, rafId = null;
+    const timers = new Set();
+    const safeTimeout = (fn, ms) => {
+      const id = setTimeout(() => { timers.delete(id); if (alive) fn(); }, ms);
+      timers.add(id);
+      return id;
+    };
 
-    function launchBall() {
-      if (!alive || phase !== 'ready') return;
-      phase = 'bowling'; ballProgress = 0; ballSpeed = 0.68 + Math.random() * 0.45; ballCurve = (Math.random() - 0.5) * 28;
-      batSwing = 0; bannerTxt = 'WAIT FOR GREEN ZONE...'; bannerTimer = 0.8;
+    const sound = {
+      ctx: null, muted: false,
+      init() {
+        if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      },
+      toggle() { this.muted = !this.muted; return this.muted; },
+      swingWhoosh() {
+        if (this.muted) return; this.init(); if (!this.ctx) return;
+        const t = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(350, t); osc.frequency.exponentialRampToValueAtTime(120, t + 0.18);
+        gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 0.2);
+      },
+      batHit(runs) {
+        if (this.muted) return; this.init(); if (!this.ctx) return;
+        const t = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(runs === 6 ? 1200 : 900, t); osc.frequency.exponentialRampToValueAtTime(180, t + 0.12);
+        gain.gain.setValueAtTime(runs === 6 ? 0.8 : 0.6, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 0.14);
+      },
+      missedBowled() {
+        if (this.muted) return; this.init(); if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        for (let i = 0; i < 4; i++) {
+          const osc = this.ctx.createOscillator(), gain = this.ctx.createGain(), delay = t + i * 0.04;
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(180 + i * 110, delay); osc.frequency.exponentialRampToValueAtTime(70, delay + 0.18);
+          gain.gain.setValueAtTime(0.4 / (i + 1), delay); gain.gain.exponentialRampToValueAtTime(0.001, delay + 0.22);
+          osc.connect(gain); gain.connect(this.ctx.destination); osc.start(delay); osc.stop(delay + 0.22);
+        }
+        [330, 310, 290, 220].forEach((freq, idx) => {
+          const noteT = t + 0.25 + idx * 0.18, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, noteT); osc.frequency.linearRampToValueAtTime(freq - 15, noteT + 0.15);
+          gain.gain.setValueAtTime(0.2, noteT); gain.gain.exponentialRampToValueAtTime(0.001, noteT + 0.17);
+          osc.connect(gain); gain.connect(this.ctx.destination); osc.start(noteT); osc.stop(noteT + 0.2);
+        });
+      },
+      bounce() {
+        if (this.muted) return; this.init(); if (!this.ctx) return;
+        const t = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+        osc.frequency.setValueAtTime(180, t); osc.frequency.exponentialRampToValueAtTime(70, t + 0.06);
+        gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 0.07);
+      }
+    };
+
+    const BATSMEN = [
+      { name: 'Chintu Blaster', num: '18', jersey: '#0284c7', border: '#0369a1', helmet: '#0369a1', pads: '#ffffff', skin: '#fcd34d', glove: '#ef4444' },
+      { name: 'Prof. Googly', num: '10', jersey: '#16a34a', border: '#15803d', helmet: '#15803d', pads: '#fbbf24', skin: '#fed7aa', glove: '#3b82f6' },
+      { name: 'Turban Tornado', num: '07', jersey: '#f59e0b', border: '#d97706', helmet: '#ea580c', pads: '#ef4444', skin: '#fde047', glove: '#10b981' }
+    ];
+    const BOWLERS = [
+      { name: 'Speedy Bunty', num: '01', jersey: '#2563eb', skin: '#fed7aa', headgear: 'headband', headColor: '#ef4444', type: 'skinny' },
+      { name: 'Spin King Jignesh', num: '33', jersey: '#059669', skin: '#fde047', headgear: 'cap', headColor: '#10b981', type: 'chubby', glasses: true, mustache: true },
+      { name: 'Rocky Slinger', num: '99', jersey: '#ea580c', skin: '#fcd34d', headgear: 'spikes', headColor: '#f59e0b', type: 'muscular' }
+    ];
+
+    const TOTAL_BALLS = 18, MAX_WICKETS = 3;
+    const BALL_SPECS = [
+      { name: 'Straight Seamer', speed: 2100, pitchX: 0.0, spin: 0.0, bounce: 1.0 },
+      { name: 'Gentle Inswinger', speed: 2200, pitchX: -0.1, spin: 0.15, bounce: 0.95 },
+      { name: 'Rising Short Pitch', speed: 2000, pitchX: 0.08, spin: 0.05, bounce: 1.3 },
+      { name: 'Loopy Off-Break', speed: 2350, pitchX: 0.15, spin: -0.2, bounce: 0.9 },
+      { name: 'Full Pitch Yorker', speed: 1950, pitchX: 0.0, spin: 0.0, bounce: 0.55 },
+      { name: 'Good Length Pace', speed: 2050, pitchX: -0.05, spin: 0.0, bounce: 1.05 },
+      { name: 'Flighted Leg-Break', speed: 2300, pitchX: -0.12, spin: 0.22, bounce: 0.95 },
+      { name: 'Deceptive Slower Ball', speed: 2450, pitchX: 0.05, spin: 0.0, bounce: 0.85 },
+      { name: 'Outswinger', speed: 2150, pitchX: 0.1, spin: -0.18, bounce: 1.0 },
+      { name: 'Chest-High Bouncer', speed: 1950, pitchX: -0.05, spin: 0.0, bounce: 1.35 },
+      { name: 'Arm Ball Flatter', speed: 2100, pitchX: 0.08, spin: -0.1, bounce: 0.7 },
+      { name: 'Blockhole Yorker', speed: 1900, pitchX: 0.0, spin: 0.0, bounce: 0.5 },
+      { name: 'Pace Thunderball', speed: 1850, pitchX: -0.05, spin: 0.0, bounce: 1.0 },
+      { name: 'Sharp Leg-Cutter', speed: 2200, pitchX: -0.12, spin: 0.25, bounce: 0.95 },
+      { name: 'Hooker Bouncer', speed: 1950, pitchX: 0.1, spin: -0.08, bounce: 1.4 },
+      { name: 'Reverse Swing Tail', speed: 2000, pitchX: 0.12, spin: -0.25, bounce: 0.9 },
+      { name: 'Pinpoint Toe-Crusher', speed: 1880, pitchX: 0.0, spin: 0.0, bounce: 0.45 },
+      { name: 'Final Over Climax', speed: 1800, pitchX: 0.0, spin: 0.0, bounce: 1.1 }
+    ];
+
+    let match = {
+      runs: 0, wickets: 0, ballsDelivered: 0, history: [], sixes: 0, fours: 0,
+      highScore: parseInt(localStorage.getItem('toon_cricket_hi') || '0', 10) || 0,
+      inningsFinished: false, wonCoins: 0, rewardClaimed: false
+    };
+
+    function formatOvers(balls) { return Math.floor(balls / 6) + '.' + (balls % 6); }
+
+    function evaluateShotTiming(deltaMs) {
+      const abs = Math.abs(deltaMs);
+      if (abs <= 160) return { rating: 'PERFECT', runs: 6, isWicket: false, msg: 'MASSIVE SIX!! 🚀', sub: 'Ball landed on Mars!' };
+      else if (abs <= 320) return { rating: 'GOOD', runs: 4, isWicket: false, msg: 'CRACKING FOUR!! ⚡', sub: 'Grass is burning!' };
+      else if (abs <= 480) { const isTwo = abs <= 400; return { rating: 'OKAY', runs: isTwo ? 2 : 1, isWicket: false, msg: isTwo ? 'TWO RUNS! 🏃' : 'SINGLE! 💨', sub: 'Sneaky paddle tap!' }; }
+      else if (deltaMs < -480 && deltaMs >= -700) return { rating: 'EARLY', runs: 0, isWicket: true, msg: 'CLEAN BOWLED!! 💥', sub: 'Too early! Missed the line!' };
+      else if (deltaMs > 480 && deltaMs <= 700) return { rating: 'LATE', runs: 0, isWicket: true, msg: 'STUMPS SHATTERED!! 🪵', sub: 'Too late! Rattled middle stump!' };
+      return { rating: 'MISSED', runs: 0, isWicket: true, msg: 'TIMBERRR! BOWLED!! 🪵💥', sub: 'Clean bowled!' };
     }
 
-    function checkMatchEnd() {
-      if (runs >= targetRuns) {
-        phase = 'over';
-        setTimeout(() => { if (!alive) return; alive = false; showGameResult({ won: true, coins: 5, title: '🏆 MATCH WON!', desc: `Chased ${runs}/${targetRuns} with ${ballsLeft} balls left!\nReward: +5 Coins` }); }, 700);
-      } else if (wickets >= maxWickets || ballsLeft <= 0) {
-        phase = 'over';
-        setTimeout(() => { if (!alive) return; alive = false; showGameResult({ won: false, coins: 0, title: '🏏 INNINGS OVER!', desc: `Scored ${runs}/${targetRuns} runs. Watch an ad to chase again!` }); }, 700);
+    const canvas = document.getElementById('game-canvas'), ctx = canvas.getContext('2d');
+    const fielders = [
+      { id: 1, name: 'Gappu', bx: 0.16, by: 0.50, x: 0, y: 0, cap: '#10b981', skin: '#fde047', style: 'bucket_hat', type: 'chubby', glasses: true, state: 'IDLE' },
+      { id: 2, name: 'Lanky Raju', bx: 0.30, by: 0.40, x: 0, y: 0, cap: '#0284c7', skin: '#fed7aa', style: 'sunhat', type: 'tall', state: 'IDLE' },
+      { id: 3, name: 'Tuffy', bx: 0.70, by: 0.40, x: 0, y: 0, cap: '#dc2626', skin: '#fcd34d', style: 'cap', type: 'muscular', mustache: true, state: 'IDLE' },
+      { id: 4, name: 'Speedy Sonu', bx: 0.84, by: 0.52, x: 0, y: 0, cap: '#7c3aed', skin: '#d97706', style: 'afro', type: 'normal', state: 'IDLE' },
+      { id: 5, name: 'Pandit Ji', bx: 0.58, by: 0.35, x: 0, y: 0, cap: '#ea580c', skin: '#fed7aa', style: 'bandana', type: 'short', glasses: true, mustache: true, state: 'IDLE' }
+    ];
+
+    const sim = {
+      ballActive: false, hasSwung: false, ballStartTime: 0, ballDuration: 2100, ballProgress: 0,
+      currentSpec: BALL_SPECS[0], battingAnim: 'IDLE', animTimer: 0, bannerText: '', bannerSubtext: '',
+      bannerColor: '#facc15', bannerTimer: 0, cameraShake: 0, flyingWoods: [], bowlerState: 'IDLE',
+      umpireSignal: 'NONE', hitBallActive: false, hitBallX: 0, hitBallY: 0, hitBallVx: 0, hitBallVy: 0,
+      hitBallScale: 1, w: 390, h: 520, lastTime: performance.now()
+    };
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(280, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(300, Math.floor(rect.height * dpr));
+      sim.w = rect.width || 390; sim.h = rect.height || 520;
+      for (const f of fielders) { f.x = f.bx * sim.w; f.y = f.by * sim.h; }
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function shatterStumps() {
+      const sx = sim.w * 0.50, sy = sim.h * 0.73;
+      sim.flyingWoods = [
+        { x: sx - 8, y: sy - 18, vx: -200, vy: -520, w: 5.5, h: 38, rot: 0, vRot: -8, color: '#b45309' },
+        { x: sx, y: sy - 18, vx: 50, vy: -620, w: 5.5, h: 38, rot: 0, vRot: 12, color: '#b45309' },
+        { x: sx + 8, y: sy - 18, vx: 220, vy: -480, w: 5.5, h: 38, rot: 0, vRot: 9, color: '#b45309' },
+        { x: sx - 4, y: sy - 38, vx: -120, vy: -700, w: 12, h: 3.5, rot: 0, vRot: -20, color: '#f59e0b' },
+        { x: sx + 4, y: sy - 38, vx: 160, vy: -720, w: 12, h: 3.5, rot: 0, vRot: 22, color: '#f59e0b' }
+      ];
+    }
+
+    function triggerHitAction() {
+      if (!alive || match.inningsFinished || sim.hasSwung) return;
+      sim.hasSwung = true;
+      sound.swingWhoosh();
+      haptic('heavy');
+
+      const btn = document.getElementById('hit-button'), btnTxt = document.getElementById('hit-button-text');
+      if (btn) btn.className = 'swung';
+      if (btnTxt) btnTxt.innerText = 'SWUNG!';
+
+      if (!sim.ballActive) { sim.battingAnim = 'SWING_MISS'; sim.animTimer = 1.0; return; }
+
+      const now = performance.now(), optimalTime = sim.ballStartTime + sim.ballDuration, deltaMs = now - optimalTime;
+      const result = evaluateShotTiming(deltaMs);
+      sim.ballActive = false;
+
+      if (result.isWicket) {
+        sim.battingAnim = 'BOWLED'; sim.animTimer = 2.4; sim.bowlerState = 'CELEBRATE'; sim.umpireSignal = 'OUT'; sim.cameraShake = 0.55;
+        sound.missedBowled(); haptic('error'); shatterStumps();
+        for (const f of fielders) f.state = 'CELEBRATE';
+        sim.bannerText = result.msg; sim.bannerSubtext = result.sub + ' (' + (deltaMs > 0 ? '+' : '') + Math.round(deltaMs) + 'ms)';
+        sim.bannerColor = '#ef4444'; sim.bannerTimer = 2.4;
+      } else {
+        sim.hitBallActive = true; sim.hitBallX = sim.w * 0.44; sim.hitBallY = sim.h * 0.64;
+        if (result.runs === 6) {
+          sim.battingAnim = 'SWING_SIX'; sim.bowlerState = 'DISAPPOINTED'; sim.umpireSignal = 'SIX'; sim.cameraShake = 0.75;
+          sim.hitBallVx = (Math.random() - 0.5) * 60; sim.hitBallVy = -480; sim.hitBallScale = 1.0;
+          for (const f of fielders) f.state = 'AWE';
+        } else if (result.runs === 4) {
+          sim.battingAnim = 'SWING_FOUR'; sim.bowlerState = 'DISAPPOINTED'; sim.umpireSignal = 'FOUR'; sim.cameraShake = 0.4;
+          sim.hitBallVx = (Math.random() > 0.5 ? 1 : -1) * 200; sim.hitBallVy = -320; sim.hitBallScale = 0.8;
+          for (const f of fielders) f.state = 'CHASE';
+        } else {
+          sim.battingAnim = 'SWING_SINGLE'; sim.bowlerState = 'IDLE'; sim.cameraShake = 0.15;
+          sim.hitBallVx = (Math.random() - 0.5) * 140; sim.hitBallVy = -190; sim.hitBallScale = 0.6;
+          for (const f of fielders) f.state = 'CHASE';
+        }
+        sound.batHit(result.runs); haptic(result.runs === 6 ? 'success' : 'medium');
+        sim.animTimer = 2.0; sim.bannerText = result.msg; sim.bannerSubtext = result.sub + ' (' + (deltaMs > 0 ? '+' : '') + Math.round(deltaMs) + 'ms)';
+        sim.bannerColor = result.runs === 6 ? '#facc15' : result.runs === 4 ? '#38bdf8' : '#4ade80'; sim.bannerTimer = 2.0;
+      }
+
+      safeTimeout(() => {
+        sim.hitBallActive = false;
+        for (const f of fielders) { f.state = 'IDLE'; f.x = f.bx * sim.w; f.y = f.by * sim.h; }
+        resolveDelivery(result);
+      }, 2100);
+    }
+
+    function drawScene(ctx, now) {
+      const w = sim.w, h = sim.h;
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.35);
+      sky.addColorStop(0, '#38bdf8'); sky.addColorStop(1, '#bae6fd');
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h * 0.35);
+      ctx.fillStyle = '#0f766e'; ctx.fillRect(0, h * 0.22, w, h * 0.1);
+
+      const grass = ctx.createLinearGradient(0, h * 0.32, 0, h);
+      grass.addColorStop(0, '#15803d'); grass.addColorStop(1, '#166534');
+      ctx.fillStyle = grass; ctx.fillRect(0, h * 0.32, w, h * 0.68);
+
+      const topW = w * 0.22, botW = w * 0.70, topY = h * 0.28, botY = h * 0.88;
+      ctx.beginPath();
+      ctx.moveTo(w*0.5 - topW*0.5, topY); ctx.lineTo(w*0.5 + topW*0.5, topY);
+      ctx.lineTo(w*0.5 + botW*0.5, botY); ctx.lineTo(w*0.5 - botW*0.5, botY);
+      ctx.closePath();
+      const pitchGrad = ctx.createLinearGradient(0, topY, 0, botY);
+      pitchGrad.addColorStop(0, '#d97706'); pitchGrad.addColorStop(1, '#eab308');
+      ctx.fillStyle = pitchGrad; ctx.fill(); ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2.5; ctx.stroke();
+
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(w*0.5 - topW*0.45, topY + 12); ctx.lineTo(w*0.5 + topW*0.45, topY + 12); ctx.stroke();
+
+      const popY = h * 0.64, popW = topW + (botW - topW) * ((popY - topY) / (botY - topY));
+      ctx.beginPath(); ctx.moveTo(w*0.5 - popW*0.48, popY); ctx.lineTo(w*0.5 + popW*0.48, popY); ctx.stroke();
+
+      const stmpCreaseY = h * 0.73, stmpCreaseW = topW + (botW - topW) * ((stmpCreaseY - topY) / (botY - topY));
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(w*0.5 - stmpCreaseW*0.38, stmpCreaseY); ctx.lineTo(w*0.5 + stmpCreaseW*0.38, stmpCreaseY); ctx.stroke();
+
+      if (sim.ballActive) {
+        const px = w * 0.49 + sim.currentSpec.pitchX * 45, py = h * 0.48;
+        ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.ellipse(px, py, 13, 5.5, 0, 0, Math.PI*2); ctx.stroke();
+        if (sim.ballProgress >= 0.45) {
+          const isOpt = sim.ballProgress >= 0.82 && sim.ballProgress <= 1.15;
+          ctx.strokeStyle = isOpt ? '#22c55e' : 'rgba(74, 222, 128, 0.4)';
+          ctx.fillStyle = isOpt ? 'rgba(34, 197, 94, 0.28)' : 'rgba(74, 222, 128, 0.08)';
+          ctx.beginPath(); ctx.ellipse(w * 0.46, h * 0.63, 34, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+          if (isOpt) {
+            ctx.fillStyle = '#22c55e'; ctx.font = '800 11px "Fredoka", sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('⚡ TAP NOW! ⚡', w * 0.46, h * 0.63 - 16);
+          }
+        }
+      }
+
+      for (const f of fielders) {
+        ctx.save(); ctx.translate(f.x, f.y);
+        const bob = f.state === 'CHASE' ? Math.abs(Math.sin(now * 0.025 + f.id)) * 5 : Math.sin(now * 0.005 + f.id) * 2;
+        ctx.translate(0, -bob);
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(0, 12 + bob, f.type === 'chubby' ? 12 : 8, 3.5, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#f8fafc';
+        if (f.type === 'tall') { ctx.fillRect(-6, 0, 4, 13); ctx.fillRect(2, 0, 4, 13); ctx.fillStyle = '#0284c7'; ctx.fillRect(-6, -14, 12, 14); }
+        else if (f.type === 'chubby') { ctx.fillRect(-7, 2, 5, 8); ctx.fillRect(2, 2, 5, 8); ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(0, -5, 9, 0, Math.PI*2); ctx.fill(); }
+        else if (f.type === 'muscular') { ctx.fillRect(-6, 0, 4.5, 10); ctx.fillRect(1.5, 0, 4.5, 10); ctx.fillStyle = '#dc2626'; ctx.fillRect(-8, -12, 16, 12); }
+        else { ctx.fillRect(-6, 0, 4.5, 10); ctx.fillRect(1.5, 0, 4.5, 10); ctx.fillStyle = '#7c3aed'; ctx.fillRect(-6, -10, 12, 11); }
+
+        const headY = f.type === 'tall' ? -19 : -15;
+        ctx.fillStyle = f.skin; ctx.beginPath(); ctx.arc(0, headY, f.type === 'chubby' ? 6.5 : 5.5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(-2, headY, 1.2, 0, Math.PI*2); ctx.arc(2, headY, 1.2, 0, Math.PI*2); ctx.fill();
+        if (f.glasses) { ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(-2.5, headY, 2.5, 0, Math.PI*2); ctx.arc(2.5, headY, 2.5, 0, Math.PI*2); ctx.stroke(); }
+        if (f.mustache) { ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(0, headY + 2.5, 2, Math.PI, 0); ctx.fill(); }
+        ctx.fillStyle = f.cap;
+        if (f.style === 'bucket_hat') { ctx.fillRect(-7, headY - 8, 14, 6); ctx.fillRect(-9, headY - 2.5, 18, 2); }
+        else if (f.style === 'sunhat') { ctx.fillStyle = '#f8fafc'; ctx.fillRect(-11, headY - 2.5, 22, 2.5); ctx.beginPath(); ctx.arc(0, headY - 4, 6, Math.PI, 0); ctx.fill(); }
+        else if (f.style === 'afro') { ctx.fillStyle = '#1e1b4b'; ctx.beginPath(); ctx.arc(0, headY - 3, 8.5, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#a855f7'; ctx.fillRect(-6.5, headY - 2.5, 13, 2.5); }
+        else if (f.style === 'bandana') { ctx.fillRect(-6, headY - 5, 12, 3); }
+        else { ctx.beginPath(); ctx.arc(0, headY - 2, 6, Math.PI, 0); ctx.fill(); ctx.fillRect(-2, headY - 4, 7, 2); }
+        ctx.fillStyle = '#fef08a'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(f.name, 0, headY - 10);
+        ctx.restore();
+      }
+
+      const curOv = Math.floor(match.ballsDelivered / 6), curBowler = BOWLERS[Math.min(curOv, BOWLERS.length - 1)];
+      ctx.save(); ctx.translate(w * 0.5, h * 0.28);
+      ctx.fillStyle = '#78350f'; ctx.fillRect(-5, -12, 2.5, 12); ctx.fillRect(-1, -12, 2.5, 12); ctx.fillRect(3, -12, 2.5, 12);
+      const bBob = sim.bowlerState === 'RUNUP' ? Math.sin(now * 0.024) * 4 : 0;
+      ctx.translate(14, -16 - bBob);
+      ctx.fillStyle = curBowler.jersey;
+      if (curBowler.type === 'chubby') { ctx.beginPath(); ctx.arc(0, 1, 9, 0, Math.PI*2); ctx.fill(); }
+      else if (curBowler.type === 'muscular') { ctx.fillRect(-8, -6, 16, 14); }
+      else { ctx.fillRect(-6, -6, 12, 14); }
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 7px Impact, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(curBowler.num, 0, 4);
+      ctx.fillStyle = curBowler.skin; ctx.beginPath(); ctx.arc(0, -11, 6, 0, Math.PI*2); ctx.fill();
+      if (curBowler.glasses) { ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.strokeRect(-4, -12, 3, 3); ctx.strokeRect(1, -12, 3, 3); }
+      if (curBowler.mustache) { ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(0, -9, 2, Math.PI, 0); ctx.fill(); }
+      ctx.fillStyle = curBowler.headColor;
+      if (curBowler.headgear === 'headband') ctx.fillRect(-7, -15, 14, 3);
+      else if (curBowler.headgear === 'cap') { ctx.beginPath(); ctx.arc(0, -13, 7, Math.PI, 0); ctx.fill(); }
+      else ctx.fillRect(-5, -17, 10, 6);
+      ctx.save(); ctx.translate(0, -2); ctx.rotate(sim.bowlerState === 'RUNUP' ? now * 0.035 : sim.bowlerState === 'RELEASE' ? -1.2 : 0);
+      ctx.strokeStyle = curBowler.skin; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -14); ctx.stroke(); ctx.restore();
+      if (sim.bowlerState === 'CELEBRATE') {
+        ctx.fillStyle = '#fef08a'; ctx.fillRect(-22, -32, 44, 15);
+        ctx.fillStyle = '#713f12'; ctx.font = 'bold 8px sans-serif'; ctx.fillText('OUT HO GAYA!💥', -20, -21);
+      }
+      ctx.restore();
+
+      ctx.save(); ctx.translate(w * 0.32, h * 0.32);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(-8, 0, 16, 15);
+      ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -5, 6.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(-10, -10, 20, 2.5);
+      if (sim.umpireSignal === 'SIX') { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(-6, 2); ctx.lineTo(-10, -18); ctx.moveTo(6, 2); ctx.lineTo(10, -18); ctx.stroke(); }
+      else if (sim.umpireSignal === 'OUT') { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(5, 3); ctx.lineTo(8, -15); ctx.stroke(); }
+      ctx.restore();
+
+      const curBat = BATSMEN[Math.min(match.wickets, BATSMEN.length - 1)];
+      ctx.save(); ctx.translate(w * 0.42, h * 0.64);
+      let batRot = -25, batX = 8, batY = 10, batBob = 0, stride = 0;
+      if (sim.battingAnim === 'READY') { batRot = -55; batY = 4; }
+      else if (sim.battingAnim === 'SWING_SIX') {
+        const t = Math.min((2.0 - sim.animTimer) * 1.5, 1);
+        batRot = -55 + t * 125; batX = 8 - t * 14; batY = 4 - t * 18; batBob = -Math.sin(t*Math.PI)*12; stride = t * 14;
+      } else if (sim.battingAnim === 'SWING_FOUR') {
+        const t = Math.min((2.0 - sim.animTimer) * 2, 1);
+        batRot = -50 + t * 105; batX = 6 - t * 12; batY = 6 - t * 10; stride = t * 12;
+      } else if (sim.battingAnim === 'BOWLED') { batRot = 70; batX = 18; batY = 24; batBob = 6; }
+
+      ctx.translate(0, batBob);
+      ctx.fillStyle = curBat.pads; ctx.fillRect(-14 - stride, 8, 10, 24); ctx.fillRect(3, 10, 10, 24);
+      ctx.fillStyle = curBat.jersey; ctx.fillRect(-15, -12, 30, 24);
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(curBat.name.split(' ')[0].toUpperCase(), 0, -2);
+      ctx.fillStyle = '#facc15'; ctx.font = '800 13px Impact, sans-serif'; ctx.fillText(curBat.num, 0, 9);
+
+      ctx.save(); ctx.translate(-2, -22);
+      ctx.fillStyle = curBat.helmet; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#1e293b'; ctx.fillRect(-7, 7, 14, 5);
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(-11, -2); ctx.lineTo(-16, -8); ctx.moveTo(-11, 2); ctx.lineTo(-15, -4); ctx.stroke();
+      ctx.restore();
+
+      ctx.save(); ctx.translate(batX, batY); ctx.rotate(batRot * Math.PI / 180);
+      ctx.fillStyle = '#fef3c7'; ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2;
+      ctx.fillRect(-5, -56, 10, 46); ctx.strokeRect(-5, -56, 10, 46);
+      ctx.fillStyle = '#dc2626'; ctx.fillRect(-4, -50, 8, 11);
+      ctx.fillStyle = curBat.glove; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2); ctx.arc(0, 9, 6, 0, Math.PI*2); ctx.fill();
+      ctx.restore(); ctx.restore();
+
+      const sx = w * 0.50, sy = h * 0.73;
+      if (sim.flyingWoods.length === 0) {
+        ctx.save(); ctx.translate(sx, sy); ctx.fillStyle = '#b45309';
+        for (let i = -1; i <= 1; i++) ctx.fillRect(i * 9 - 2.5, -38, 5, 38);
+        ctx.fillStyle = '#f59e0b'; ctx.fillRect(-13, -41, 12, 3); ctx.fillRect(1, -41, 12, 3); ctx.restore();
+      }
+
+      ctx.save(); ctx.translate(w * 0.50, h * 0.81);
+      ctx.fillStyle = '#fde047'; ctx.fillRect(-16, 2, 10, 14); ctx.fillRect(6, 2, 10, 14);
+      ctx.fillStyle = '#16a34a'; ctx.fillRect(-12, -10, 24, 16);
+      ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -16, 8, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#15803d'; ctx.beginPath(); ctx.arc(0, -18, 8.5, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(-16, -2, 7, 0, Math.PI*2); ctx.arc(16, -2, 7, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      if (sim.ballActive) {
+        const p = sim.ballProgress, startX = w * 0.5, startY = h * 0.28, pitchX = w * 0.49 + sim.currentSpec.pitchX * 45, pitchY = h * 0.48;
+        const batHitX = w * 0.46 + sim.currentSpec.spin * 35, batHitY = h * 0.63, stmpX = w * 0.50, stmpY = h * 0.73;
+        let cx, cy;
+        if (p < 0.55) { const t = p / 0.55; cx = startX + (pitchX - startX) * t; cy = (startY + (pitchY - startY) * t) - Math.sin(t * Math.PI) * 22; }
+        else if (p <= 1.0) { const t = (p - 0.55) / 0.45; cx = pitchX + (batHitX - pitchX) * t; cy = (pitchY + (batHitY - pitchY) * t) - Math.sin(t * Math.PI) * 30 * sim.currentSpec.bounce; }
+        else { const t = Math.min((p - 1.0) / 0.25, 1); cx = batHitX + (stmpX - batHitX) * t; cy = batHitY + (stmpY - batHitY) * t; }
+        ctx.save(); ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(cx, cy, 3.5 + Math.min(p, 1.25) * 11, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      }
+
+      if (sim.hitBallActive) {
+        ctx.save(); ctx.translate(sim.hitBallX, sim.hitBallY);
+        ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(0, 0, 16 * sim.hitBallScale, 0, Math.PI*2); ctx.fill(); ctx.restore();
+      }
+
+      for (const wood of sim.flyingWoods) {
+        ctx.save(); ctx.translate(wood.x, wood.y); ctx.rotate(wood.rot);
+        ctx.fillStyle = wood.color; ctx.fillRect(-wood.w * 0.5, -wood.h * 0.5, wood.w, wood.h); ctx.restore();
+      }
+
+      if (sim.bannerTimer > 0 && sim.bannerText) {
+        ctx.save();
+        const bannerY = h * 0.09, bW = Math.min(w * 0.78, 260), bH = 40;
+        ctx.translate(w * 0.5, bannerY);
+        ctx.beginPath(); ctx.roundRect(-bW * 0.5, -bH * 0.5, bW, bH, 12);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)'; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = sim.bannerColor; ctx.stroke();
+        ctx.fillStyle = sim.bannerColor; ctx.font = '800 15px "Fredoka", Impact, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(sim.bannerText, 0, -3);
+        ctx.fillStyle = '#e2e8f0'; ctx.font = '600 10px "Fredoka", sans-serif';
+        ctx.fillText(sim.bannerSubtext, 0, 12);
+        ctx.restore();
       }
     }
 
-    function swingBat() {
-      if (!alive) return;
-      if (phase === 'ready') { launchBall(); return; }
-      if (phase !== 'bowling') return;
-      batSwing = 1; haptic('medium');
-      const diff = Math.abs(ballProgress - 0.83);
-      let outcomeRuns = 0, isOut = false;
-      if (diff <= 0.055) { outcomeRuns = 6; bannerTxt = '🔥 SUPER SIX! +6'; }
-      else if (diff <= 0.11) { outcomeRuns = 4; bannerTxt = '⚡ CRACKING FOUR! +4'; }
-      else if (diff <= 0.17) { outcomeRuns = Math.random() < 0.5 ? 2 : 1; bannerTxt = `🏃 NICE SHOT! +${outcomeRuns}`; }
-      else if (ballProgress < 0.52) { bannerTxt = '💨 TOO EARLY! DOT BALL'; }
-      else { isOut = true; bannerTxt = '☝️ CAUGHT / BOWLED!'; }
-      ballsLeft--;
-      if (isOut) { wickets++; haptic('error'); flyBall = null; }
-      else { runs += outcomeRuns; if (outcomeRuns >= 4) haptic('success'); flyBall = outcomeRuns > 0 ? { x: batsmanX, y: batsmanY-12, vx: (Math.random()-0.5)*320, vy: -380-outcomeRuns*35, r: 9 } : null; }
-      phase = 'hit_fx'; bannerTimer = 1.15; updateHud(); checkMatchEnd();
-    }
-
-    canvas.addEventListener('pointerdown', swingBat);
-    setTimeout(() => { if (alive && phase === 'ready') launchBall(); }, 500);
-
-    let lastTime = performance.now();
     function loop(now) {
       if (!alive) return;
-      const dt = Math.min(0.05, (now - lastTime) / 1000); lastTime = now;
-      const grad = ctx.createRadialGradient(w/2, h*0.55, 40, w/2, h*0.55, Math.max(w, h)*0.75);
-      grad.addColorStop(0, '#22c55e'); grad.addColorStop(1, '#14532d');
-      ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, w, 72);
-      for (let i = 0; i < w; i += 22) {
-        ctx.fillStyle = ['#ef4444','#facc15','#38bdf8','#f97316','#a855f7'][Math.floor(i/22)%5];
-        ctx.beginPath(); ctx.arc(i+11, 52 + ((i%44===0)?4:0), 7, 0, Math.PI*2); ctx.fill();
-      }
-      ctx.fillStyle = '#e7c98f'; ctx.beginPath(); ctx.moveTo(w/2-34, bowlerY); ctx.lineTo(w/2+34, bowlerY); ctx.lineTo(w/2+68, batsmanY+35); ctx.lineTo(w/2-68, batsmanY+35); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(w/2-58, batsmanY+6); ctx.lineTo(w/2+58, batsmanY+6); ctx.stroke();
-      ctx.fillStyle = '#fde047'; [-10, 0, 10].forEach(ox => ctx.fillRect(batsmanX+ox-2, batsmanY-10, 4, 34));
-      const sweetY = bowlerY + (batsmanY - bowlerY) * 0.83;
-      ctx.strokeStyle = 'rgba(34,197,94,0.85)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(batsmanX, sweetY, 26, 12, 0, 0, Math.PI*2); ctx.stroke();
+      const dt = Math.min((now - sim.lastTime) / 1000, 0.05);
+      sim.lastTime = now;
 
-      ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(bowlerX, bowlerY-12, 13, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(bowlerX, bowlerY-28, 10, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.roundRect(batsmanX-28, batsmanY-22, 22, 34, 8); ctx.fill();
-      ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(batsmanX-17, batsmanY-34, 11, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#1d4ed8'; ctx.beginPath(); ctx.arc(batsmanX-17, batsmanY-37, 11, Math.PI, 0); ctx.fill();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      ctx.save();
+      ctx.scale(dpr, dpr);
 
-      ctx.save(); ctx.translate(batsmanX-10, batsmanY-4); ctx.rotate(batSwing > 0 ? -1.4 : 0.45); ctx.fillStyle = '#d97706'; ctx.fillRect(0, -4, 42, 9); ctx.restore();
-      if (batSwing > 0) batSwing = Math.max(0, batSwing - dt * 4);
-
-      if (phase === 'bowling') {
-        ballProgress += dt * ballSpeed;
-        const bx = bowlerX + Math.sin(ballProgress * Math.PI) * ballCurve, by = bowlerY + (batsmanY - bowlerY) * ballProgress, r = 6 + ballProgress * 6;
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(bx, by+6, r, r*0.5, 0, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#b91c1c'; ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI*2); ctx.fill();
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(bx, by, r*0.6, 0, Math.PI); ctx.stroke();
-        if (ballProgress >= 1.02) { ballsLeft--; wickets++; haptic('error'); bannerTxt = '💥 CLEAN BOWLED!'; bannerTimer = 1.15; phase = 'hit_fx'; updateHud(); checkMatchEnd(); }
-      } else if (phase === 'hit_fx') {
-        if (flyBall) { flyBall.x += flyBall.vx*dt; flyBall.y += flyBall.vy*dt; flyBall.vy += 320*dt; ctx.fillStyle = '#b91c1c'; ctx.beginPath(); ctx.arc(flyBall.x, flyBall.y, flyBall.r, 0, Math.PI*2); ctx.fill(); }
-        bannerTimer -= dt;
-        if (bannerTimer <= 0) { phase = 'ready'; launchBall(); }
+      if (sim.cameraShake > 0) {
+        sim.cameraShake = Math.max(0, sim.cameraShake - dt * 2.5);
+        ctx.translate((Math.random() - 0.5) * sim.cameraShake * 16, (Math.random() - 0.5) * sim.cameraShake * 16);
       }
 
-      ctx.fillStyle = 'rgba(15,23,42,0.85)'; ctx.beginPath(); ctx.roundRect(w/2-130, 82, 260, 42, 21); ctx.fill();
-      ctx.fillStyle = '#ffd700'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(bannerTxt, w/2, 103);
-      ctx.fillStyle = phase === 'bowling' ? '#ffd700' : 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(w/2-110, h-72, 220, 48, 24); ctx.fill();
-      ctx.fillStyle = phase === 'bowling' ? '#5c3d00' : '#fff'; ctx.font = 'bold 17px sans-serif'; ctx.fillText(phase === 'bowling' ? '🏏 SWING BAT!' : 'GET READY...', w/2, h-48);
+      if (sim.animTimer > 0) {
+        sim.animTimer -= dt;
+        if (sim.animTimer <= 0 && !sim.ballActive) { sim.battingAnim = 'IDLE'; sim.bowlerState = 'IDLE'; sim.umpireSignal = 'NONE'; }
+      }
+      if (sim.bannerTimer > 0) sim.bannerTimer -= dt;
+
+      if (sim.ballActive) {
+        const elapsed = now - sim.ballStartTime;
+        sim.ballProgress = elapsed / sim.ballDuration;
+        sim.bowlerState = sim.ballProgress < 0.28 ? 'RUNUP' : 'RELEASE';
+        if (sim.ballProgress >= 0.52 && sim.ballProgress <= 0.56) sound.bounce();
+
+        if (sim.ballProgress >= 1.25 && !sim.hasSwung) {
+          sim.ballActive = false; sim.hasSwung = true;
+          const res = evaluateShotTiming(999);
+          sim.battingAnim = 'BOWLED'; sim.animTimer = 2.4; sim.bowlerState = 'CELEBRATE'; sim.umpireSignal = 'OUT'; sim.cameraShake = 0.55;
+          sound.missedBowled(); haptic('error'); shatterStumps();
+          for (const f of fielders) f.state = 'CELEBRATE';
+          sim.bannerText = res.msg; sim.bannerSubtext = 'Clean bowled! Missed the line completely!';
+          sim.bannerColor = '#ef4444'; sim.bannerTimer = 2.4;
+
+          const btn = document.getElementById('hit-button'), btnTxt = document.getElementById('hit-button-text');
+          if (btn) btn.className = 'swung';
+          if (btnTxt) btnTxt.innerText = 'SWUNG!';
+
+          safeTimeout(() => {
+            for (const f of fielders) { f.state = 'IDLE'; f.x = f.bx * sim.w; f.y = f.by * sim.h; }
+            resolveDelivery(res);
+          }, 2100);
+        }
+      }
+
+      if (sim.hitBallActive) { sim.hitBallX += sim.hitBallVx * dt; sim.hitBallY += sim.hitBallVy * dt; sim.hitBallVy += 140 * dt; }
+
+      for (const f of fielders) {
+        if (f.state === 'IDLE') { f.x = f.bx * sim.w; f.y = f.by * sim.h; }
+        else if (f.state === 'CHASE' && sim.hitBallActive) {
+          const dx = sim.hitBallX - f.x, dy = sim.hitBallY - f.y, dist = Math.hypot(dx, dy);
+          if (dist > 15) { f.x += (dx / dist) * 160 * dt; f.y += (dy / dist) * 160 * dt; }
+        }
+      }
+
+      for (let i = 0; i < sim.flyingWoods.length; i++) {
+        const wd = sim.flyingWoods[i];
+        wd.x += wd.vx * dt; wd.y += wd.vy * dt; wd.vy += 600 * dt; wd.rot += wd.vRot * dt;
+        if (wd.y > sim.h * 0.95) { wd.y = sim.h * 0.95; wd.vy = -wd.vy * 0.4; wd.vx *= 0.6; }
+      }
+
+      drawScene(ctx, now);
+      ctx.restore();
       rafId = requestAnimationFrame(loop);
     }
+
+    function updateHUD() {
+      document.getElementById('hud-runs').innerText = match.runs;
+      document.getElementById('hud-wickets').innerText = match.wickets;
+      document.getElementById('hud-overs').innerText = formatOvers(match.ballsDelivered);
+      setFsStat(`🏏 ${match.runs}/${match.wickets} (${formatOvers(match.ballsDelivered)})`);
+
+      const curBat = BATSMEN[Math.min(match.wickets, BATSMEN.length - 1)];
+      const curOv = Math.floor(match.ballsDelivered / 6), curBowler = BOWLERS[Math.min(curOv, BOWLERS.length - 1)];
+      document.getElementById('hud-batsman-name').innerText = '🏏 ' + curBat.name + ' (#' + curBat.num + ')';
+      document.getElementById('hud-bowler-name').innerText = '⚾ ' + curBowler.name;
+
+      for (let i = 0; i < 3; i++) {
+        const sock = document.getElementById('w-sock-' + i);
+        sock.className = i < match.wickets ? 'wicket-pill wicket-out' : 'wicket-pill wicket-live';
+        sock.innerText = i < match.wickets ? '✕' : '';
+      }
+
+      document.getElementById('hud-over-idx').innerText = 'Ov ' + (curOv + 1) + ':';
+      const ballsThisOver = match.history.slice(curOv * 6, (curOv + 1) * 6), dots = document.getElementById('hud-ball-dots').children;
+      for (let i = 0; i < 6; i++) {
+        const code = ballsThisOver[i] || '';
+        dots[i].innerText = code; dots[i].className = 'ball-badge';
+        if (code === '6') dots[i].classList.add('six');
+        else if (code === '4') dots[i].classList.add('four');
+        else if (code === 'W') dots[i].classList.add('wicket');
+        else if (code === '1' || code === '2') dots[i].classList.add('single');
+        else if (code === '•') dots[i].classList.add('dot');
+      }
+    }
+
+    function queueNextBall(delayMs) {
+      const btn = document.getElementById('hit-button'), btnTxt = document.getElementById('hit-button-text');
+      if (btn) btn.className = 'waiting';
+      if (btnTxt) btnTxt.innerText = 'GET READY...';
+
+      safeTimeout(() => {
+        if (match.wickets >= MAX_WICKETS || match.ballsDelivered >= TOTAL_BALLS) return;
+        sim.currentSpec = BALL_SPECS[match.ballsDelivered % BALL_SPECS.length];
+        document.getElementById('hud-ball-name').innerText = sim.currentSpec.name;
+        sim.ballActive = true; sim.hasSwung = false; sim.ballStartTime = performance.now();
+        sim.ballDuration = sim.currentSpec.speed; sim.ballProgress = 0; sim.battingAnim = 'READY';
+        sim.bowlerState = 'RUNUP'; sim.flyingWoods = [];
+        if (btn) btn.className = 'ready';
+        if (btnTxt) btnTxt.innerText = 'HIT BALL!';
+      }, delayMs);
+    }
+
+    function resolveDelivery(res) {
+      match.ballsDelivered++; match.runs += res.runs;
+      if (res.isWicket) match.wickets++;
+      if (res.runs === 6) match.sixes++;
+      if (res.runs === 4) match.fours++;
+      match.history.push(res.isWicket ? 'W' : (res.runs === 0 ? '•' : '' + res.runs));
+      match.highScore = Math.max(match.highScore, match.runs);
+      localStorage.setItem('toon_cricket_hi', match.highScore.toString());
+      updateHUD();
+
+      if (match.wickets >= MAX_WICKETS || match.ballsDelivered >= TOTAL_BALLS) {
+        safeTimeout(showGameOver, 600);
+      } else {
+        queueNextBall(1300);
+      }
+    }
+
+    function showGameOver() {
+      match.inningsFinished = true;
+      const isAllOut = match.wickets >= MAX_WICKETS;
+      const wonCoins = match.runs >= 10 ? Math.max(0, Number(gameWinReward) || 0) : 0;
+      match.wonCoins = wonCoins;
+      match.rewardClaimed = false;
+
+      document.getElementById('go-icon').innerText = isAllOut ? '💥' : '🏆';
+      document.getElementById('go-title').innerText = isAllOut ? 'ALL OUT! (3 WICKETS)' : 'INNINGS COMPLETE!';
+
+      let perfTitle = 'VALIANT SLOGGER! 😅', perfSub = 'Great effort! Good bat speed!';
+      if (isAllOut && match.runs < 10) { perfTitle = 'DUCK SUPREME! 🦆'; perfSub = 'Score 10+ runs to win Coins!'; }
+      else if (match.runs >= 60) { perfTitle = 'GULLY CRICKET GOD! 👑'; perfSub = 'Bowlers are packing bags and moving to tennis!'; }
+      else if (match.runs >= 40) { perfTitle = 'MASTER BLASTER! 💥'; perfSub = 'Roof tiles shattered! Neighbors calling the umpire!'; }
+      else if (match.runs >= 20) { perfTitle = 'VILLAGE HERO! 🏏'; perfSub = 'Solid knocks and wild swings! Crowd delighted!'; }
+      else if (match.runs >= 10) { perfTitle = 'CHALLENGER! ⭐'; perfSub = 'Nice batting! Reward unlocked!'; }
+      if (wonCoins > 0) perfSub += ` (+${wonCoins} Coins)`;
+
+      document.getElementById('go-perf-title').innerText = perfTitle;
+      document.getElementById('go-perf-sub').innerText = perfSub;
+      document.getElementById('go-runs').innerText = match.runs;
+      document.getElementById('go-wickets').innerText = match.wickets + ' / 3';
+      document.getElementById('go-overs').innerText = formatOvers(match.ballsDelivered);
+      document.getElementById('go-sixes').innerText = match.sixes;
+      document.getElementById('go-fours').innerText = match.fours;
+      document.getElementById('go-best').innerText = match.highScore;
+
+      const needContAd = requireGameContinueAd && isGamePassExpired();
+      const needExitAd = wonCoins > 0 && requireGameExitAd && isGamePassExpired();
+      const restBtn = document.getElementById('btn-restart-game'), exitBtn = document.getElementById('btn-tc-exit');
+      if (wonCoins > 0) {
+        restBtn.innerHTML = needContAd ? `🎬 Watch Ad, Claim +${wonCoins} & New Game` : `🔄 Claim +${wonCoins} & New Game`;
+        exitBtn.innerText = needExitAd ? `🎁 Watch Ad, Claim +${wonCoins} & Exit` : `✅ Claim +${wonCoins} & Exit`;
+      } else {
+        restBtn.innerHTML = needContAd ? '🎬 Watch Ad & New Game' : '🔄 START NEW GAME!';
+        exitBtn.innerText = '🏠 Back to Fun Zone';
+      }
+
+      document.getElementById('modal-gameover').classList.remove('hidden');
+    }
+
+    function startNewMatch() {
+      match.runs = 0; match.wickets = 0; match.ballsDelivered = 0; match.history = [];
+      match.sixes = 0; match.fours = 0; match.inningsFinished = false; match.wonCoins = 0; match.rewardClaimed = false;
+      sim.ballActive = false; sim.hasSwung = false; sim.hitBallActive = false; sim.flyingWoods = [];
+      updateHUD();
+      document.getElementById('modal-title').classList.add('hidden');
+      document.getElementById('modal-gameover').classList.add('hidden');
+      queueNextBall(1000);
+    }
+
+    async function handleCricketRestart() {
+      if (!match.inningsFinished) { startNewMatch(); return; }
+      const needContAd = requireGameContinueAd && isGamePassExpired();
+      const proceed = async () => {
+        if (match.wonCoins > 0 && !match.rewardClaimed && isRealTelegramUser()) {
+          const ok = await recordTx(match.wonCoins, 'game', 'ToonCricket Game Reward');
+          if (!ok) return;
+          match.rewardClaimed = true;
+        }
+        startNewMatch();
+      };
+      if (needContAd) showSmoothAd('game_continue', async () => { refreshGamePass(); await proceed(); });
+      else await proceed();
+    }
+
+    async function handleCricketExit() {
+      if (match.inningsFinished && match.wonCoins > 0 && !match.rewardClaimed && isRealTelegramUser()) {
+        const needExitAd = requireGameExitAd && isGamePassExpired();
+        if (needExitAd) {
+          showSmoothAd('game_claim_exit', async () => {
+            await recordTx(match.wonCoins, 'game', 'ToonCricket Game Reward');
+            match.rewardClaimed = true;
+            refreshGamePass(); exitFullScreenGame();
+          }, () => exitFullScreenGame());
+          return;
+        } else {
+          await recordTx(match.wonCoins, 'game', 'ToonCricket Game Reward');
+          match.rewardClaimed = true;
+        }
+      }
+      exitFullScreenGame();
+    }
+
+    document.getElementById('btn-start-game').addEventListener('click', startNewMatch);
+    document.getElementById('btn-restart-game').addEventListener('click', handleCricketRestart);
+    document.getElementById('btn-tc-exit').addEventListener('click', handleCricketExit);
+    document.getElementById('hit-button').addEventListener('click', triggerHitAction);
+    document.getElementById('game-canvas').addEventListener('click', triggerHitAction);
+    document.getElementById('btn-sound').addEventListener('click', () => {
+      const isMuted = sound.toggle();
+      document.getElementById('btn-sound').innerText = isMuted ? '🔇' : '🔊';
+    });
+
+    const onKey = (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        const titleVisible = !document.getElementById('modal-title').classList.contains('hidden');
+        const goVisible = !document.getElementById('modal-gameover').classList.contains('hidden');
+        if (titleVisible) startNewMatch();
+        else if (goVisible) handleCricketRestart();
+        else triggerHitAction();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+
+    updateHUD();
     rafId = requestAnimationFrame(loop);
-    gameCleanupFn = () => { alive = false; if (rafId) cancelAnimationFrame(rafId); canvas.removeEventListener('pointerdown', swingBat); };
+
+    gameCleanupFn = () => {
+      alive = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      timers.forEach(id => clearTimeout(id));
+      timers.clear();
+      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('keydown', onKey);
+    };
   }
 
   // ========== GAME 3: DART ==========
@@ -2578,9 +3486,10 @@
       haptic(pts >= 15 ? 'success' : 'light'); updateHud();
       if (dartsLeft <= 0) {
         alive = false;
+        const reward = Math.max(0, Number(gameWinReward) || 0);
         setTimeout(() => {
-          if (score >= winTarget) showGameResult({ won: true, coins: 4, title: '🎯 BULLSEYE MASTER!', desc: `Scored ${score} points (Target: ${winTarget})!\nReward: +4 Coins` });
-          else showGameResult({ won: false, coins: 0, title: '🎯 SO CLOSE!', desc: `Scored ${score}/${winTarget} points. Watch an ad to throw again!` });
+          if (score >= winTarget) showGameResult({ won: true, coins: reward, title: '🎯 BULLSEYE MASTER!', desc: `Scored ${score} points (Target: ${winTarget})!\nReward: +${reward} Coins` });
+          else showGameResult({ won: false, coins: 0, title: '🎯 SO CLOSE!', desc: `Scored ${score}/${winTarget} points. Try again!` });
         }, 500);
       }
     }
@@ -2625,11 +3534,16 @@
       for (let i = fruits.length - 1; i >= 0; i--) {
         const f = fruits[i];
         if (Math.hypot(f.x - x, f.y - y) < 38) {
-          if (f.isBomb) { alive = false; showGameResult({ won: false, coins: 0, title: '💣 BOOM!', desc: `Sliced a bomb! Score: ${score}. Watch an ad to retry!` }); return; }
+          if (f.isBomb) { alive = false; showGameResult({ won: false, coins: 0, title: '💣 BOOM!', desc: `Sliced a bomb! Score: ${score}. Try again!` }); return; }
           score++; haptic('light');
           for (let k = 0; k < 8; k++) particles.push({ x: f.x, y: f.y, vx: (Math.random()-0.5)*260, vy: (Math.random()-0.5)*260, c: '#f87171', life: 0.45 });
           fruits.splice(i, 1); updateHud();
-          if (score >= targetScore) { alive = false; showGameResult({ won: true, coins: 4, title: '🍎 FRUIT NINJA!', desc: `Sliced ${score} fruits in time!\nReward: +4 Coins` }); return; }
+          if (score >= targetScore) {
+            alive = false;
+            const reward = Math.max(0, Number(gameWinReward) || 0);
+            showGameResult({ won: true, coins: reward, title: '🍎 FRUIT NINJA!', desc: `Sliced ${score} fruits in time!\nReward: +${reward} Coins` });
+            return;
+          }
         }
       }
     }
@@ -2646,7 +3560,7 @@
       if (!alive) return;
       const dt = Math.min(0.05, (now - lastTime) / 1000); lastTime = now;
       timeLeft -= dt; updateHud();
-      if (timeLeft <= 0) { alive = false; showGameResult({ won: false, coins: 0, title: '⏱ TIME UP!', desc: `Sliced ${score}/${targetScore} fruits. Watch an ad to try again!` }); return; }
+      if (timeLeft <= 0) { alive = false; showGameResult({ won: false, coins: 0, title: '⏱ TIME UP!', desc: `Sliced ${score}/${targetScore} fruits. Try again!` }); return; }
 
       spawnTimer += dt;
       if (spawnTimer >= 0.72) {
@@ -2708,14 +3622,19 @@
         for (let b = bullets.length - 1; b >= 0; b--) {
           if (Math.hypot(bullets[b].x - en.x, bullets[b].y - en.y) < 26) {
             bullets.splice(b, 1); enemies.splice(i, 1); kills++; haptic('light'); updateHud(); hit = true;
-            if (kills >= targetKills) { alive = false; showGameResult({ won: true, coins: 4, title: '🚀 GALAXY DEFENDED!', desc: `Destroyed ${kills} alien ships!\nReward: +4 Coins` }); return; }
+            if (kills >= targetKills) {
+              alive = false;
+              const reward = Math.max(0, Number(gameWinReward) || 0);
+              showGameResult({ won: true, coins: reward, title: '🚀 GALAXY DEFENDED!', desc: `Destroyed ${kills} alien ships!\nReward: +${reward} Coins` });
+              return;
+            }
             break;
           }
         }
         if (hit) continue;
         if (en.y > h - 25 || Math.hypot(en.x - shipX, en.y - shipY) < 30) {
           enemies.splice(i, 1); lives--; haptic('error'); updateHud();
-          if (lives <= 0) { alive = false; showGameResult({ won: false, coins: 0, title: '💥 SHIP DESTROYED!', desc: `Defeated ${kills}/${targetKills} aliens. Watch an ad to respawn!` }); return; }
+          if (lives <= 0) { alive = false; showGameResult({ won: false, coins: 0, title: '💥 SHIP DESTROYED!', desc: `Defeated ${kills}/${targetKills} aliens. Try again!` }); return; }
         }
       }
 
@@ -2739,9 +3658,14 @@
     function dropBlock() {
       if (!alive) return;
       const prev = stack[stack.length - 1], overlapLeft = Math.max(prev.x, moving.x), overlapW = Math.min(prev.x+prev.w, moving.x+moving.w) - overlapLeft;
-      if (overlapW <= 6) { alive = false; haptic('error'); showGameResult({ won: false, coins: 0, title: '🗼 TOWER COLLAPSED!', desc: `Stacked ${stack.length-1}/${targetHeight} floors. Watch an ad to rebuild!` }); return; }
+      if (overlapW <= 6) { alive = false; haptic('error'); showGameResult({ won: false, coins: 0, title: '🗼 TOWER COLLAPSED!', desc: `Stacked ${stack.length-1}/${targetHeight} floors. Try again!` }); return; }
       haptic('light'); stack.push({ x: overlapLeft, w: overlapW, c: moving.c }); updateHud();
-      if (stack.length - 1 >= targetHeight) { alive = false; showGameResult({ won: true, coins: 4, title: '🗼 SKYSCRAPER BUILT!', desc: `Reached height ${targetHeight}!\nReward: +4 Coins` }); return; }
+      if (stack.length - 1 >= targetHeight) {
+        alive = false;
+        const reward = Math.max(0, Number(gameWinReward) || 0);
+        showGameResult({ won: true, coins: reward, title: '🗼 SKYSCRAPER BUILT!', desc: `Reached height ${targetHeight}!\nReward: +${reward} Coins` });
+        return;
+      }
       moving = { x: 10, w: overlapW, dir: 1, speed: 190 + stack.length * 16, c: colors[stack.length % colors.length] };
     }
 
@@ -2765,11 +3689,39 @@
     gameCleanupFn = () => { alive = false; if (rafId) cancelAnimationFrame(rafId); canvas.removeEventListener('pointerdown', dropBlock); };
   }
 
-  // ========== GAME 7: SPIN & WIN ==========
+  // ========== GAME 7: SPIN & WIN (1-3 COINS, MAX 10/DAY) ==========
   function startSpinFS(stage) {
-    stage.innerHTML = `<div style="text-align:center;padding:16px;width:100%;max-width:380px;"><div style="font-size:30px;color:#ffd700;margin-bottom:-10px;position:relative;z-index:2;">▼</div><canvas id="fs-spin-canvas" width="300" height="300" style="width:min(76vw,300px);height:min(76vw,300px);border-radius:50%;box-shadow:0 0 0 6px #ffd700, 0 12px 30px rgba(0,0,0,0.5);"></canvas><div style="margin-top:24px;"><button class="gold-btn" id="fs-spin-btn" style="padding:14px 40px;font-size:17px;">🎡 SPIN NOW</button></div></div>`;
-    setFsStat('🎡 Luck Spin');
-    const segments = [{label:'+5',coins:5,color:'#ef4444'},{label:'0',coins:0,color:'#334155'},{label:'+3',coins:3,color:'#10b981'},{label:'+8',coins:8,color:'#3b82f6'},{label:'0',coins:0,color:'#475569'},{label:'+4',coins:4,color:'#f59e0b'},{label:'+10',coins:10,color:'#a855f7'},{label:'+2',coins:2,color:'#06b6d4'}];
+    const spinKey = 'vtn_spins_' + userId + '_' + new Date().toDateString();
+    let spinsUsed = Number(localStorage.getItem(spinKey) || 0);
+    const maxSpins = Math.max(1, Number(spinDailyLimit) || 10);
+    const minC = Math.max(1, Number(spinMinCoins) || 1);
+    const maxC = Math.max(minC, Number(spinMaxCoins) || 3);
+    const midC = Math.round((minC + maxC) / 2);
+
+    const leftNow = Math.max(0, maxSpins - spinsUsed);
+    stage.innerHTML = `
+      <div style="text-align:center;padding:16px;width:100%;max-width:380px;">
+        <div id="fs-spin-limit-msg" style="font-size:13px;font-weight:800;color:#38bdf8;margin-bottom:8px;">🎡 Spins left today: ${leftNow} / ${maxSpins} (Win ${minC}–${maxC} Coins)</div>
+        <div style="font-size:30px;color:#ffd700;margin-bottom:-10px;position:relative;z-index:2;">▼</div>
+        <canvas id="fs-spin-canvas" width="300" height="300" style="width:min(74vw,290px);height:min(74vw,290px);border-radius:50%;box-shadow:0 0 0 6px #ffd700, 0 12px 30px rgba(0,0,0,0.5);"></canvas>
+        <div style="margin-top:20px;">
+          <button class="gold-btn" id="fs-spin-btn" style="padding:14px 40px;font-size:17px;" ${leftNow <= 0 ? 'disabled' : ''}>${leftNow <= 0 ? '🔒 Daily Limit Reached' : '🎡 SPIN NOW'}</button>
+        </div>
+      </div>
+    `;
+    setFsStat(`🎡 ${leftNow}/${maxSpins} Left`);
+
+    const segments = [
+      { label: '+' + minC, coins: minC, color: '#ef4444' },
+      { label: '0', coins: 0, color: '#334155' },
+      { label: '+' + midC, coins: midC, color: '#10b981' },
+      { label: '+' + maxC, coins: maxC, color: '#3b82f6' },
+      { label: '0', coins: 0, color: '#475569' },
+      { label: '+' + minC, coins: minC, color: '#f59e0b' },
+      { label: '+' + maxC, coins: maxC, color: '#a855f7' },
+      { label: '+' + midC, coins: midC, color: '#06b6d4' }
+    ];
+
     const c = document.getElementById('fs-spin-canvas'), ctx = c.getContext('2d');
     let angle = 0, spinning = false, rafId = null;
     function drawWheel() {
@@ -2784,10 +3736,24 @@
       ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI*2); ctx.fill();
     }
     drawWheel();
+
     const btn = document.getElementById('fs-spin-btn');
     btn.onclick = () => {
       if (spinning) return;
+      spinsUsed = Number(localStorage.getItem(spinKey) || 0);
+      if (spinsUsed >= maxSpins) {
+        alert(`Daily Spin limit reached (${maxSpins}/${maxSpins} today). Come back tomorrow!`);
+        btn.disabled = true; btn.innerText = '🔒 Daily Limit Reached';
+        return;
+      }
       spinning = true; btn.disabled = true; haptic('medium');
+      spinsUsed++;
+      localStorage.setItem(spinKey, String(spinsUsed));
+      const newLeft = Math.max(0, maxSpins - spinsUsed);
+      setFsStat(`🎡 ${newLeft}/${maxSpins} Left`);
+      const msgEl = document.getElementById('fs-spin-limit-msg');
+      if (msgEl) msgEl.innerText = `🎡 Spins left today: ${newLeft} / ${maxSpins} (Win ${minC}–${maxC} Coins)`;
+
       const winIndex = Math.floor(Math.random() * segments.length), arc = (Math.PI * 2) / segments.length;
       const targetAngle = -Math.PI/2 - (winIndex * arc + arc/2);
       const totalSpin = Math.PI * 2 * 6 + ((targetAngle - (angle % (Math.PI*2)) + Math.PI*4) % (Math.PI*2));
@@ -2799,8 +3765,8 @@
         if (p < 1) rafId = requestAnimationFrame(anim);
         else {
           const seg = segments[winIndex];
-          if (seg.coins > 0) showGameResult({ won: true, coins: seg.coins, title: '🎡 JACKPOT!', desc: `Wheel landed on +${seg.coins} Coins!` });
-          else showGameResult({ won: false, coins: 0, title: '🎡 BETTER LUCK!', desc: 'Landed on 0. Watch an ad to spin again!' });
+          if (seg.coins > 0) showGameResult({ won: true, coins: seg.coins, title: '🎡 YOU WON!', desc: `Wheel landed on +${seg.coins} Coins!\n(${newLeft} spins left today)` });
+          else showGameResult({ won: false, coins: 0, title: '🎡 BETTER LUCK!', desc: `Landed on 0. (${newLeft} spins left today)` });
         }
       }
       rafId = requestAnimationFrame(anim);
@@ -2840,8 +3806,11 @@
           setTimeout(() => {
             idx++; locked = false;
             if (idx < questions.length) renderQ();
-            else if (correct >= 3) showGameResult({ won: true, coins: 4, title: '🧠 QUIZ GENIUS!', desc: `Answered ${correct}/5 correctly!\nReward: +4 Coins` });
-            else showGameResult({ won: false, coins: 0, title: '❓ ALMOST THERE!', desc: `Scored ${correct}/5 (need 3). Watch an ad to play again!` });
+            else if (correct >= 3) {
+              const reward = Math.max(0, Number(gameWinReward) || 0);
+              showGameResult({ won: true, coins: reward, title: '🧠 QUIZ GENIUS!', desc: `Answered ${correct}/5 correctly!\nReward: +${reward} Coins` });
+            }
+            else showGameResult({ won: false, coins: 0, title: '❓ ALMOST THERE!', desc: `Scored ${correct}/5 (need 3). Try again!` });
           }, 650);
         };
         box.appendChild(btn);
@@ -2854,7 +3823,8 @@
   function startTicTacToeFS(stage) {
     let board = Array(9).fill(''), over = false;
     const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    stage.innerHTML = `<div style="text-align:center;padding:16px;"><div id="fs-ttt-msg" style="font-size:18px;font-weight:800;color:#ffd700;margin-bottom:10px;">Your Turn (❌)</div><div class="fs-ttt-board" id="fs-ttt-board"></div><div style="font-size:12px;color:#94a3b8;margin-top:8px;">Beat the AI to win +4 Coins!</div></div>`;
+    const reward = Math.max(0, Number(gameWinReward) || 0);
+    stage.innerHTML = `<div style="text-align:center;padding:16px;"><div id="fs-ttt-msg" style="font-size:18px;font-weight:800;color:#ffd700;margin-bottom:10px;">Your Turn (❌)</div><div class="fs-ttt-board" id="fs-ttt-board"></div><div style="font-size:12px;color:#94a3b8;margin-top:8px;">Beat the AI to win +${reward} Coins!</div></div>`;
     setFsStat('❌ vs ⭕');
     function checkWin(sym) { return wins.some(w => w.every(i => board[i] === sym)); }
     function aiMove() {
@@ -2872,13 +3842,13 @@
         cell.onclick = () => {
           if (over || board[i]) return;
           board[i] = 'X'; haptic('light'); render();
-          if (checkWin('X')) { over = true; setTimeout(() => showGameResult({ won: true, coins: 4, title: '❌ YOU WON!', desc: 'You outsmarted the AI!\nReward: +4 Coins' }), 300); return; }
-          if (board.every(c => c !== '')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '🤝 DRAW!', desc: 'Stalemate! Watch an ad to play another round!' }), 300); return; }
+          if (checkWin('X')) { over = true; setTimeout(() => showGameResult({ won: true, coins: reward, title: '❌ YOU WON!', desc: `You outsmarted the AI!\nReward: +${reward} Coins` }), 300); return; }
+          if (board.every(c => c !== '')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '🤝 DRAW!', desc: 'Stalemate! Play another round!' }), 300); return; }
           over = true; document.getElementById('fs-ttt-msg').innerText = 'AI Thinking...';
           setTimeout(() => {
             aiMove(); over = false; render();
-            if (checkWin('O')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '⭕ AI WON!', desc: 'AI got 3 in a row. Watch an ad to rematch!' }), 300); }
-            else if (board.every(c => c !== '')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '🤝 DRAW!', desc: 'Stalemate! Watch an ad to play another round!' }), 300); }
+            if (checkWin('O')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '⭕ AI WON!', desc: 'AI got 3 in a row. Try a rematch!' }), 300); }
+            else if (board.every(c => c !== '')) { over = true; setTimeout(() => showGameResult({ won: false, coins: 0, title: '🤝 DRAW!', desc: 'Stalemate! Play another round!' }), 300); }
             else document.getElementById('fs-ttt-msg').innerText = 'Your Turn (❌)';
           }, 350);
         };
@@ -2922,13 +3892,14 @@
         if (num !== sol[selected]) {
           mistakes++; haptic('error'); updateHud(); renderGrid();
           if (mistakes >= maxMistakes) {
-            setTimeout(() => showGameResult({ won: false, coins: 0, title: '🔢 TOO MANY MISTAKES!', desc: 'Used all 3 mistakes. Watch an ad to try a fresh puzzle!' }), 300);
+            setTimeout(() => showGameResult({ won: false, coins: 0, title: '🔢 TOO MANY MISTAKES!', desc: 'Used all 3 mistakes. Try a fresh puzzle!' }), 300);
           }
           return;
         }
         haptic('light'); renderGrid();
         if (grid.every((v, i) => v === sol[i])) {
-          setTimeout(() => showGameResult({ won: true, coins: 5, title: '🔢 SUDOKU SOLVED!', desc: 'Clean 4×4 solve!\nReward: +5 Coins' }), 300);
+          const reward = Math.max(0, Number(gameWinReward) || 0);
+          setTimeout(() => showGameResult({ won: true, coins: reward, title: '🔢 SUDOKU SOLVED!', desc: `Clean 4×4 solve!\nReward: +${reward} Coins` }), 300);
         }
       };
       pad.appendChild(btn);
@@ -2966,6 +3937,8 @@
     if (hint) hint.innerText = 'Min: ' + withdrawMin + ' coins' + (withdrawMax > 0 ? ' | Max: ' + withdrawMax + ' coins' : '');
     const amt = document.getElementById('withdraw-amount');
     if (amt) { amt.min = withdrawMin; amt.value = withdrawMin; if (withdrawMax > 0) amt.max = withdrawMax; }
+    const btn = document.getElementById('withdraw-submit-btn');
+    if (btn) btn.innerText = requireWithdrawAd ? '🎬 Watch Ad & Submit Request' : '💳 Submit Withdrawal Request';
     showPage('withdraw-form');
   }
 
@@ -2983,7 +3956,7 @@
     const btn = document.getElementById('withdraw-submit-btn');
     if (btn) btn.disabled = true;
 
-    showSmoothAd('withdraw', async () => {
+    const doWithdrawRequest = async () => {
       try {
         const { data, error } = await sb.rpc('secure_request_withdraw', {
           p_telegram_id: String(userId),
@@ -3003,9 +3976,15 @@
       } finally {
         isSubmittingWithdraw = false; if (btn) btn.disabled = false;
       }
-    }, () => {
-      isSubmittingWithdraw = false; if (btn) btn.disabled = false;
-    });
+    };
+
+    if (requireWithdrawAd) {
+      showSmoothAd('withdraw', doWithdrawRequest, () => {
+        isSubmittingWithdraw = false; if (btn) btn.disabled = false;
+      });
+    } else {
+      await doWithdrawRequest();
+    }
   }
 
   async function openWalletHistory(type) {
@@ -3052,15 +4031,28 @@
     if (!isAdminUser()) return;
     document.getElementById('admin-bot-input').value = botUsername;
     document.getElementById('admin-channel-link-input').value = officialChannelLink;
+    if (document.getElementById('admin-channel-username')) document.getElementById('admin-channel-username').value = officialChannelUsername || '';
+    if (document.getElementById('admin-channel-verify-api')) document.getElementById('admin-channel-verify-api').value = channelVerifyApiUrl || '';
     document.getElementById('admin-gate-required').value = gateRequired ? 'true' : 'false';
     document.getElementById('admin-pin-input').value = adminPin;
     document.getElementById('admin-signup-bonus').value = signupBonus;
     document.getElementById('admin-ref-reward').value = referralReward;
     document.getElementById('admin-ref-welcome').value = referralWelcomeBonus;
     document.getElementById('admin-daily-cap').value = dailyEarnCap;
+
+    if (document.getElementById('admin-game-reward')) document.getElementById('admin-game-reward').value = gameWinReward;
+    if (document.getElementById('admin-spin-limit')) document.getElementById('admin-spin-limit').value = spinDailyLimit;
+    if (document.getElementById('admin-spin-min')) document.getElementById('admin-spin-min').value = spinMinCoins;
+    if (document.getElementById('admin-spin-max')) document.getElementById('admin-spin-max').value = spinMaxCoins;
+
     document.getElementById('admin-checkin-ad').value = requireCheckinAd ? 'true' : 'false';
     document.getElementById('admin-game-ad').value = requireGameAd ? 'true' : 'false';
+    if (document.getElementById('admin-game-continue-ad')) document.getElementById('admin-game-continue-ad').value = requireGameContinueAd ? 'true' : 'false';
+    if (document.getElementById('admin-game-exit-ad')) document.getElementById('admin-game-exit-ad').value = requireGameExitAd ? 'true' : 'false';
+    if (document.getElementById('admin-chat-ad')) document.getElementById('admin-chat-ad').value = requireChatAd ? 'true' : 'false';
+    if (document.getElementById('admin-withdraw-ad')) document.getElementById('admin-withdraw-ad').value = requireWithdrawAd ? 'true' : 'false';
     document.getElementById('admin-game-ad-mins').value = gameAdEveryMins;
+
     document.getElementById('admin-daily-reward').value = dailyCheckinReward;
     document.getElementById('admin-wd-min').value = withdrawMin;
     document.getElementById('admin-wd-max').value = withdrawMax;
@@ -3080,7 +4072,8 @@
     ['watch','views','join','bot','install','website','affiliate','products','other','promote','games','chat'].forEach(c => {
       const el = document.getElementById('pause-' + c); if (el) el.checked = !!categoryPauses[c];
     });
-    loadMasterStats(); loadAdminAdsList(); loadAdminPayouts(); loadAdminTaskList(); loadAutoEarnAdminUI(); loadAdminProofs();
+    loadMasterStats(); loadAdminAdsList(); loadAdminPayouts(); loadAdminWithdrawHistory('pending');
+    loadAdminTaskList(); loadAutoEarnAdminUI(); loadAdminProofs(); loadAdminProofHistory('approved');
   }
 
   async function saveAppStatus() {
@@ -3109,6 +4102,10 @@
     document.getElementById('monetag-zone').value = monetagZone || '';
     document.getElementById('monetag-script').value = monetagScriptUrl || '';
     document.getElementById('adsgram-block').value = adsgramBlockId || '';
+    if (document.getElementById('ad-network-mode')) document.getElementById('ad-network-mode').value = adNetworkMode || 'auto';
+    if (document.getElementById('adsterra-direct')) document.getElementById('adsterra-direct').value = adsterraDirectUrl || '';
+    if (document.getElementById('adsterra-script')) document.getElementById('adsterra-script').value = adsterraScriptUrl || '';
+    if (document.getElementById('admin-ad-wait')) document.getElementById('admin-ad-wait').value = adWaitSeconds || 6;
     renderAutoAdsList();
   }
 
@@ -3155,8 +4152,21 @@
     monetagZone = document.getElementById('monetag-zone').value.trim();
     monetagScriptUrl = document.getElementById('monetag-script').value.trim();
     adsgramBlockId = document.getElementById('adsgram-block').value.trim();
-    if (sb) await sb.from('app_settings').upsert([{ setting_key:'monetag_zone', setting_value:monetagZone }, { setting_key:'monetag_script', setting_value:monetagScriptUrl }, { setting_key:'adsgram_block', setting_value:adsgramBlockId }]);
-    loadAdNetworkSDKs(); alert('✅ Network IDs saved!\nReload the Mini App once.');
+    adNetworkMode = document.getElementById('ad-network-mode')?.value || 'auto';
+    adsterraDirectUrl = document.getElementById('adsterra-direct')?.value.trim() || '';
+    adsterraScriptUrl = document.getElementById('adsterra-script')?.value.trim() || '';
+    adWaitSeconds = Math.max(3, Number(document.getElementById('admin-ad-wait')?.value) || 6);
+
+    if (sb) await sb.from('app_settings').upsert([
+      { setting_key:'monetag_zone', setting_value:monetagZone },
+      { setting_key:'monetag_script', setting_value:monetagScriptUrl },
+      { setting_key:'adsgram_block', setting_value:adsgramBlockId },
+      { setting_key:'ad_network_mode', setting_value:adNetworkMode },
+      { setting_key:'adsterra_direct_url', setting_value:adsterraDirectUrl },
+      { setting_key:'adsterra_script_url', setting_value:adsterraScriptUrl },
+      { setting_key:'ad_wait_seconds', setting_value:String(adWaitSeconds) }
+    ]);
+    loadAdNetworkSDKs(); alert('✅ Ad Network settings saved!\nReload Mini App if you changed script URLs.');
   }
 
   async function loadMasterStats() {
@@ -3220,11 +4230,37 @@
     } catch(e) { cont.innerHTML = '<div class="card">Failed: ' + escHtml(e.message || e) + '</div>'; }
   }
 
+  async function loadAdminWithdrawHistory(status = 'pending') {
+    const cont = document.getElementById('admin-withdraw-history-list'); if (!cont || !sb || !isAdminUser()) return;
+    ['pending','approved','rejected','all'].forEach(s => {
+      const el = document.getElementById('wd-tab-' + s);
+      if (el) el.classList.toggle('active', s === status);
+    });
+    cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;font-size:12px;">Loading...</div>';
+    try {
+      let q = sb.from('withdrawals').select('*').order('id', { ascending: false }).limit(50);
+      if (status !== 'all') q = q.eq('status', status);
+      const { data, error } = await q;
+      if (error) { cont.innerHTML = '<div style="color:#c8102e;font-size:12px;">' + escHtml(error.message) + '</div>'; return; }
+      if (!data || !data.length) { cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;font-size:12px;">No records found</div>'; return; }
+      data.forEach(w => { adminPayoutsCache[w.id] = w; });
+      cont.innerHTML = data.map(w => {
+        const st = w.status || 'pending';
+        const color = st === 'approved' ? '#4CAF50' : st === 'rejected' ? '#c8102e' : '#FF9800';
+        const badge = st === 'approved' ? '✅ Paid' : st === 'rejected' ? '❌ Rejected' : '⏳ Unpaid';
+        const btns = st === 'pending'
+          ? `<div><button class="start-btn" style="background:#4CAF50;padding:4px 8px;font-size:10px;margin-bottom:3px;" onclick="approvePayout(${Number(w.id)})">Pay</button><br><button class="start-btn" style="background:#c8102e;padding:4px 8px;font-size:10px;" onclick="rejectPayout(${Number(w.id)})">Reject</button></div>`
+          : `<div style="font-weight:900;font-size:11px;color:${color};">${badge}</div>`;
+        return `<div class="list-item" style="margin:0 0 8px 0;padding:10px;border-left:4px solid ${color};"><div class="info"><h4>${escHtml((w.payout_type||'').toUpperCase())} • ${Number(w.amount)||0} Coins</h4><p>User: ${escHtml(w.telegram_id)} • Addr: <b>${escHtml(w.address||'')}</b><br><span style="font-size:10px;color:#888;">${w.created_at ? new Date(w.created_at).toLocaleString() : 'id:' + w.id}</span></p></div>${btns}</div>`;
+      }).join('');
+    } catch(e) { cont.innerHTML = '<div style="color:#c8102e;font-size:12px;">Failed to load history</div>'; }
+  }
+
   async function approvePayout(id) {
     if (!isAdminUser() || !confirm('Mark as Paid?')) return;
     const { data: updated, error } = await sb.from('withdrawals').update({ status: 'approved' }).eq('id', id).eq('status', 'pending').select();
     if (error || !updated || !updated.length) { alert('Already processed or error.'); loadAdminPayouts(); return; }
-    alert('Approved'); loadAdminPayouts(); loadMasterStats();
+    alert('Approved'); loadAdminPayouts(); loadAdminWithdrawHistory('approved'); loadMasterStats();
   }
 
   async function rejectPayout(id) {
@@ -3234,7 +4270,7 @@
     if (error || !updated || !updated.length) { alert('Already processed.'); loadAdminPayouts(); return; }
     const { data: rpcData, error: rpcErr } = await sb.rpc('secure_credit_balance', { p_telegram_id: String(w.telegram_id), p_amount: Number(w.amount)||0, p_type: 'admin', p_description: 'Withdrawal rejected refund' });
     alert(rpcErr || (rpcData && !rpcData.success) ? 'Rejected, refund failed' : 'Rejected & Refunded');
-    loadAdminPayouts(); loadMasterStats();
+    loadAdminPayouts(); loadAdminWithdrawHistory('rejected'); loadMasterStats();
   }
 
   async function saveAdminSettings() {
@@ -3242,13 +4278,27 @@
     const bName = document.getElementById('admin-bot-input').value.trim().replace('@', '');
     const pin = document.getElementById('admin-pin-input').value.trim();
     const chLink = safeUrl(document.getElementById('admin-channel-link-input').value.trim()) || officialChannelLink;
+    const chUser = (document.getElementById('admin-channel-username')?.value || '').trim();
+    const chApi = (document.getElementById('admin-channel-verify-api')?.value || '').trim();
     const reqGate = document.getElementById('admin-gate-required').value;
     const sBonus = Number(document.getElementById('admin-signup-bonus').value) || 30;
     const rReward = Number(document.getElementById('admin-ref-reward').value) || 50;
     const rWelcome = Number(document.getElementById('admin-ref-welcome').value) || 20;
     const dCap = Number(document.getElementById('admin-daily-cap').value) || 0;
-    const cAd = document.getElementById('admin-checkin-ad').value, gAd = document.getElementById('admin-game-ad').value;
+
+    const gRew = Math.max(0, Number(document.getElementById('admin-game-reward')?.value) || 0);
+    const sLim = Math.max(1, Number(document.getElementById('admin-spin-limit')?.value) || 10);
+    const sMin = Math.max(1, Number(document.getElementById('admin-spin-min')?.value) || 1);
+    const sMax = Math.max(sMin, Number(document.getElementById('admin-spin-max')?.value) || 3);
+
+    const cAd = document.getElementById('admin-checkin-ad').value;
+    const gAd = document.getElementById('admin-game-ad').value;
+    const gContAd = document.getElementById('admin-game-continue-ad')?.value || 'true';
+    const gExitAd = document.getElementById('admin-game-exit-ad')?.value || 'true';
+    const chAd = document.getElementById('admin-chat-ad')?.value || 'true';
+    const wdAd = document.getElementById('admin-withdraw-ad')?.value || 'true';
     const gMins = Number(document.getElementById('admin-game-ad-mins').value) || 0;
+
     const dRew = Number(document.getElementById('admin-daily-reward').value) || 10;
     const wMin = Number(document.getElementById('admin-wd-min').value) || 500, wMax = Number(document.getElementById('admin-wd-max').value) || 0;
     const dUpi = document.getElementById('admin-deposit-upi').value.trim(), dCry = document.getElementById('admin-deposit-crypto').value.trim(), dQr = document.getElementById('admin-deposit-qr').value.trim();
@@ -3256,18 +4306,28 @@
     const vCost = Number(document.getElementById('admin-vip-cost')?.value) || 500, vTasks = Number(document.getElementById('admin-vip-tasks')?.value) || 10;
 
     if (bName) botUsername = bName; if (pin) adminPin = pin; if (chLink) officialChannelLink = chLink;
+    officialChannelUsername = chUser; channelVerifyApiUrl = chApi;
     gateRequired = (reqGate === 'true'); signupBonus = sBonus; referralReward = rReward; referralWelcomeBonus = rWelcome;
-    dailyEarnCap = dCap; requireCheckinAd = (cAd === 'true'); requireGameAd = (gAd === 'true'); gameAdEveryMins = gMins;
+    dailyEarnCap = dCap; gameWinReward = gRew; spinDailyLimit = sLim; spinMinCoins = sMin; spinMaxCoins = sMax;
+    requireCheckinAd = (cAd === 'true'); requireGameAd = (gAd === 'true');
+    requireGameContinueAd = (gContAd === 'true'); requireGameExitAd = (gExitAd === 'true');
+    requireChatAd = (chAd === 'true'); requireWithdrawAd = (wdAd === 'true');
+    gameAdEveryMins = gMins;
     dailyCheckinReward = dRew; withdrawMin = wMin; withdrawMax = wMax; depositUpi = dUpi; depositCrypto = dCry; depositQrUrl = dQr;
     refLevel1Pct = rL1; refLevel2Pct = rL2; vipWeeklyCost = vCost; vipDailyTasks = vTasks;
 
     if (sb) {
       await sb.from('app_settings').upsert([
         { setting_key:'bot_username', setting_value:bName }, { setting_key:'admin_pin', setting_value:pin },
-        { setting_key:'channel_link', setting_value:chLink }, { setting_key:'gate_required', setting_value:reqGate },
+        { setting_key:'channel_link', setting_value:chLink }, { setting_key:'official_channel_username', setting_value:chUser },
+        { setting_key:'channel_verify_api', setting_value:chApi }, { setting_key:'gate_required', setting_value:reqGate },
         { setting_key:'signup_bonus', setting_value:String(sBonus) }, { setting_key:'referral_reward', setting_value:String(rReward) },
         { setting_key:'referral_welcome', setting_value:String(rWelcome) }, { setting_key:'daily_earn_cap', setting_value:String(dCap) },
+        { setting_key:'game_win_reward', setting_value:String(gRew) }, { setting_key:'spin_daily_limit', setting_value:String(sLim) },
+        { setting_key:'spin_min_coins', setting_value:String(sMin) }, { setting_key:'spin_max_coins', setting_value:String(sMax) },
         { setting_key:'require_checkin_ad', setting_value:cAd }, { setting_key:'require_game_ad', setting_value:gAd },
+        { setting_key:'require_game_continue_ad', setting_value:gContAd }, { setting_key:'require_game_exit_ad', setting_value:gExitAd },
+        { setting_key:'require_chat_ad', setting_value:chAd }, { setting_key:'require_withdraw_ad', setting_value:wdAd },
         { setting_key:'game_ad_mins', setting_value:String(gMins) }, { setting_key:'daily_checkin_reward', setting_value:String(dRew) },
         { setting_key:'withdraw_min', setting_value:String(wMin) }, { setting_key:'withdraw_max', setting_value:String(wMax) },
         { setting_key:'deposit_upi', setting_value:dUpi }, { setting_key:'deposit_crypto', setting_value:dCry },
@@ -3373,6 +4433,33 @@
     }).join('');
   }
 
+  async function loadAdminProofHistory(status = 'approved') {
+    const cont = document.getElementById('admin-proof-history-list'); if (!cont || !sb || !isAdminUser()) return;
+    ['approved','pending','rejected','all'].forEach(s => {
+      const el = document.getElementById('pf-tab-' + s);
+      if (el) el.classList.toggle('active', s === status);
+    });
+    cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;font-size:12px;">Loading...</div>';
+    try {
+      let q = sb.from('task_proofs').select('*').order('id', { ascending: false }).limit(50);
+      if (status !== 'all') q = q.eq('status', status);
+      const { data, error } = await q;
+      if (error) { cont.innerHTML = '<div style="color:#c8102e;font-size:12px;">' + escHtml(error.message) + '</div>'; return; }
+      if (!data || !data.length) { cont.innerHTML = '<div style="text-align:center;color:#888;padding:10px;font-size:12px;">No proof records found</div>'; return; }
+      data.forEach(p => { adminProofsCache[p.id] = p; });
+      cont.innerHTML = data.map(p => {
+        const st = p.status || 'pending';
+        const color = st === 'approved' ? '#4CAF50' : st === 'rejected' ? '#c8102e' : '#FF9800';
+        const badge = st === 'approved' ? '✅ Verified' : st === 'rejected' ? '❌ Rejected' : '⏳ Pending';
+        const img = safeImgDataUrl(p.proof_image) ? `<img src="${p.proof_image}" style="max-width:100%;max-height:110px;border-radius:8px;margin-top:6px;">` : '';
+        const actionEl = st === 'pending'
+          ? `<div><button class="start-btn" style="background:#4CAF50;padding:4px 8px;font-size:10px;margin-bottom:3px;" onclick="approveProof(${Number(p.id)})">Pay</button><br><button class="start-btn" style="background:#c8102e;padding:4px 8px;font-size:10px;" onclick="rejectProof(${Number(p.id)})">Reject</button></div>`
+          : `<div style="font-weight:900;font-size:11px;color:${color};">${badge}</div>`;
+        return `<div class="list-item" style="margin:0 0 8px 0;padding:10px;border-left:4px solid ${color};flex-wrap:wrap;"><div class="info" style="flex:1;min-width:60%;"><h4>${escHtml(p.task_title||'Task')} (+${Number(p.reward)||0})</h4><p>User: ${escHtml(p.telegram_id)}<br>Proof (${escHtml(p.proof_type)}): <b>${escHtml(p.proof_text||'-')}</b><br><span style="font-size:10px;color:#888;">${p.created_at ? new Date(p.created_at).toLocaleString() : 'id:' + p.id}</span></p>${img}</div>${actionEl}</div>`;
+      }).join('');
+    } catch(e) { cont.innerHTML = '<div style="color:#c8102e;font-size:12px;">Failed to load proof history</div>'; }
+  }
+
   async function approveProof(id) {
     if (!isAdminUser()) return;
     const p = adminProofsCache[id]; if (!p) return;
@@ -3390,14 +4477,14 @@
       const { data: existing } = await sb.from('completed_tasks').select('id').eq('telegram_id', uid).eq('task_id', taskId).maybeSingle();
       if (!existing) { await sb.from('completed_tasks').insert([{ telegram_id: uid, task_id: taskId }]); }
     }
-    alert('Paid!'); loadAdminProofs(); loadMasterStats();
+    alert('Paid!'); loadAdminProofs(); loadAdminProofHistory('approved'); loadMasterStats();
   }
 
   async function rejectProof(id) {
     if (!isAdminUser()) return;
     if (!confirm('Reject this proof?')) return;
     await sb.from('task_proofs').update({ status: 'rejected' }).eq('id', id).eq('status', 'pending');
-    loadAdminProofs();
+    loadAdminProofs(); loadAdminProofHistory('rejected');
   }
 
   async function loadAdminCompletionHistory() {
